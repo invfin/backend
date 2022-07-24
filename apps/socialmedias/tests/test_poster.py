@@ -7,6 +7,7 @@ from django.utils.safestring import mark_safe
 
 from apps.users.tests.factories import UserFactory
 from apps.empresas.tests.factories import AppleExample
+from apps.general.tests.factories import GenerateGeneralExample
 from apps.escritos.tests.factories import GenerateEscritosExample
 # from apps.public_blog.tests.factories
 
@@ -20,6 +21,8 @@ from apps.socialmedias.models import (
 )
 from apps.socialmedias.poster import SocialPosting
 from apps.socialmedias import constants
+
+from .factories import GenerateSocialmediasExample
 
 
 FULL_DOMAIN = settings.FULL_DOMAIN
@@ -35,12 +38,14 @@ class PosterTest(TestCase):
     def setUpTestData(cls):
         # cls.question = Question.objects.create(**QUESTION)
         cls.user = UserFactory()
+        GenerateGeneralExample.generate_all()
+        GenerateSocialmediasExample.generate_all()
         GenerateEscritosExample.generate_all()
-        cls.term = GenerateEscritosExample
+        cls.escritos_examples = GenerateEscritosExample
         # cls.public_blog = PublicBlog.objects.create(**PUBLICBLOG)
         cls.company = AppleExample.return_example()
     
-    def test_company(self):
+    def test_company_content(self):
         with vcr.use_cassette('cassettes/company/retrieve/test_get_current_price.yaml'):
             company_poster = SocialPosting().company_content(self.company)
         self.assertEqual(
@@ -54,18 +59,38 @@ class PosterTest(TestCase):
             }
         )
     
-    @poster_vcr.use_cassette
-    def test_posting_question(self):
+    def test_term(self):
+        term_poster = SocialPosting().term_content(self.escritos_examples.term)
+        self.assertEqual(
+            term_poster, 
+            {
+                "title": self.escritos_examples.term.title,
+                "description": self.escritos_examples.term.resume,
+                "link": FULL_DOMAIN + self.escritos_examples.term.get_absolute_url(),
+                "content_shared": self.escritos_examples.term,
+                "shared_model_historial": TermSharedHistorial,
+            }
+        )
+    
+    @poster_vcr.use_cassette(filter_post_data_parameters=['access_token'])
+    def test_posting_specific_term_on_facebook(self):
         SocialPosting.share_content(
             constants.MODEL_TERM,
             [
                 {"platform": constants.FACEBOOK, "post_type": constants.POST_TYPE_TEXT},
-                {"platform": constants.TWITTER, "post_type": constants.POST_TYPE_TEXT}
-            ]
+            ],
+            self.escritos_examples.term
         )
-        content = SocialPosting().company_content(self.term)
-        fb_response = self.facebook_poster.post_on_facebook(**content)
-        print(fb_response)
+    
+    # @poster_vcr.use_cassette(filter_post_data_parameters=['access_token'])
+    def test_posting_specific_term_no_resume_on_facebook(self):
+        SocialPosting.share_content(
+            constants.MODEL_TERM,
+            [
+                {"platform": constants.FACEBOOK, "post_type": constants.POST_TYPE_TEXT},
+            ],
+            self.escritos_examples.empty_term
+        )
         
     # def test_blog(self):
     #     publicBlog = PublicBlog.objects.get_random()
@@ -79,11 +104,7 @@ class PosterTest(TestCase):
     #     question_response= question.title, 'https://inversionesyfinanzas.xyz' + question.get_absolute_url(), question.content
     #     self.assertEqual(question_poster, question_response)
 
-    # def test_term(self):
-    #     term = Term.objects.get_random()
-    #     term_poster = SocialPosting(TermSharedHistorial, term).generate_content()
-    #     term_response = term.title, 'https://inversionesyfinanzas.xyz' + term.get_absolute_url(), term.resume
-    #     self.assertEqual(term_poster, term_response)
+    
 
     # def test_clean_description(self):
     #     title, link, description = SocialPosting(QuestionSharedHistorial, self.question).generate_content()

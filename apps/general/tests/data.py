@@ -45,7 +45,7 @@ CURRENCIES = [
       "name":"",
       "iso":"",
       "decimals":2,
-      "country":""
+      "country_id":1
    },
    {
       "id":2,
@@ -54,7 +54,7 @@ CURRENCIES = [
       "name":"",
       "iso":"",
       "decimals":2,
-      "country":""
+      "country_id":2
    }
 ]
 

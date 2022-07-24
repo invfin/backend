@@ -5,6 +5,7 @@ import random
 import tweepy
 from django.conf import settings
 
+from django.template.defaultfilters import slugify
 site = 'https://inversionesyfinanzas.xyz'
 
 # logger = logging.getLogger('longs')
@@ -107,7 +108,7 @@ class Twitter:
             utm_source = f'utm_source={platform}'
             utm_medium = f'utm_medium={platform}'
             utm_campaign = f'utm_campaign=post-shared-auto'
-            utm_term = f'utm_term={title}'
+            utm_term = f'utm_term={slugify(title)}'
             link = f'{link}?{utm_source}&{utm_medium}&{utm_campaign}&{utm_term}'
 
             tweet = f'{emojis[0].emoji} {description} Más en {link} #{hashtag1.name} #{hashtag2.name} #{hashtag3.name}'

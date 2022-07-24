@@ -19,7 +19,6 @@ from apps.socialmedias.constants import FACEBOOK
 from apps.socialmedias.socialposter.facepy import Facebook
 
 from apps.socialmedias.poster import SocialPosting
-from .data import AAPL, TERM, TERM_CONTENT, QUESTION, PUBLICBLOG
 from .factories import GenerateSocialmediasExample
 
 

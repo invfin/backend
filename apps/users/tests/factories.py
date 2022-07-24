@@ -9,7 +9,8 @@ class UserFactory(DjangoModelFactory):
     id = 1
     username = 'Lucas'
     email = 'test@example.com'
-    name = 'Lucas Montes'
+    first_name = 'Lucas'
+    last_name = 'Montes'
 
     @post_generation
     def password(self, create: bool, extracted: Sequence[Any], **kwargs):

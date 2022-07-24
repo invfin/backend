@@ -16,8 +16,8 @@ from apps.empresas.tests.constants import INCOME_STATEMENT, BALANCE_SHEET, CASHF
 class AppleExample:
     
     def create_company(self):
-        Country.objects.create(**COUNTRIES[0]) 
-        Sector.objects.create(**SECTORS[0])
+        Country.objects.get_or_create(**COUNTRIES[0]) 
+        Sector.objects.get_or_create(**SECTORS[0])
         company = Company.objects.create(**AAPL)
         return company
 

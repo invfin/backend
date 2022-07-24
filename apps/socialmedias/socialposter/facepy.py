@@ -2,6 +2,7 @@ import datetime
 
 import requests
 from django.conf import settings
+from django.template.defaultfilters import slugify
 
 from ..models import DefaultTilte, Emoji, Hashtag
 
@@ -153,7 +154,7 @@ class Facebook():
         utm_source = f'utm_source={platform}'
         utm_medium = f'utm_medium={platform}'
         utm_campaign = f'utm_campaign=post-shared-auto'
-        utm_term = f'utm_term={title}'
+        utm_term = f'utm_term={slugify(title)}'
         link = f'{link}?{utm_source}&{utm_medium}&{utm_campaign}&{utm_term}'
 
         description = self.create_fb_description(description=description, link=link, hashtags=[hashtag.name for hashtag in hashtags])
