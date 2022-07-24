@@ -1,8 +1,5 @@
-import random
-import time
 from datetime import datetime
 
-import requests
 import yahooquery as yq
 import yfinance as yf
 from django.conf import settings
@@ -16,11 +13,8 @@ from apps.general.models import Currency
 from apps.translate.google_trans_new import google_translator
 
 from .ratios import CalculateCompanyFinancialRatios
+from .retrieve_data import RetrieveCompanyData
 
-HEADERS = {
-    'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/95.0.4638.69 Safari/537.36',
-    'Accept-Encoding': 'gzip, deflate'
-}
 
 IMAGEKIT_URL_ENDPOINT = settings.IMAGEKIT_URL_ENDPOINT
 IMAGE_KIT = settings.IMAGE_KIT
@@ -30,24 +24,9 @@ class UpdateCompany(CalculateCompanyFinancialRatios):
     def __init__(self, company) -> None:
         self.company = company
         self.ticker = self.company.ticker
-        self.finprep_key = settings.FINPREP_KEY
+        self.retreive_data = RetrieveCompanyData(self.ticker)
         self.yf_company = yf.Ticker(self.ticker)
         self.yq_company = yq.Ticker(self.ticker)
-    
-    def request_income_statements_finprep(self) -> list:
-        url_income_st = f'https://financialmodelingprep.com/api/v3/income-statement/{self.ticker}?limit=120&apikey={self.finprep_key}'
-        inc_stt = requests.get(url_income_st,headers=HEADERS).json()
-        return inc_stt
-
-    def request_balance_sheets_finprep(self) -> list:
-        url_balance_sheet = f'https://financialmodelingprep.com/api/v3/balance-sheet-statement/{self.ticker}?limit=120&apikey={self.finprep_key}'
-        bal_sht = requests.get(url_balance_sheet,headers=HEADERS).json()
-        return bal_sht
-
-    def request_cashflow_statements_finprep(self) -> list:
-        url_cashflow_st = f'https://financialmodelingprep.com/api/v3/cash-flow-statement/{self.ticker}?limit=120&apikey={self.finprep_key}'
-        csf_stt = requests.get(url_cashflow_st,headers=HEADERS).json()
-        return csf_stt
     
     def get_most_recent_price(self) -> float:
         if 'currentPrice' in self.yf_company.info:
@@ -127,66 +106,24 @@ class UpdateCompany(CalculateCompanyFinancialRatios):
         try:
             if self.check_last_filing() == 'need update':
                 try:
-                    random_int = random.randint(5,10)
-                    income_statements = self.request_income_statements_finprep()
-                    time.sleep(random_int)
-                    balance_sheets = self.request_balance_sheets_finprep()
-                    time.sleep(random_int)
-                    cashflow_statements = self.request_cashflow_statements_finprep()
+                    finprep_data = self.retreive_data.request_finprep()
 
-                    current_data = self.generate_current_data(income_statements, balance_sheets, cashflow_statements)
-                    ly_data = self.generate_last_year_data(income_statements, balance_sheets, cashflow_statements)
-
-                    all_data = current_data
-                    all_data.update(ly_data)
-
-                    main_ratios = self.calculate_main_ratios(all_data)
-                    all_data.update(main_ratios)
-
-                    fcf_ratio = self.calculate_fcf_ratio(current_data)
-                    all_data.update(fcf_ratio)
-
-                    ps_value = self.calculate_ps_value(all_data)
-                    all_data.update(ps_value)
-
-                    company_growth = self.calculate_company_growth(all_data)        
-                    all_data.update(company_growth)
-
-                    non_gaap = self.calculate_non_gaap(all_data)
-                    all_data.update(non_gaap)
-
-                    price_to_ratio = self.calculate_price_to_ratio(all_data)
-                    eficiency_ratio = self.calculate_eficiency_ratio(all_data)
-                    enterprise_value_ratio = self.calculate_enterprise_value_ratio(all_data)
-                    liquidity_ratio = self.calculate_liquidity_ratio(all_data)
-                    margin_ratio = self.calculate_margin_ratio(all_data)
-                    operation_risk_ratio = self.calculate_operation_risk_ratio(all_data)
-                    rentability_ratios = self.calculate_rentability_ratios(all_data)
+                    all_ratios = self.calculate_all_ratios(
+                        finprep_data["income_statements"], 
+                        finprep_data["balance_sheets"], 
+                        finprep_data["cashflow_statements"]
+                    )
                 except Exception as e:
                     log_message = e
                     self.company.has_error = True
                     self.company.error_message = e
-                    self.company.save(update_fields=['has_error', 'error_message'])
-                
+                    self.company.save(update_fields=['has_error', 'error_message'])                
                 else:
-                    try:
-                        self.create_current_stock_price(price = current_data['currentPrice'])
-                        self.create_rentability_ratios(rentability_ratios)
-                        self.create_liquidity_ratio(liquidity_ratio)
-                        self.create_margin_ratio(margin_ratio)
-                        self.create_fcf_ratio(fcf_ratio)
-                        self.create_ps_value(ps_value)
-                        self.create_non_gaap(non_gaap)
-                        self.create_operation_risk_ratio(operation_risk_ratio)
-                        self.create_price_to_ratio(price_to_ratio)
-                        self.create_enterprise_value_ratio(enterprise_value_ratio)
-                        self.create_eficiency_ratio(eficiency_ratio)
-                        self.create_company_growth(company_growth)
-
+                    try:                        
+                        self.create_all_ratios(all_ratios)
                         self.company.updated = True
                         self.company.last_update = datetime.now()
                         self.company.save(update_fields=['updated', 'last_update'])
-                        print('updated', self.company)
                     except Exception as e:
                         log_message = e
                         CompanyUpdateLog.objects.create_log(self.company, 'second_step_financial_update', log_message)
@@ -209,6 +146,20 @@ class UpdateCompany(CalculateCompanyFinancialRatios):
             self.company.save(update_fields=['has_error', 'error_message'])
         finally:
             CompanyUpdateLog.objects.create_log(self.company, 'last_step_financial_update', log_message)
+    
+    def create_all_ratios(self, all_ratios: dict):
+        self.create_current_stock_price(price = all_ratios["current_data"]['currentPrice'])
+        self.create_rentability_ratios(all_ratios["rentability_ratios"])
+        self.create_liquidity_ratio(all_ratios["liquidity_ratio"])
+        self.create_margin_ratio(all_ratios["margin_ratio"])
+        self.create_fcf_ratio(all_ratios["fcf_ratio"])
+        self.create_ps_value(all_ratios["ps_value"])
+        self.create_non_gaap(all_ratios["non_gaap"])
+        self.create_operation_risk_ratio(all_ratios["operation_risk_ratio"])
+        self.create_price_to_ratio(all_ratios["price_to_ratio"])
+        self.create_enterprise_value_ratio(all_ratios["enterprise_value_ratio"])
+        self.create_eficiency_ratio(all_ratios["eficiency_ratio"])
+        self.create_company_growth(all_ratios["company_growth"])
 
     def check_last_filing(self):
         least_recent_date = self.yq_company.balance_sheet()

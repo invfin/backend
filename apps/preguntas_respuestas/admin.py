@@ -1,12 +1,12 @@
 from django.contrib import admin
 
-from import_export.admin import ImportExportModelAdmin
+from import_export.admin import ImportExportActionModelAdmin
 
 from .models import Answer, AnswerComment, QuesitonComment, Question
 
 
 @admin.register(Question)
-class QuestionAdmin(ImportExportModelAdmin, admin.ModelAdmin):
+class QuestionAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
     list_display = [
         'id',
         'title',
@@ -21,7 +21,7 @@ class QuestionAdmin(ImportExportModelAdmin, admin.ModelAdmin):
 
 
 @admin.register(QuesitonComment)
-class QuesitonCommentAdmin(admin.ModelAdmin):
+class QuesitonCommentAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
     list_display = [
         'id',
         'author',
@@ -31,7 +31,7 @@ class QuesitonCommentAdmin(admin.ModelAdmin):
 
 
 @admin.register(Answer)
-class AnswerAdmin(admin.ModelAdmin):
+class AnswerAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
     list_display = [
         'id',
         'author'
@@ -44,7 +44,7 @@ class AnswerAdmin(admin.ModelAdmin):
 
 
 @admin.register(AnswerComment)
-class AnswerCommentAdmin(admin.ModelAdmin):
+class AnswerCommentAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
     list_display = [
         'id',
         'author',

@@ -1,5 +1,7 @@
 from django.contrib import admin
 
+from import_export.admin import ImportExportActionModelAdmin
+
 from .models import (
     Category,
     Country,
@@ -30,7 +32,7 @@ class NotificationAdmin(admin.ModelAdmin):
 
 
 @admin.register(Category)
-class CategoryAdmin(admin.ModelAdmin):
+class CategoryAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
     list_display = [
         'id',
         'name'
@@ -38,7 +40,7 @@ class CategoryAdmin(admin.ModelAdmin):
 
 
 @admin.register(Tag)
-class TagAdmin(admin.ModelAdmin):
+class TagAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
     list_display = [
         'id',
         'name'
@@ -46,7 +48,7 @@ class TagAdmin(admin.ModelAdmin):
 
 
 @admin.register(Industry)
-class IndustryAdmin(admin.ModelAdmin):
+class IndustryAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
     list_display = [
         'id',
         'industry'
@@ -54,7 +56,7 @@ class IndustryAdmin(admin.ModelAdmin):
 
 
 @admin.register(Sector)
-class SectorAdmin(admin.ModelAdmin):
+class SectorAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
     list_display = [
         'id',
         'sector'
@@ -62,7 +64,7 @@ class SectorAdmin(admin.ModelAdmin):
 
 
 @admin.register(Currency)
-class CurrencyAdmin(admin.ModelAdmin):
+class CurrencyAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
     list_display = [
         'id',
         'currency'
@@ -70,7 +72,7 @@ class CurrencyAdmin(admin.ModelAdmin):
 
 
 @admin.register(Country)
-class CountryAdmin(admin.ModelAdmin):
+class CountryAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
     list_display = [
         'id',
         'country'

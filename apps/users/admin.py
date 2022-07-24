@@ -2,7 +2,7 @@ from django.contrib import admin
 from django.contrib.auth import admin as auth_admin
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
-from import_export.admin import ImportExportModelAdmin
+from import_export.admin import ImportExportActionModelAdmin
 
 from apps.users.forms import UserAdminChangeForm, UserAdminCreationForm
 
@@ -12,7 +12,7 @@ User = get_user_model()
 
 
 @admin.register(User)
-class UserAdmin(ImportExportModelAdmin, auth_admin.UserAdmin):
+class UserAdmin(ImportExportActionModelAdmin, auth_admin.UserAdmin):
 
     form = UserAdminChangeForm
     add_form = UserAdminCreationForm

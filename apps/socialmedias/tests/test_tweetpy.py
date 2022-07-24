@@ -1,3 +1,5 @@
+import vcr
+
 from django.test import TestCase
 
 from apps.empresas.models import Company
@@ -16,6 +18,12 @@ from apps.socialmedias.socialposter.tweetpy import Twitter
 
 from ..poster import SocialPosting
 from .factories import DefaultTilteFactory, EmojiFactory, HashtagFactory
+
+
+twitter_vcr = vcr.VCR(
+    cassette_library_dir='cassettes/twitter/',
+    path_transformer=vcr.VCR.ensure_suffix('.yaml'),
+)
 
 
 class PosterTest(TestCase):

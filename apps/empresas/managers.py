@@ -66,8 +66,7 @@ class CompanyManager(Manager):
 
     def get_random(self, query=None):
         query = query if query else self.all()
-        models_list = list(query)
-        return random.choice(models_list)
+        return random.choice(list(query))
 
     def companies_by_main_exchange(self, name=None):
         return self.filter(exchange__main_org__name = name)
@@ -120,7 +119,7 @@ class CompanyManager(Manager):
             )
     
     def get_random_most_visited_clean_company(self):
-        return self.filter(
+        return self.get_random(self.filter(
             no_incs = False,
             no_bs = False,
             no_cfs = False,
@@ -130,7 +129,7 @@ class CompanyManager(Manager):
             visited_by_user=Count('usercompanyvisited'),
             visited_by_visiteur=Count('visiteurcompanyvisited'),
             total_visits=F('visited_by_user') + F('visited_by_visiteur')
-        ).order_by('total_visits')
+        ).order_by('total_visits'))
 
     def get_most_visited_companies(self):
         """

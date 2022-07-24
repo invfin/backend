@@ -9,7 +9,7 @@ from apps.general.utils import ChartSerializer
 from apps.general.mixins import BaseToAll
 from apps.general.models import Currency
 
-from .retreive_data import RetreiveCompanyData
+from .retrieve_data import RetrieveCompanyData
 
 
 class CompanyExtended(BaseToAll, ChartSerializer):
@@ -18,7 +18,7 @@ class CompanyExtended(BaseToAll, ChartSerializer):
     
     @property
     def show_news(self):
-        return RetreiveCompanyData(self.ticker).get_news()
+        return RetrieveCompanyData(self.ticker).get_news()
 
     def all_income_statements(self, limit) ->list:
         inc = self.inc_statements.all()
@@ -1687,7 +1687,7 @@ class CompanyExtended(BaseToAll, ChartSerializer):
             all_operation_risks_ratios: list = None,
             all_ev_ratios: list = None,
     ) -> dict:
-        current_price = RetreiveCompanyData(self.ticker).get_current_price()['current_price']
+        current_price = RetrieveCompanyData(self.ticker).get_current_price()['current_price']
 
         all_balance_sheets = all_balance_sheets if all_balance_sheets else self.all_balance_sheets(10) 
         all_per_share = all_per_share if all_per_share else self.all_per_share_values(10) 
