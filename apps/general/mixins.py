@@ -40,6 +40,43 @@ class BaseToAll(Model):
     @property
     def object_name(self):
         return self._meta.object_name
+    
+    @property
+    def regularised_description(self):
+        if self.object_name == 'Question':
+            regularised_description = self.content
+
+        elif self.object_name == 'Company':
+            regularised_description = self.description
+
+        else:
+            regularised_description = self.resume
+
+        return regularised_description
+    
+    @property
+    def regularised_title(self):
+        if self.object_name == 'Company':
+            regularised_title = self.name
+        else:
+            regularised_title = self.title
+
+        return regularised_title
+    
+    @property
+    def for_task(self):
+        return {
+            'app_label': self.app_label,
+            'object_name': self.object_name,
+            'title': self.regularised_title,
+            'content': self.regularised_description,
+            'id': self.pk,
+        }
+    
+    @property
+    def encoded_url(self):
+        url = f'{self.id}-{self.app_label}-{self.object_name}'
+        return urlsafe_base64_encode(force_bytes(url))
 
 
 class CommonMixin(BaseToAll):
@@ -52,32 +89,15 @@ class CommonMixin(BaseToAll):
     
     @property
     def encoded_url_comment(self):
-        url = f'{self.id}-{self.app_label}-{self.object_name}'
-        url = urlsafe_base64_encode(force_bytes(url))
-        return url
+        return self.encoded_url
     
     @property
     def encoded_url_up(self):
-        url = f'{self.id}-{self.app_label}-{self.object_name}-up'
-        url = urlsafe_base64_encode(force_bytes(url))
-        return url
+        return urlsafe_base64_encode(force_bytes(f'{self.encoded_url}-up'))
     
     @property
     def encoded_url_down(self):
-        url = f'{self.id}-{self.app_label}-{self.object_name}-down'
-        url = urlsafe_base64_encode(force_bytes(url))
-        return url
-    
-    @property
-    def for_task(self):
-        to_json = {
-            'app_label': self.app_label,
-            'object_name': self.object_name,
-            'title': self.title,
-            'content': self.content,
-            'id': self.pk,
-        }        
-        return to_json
+        return urlsafe_base64_encode(force_bytes(f'{self.encoded_url}-down'))
 
     def vote(self, user, action):
         user_already_upvoted = True if user in self.upvotes.all() else False
@@ -140,37 +160,11 @@ class CommonMixin(BaseToAll):
                 "name": "Inversiones & Finanzas",
                 "logo": {
                     "@type": "ImageObject",
-                    "url": "href=/static/general/assets/img/favicon/favicon.ico"
+                    "url": f"{FULL_DOMAIN}/static/general/assets/img/favicon/favicon.ico"
                 },
                 },
             }
         return schema_org
-
-    @property
-    def regularised_description(self):
-        if self.object_name == 'Question':
-            regularised_description = self.content
-
-        elif self.object_name == 'Company':
-            regularised_description = self.description
-
-        else:
-            regularised_description = self.resume
-
-        return regularised_description
-    
-    @property
-    def regularised_title(self):
-        if self.object_name == 'Question':
-            regularised_title = self.title
-
-        elif self.object_name == 'Company':
-            regularised_title = self.name
-
-        else:
-            regularised_title = self.title
-
-        return regularised_title
 
     @property
     def meta_info(self):
@@ -262,7 +256,7 @@ class BaseEscritosMixins(Model):
                 "name": "Inversiones & Finanzas",
                 "logo": {
                     "@type": "ImageObject",
-                    "url": "href=/static/general/assets/img/favicon/favicon.ico"
+                    "url": f"{FULL_DOMAIN}/static/general/assets/img/favicon/favicon.ico"
                 },
                 },
             },

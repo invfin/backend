@@ -162,7 +162,13 @@ class PublicBlogComment(BaseComment):
 
 
 class EmailPublicBlog(BaseEmail):
-    email_related = ForeignKey(PublicBlogAsNewsletter,null = True, blank=True, on_delete=SET_NULL, related_name = 'email_related')
+    email_related = ForeignKey(
+        PublicBlogAsNewsletter,
+        null=True, 
+        blank=True, 
+        on_delete=SET_NULL, 
+        related_name = 'email_related'
+    )
 
     class Meta:
         verbose_name = "Email from public blog"

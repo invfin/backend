@@ -21,6 +21,7 @@ from apps.socialmedias.constants import SOCIAL_MEDIAS
 from apps.seo import constants
 from apps.users.models import User
 
+
 class WebsiteLegalPage(Model):
     title = CharField(max_length=8000)
     slug = CharField(max_length=8000, null=True)
@@ -59,17 +60,16 @@ class WebsiteEmail(BaseNewsletter):
 
     def __str__(self) -> str:
         return self.title
-    
-    @property
-    def opening_rate(self):
-        all_emails = self.email_related.all()
-        all_opened = self.email_related.filter(opened=True).count()
-        rate = all_emails / all_opened if all_opened != 0 else 0
-        return rate
-
+        
 
 class WebsiteEmailTrack(BaseEmail):
-    email_related = ForeignKey(WebsiteEmail, null = True, blank=True, on_delete=SET_NULL, related_name = "email_related")
+    email_related = ForeignKey(
+        WebsiteEmail, 
+        null=True,
+        blank=True,
+        on_delete=SET_NULL, 
+        related_name="email_related"
+    )
 
     class Meta:
         verbose_name = "Email counting"

@@ -25,7 +25,11 @@ User = get_user_model()
 
 from ckeditor.fields import RichTextField
 
-from apps.general.mixins import BaseEscritosMixins, CommonMixin
+from apps.general.mixins import (
+    BaseEscritosMixins, 
+    CommonMixin,
+    BaseToAll
+)
 
 
 class BaseWrittenContent(CommonMixin):
@@ -115,7 +119,7 @@ class BaseComment(Model):
         pass
 
 
-class BaseNewsletter(Model):
+class BaseNewsletter(BaseToAll):
     title = CharField(max_length=500)
     content = RichTextField(config_name='simple')
     sent = BooleanField(default=False)
@@ -125,23 +129,11 @@ class BaseNewsletter(Model):
         abstract = True
     
     @property
-    def app_label(self):
-        return self._meta.app_label
-    
-    @property
-    def object_name(self):
-        return self._meta.object_name
-    
-    @property
-    def for_task(self):
-        to_json = {
-            'app_label': self.app_label,
-            'object_name': self.object_name,
-            'title': self.title,
-            'content': self.content,
-            'id': self.pk,
-        }        
-        return to_json
+    def opening_rate(self):
+        all_emails = self.email_related.all().count()
+        all_opened = self.email_related.filter(opened=True).count()
+        rate = all_emails / all_opened if all_opened != 0 else 0
+        return round(rate, 2)
 
 
 class BaseEmail(Model):
@@ -160,12 +152,6 @@ class BaseEmail(Model):
     @property
     def object_name(self):
         return self._meta.object_name
-    
-    @property
-    def encoded_url(self):
-        url = f'{self.id}-{self.app_label}-{self.object_name}'
-        url = urlsafe_base64_encode(force_bytes(url))
-        return url
 
 
 class BaseGenericModels(Model):
@@ -177,7 +163,7 @@ class BaseGenericModels(Model):
     class Meta:
         abstract = True
     
-    def __str__(self, *args, **kwargs):
+    def __str__(self):
         return str(self.id)
     
     @property

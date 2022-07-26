@@ -1,4 +1,3 @@
-from ckeditor.widgets import CKEditorWidget
 from django.forms import (
     CharField,
     DateTimeField,
@@ -26,7 +25,8 @@ class ContactForm(Form):
         message = self.cleaned_data['message']
 
         message = f"{name} con el email {email} ha enviado {message}"
-        EmailingSystem().simple_email(message)
+        subject = 'Nuevo mensaje desde suport'
+        EmailingSystem().simple_email(subject, message)
 
 
 class WebEmailForm(ModelForm):

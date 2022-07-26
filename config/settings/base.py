@@ -286,7 +286,8 @@ DEFAULT_EMAIL = env("DEFAULT_EMAIL")
 EMAIL_NEWSLETTER = env("EMAIL_NEWSLETTER")
 MAIN_EMAIL = env("MAIN_EMAIL")
 EMAIL_ACCOUNTS = env("EMAIL_ACCOUNTS")
-EMAIL_DEFAULT = env("EMAIL_DEFAULT") #To delete
+EMAIL_DEFAULT = env("EMAIL_DEFAULT")
+EMAIL_SUGGESTIONS = env("EMAIL_SUGGESTIONS")
 
 # ADMIN
 # ------------------------------------------------------------------------------
