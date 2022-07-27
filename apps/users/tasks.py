@@ -6,7 +6,11 @@ User = get_user_model()
 
 
 @celery_app.task()
-def get_users_count():
-    """A pointless Celery task to demonstrate usage."""
-    print('hola')
-    return User.objects.count()
+def update_users_last_time_seen():
+    for user in User.objects.all():
+        try:
+            last_journey_date = user.journeys.all().latest().date
+            user.last_time_seen = last_journey_date
+            user.save(update_fields=['last_time_seen'])
+        except:
+            continue

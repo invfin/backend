@@ -38,6 +38,9 @@ class User(AbstractUser):
     is_writter = BooleanField(default=False)
     just_newsletter = BooleanField(default=False)
     just_correction = BooleanField(default=False)
+    last_time_seen = DateTimeField(blank=True, null=True)
+    is_recurrent = BooleanField(default=False)
+    is_customer = BooleanField(default=False)
     objects = UserExtraManager()
 
     class Meta:

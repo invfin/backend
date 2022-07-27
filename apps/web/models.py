@@ -1,20 +1,16 @@
 from ckeditor.fields import RichTextField
 from django.db.models import (
-    CASCADE,
     SET_NULL,
     BooleanField,
     CharField,
     DateTimeField,
     ForeignKey,
-    JSONField,
     ManyToManyField,
-    Model,
     PositiveBigIntegerField,
     SlugField,
-    TextField,
 )
-from django.template.defaultfilters import slugify
 
+from apps.general.mixins import BaseToAll
 from apps.general.bases import BaseEmail, BaseNewsletter
 from apps.seo.models import Visiteur
 from apps.socialmedias.constants import SOCIAL_MEDIAS
@@ -22,9 +18,9 @@ from apps.seo import constants
 from apps.users.models import User
 
 
-class WebsiteLegalPage(Model):
-    title = CharField(max_length=8000)
-    slug = CharField(max_length=8000, null=True)
+class WebsiteLegalPage(BaseToAll):
+    title = CharField(max_length=800)
+    slug = SlugField(max_length=800, null=True, blank=True)
     content = RichTextField()
 
     class Meta:
@@ -34,12 +30,13 @@ class WebsiteLegalPage(Model):
     
     def save(self, *args, **kwargs): # new
         if not self.slug:
-            self.slug = slugify(self.title)
+            self.slug = self.save_unique_field("slug", self.title)
         return super().save(*args, **kwargs)
 
 
-class WebsiteEmailsType(Model):
-    name = CharField(max_length=8000)
+class WebsiteEmailsType(BaseToAll):
+    name = CharField(max_length=800)
+    slug = SlugField(max_length=800, null=True, blank=True)
 
     class Meta:
         ordering = ['-id']
@@ -48,6 +45,11 @@ class WebsiteEmailsType(Model):
     
     def __str__(self) -> str:
         return self.name
+    
+    def save(self, *args, **kwargs): # new
+        if not self.slug:
+            self.slug = self.save_unique_field("slug", self.name)
+        return super().save(*args, **kwargs)
 
 
 class WebsiteEmail(BaseNewsletter):
@@ -79,9 +81,9 @@ class WebsiteEmailTrack(BaseEmail):
         return self.email_related.title
 
 
-class PromotionCampaign(Model):
+class PromotionCampaign(BaseToAll):
     title = CharField(max_length=600, blank=True)
-    slug = SlugField(blank=True)
+    slug = SlugField(max_length=800, null=True, blank=True)
     categories = ManyToManyField('general.Category', blank=True)
     tags = ManyToManyField('general.Tag', blank=True)
     start_date = DateTimeField(blank=True, null=True)
@@ -93,13 +95,17 @@ class PromotionCampaign(Model):
 
     def __str__(self) -> str:
         return self.title
+    
+    def save(self, *args, **kwargs):
+        self.slug = self.save_unique_field("slug", self.title)
+        return super().save(*args, **kwargs)
 
 
-class Promotion(Model):
+class Promotion(BaseToAll):
     title = CharField(max_length=600, blank=True)
     content = RichTextField()
     thumbnail = CharField(max_length=600, blank=True)
-    slug = SlugField()
+    slug = SlugField(max_length=800, null=True, blank=True)
     prize = PositiveBigIntegerField(default=0)
     has_prize = BooleanField(default=False)
     shareable_url = CharField(max_length=600, blank=True)
@@ -124,6 +130,10 @@ class Promotion(Model):
     
     def __str__(self) -> str:
         return self.title
+    
+    def save(self, *args, **kwargs):
+        self.slug = self.save_unique_field("slug", self.title)
+        return super().save(*args, **kwargs)
     
     @property
     def full_url(self):

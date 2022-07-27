@@ -23,9 +23,3 @@ NOTIFICATIONS_TYPE = (
 EMAIL_FOR_NEWSLETTER = "newsletter"
 EMAIL_FOR_NOTIFICATION = "notification"
 EMAIL_FOR_WEB = "web"
-
-EMAIL_WEB_PROMOTION = "promotion"
-EMAIL_WEB_SUGGESTION = "suggestion"
-EMAIL_WEB_ANNOUNCEMENT = "announcement"
-EMAIL_WEB_WELCOME = "welcome"
-EMAIL_WEB_ENGAGEMENT = "engagement"

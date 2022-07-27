@@ -109,10 +109,12 @@ class Journey(Model):
 
     class Meta:
         abstract = True
+        ordering = ['-date']
+        get_latest_by = "-date"
 
 
 class VisiteurJourney(Journey):
-    user = ForeignKey(Visiteur, null = True, blank=True, on_delete=CASCADE)
+    user = ForeignKey(Visiteur, null = True, blank=True, on_delete=CASCADE, related_name="journeys")
 
     class Meta:
         verbose_name = "Historial visitas anónimos"
@@ -120,7 +122,7 @@ class VisiteurJourney(Journey):
     
 
 class UserJourney(Journey):
-    user = ForeignKey(User, null = True, blank=True, on_delete=CASCADE)
+    user = ForeignKey(User, null = True, blank=True, on_delete=CASCADE, related_name="journeys")
 
     class Meta:
         verbose_name = "Historial visitas usuarios"

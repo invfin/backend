@@ -8,6 +8,7 @@ from django.core.files.base import ContentFile
 from django.db.models import ImageField, Model
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
+from django.template.defaultfilters import slugify
 from PIL import Image
 
 FULL_DOMAIN = settings.FULL_DOMAIN
@@ -77,6 +78,17 @@ class BaseToAll(Model):
     def encoded_url(self):
         url = f'{self.id}-{self.app_label}-{self.object_name}'
         return urlsafe_base64_encode(force_bytes(url))
+    
+    def save_unique_field(self, field, value, extra:int=None):
+        max_length = self._meta.get_field(field).max_length
+        if extra:
+            value = slugify(f"{value}-{extra}")
+        if len(value) > max_length:
+            value = value[:max_length+1]
+        if self.__class__.objects.filter(field=value).exists():
+            extra += 1
+            return self.save_unique_field(field, value, extra)
+        return value
 
 
 class CommonMixin(BaseToAll):
