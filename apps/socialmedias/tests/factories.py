@@ -24,21 +24,3 @@ class SocialmediaExamples:
         
     def create_emojis(self):
         Emoji.objects.bulk_create([Emoji(emoji=emoji) for emoji in ICONS])
-
-class EmojiFactory(DjangoModelFactory):
-    emoji = '😀'
-    class Meta:
-        model = Emoji
-
-
-class DefaultTilteFactory(DjangoModelFactory):
-    title = 'No te lo pierdas'
-    class Meta:
-        model = DefaultTilte
-
-
-class HashtagFactory(DjangoModelFactory):
-    title = 'test'
-    class Meta:
-        model = Hashtag
-

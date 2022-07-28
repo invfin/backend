@@ -7,8 +7,8 @@ from apps.general.outils.notifications import NotificationSystem
 
 
 @celery_app.task()
-def enviar_email_task(is_for:str, email:Dict, receiver_id:int, email_type:str):
-    return EmailingSystem(is_for).enviar_email(email, receiver_id, email_type)
+def enviar_email_task(is_for:str, email:Dict, receiver_id:int):
+    return EmailingSystem(is_for).enviar_email(email, receiver_id)
 
 
 @celery_app.task()

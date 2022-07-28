@@ -38,6 +38,7 @@ pre-commit
 # Django
 # ------------------------------------------------------------------------------
 factory-boy
+model_bakery
 
 django-debug-toolbar
 django-extensions
