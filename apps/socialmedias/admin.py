@@ -4,6 +4,7 @@ from .models import (
     BlogSharedHistorial,
     CompanySharedHistorial,
     DefaultTilte,
+    DefaultContent,
     Emoji,
     Hashtag,
     NewsSharedHistorial,
@@ -13,11 +14,24 @@ from .models import (
 )
 
 
+@admin.register(DefaultContent)
+class DefaultContentAdmin(admin.ModelAdmin):
+    list_display = [
+        'id',
+        'title',
+        "for_content",
+        "purpose"
+    ]
+
+
+
 @admin.register(DefaultTilte)
 class DefaultTilteAdmin(admin.ModelAdmin):
     list_display = [
         'id',
-        'title'
+        'title',
+        "for_content",
+        "purpose"
     ]
 
 @admin.register(Emoji)

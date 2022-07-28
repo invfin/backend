@@ -54,8 +54,17 @@ class Emoji(Model):
 
 class DefaultTilte(Model):
     title = TextField(default='')
-    for_content = PositiveIntegerField(choices=FOR_CONTENT, blank=True, default=0)
-    purpose = CharField(max_length=500, choices=web_constants.CONTENT_PURPOSES)
+    for_content = PositiveIntegerField(
+        choices=FOR_CONTENT, 
+        blank=True, 
+        default=0
+    )
+    purpose = CharField(
+        max_length=500, 
+        choices=web_constants.CONTENT_PURPOSES, 
+        null=True,
+        blank=True
+    )
     objects = TitlesManager()
 
     class Meta:
@@ -68,8 +77,17 @@ class DefaultTilte(Model):
 
 class DefaultContent(Model):
     title = CharField(max_length=500)
-    for_content = PositiveIntegerField(choices=FOR_CONTENT, blank=True, default=0)
-    purpose = CharField(max_length=500, choices=web_constants.CONTENT_PURPOSES)
+    for_content = PositiveIntegerField(
+        choices=FOR_CONTENT, 
+        blank=True, 
+        default=0
+    )
+    purpose = CharField(
+        max_length=500, 
+        choices=web_constants.CONTENT_PURPOSES, 
+        null=True,
+        blank=True
+    )
     content = RichTextField()
     objects = DefaultContentManager()
 

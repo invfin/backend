@@ -9,6 +9,7 @@ SOCIAL_MEDIAS = [
     ('instagram', 'Instagram')
 ]
 
+ALL = 0
 QUESTION = 1
 NEWS = 2
 TERM = 3
@@ -18,6 +19,7 @@ WEB = 6
 
 
 FOR_CONTENT= (
+    (ALL, 'All'),
     (QUESTION, 'Question'),
     (NEWS, 'News'),
     (TERM, 'Term'),
