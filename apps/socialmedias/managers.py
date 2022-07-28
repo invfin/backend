@@ -1,12 +1,17 @@
 import random
+from typing import Dict
 
 from django.db.models import Manager
 
 
+class DefaultContentManager(Manager):
+    def random_content(self, filter:Dict):
+        return random.choice(list(self.filter(**filter)))
+
+
 class TitlesManager(Manager):
-    @property
-    def random_title(self):
-        return random.choice(list(self.all()))
+    def random_title(self, filter:Dict):
+        return random.choice(list(self.filter(**filter)))
 
 
 class EmojisManager(Manager):

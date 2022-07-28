@@ -1,7 +1,6 @@
 {% extends "bases/base_forms.html" %}
 {% block extra %}
-{% load static i18n extra %}
-{% load crispy_forms_tags %}
+{% load static i18n extra crispy_forms_tags %}
 <meta name="robots" content="noindex,nofollow">
 <script type="text/javascript" src="{% static 'general/assets/vendor/moment.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'general/assets/vendor/bootstrap-datetimepicker.js' %}"></script>
@@ -36,7 +35,7 @@
                         {{form.content|as_crispy_field}}
                     </div>
                     <div class="col-12">
-                        <button type="submit" class="btn btn-primary">Enviar</button>
+                        <button type="submit" class="btn btn-primary col-12">Guardar</button>
                     </div>
                 </div>
                 </div>

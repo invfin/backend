@@ -162,7 +162,7 @@ class Facebook():
         utm_term = f'utm_term={title}'
         link = f'{link}?{utm_source}&{utm_medium}&{utm_campaign}&{utm_term}'
 
-        caption = self.create_fb_description(caption=caption, link=link, hashtags=[hashtag.name for hashtag in hashtags])
+        caption = self.create_fb_description(caption=caption, link=link, hashtags=[hashtag.title for hashtag in hashtags])
         
         if post_type == 1 or post_type == 5 or post_type == 7:
             content_type = 'video'
@@ -192,7 +192,7 @@ class Facebook():
     
 
     def share_facebook_post(self, post_id, yb_title):
-        default_title = DefaultTilte.objects.random_title
+        default_title = DefaultTilte.objects.random_title()
         url_to_share = f'https://www.facebook.com/{self.facebook_page_name}/posts/{post_id}&show_text=true'
         return self.post_on_facebook(
             post_type=4,

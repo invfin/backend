@@ -65,7 +65,7 @@ class CreateQuestionView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
 			modelo.is_answered = True
 			modelo.has_accepted_answer = True
 		
-		prepare_notifications_task.delay(modelo.for_task, 5)
+		# prepare_notifications_task.delay(modelo.dict_for_task, 5)
 		return super().form_valid(form)
 	
 	def form_invalid(self, form):

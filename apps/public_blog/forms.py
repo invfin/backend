@@ -36,5 +36,5 @@ class PublicBlogForm(ModelForm):
             'title':('Título'),
             'resume':('Resumen'),
             'status':('Estatus'),
-            'send_as_newsletter':('¿Quieres enviar este escrito como newsletter?'),
+            'send_as_newsletter':('¿Quieres enviar este blog a tus lectores por email?'),
             'content':('Cuerpo')}

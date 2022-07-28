@@ -51,7 +51,7 @@ class Twitter:
             pagination = f'[{part}/{parts}]'
             if part == 0:
                 text_part = f"""
-                {title} {pagination} #{hashtag1.name} #{hashtag2.name} #{hashtag3.name}
+                {title} {pagination} #{hashtag1.title} #{hashtag2.title} #{hashtag3.title}
                 """
                 response = twitter_api.update_status(text_part)
                 twitter_post = {

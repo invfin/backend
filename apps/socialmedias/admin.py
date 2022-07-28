@@ -31,7 +31,7 @@ class EmojiAdmin(admin.ModelAdmin):
 class HashtagAdmin(admin.ModelAdmin):
     list_display = [
         'id',
-        'name',
+        'title',
         'platform',
         'is_trending',
     ]

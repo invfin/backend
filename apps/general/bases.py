@@ -14,7 +14,7 @@ from django.db.models import (
     ManyToManyField,
     Model,
     PositiveIntegerField,
-    TextField,
+    TextField
 )
 from django.template.defaultfilters import slugify
 from django.utils import timezone
@@ -102,7 +102,7 @@ class BaseEscrito(BaseWrittenContent, BaseEscritosMixins):
 
 
 class BaseComment(Model):
-    author = ForeignKey(User, on_delete=SET_NULL, null=True) 
+    author = ForeignKey(User, on_delete=SET_NULL, null=True)
     content = TextField()
     created_at = DateTimeField(auto_now_add=True)
 
@@ -120,6 +120,9 @@ class BaseComment(Model):
 class BaseNewsletter(BaseToAll):
     title = CharField(max_length=500)
     content = RichTextField(config_name='simple')
+    default_title = ForeignKey("socialmedias.DefaultTilte", on_delete=SET_NULL, null=True, blank=True)
+    default_content = ForeignKey("socialmedias.DefaultContent", on_delete=SET_NULL, null=True, blank=True)
+    title_emojis = ManyToManyField("socialmedias.Emoji", blank=True)
     sent = BooleanField(default=False)
     date_to_send = DateTimeField(null=True, blank=True)
 

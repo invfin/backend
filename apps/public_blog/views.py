@@ -130,7 +130,8 @@ class CreatePublicBlogPostView(WritterOnlyView, CreateView):
 		if modelo.send_as_newsletter == True:
 			return redirect('public_blog:create_newsletter_blog', kwargs={'slug':modelo.slug})
 		if modelo.status == 1:
-			prepare_notifications_task.delay(modelo.for_task, 1)			
+			pass
+			# prepare_notifications_task.delay(modelo.dict_for_task, 1)			
 		return super(CreatePublicBlogPostView, self).form_valid(form)
 
 
@@ -157,7 +158,8 @@ class UpdatePublicBlogPostView(WritterOnlyView, UpdateView):
 		if modelo.send_as_newsletter == True:
 			return redirect('public_blog:create_newsletter_blog', kwargs={'slug':modelo.slug})
 		if modelo.status == 1:
-			prepare_notifications_task.delay(modelo.for_task, 1)			
+			pass
+			# prepare_notifications_task.delay(modelo.dict_for_task, 1)			
 		return super(UpdatePublicBlogPostView, self).form_valid(form)
 
 	def test_func(self):

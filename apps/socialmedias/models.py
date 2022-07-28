@@ -1,6 +1,5 @@
-from email.policy import default
-
 from ckeditor.fields import RichTextField
+
 from django.contrib.auth import get_user_model
 from django.db.models import (
     CASCADE,
@@ -19,15 +18,16 @@ from apps.empresas.models import Company
 from apps.escritos.models import Term
 from apps.preguntas_respuestas.models import Question
 from apps.public_blog.models import PublicBlog, WritterProfile
+from apps.web import constants as web_constants
 
-from .constants import FOR_MODEL, POST_TYPE, SOCIAL_MEDIAS
-from .managers import EmojisManager, HashtagsManager, TitlesManager
+from .constants import FOR_CONTENT, POST_TYPE, SOCIAL_MEDIAS
+from .managers import EmojisManager, HashtagsManager, TitlesManager, DefaultContentManager
 
 User = get_user_model()
 
 
 class Hashtag(Model):        
-    name = TextField(default='')
+    title = TextField(default='')
     platform = CharField(max_length=500, choices=SOCIAL_MEDIAS)
     is_trending = BooleanField(default=False)
     objects = HashtagsManager()
@@ -37,7 +37,7 @@ class Hashtag(Model):
         db_table = 'socialmedia_hashtags'
     
     def __str__(self) -> str:
-        return str(self.name)
+        return str(self.title)
 
 
 class Emoji(Model):
@@ -54,12 +54,28 @@ class Emoji(Model):
 
 class DefaultTilte(Model):
     title = TextField(default='')
-    for_model = PositiveIntegerField(choices=FOR_MODEL, blank=True, default=0)
+    for_content = PositiveIntegerField(choices=FOR_CONTENT, blank=True, default=0)
+    purpose = CharField(max_length=500, choices=web_constants.CONTENT_PURPOSES)
     objects = TitlesManager()
 
     class Meta:
         verbose_name = "Default titles"
         db_table = 'socialmedia_titles'
+    
+    def __str__(self) -> str:
+        return str(self.title)
+
+
+class DefaultContent(Model):
+    title = CharField(max_length=500)
+    for_content = PositiveIntegerField(choices=FOR_CONTENT, blank=True, default=0)
+    purpose = CharField(max_length=500, choices=web_constants.CONTENT_PURPOSES)
+    content = RichTextField()
+    objects = DefaultContentManager()
+
+    class Meta:
+        verbose_name = "Default content"
+        db_table = 'socialmedia_content'
     
     def __str__(self) -> str:
         return str(self.title)  

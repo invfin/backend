@@ -9,12 +9,21 @@ SOCIAL_MEDIAS = [
     ('instagram', 'Instagram')
 ]
 
-FOR_MODEL = (
-    (1, 'Question'),
-    (2, 'News'),
-    (3, 'Term'),
-    (4, 'Blog'),
-    (5, 'Company')
+QUESTION = 1
+NEWS = 2
+TERM = 3
+BLOG = 4
+COMPANY = 5
+WEB = 6
+
+
+FOR_CONTENT= (
+    (QUESTION, 'Question'),
+    (NEWS, 'News'),
+    (TERM, 'Term'),
+    (BLOG, 'Blog'),
+    (COMPANY, 'Company'),
+    (WEB, 'Web')
 )
 
 POST_TYPE = (

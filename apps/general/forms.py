@@ -38,4 +38,4 @@ class DefaultNewsletterForm(Form):
     def send_email(self, newsletter_model):
         newsletter = self.creating_newsletter(newsletter_model)
 
-        return newsletter.for_task
+        return newsletter.dict_for_task

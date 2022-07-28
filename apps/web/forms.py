@@ -8,6 +8,8 @@ from django.forms import (
     Textarea,
 )
 
+from ckeditor.widgets import CKEditorWidget
+
 from apps.general.outils.emailing import EmailingSystem
 
 from .models import WebsiteEmail

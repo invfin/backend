@@ -1,3 +1,4 @@
+from typing import Dict
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 
@@ -20,7 +21,7 @@ def check_programmed_blog_posts_task():
 
 
 @celery_app.task()
-def send_newsletter_to_followers_task(writter_id, newsletter):
+def send_newsletter_to_followers_task(writter_id:int, newsletter:Dict):
     writter = User.objects.get(id = writter_id)
     for follower in NewsletterFollowers.objects.get(user = writter):
         enviar_email_task.delay(newsletter, follower.id, 'news')

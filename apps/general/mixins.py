@@ -65,14 +65,23 @@ class BaseToAll(Model):
         return regularised_title
     
     @property
-    def for_task(self):
+    def dict_for_task(self):
         return {
             'app_label': self.app_label,
             'object_name': self.object_name,
-            'title': self.regularised_title,
-            'content': self.regularised_description,
             'id': self.pk,
         }
+    
+    @property
+    def dict_for_email(self):
+        dict_task = self.dict_for_task
+        dict_task.update(
+            {
+            'title': self.regularised_title,
+            'content': self.regularised_description,
+            }
+        )
+        return dict_task
     
     @property
     def encoded_url(self):

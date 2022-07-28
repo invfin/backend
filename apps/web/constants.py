@@ -1,13 +1,13 @@
-EMAIL_WEB_PROMOTION = "promotion"
-EMAIL_WEB_SUGGESTION = "suggestion"
-EMAIL_WEB_ANNOUNCEMENT = "announcement"
-EMAIL_WEB_WELCOME = "welcome"
-EMAIL_WEB_ENGAGEMENT = "engagement"
+CONTENT_FOR_PROMOTION = "promotion"
+CONTENT_FOR_SUGGESTION = "suggestion"
+CONTENT_FOR_ANNOUNCEMENT = "announcement"
+CONTENT_FOR_WELCOME = "welcome"
+CONTENT_FOR_ENGAGEMENT = "engagement"
 
-EMAIL_WEB_KINDS = (
-    (EMAIL_WEB_PROMOTION, "Promotion"),
-    (EMAIL_WEB_SUGGESTION, "Suggestion"),
-    (EMAIL_WEB_ANNOUNCEMENT, "Announcement"),
-    (EMAIL_WEB_WELCOME, "Welcome"),
-    (EMAIL_WEB_ENGAGEMENT, "Engagement"),
+CONTENT_PURPOSES = (
+    (CONTENT_FOR_PROMOTION, "Promotion"),
+    (CONTENT_FOR_SUGGESTION, "Suggestion"),
+    (CONTENT_FOR_ANNOUNCEMENT, "Announcement"),
+    (CONTENT_FOR_WELCOME, "Welcome"),
+    (CONTENT_FOR_ENGAGEMENT, "Engagement"),
 )
