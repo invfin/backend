@@ -1,5 +1,7 @@
 import time
 
+import vcr
+
 from django.test import TestCase
 
 from apps.empresas.company.update import UpdateCompany
@@ -8,21 +10,28 @@ from .constants import *
 from .factories import CompanyFactory
 
 
+company_vcr = vcr.VCR(
+    cassette_library_dir='cassettes/company/',
+    path_transformer=vcr.VCR.ensure_suffix('.yaml'),
+)
+
+
 class ScrapCompanyInfoTest(TestCase):
-    def setUp(self) -> None:
-        self.company = CompanyFactory()
-        self.company_update = UpdateCompany(self.company)
-        self.company.inc_statements.create(date = 2018)
-        self.zinga = CompanyFactory(
+    @classmethod
+    def setUpTestData(cls) -> None:
+        cls.company = CompanyFactory()
+        cls.company_update = UpdateCompany(cls.company)
+        cls.company.inc_statements.create(date=2018)
+        cls.zinga = CompanyFactory(
             ticker='ZNGA'
         )
-    
+
     def test_need_update(self):
         need_update = self.company_update.check_last_filing()
         self.assertEqual(need_update, 'need update')
-        
+
         company2_update = UpdateCompany(self.company)
-        self.company.inc_statements.create(date = 2021)
+        self.company.inc_statements.create(date=2021)
         need_update2 = company2_update.check_last_filing()
         self.assertEqual(need_update2, 'updated')
 
@@ -44,7 +53,7 @@ class ScrapCompanyInfoTest(TestCase):
         ps_value = self.company_update.calculate_ps_value(all_data)
         all_data.update(ps_value)
 
-        company_growth = self.company_update.calculate_company_growth(all_data)        
+        company_growth = self.company_update.calculate_company_growth(all_data)
         all_data.update(company_growth)
 
         non_gaap = self.company_update.calculate_non_gaap(all_data)
@@ -54,12 +63,12 @@ class ScrapCompanyInfoTest(TestCase):
 
         eficiency_ratio = self.company_update.calculate_eficiency_ratio(all_data)
         enterprise_value_ratio = self.company_update.calculate_enterprise_value_ratio(all_data)
-        
+
         liquidity_ratio = self.company_update.calculate_liquidity_ratio(all_data)
         margin_ratio = self.company_update.calculate_margin_ratio(all_data)
-        
+
         operation_risk_ratio = self.company_update.calculate_operation_risk_ratio(all_data)
-        
+
         rentability_ratios = self.company_update.calculate_rentability_ratios(all_data)
 
         self.assertEqual(self.company.inc_statements.count(), 1)
@@ -88,7 +97,7 @@ class ScrapCompanyInfoTest(TestCase):
         created_enterprise_value_ratio = self.company_update.create_enterprise_value_ratio(enterprise_value_ratio)
         created_eficiency_ratio = self.company_update.create_eficiency_ratio(eficiency_ratio)
         created_company_growth = self.company_update.create_company_growth(company_growth)
-        
+
         self.assertEqual(created_current_stock_price.price, current_data['currentPrice'])
 
         self.assertEqual(self.company.stock_prices.latest().price, current_data['currentPrice'])
