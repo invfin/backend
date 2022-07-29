@@ -89,6 +89,9 @@ requirements:
 	docker-compose -f local.yml run django /requirements.sh "temp_venv/bin/pip"
 	docker-compose -f local.yml run django rm -rf temp_venv/
 
+reset_migrations:
+	docker-compose -f local.yml run --rm django reset_migrations.sh
+
 # Postgres
 shell_db:
 	docker-compose -f local.yml exec postgres /bin/sh
