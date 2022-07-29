@@ -7,4 +7,4 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         print("Truncates django_migrations table")
         cursor = connection.cursor()
-        cursor.execute("TRUNCATE TABLE 'django_migrations'")
+        cursor.execute("TRUNCATE TABLE django_migrations")
