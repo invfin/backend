@@ -1,14 +1,22 @@
 import os
 from pathlib import Path
-import importlib
 import configparser
+import importlib
 
 
-class AutomateTests:
+class ConfigFiles:
+    """
+    A class to find and/or create configuration files to be able to
+    create tests easily in all the local apps installed in the django project.
+    """
     current_path = Path(__file__).parent.resolve()
     config_parser = configparser.ConfigParser()
 
     def parse_pytest_ini(self, file_path):
+        """
+        If a pytest init file is found it looks for the django config files
+        to find the settings to know which apps are installed
+        """
         self.config_parser.read(file_path)
         sections = self.config_parser.sections()
         if 'pytest' in sections:
@@ -21,8 +29,12 @@ class AutomateTests:
                 return possible_config
             else:
                 return self.config_parser['pytest']['python_files']
-    
+
     def parse_setup_cfg(self, file_path):
+        """
+        If a setup.cfg file is found it looks for the django config files
+        to find the settings to know which apps are installed
+        """
         self.config_parser.read(file_path)
         sections = self.config_parser.sections()
         if 'mypy.plugins.django-stubs' in sections:
@@ -33,6 +45,11 @@ class AutomateTests:
                 return self.config_parser['isort']['known_first_party']
 
     def find_django_config_file(self):
+        """
+        It looks over all the directories and files in the root directory
+        to find a setup, pytest o manage file to be able to find the settings
+        files/directory of the django project to know which apps are installed
+        """
         django_config_file = None
         for file in os.listdir(self.current_path):
             if file == 'setup.cfg':
@@ -42,37 +59,13 @@ class AutomateTests:
             if django_config_file:
                 return django_config_file
             continue
-    
-    def get_all_apps(self):
-        configuration = self.find_django_config_file()
-        conf_import = importlib.import_module(configuration)
-        apps = conf_import.LOCAL_APPS
-        return apps
-    
-    def inspect_app_folder(self, app):
-        path = Path(importlib.import_module(app).__file__).parent.resolve()
-        for file in os.listdir(path):
-            if file.startswith('test'):
-                if Path(f'{path}/{file}').is_file():
-                    return self.create_tests_folder(path, file)
-                else:
-                    if not '__init__.py' in os.listdir(f'{path}/{file}'):
-                        with open(f'{path}/{file}/__init__.py', 'w') as f:
-                            f.close()
-                    return f'{path}/{file}'
-        return self.create_tests_folder(path)
-    
-    def create_tests_folder(self, path: str, file:str = None):
-        test_folder = f'{path}/tests'
-        os.mkdir(test_folder)
-        with open(f'{test_folder}/__init__.py', 'w') as f:
-            f.close()
-        if file:
-            os.rename(f'{path}/{file}', f'{test_folder}/{file}')
-        return test_folder
-        
-            
+        assert "No config files found"
 
-if __name__ == "__main__":
-    apps = AutomateTests().get_all_apps()
-    AutomateTests().inspect_app_folder('apps.escritos')
+    @classmethod
+    def get_all_apps(cls):
+        """
+        It gets all the apps that the ConfigClass has found
+        """
+        configuration = cls().find_django_config_file()
+        conf_import = importlib.import_module(configuration)
+        return conf_import.LOCAL_APPS
