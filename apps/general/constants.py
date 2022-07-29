@@ -20,6 +20,6 @@ NOTIFICATIONS_TYPE = (
     (COMMENT_PURCHASED_PRODUCT, '¿Qué opinas de tu última compra?')
 )
 
-EMAIL_FOR_NEWSLETTER = "newsletter"
+EMAIL_FOR_PUBLIC_BLOG = "public_blog"
 EMAIL_FOR_NOTIFICATION = "notification"
 EMAIL_FOR_WEB = "web"

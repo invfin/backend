@@ -101,7 +101,7 @@ class BaseEscrito(BaseWrittenContent, BaseEscritosMixins):
         return image
 
 
-class BaseComment(Model):
+class BaseComment(BaseToAll):
     author = ForeignKey(User, on_delete=SET_NULL, null=True)
     content = TextField()
     created_at = DateTimeField(auto_now_add=True)
@@ -137,7 +137,7 @@ class BaseNewsletter(BaseToAll):
         return round(rate, 2)
 
 
-class BaseEmail(Model):
+class BaseEmail(BaseToAll):
     sent_to = ForeignKey(User, on_delete=CASCADE)
     date_sent = DateTimeField(auto_now_add=True)
     opened = BooleanField(default=False)
@@ -145,17 +145,9 @@ class BaseEmail(Model):
 
     class Meta:
         abstract = True
-    
-    @property
-    def app_label(self):
-        return self._meta.app_label
-    
-    @property
-    def object_name(self):
-        return self._meta.object_name
 
 
-class BaseGenericModels(Model):
+class BaseGenericModels(BaseToAll):
     content_type = ForeignKey(ContentType, on_delete=CASCADE)
     object_id = PositiveIntegerField()
     object = GenericForeignKey("content_type", "object_id")
@@ -166,14 +158,6 @@ class BaseGenericModels(Model):
     
     def __str__(self):
         return str(self.id)
-    
-    @property
-    def app_label(self):
-        return self._meta.app_label
-    
-    @property
-    def object_name(self):
-        return self._meta.object_name
 
 
 class BaseFavoritesHistorial(Model):

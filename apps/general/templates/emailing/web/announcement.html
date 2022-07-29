@@ -1,12 +1,12 @@
-{% extends "emailing/base.html" %}
 
+{% extends "emailing/base.html" %}
 {% block content %}
-<p>Hola {{usuario.full_name}} ¿Qué tal estás?
+<p>{{first_intro}}{{user.full_name}}{{second_intro}}
     <br>
     {{content|safe}}        
 </p>
 <br>
-Atentamente
+{{first_goodbye}}
 <br>
 Lucas Montes - Inversiones & Finanzas
 {% endblock content %}

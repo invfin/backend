@@ -2,6 +2,7 @@ BLACK_FOLDERS=apps
 
 .PHONY: requirements
 
+
 build:
 	docker-compose -f local.yml build $(ar)
 
@@ -112,6 +113,9 @@ restore:
 	docker-compose -f local.yml stop
 	docker-compose -f local.yml up -d postgres
 	docker-compose -f local.yml exec postgres restore $(ar)
+
+auto_restore:
+	auto_backup_import
 
 # Documentation
 docs_check:
