@@ -23,7 +23,7 @@ class NotificationSystem:
     """  
 
     def save_notif(self, user, object_related, notif_type_num):
-        from ..tasks import enviar_email_task
+        from ..tasks import send_email_task
         notif_type = self.select_notification_type(notif_type_num)
 
         notification = Notification.objects.create(
@@ -39,7 +39,7 @@ class NotificationSystem:
             'object_name': notification.object_name,
             'id': notification.pk
         }
-        return enviar_email_task.delay(email, user.pk, 'notif')
+        return send_email_task.delay(email, user.pk, 'notif')
 
     def notify_related_users(self, question, notif_type_num):
         pass

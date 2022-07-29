@@ -2,7 +2,7 @@ from typing import Dict
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 
-from apps.general.tasks import enviar_email_task
+from apps.general.tasks import send_email_task
 from apps.public_blog.models import (
     NewsletterFollowers,
     PublicBlog,
@@ -24,4 +24,4 @@ def check_programmed_blog_posts_task():
 def send_newsletter_to_followers_task(writter_id:int, newsletter:Dict):
     writter = User.objects.get(id = writter_id)
     for follower in NewsletterFollowers.objects.get(user = writter):
-        enviar_email_task.delay(newsletter, follower.id, 'news')
+        send_email_task.delay(newsletter, follower.id, 'news')
