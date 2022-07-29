@@ -90,7 +90,7 @@ requirements:
 	docker-compose -f local.yml run django rm -rf temp_venv/
 
 reset_migrations:
-	docker-compose -f local.yml run --rm django reset_migrations.sh
+	docker-compose -f local.yml run --rm django ./reset_migrations.sh
 
 # Postgres
 shell_db:

@@ -40,6 +40,9 @@ RUN chmod +x /start
 COPY ./compose/production/django/requirements.sh /requirements.sh
 RUN chmod +x /requirements.sh
 
+COPY ./compose/production/django/reset_migrations.sh /reset_migrations.sh
+RUN chmod +x /reset_migrations.sh
+
 COPY ./compose/local/django/celery/worker/start /start-celeryworker
 RUN sed -i 's/\r//' /start-celeryworker
 RUN chmod +x /start-celeryworker
