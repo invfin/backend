@@ -1,7 +1,8 @@
 {% extends "bases/base_forms.html" %}
-{% load static i18n extra %}
-{% load crispy_forms_tags %}
+{% load static i18n extra crispy_forms_tags %}
 {% block FormContent %}
+<link rel="stylesheet" href="{% static 'general/assets/vendor/bootstrap-datepicker/dist/css/bootstrap-datepicker.min.css' %}">
+
       <div class="card">
         <div class="card-body">
           <div class="e-profile">
@@ -88,4 +89,26 @@
           </div>
         </div>
       </div>
+
+      <script type="text/javascript" src="{% static 'general/assets/vendor/moment.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'general/assets/vendor/bootstrap-datetimepicker.js' %}"></script>
+
+<script type="text/javascript">
+    $(function () {
+    $(".datetimepicker1").datetimepicker({
+        icons: {
+            time: "fa fa-clock",
+            date: "fa fa-calendar-day",
+            up: "fa fa-chevron-up",
+            down: "fa fa-chevron-down",
+            previous: 'fa fa-chevron-left',
+            next: 'fa fa-chevron-right',
+            today: 'fa fa-screenshot',
+            clear: 'fa fa-trash',
+            close: 'fa fa-remove'
+          },
+      format: 'DD-MM-YYYY',
+    });
+  });
+</script>
 {% endblock FormContent %}

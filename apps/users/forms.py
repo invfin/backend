@@ -1,6 +1,7 @@
 from allauth.account.forms import SignupForm
 from allauth.socialaccount.forms import SignupForm as SocialSignupForm
 from django import forms
+from django.conf import settings
 from django.contrib.auth import forms as admin_forms
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
@@ -46,6 +47,7 @@ class UserSocialSignupForm(SocialSignupForm):
 
 
 class UserForm(forms.ModelForm):
+    username = forms.CharField()
 
     class Meta:
         model = User
@@ -57,7 +59,13 @@ class UserForm(forms.ModelForm):
 
 
 class UserProfileForm(forms.ModelForm):
-    edad= forms.DateField(widget=forms.SelectDateWidget)
+    edad= forms.DateField(
+        label='Cumpleaños',
+        input_formats=settings.DATE_INPUT_FORMATS,
+        widget = forms.DateInput(
+            attrs={'class':'datetimepicker1'}
+        )
+    )
 
     class Meta:
         model = Profile
