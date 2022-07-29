@@ -1,4 +1,5 @@
 import time
+import vcr
 
 from django.test import TestCase
 
@@ -8,15 +9,23 @@ from .constants import *
 from .factories import CompanyFactory
 
 
+company_vcr = vcr.VCR(
+    cassette_library_dir='cassettes/company/',
+    path_transformer=vcr.VCR.ensure_suffix('.yaml'),
+)
+
+
 class ScrapCompanyInfoTest(TestCase):
-    def setUp(self) -> None:
-        self.company = CompanyFactory()
-        self.company_update = UpdateCompany(self.company)
-        self.company.inc_statements.create(date = 2018)
-        self.zinga = CompanyFactory(
+    @classmethod
+    def setUpTestData(cls) -> None:
+        cls.company = CompanyFactory()
+        cls.company_update = UpdateCompany(cls.company)
+        cls.company.inc_statements.create(date = 2018)
+        cls.zinga = CompanyFactory(
             ticker='ZNGA'
         )
     
+    @company_vcr.use_cassette
     def test_need_update(self):
         need_update = self.company_update.check_last_filing()
         self.assertEqual(need_update, 'need update')
@@ -117,13 +126,4 @@ class ScrapCompanyInfoTest(TestCase):
         self.assertEqual(self.company.efficiency_ratios.count(), 1)
         self.assertEqual(self.company.growth_rates.count(), 1)
 
-    def test_requests(self):
-        up_comp = UpdateCompany(self.zinga)
-        inc = up_comp.request_income_statements_finprep()
-        time.sleep(5)
-        bls = up_comp.request_balance_sheets_finprep()
-        time.sleep(5)
-        cfs = up_comp.request_cashflow_statements_finprep()
-        print(inc)
-        print(bls)
-        print(cfs)
+    

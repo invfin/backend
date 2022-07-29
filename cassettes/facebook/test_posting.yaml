@@ -1,0 +1,62 @@
+interactions:
+- request:
+    body: message=AAPL+ha+tenido+un+crecimiento+en+sus+ingresos+del+9.8%25+anualizado+durante+los+%C3%BAltimos+10+a%C3%B1os.+Actualmente+la+empresa+genera+365817000000.0USD+con+gastos+elev%C3%A1ndose+a+212981000000.0USD.+La+empresa+cotiza+a+154.09USD+por+acci%C3%B3n%2C+con+16701272000.0+acciones+en+circulaci%C3%B3n+la+empresa+obtiene+una+capitalizaci%C3%B3n+burs%C3%A1til+de+2573499002480.0USD+Apple+Inc.+Dise%C3%B1os%2C+fabricantes+y+mercados+Smartphones%2C+computadoras+personales%2C+tabletas%2C+wearables+y+accesorios+en+todo+el+mundo.+Tambi%C3%A9n+vende+varios+servicios+relacionados.+La+compa%C3%B1%C3%ADa+ofrece+iPhone%2C+una+l%C3%ADnea+de+tel%C3%A9fonos+inteligentes%3B+Mac%2C+una+l%C3%ADnea+de+computadoras+personales%3B+iPad%2C+una+l%C3%ADnea+de+tabletas+multiusos%3B+y+los+wearables%2C+el+hogar+y+los+accesorios+que+comprenden+airpods%2C+Apple+TV%2C+Apple+Watch%2C+Beats+Products%2C+HomePod%2C+iPod+Touch+y+otros+accesorios+de+marca+de+manzana+y+de+terceros.+Tambi%C3%A9n+proporciona+servicios+de+soporte+AppleCare%3B+Servicios+de+Tienda+de+Servicios+en+Cloud%3B+y+opera+varias+plataformas%2C+incluida+la+tienda+de+aplicaciones%2C+que+permiten+a+los+clientes+descubrir+y+descargar+aplicaciones+y+contenido+digital%2C+como+libros%2C+m%C3%BAsica%2C+videos%2C+juegos+y+podcasts.+Adem%C3%A1s%2C+la+compa%C3%B1%C3%ADa+ofrece+diversos+servicios%2C+como+Apple+Arcade%2C+un+servicio+de+suscripci%C3%B3n+al+juego%3B+Apple+Music%2C+que+ofrece+a+los+usuarios+una+experiencia+auditiva+curada+con+estaciones+de+radio+bajo+demanda%3B+Apple+News+%2B%2C+un+servicio+de+noticias+de+suscripci%C3%B3n+y+revista%3B+Apple+TV+%2B%2C+que+ofrece+contenido+original+exclusivo%3B+Tarjeta+de+Apple%2C+una+tarjeta+de+cr%C3%A9dito+de+marca+compartida%3B+y+Apple+Pay%2C+un+servicio+de+pago+sin+efectivo%2C+as%C3%AD+como+licencias+de+su+propiedad+intelectual.+La+compa%C3%B1%C3%ADa+sirve+a+los+consumidores%2C+y+peque%C3%B1as+y+medianas+empresas%3B+y+la+educaci%C3%B3n%2C+la+empresa+y+los+mercados+gubernamentales.+Vende+y+ofrece+aplicaciones+de+terceros+para+sus+productos+a+trav%C3%A9s+de+la+App+Store.+La+compa%C3%B1%C3%ADa+tambi%C3%A9n+vende+sus+productos+a+trav%C3%A9s+de+sus+tiendas+minoristas+y+en+l%C3%ADnea%2C+y+fuerza+de+ventas+directa%3B+y+portadores+de+red+celulares+de+terceros%2C+mayoristas%2C+minoristas+y+revendedores.+Apple+Inc.+se+fund%C3%B3+en+1977+y+tiene+su+sede+en+Cupertino%2C+California.+%0A%0A++++++++M%C3%A1s+en+http%3A%2F%2Fexample.com%3A8000%2Fscreener%2Fanalisis-de%2FAAPL%2F%3Futm_source%3Dfacebook%26utm_medium%3Dfacebook%26utm_campaign%3Dpost-shared-auto%26utm_term%3DApple+Inc.%0A++++++++%0A++++++++Visita+nuestras+redes+sociales%3A%0A++++++++Facebook%3A+https%3A%2F%2Fwww.facebook.com%2FInversionesyFinanzas%2F%0A++++++++Instagram%3A+https%3A%2F%2Fwww.instagram.com%2Finversiones.finanzas%2F%0A++++++++TikTok%3A+https%3A%2F%2Fwww.tiktok.com%2F%40inversionesyfinanzas%3F%0A++++++++Twitter+%3A+https%3A%2F%2Ftwitter.com%2FInvFinz%0A++++++++LinkedIn+%3A+https%3A%2F%2Fwww.linkedin.com%2Fcompany%2Finversiones-finanzas%0A++++++++.%0A++++++++.%0A++++++++.%0A++++++++.%0A++++++++.%0A++++++++.%0A++++++++.%0A++++++++.%0A++++++++.%0A++++++++.%0A++++++++.%0A++++++++.%0A++++++++valueinvesting%0A++++++++&title=Apple+Inc.&link=http%3A%2F%2Fexample.com%3A8000%2Fscreener%2Fanalisis-de%2FAAPL%2F%3Futm_source%3Dfacebook%26utm_medium%3Dfacebook%26utm_campaign%3Dpost-shared-auto%26utm_term%3DApple+Inc.
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '3591'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - python-requests/2.28.1
+    method: POST
+    uri: https://graph.facebook.com/105836681984738/feed
+  response:
+    body:
+      string: '{"id":"105836681984738_163505906217815"}'
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Alt-Svc:
+      - h3=":443"; ma=86400, h3-29=":443"; ma=86400
+      Cache-Control:
+      - private, no-cache, no-store, must-revalidate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '40'
+      Content-Type:
+      - application/json; charset=UTF-8
+      Date:
+      - Sun, 24 Jul 2022 12:50:03 GMT
+      Expires:
+      - Sat, 01 Jan 2000 00:00:00 GMT
+      Pragma:
+      - no-cache
+      Strict-Transport-Security:
+      - max-age=15552000; preload
+      Vary:
+      - Origin
+      X-FB-Debug:
+      - EGH6yl0YQ5Q+tAiqvkrFcNdD7A4t0wTPeQ0ewv0WVIywNEaosGIHzd3e8Rwh0LzYF+rGDoNvAEVws2DgtsoFnA==
+      facebook-api-version:
+      - v12.0
+      x-business-use-case-usage:
+      - '{"105836681984738":[{"type":"pages","call_count":1,"total_cputime":1,"total_time":1,"estimated_time_to_regain_access":0}]}'
+      x-fb-request-id:
+      - A4y1Q50x1A03x7n4-Jh5HCc
+      x-fb-rev:
+      - '1005901327'
+      x-fb-rlafr:
+      - '0'
+      x-fb-trace-id:
+      - GqBw0li0EjZ
+    status:
+      code: 200
+      message: OK
+version: 1

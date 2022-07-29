@@ -1,8 +1,11 @@
+import vcr
+
 from django.conf import settings
 from django.test import TestCase
 
 from apps.empresas.models import Company
-from apps.escritos.models import Term
+from apps.empresas.tests.factories import AppleExample
+from apps.escritos.models import Term, TermContent
 from apps.preguntas_respuestas.models import Question
 from apps.public_blog.models import PublicBlog
 from apps.socialmedias.models import (
@@ -12,48 +15,32 @@ from apps.socialmedias.models import (
     QuestionSharedHistorial,
     TermSharedHistorial,
 )
+from apps.socialmedias.constants import FACEBOOK
 from apps.socialmedias.socialposter.facepy import Facebook
 
-from ..poster import SocialPosting
-from .data import AAPL
-from .factories import DefaultTilteFactory, EmojiFactory, HashtagFactory
-
-test_page_id = settings.NEW_FACEBOOK_ID
-test_page_token = settings.NEW_FB_PAGE_ACCESS_TOKEN
+from apps.socialmedias.poster import SocialPosting
+from .factories import GenerateSocialmediasExample
 
 
-class FacePosterTest(TestCase):    
-    def test_blog(self):
-        publicBlog = PublicBlog.objects.get_random()
-        blog_poster = SocialPosting(BlogSharedHistorial, publicBlog).generate_content()
-        blog_response = publicBlog.title, 'https://inversionesyfinanzas.xyz' + publicBlog.get_absolute_url(), publicBlog.resume, 'https://inversionesyfinanzas.xyz' + publicBlog.image
-        self.assertEqual(blog_poster, blog_response)
+facebook_vcr = vcr.VCR(
+    cassette_library_dir='cassettes/facebook/',
+    path_transformer=vcr.VCR.ensure_suffix('.yaml'),
+    filter_post_data_parameters=['access_token']
+)
 
-    def test_question(self):
-        question = Question.objects.get_random()
-        question_poster = SocialPosting(QuestionSharedHistorial, question).generate_content()
-        print(question_poster)
-        question_response= question.title, 'https://inversionesyfinanzas.xyz' + question.get_absolute_url(), question.content, None
-        self.assertEqual(question_poster, question_response)
 
-    def test_term(self):
-        term = Term.objects.get_random()
-        term_poster = SocialPosting(TermSharedHistorial, term).generate_content()
-        term_response = term.title, 'https://inversionesyfinanzas.xyz' + term.get_absolute_url(), term.resume, 'https://inversionesyfinanzas.xyz' + term.image
-        self.assertEqual(term_poster, term_response)
+class FacePosterTest(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.facebook_poster = Facebook(settings.NEW_FACEBOOK_ID, settings.NEW_FB_PAGE_ACCESS_TOKEN)
+        cls.company = AppleExample.return_example()
+        GenerateSocialmediasExample.generate_all()
+        cls.examples = GenerateSocialmediasExample
 
-    def test_company(self):
-        company = Company.objects.get_random()
-        company_poster = SocialPosting(CompanySharedHistorial, company).generate_content()
-        company_response = company.name, 'https://inversionesyfinanzas.xyz' + company.get_absolute_url(), company.description, company.image
-        self.assertEqual(company_poster, company_response)
-        title, link, description, media_url = company_poster
-        print(description)
+    @facebook_vcr.use_cassette
+    def test_posting(self):
+        with vcr.use_cassette('cassettes/company/retrieve/test_get_current_price.yaml'):
+            content = SocialPosting().company_content(self.company)
         
-    def test_news(self):
-        company = Company.objects.create(**AAPL)
-        title, link, description, media_url = SocialPosting(NewsSharedHistorial, company_related=company).generate_content()
-        
-    # def test_posting(self):
-    #     fb_response = Facebook(test_page_id, test_page_token).post_on_facebook(title=title, caption=description, post_type=3, link=link, media_url=media_url)
-    #     print(fb_response)
+        fb_response = self.facebook_poster.post_on_facebook(**content)
+        print(fb_response)

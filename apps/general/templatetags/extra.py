@@ -4,10 +4,9 @@ from datetime import datetime
 from django import template
 from django.urls import reverse
 from django.contrib.auth.models import Group
-from django.utils.html import format_html, strip_tags
-from django.utils.safestring import mark_safe
 
 register = template.Library()
+
 
 @register.filter(name='has_group')
 def has_group(user, group_name):

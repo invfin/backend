@@ -1,0 +1,62 @@
+interactions:
+- request:
+    body: message=El+price+to+book+compara+el+precio+de+mercado+de+una+empresa+con+su+valor+en+libros%2C+que+muestra+esencialmente+el+valor+dado+por+el+mercado+por+cada+d%C3%B3lar+del+patrimonio+neto+de+la+compa%C3%B1%C3%ADa.%0A%0A++++++++M%C3%A1s+en+http%3A%2F%2Fexample.com%3A8000%2Fdefinicion%2Fprecio-valor-en-libros%2F%3Futm_source%3Dfacebook%26utm_medium%3Dfacebook%26utm_campaign%3Dpost-shared-auto%26utm_term%3DPrecio+valor+contable+%28P%2FB%29%0A++++++++%0A++++++++Visita+nuestras+redes+sociales%3A%0A++++++++Facebook%3A+https%3A%2F%2Fwww.facebook.com%2FInversionesyFinanzas%2F%0A++++++++Instagram%3A+https%3A%2F%2Fwww.instagram.com%2Finversiones.finanzas%2F%0A++++++++TikTok%3A+https%3A%2F%2Fwww.tiktok.com%2F%40inversionesyfinanzas%3F%0A++++++++Twitter+%3A+https%3A%2F%2Ftwitter.com%2FInvFinz%0A++++++++LinkedIn+%3A+https%3A%2F%2Fwww.linkedin.com%2Fcompany%2Finversiones-finanzas%0A++++++++.%0A++++++++.%0A++++++++.%0A++++++++.%0A++++++++.%0A++++++++.%0A++++++++.%0A++++++++.%0A++++++++.%0A++++++++.%0A++++++++.%0A++++++++.%0A++++++++valueinvesting%0A++++++++&title=Precio+valor+contable+%28P%2FB%29&link=http%3A%2F%2Fexample.com%3A8000%2Fdefinicion%2Fprecio-valor-en-libros%2F%3Futm_source%3Dfacebook%26utm_medium%3Dfacebook%26utm_campaign%3Dpost-shared-auto%26utm_term%3DPrecio+valor+contable+%28P%2FB%29
+    headers:
+      Accept:
+      - '*/*'
+      Accept-Encoding:
+      - gzip, deflate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '1504'
+      Content-Type:
+      - application/x-www-form-urlencoded
+      User-Agent:
+      - python-requests/2.28.1
+    method: POST
+    uri: https://graph.facebook.com/105836681984738/feed
+  response:
+    body:
+      string: '{"id":"105836681984738_163531659548573"}'
+    headers:
+      Access-Control-Allow-Origin:
+      - '*'
+      Alt-Svc:
+      - h3=":443"; ma=86400, h3-29=":443"; ma=86400
+      Cache-Control:
+      - private, no-cache, no-store, must-revalidate
+      Connection:
+      - keep-alive
+      Content-Length:
+      - '40'
+      Content-Type:
+      - application/json; charset=UTF-8
+      Date:
+      - Sun, 24 Jul 2022 15:07:12 GMT
+      Expires:
+      - Sat, 01 Jan 2000 00:00:00 GMT
+      Pragma:
+      - no-cache
+      Strict-Transport-Security:
+      - max-age=15552000; preload
+      Vary:
+      - Origin
+      X-FB-Debug:
+      - u50SFTr8qUqxeO90i9WueLALejMEw+Uae35wt52SO8za2gErYYvY49mTgg4FUNY/uQ0fC3MWiqryMIQnxFEX8g==
+      facebook-api-version:
+      - v12.0
+      x-business-use-case-usage:
+      - '{"105836681984738":[{"type":"pages","call_count":1,"total_cputime":1,"total_time":1,"estimated_time_to_regain_access":0}]}'
+      x-fb-request-id:
+      - Av5nMeIPjCv7cTKrXoAVNzt
+      x-fb-rev:
+      - '1005901389'
+      x-fb-rlafr:
+      - '0'
+      x-fb-trace-id:
+      - AAkT2DJdyck
+    status:
+      code: 200
+      message: OK
+version: 1

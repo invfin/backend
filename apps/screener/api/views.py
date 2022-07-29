@@ -7,7 +7,7 @@ from django.http.response import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.views.generic import ListView, FormView
 
-from apps.empresas.company.retreive_data import RetreiveCompanyData
+from apps.empresas.company.retrieve_data import RetrieveCompanyData
 from apps.empresas.models import Company
 from apps.empresas.valuations import discounted_cashflow
 
@@ -32,14 +32,14 @@ class CompanyFODAListView(ListView):
 
 
 def get_company_price(request, ticker):
-    prices = RetreiveCompanyData(ticker).get_current_price()
+    prices = RetrieveCompanyData(ticker).get_current_price()
     return render(request, 'headers/company_price.html', {
         'prices': prices,
     })
 
 
 def get_company_news(request, ticker):
-    news = RetreiveCompanyData(ticker).get_news()
+    news = RetrieveCompanyData(ticker).get_news()
     return render(request, 'empresas/company_parts/resume/news.html', {
         'show_news': news,
     })

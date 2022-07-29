@@ -100,7 +100,6 @@ class DefaultContent(Model):
 
 
 class BaseContentShared(Model):
-
     user = ForeignKey(User, on_delete=SET_NULL, null=True, blank=True)
     date_shared = DateTimeField(auto_now_add=True)
     post_type = PositiveIntegerField(choices=POST_TYPE)
@@ -110,17 +109,6 @@ class BaseContentShared(Model):
     description = RichTextField(blank=True)
     extra_description = RichTextField(blank=True)
     inside_information = RichTextField(blank=True)
-    # original_post = JSONField(
-    #     default={
-    #         'url': '',
-    #         'title': '',
-    #         'local_id': '',
-    #         'social_id': '',
-    #         'post_type': '',
-    #         'date_shared': ''
-    #     }
-    # )
-    # 
 
     class Meta:
         abstract = True

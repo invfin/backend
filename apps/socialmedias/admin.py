@@ -1,5 +1,7 @@
 from django.contrib import admin
 
+from import_export.admin import ImportExportActionModelAdmin
+
 from .models import (
     BlogSharedHistorial,
     CompanySharedHistorial,
@@ -26,7 +28,7 @@ class DefaultContentAdmin(admin.ModelAdmin):
 
 
 @admin.register(DefaultTilte)
-class DefaultTilteAdmin(admin.ModelAdmin):
+class DefaultTilteAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
     list_display = [
         'id',
         'title',
@@ -35,14 +37,14 @@ class DefaultTilteAdmin(admin.ModelAdmin):
     ]
 
 @admin.register(Emoji)
-class EmojiAdmin(admin.ModelAdmin):
+class EmojiAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
     list_display = [
         'id',
         'emoji'
     ]
 
 @admin.register(Hashtag)
-class HashtagAdmin(admin.ModelAdmin):
+class HashtagAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
     list_display = [
         'id',
         'title',

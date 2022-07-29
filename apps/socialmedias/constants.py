@@ -1,12 +1,23 @@
+FACEBOOK = 'facebook'
+TWITTER = 'twitter'
+INSTAGRAM = 'instagram'
+YOUTUBE = 'youtube'
+REDDIT = 'reddit'
+WHATSAPP = 'whatsapp'
+LINKEDIN = 'linkedin'
+PINTEREST = 'pinterest'
+TUMBLR = 'tumblr'
+
 SOCIAL_MEDIAS = [
-    ('facebook', 'Facebook'), 
-    ('twitter', 'Twitter'), 
-    ('reddit', 'Reddit'), 
-    ('whatsapp', 'Whatsapp'), 
-    ('linkedin', 'Linkedin'), 
-    ('pinterest', 'Pinterest'), 
-    ('tumblr', 'Tumblr'),
-    ('instagram', 'Instagram')
+    (FACEBOOK, 'Facebook'), 
+    (TWITTER, 'Twitter'), 
+    (REDDIT, 'Reddit'), 
+    (WHATSAPP, 'Whatsapp'), 
+    (LINKEDIN, 'Linkedin'), 
+    (PINTEREST, 'Pinterest'), 
+    (TUMBLR, 'Tumblr'),
+    (YOUTUBE, 'Youtube'),
+    (INSTAGRAM, 'Instagram')
 ]
 
 ALL = 0
@@ -28,12 +39,27 @@ FOR_CONTENT= (
     (WEB, 'Web')
 )
 
+POST_TYPE_VIDEO = 1
+POST_TYPE_IMAGE = 2
+POST_TYPE_TEXT = 3
+POST_TYPE_REPOST = 4
+POST_TYPE_TEXT_VIDEO = 5
+POST_TYPE_TEXT_IMAGE = 6
+POST_TYPE_SHORTS = 7
+POST_TYPE_THREAD = 8
+
 POST_TYPE = (
-    (1, 'Video'), 
-    (2, 'Image'), 
-    (3, 'Text'),
-    (4, 'Repost'), 
-    (5, 'Text and video'), 
-    (6, 'Text and image'), 
-    (7, 'Shorts'),
-    (8, 'Thread'))
+    (POST_TYPE_VIDEO, 'Video'), 
+    (POST_TYPE_IMAGE, 'Image'), 
+    (POST_TYPE_TEXT, 'Text'),
+    (POST_TYPE_REPOST, 'Repost'), 
+    (POST_TYPE_TEXT_VIDEO, 'Text and video'), 
+    (POST_TYPE_TEXT_IMAGE, 'Text and image'), 
+    (POST_TYPE_SHORTS, 'Shorts'),
+    (POST_TYPE_THREAD, 'Thread'))
+
+FACEBOOK_GRAPH_URL = 'https://graph.facebook.com/'
+
+FACEBOOK_GRAPH_VIDEO_URL = "https://graph-video.facebook.com/"
+
+INSTAGRAM_GRAPH_URL = 'https://graph.instagram.com/'

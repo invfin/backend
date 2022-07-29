@@ -2,6 +2,7 @@ import datetime
 
 import requests
 from django.conf import settings
+from django.template.defaultfilters import slugify
 
 from ..models import DefaultTilte, Emoji, Hashtag
 
@@ -13,18 +14,18 @@ PROD_FACEBOOK_PAGE_ID = settings.OLD_FACEBOOK_ID
 
 
 class Facebook():
+    facebook_url = 'https://graph.facebook.com/'
+    facebook_video_url = "https://graph-video.facebook.com/"
+
     def __init__(self, page_id=PROD_FACEBOOK_PAGE_ID, page_access_token=PROD_FACEBOOK_ACCESS_TOKEN) -> None:
         self.page_id = page_id
         self.facebook_page_name = 'InversionesyFinanzas'
         self.app_secret = settings.FACEBOOK_APP_SECRET
         self.long_lived_user_token = settings.FB_USER_ACCESS_TOKEN
-        self.page_access_token = page_access_token
-        self.facebook_url = 'https://graph.facebook.com/'
-        self.facebook_video_url = "https://graph-video.facebook.com/"
+        self.page_access_token = page_access_token        
         self.post_facebook_url = self.facebook_url + self.page_id
         self.post_facebook_video_url = self.facebook_video_url + self.page_id
-    
-    
+        
     def get_long_live_user_token(self, app_id, user_token):
         url = f'{self.facebook_url}oauth/access_token'
 
@@ -42,7 +43,6 @@ class Facebook():
         #     FB_USER_ACCESS_TOKEN
         #     return token
     
-
     def get_long_live_page_token(self, old=False):
         url = f'{self.facebook_url}{self.page_id}'
 
@@ -60,7 +60,6 @@ class Facebook():
         #     else:
         #         OLD_FB_PAGE_ACCESS_TOKEN
         #     return token
-
     
     def post_fb_video(self, video_url= "", description= "" , title= "", post_time=datetime.datetime.now(), post_now = False):
         """
@@ -84,8 +83,7 @@ class Facebook():
             )
 
         return self._send_content('video', data, files)
-
-    
+  
     def post_text(self, text= "", post_time=datetime.datetime.now(), post_now=True, link=None, title=''):
 
         if post_now is False:
@@ -102,8 +100,6 @@ class Facebook():
 
         return self._send_content('text', data)
 
-
-
     def post_image(self, description= "", photo_url= "", title= "", post_time=datetime.datetime.now(), post_now=False):
         data ={
             'access_token': self.page_access_token,
@@ -111,7 +107,6 @@ class Facebook():
         }
         return self._send_content('image', data)
         
-
     def _send_content(self, content_type:str, content, files = None):        
         if content_type == 'video':
             re = requests.post(f'{self.post_facebook_video_url}/videos',files=files, data = content)
@@ -140,15 +135,15 @@ class Facebook():
         
         return response
     
-
     def post_on_facebook(
         self,
         title:str,
-        caption:str=None,
+        description:str=None,
         num_emojis:int=1,
         post_type:int=3,
         link:str=None,
-        media_url:str=None
+        media_url:str=None,
+        **kwargs
         ):
         platform = 'facebook'
         emojis = Emoji.objects.random_emojis(num_emojis)
@@ -159,15 +154,15 @@ class Facebook():
         utm_source = f'utm_source={platform}'
         utm_medium = f'utm_medium={platform}'
         utm_campaign = f'utm_campaign=post-shared-auto'
-        utm_term = f'utm_term={title}'
+        utm_term = f'utm_term={slugify(title)}'
         link = f'{link}?{utm_source}&{utm_medium}&{utm_campaign}&{utm_term}'
 
-        caption = self.create_fb_description(caption=caption, link=link, hashtags=[hashtag.title for hashtag in hashtags])
+        description = self.create_fb_description(description=description, link=link, hashtags=[hashtag.title for hashtag in hashtags])
         
         if post_type == 1 or post_type == 5 or post_type == 7:
             content_type = 'video'
             video_url = ''
-            post_response = self.post_fb_video(video_url= video_url, description=caption, title= custom_title, post_now = True)
+            post_response = self.post_fb_video(video_url= video_url, description=description, title= custom_title, post_now = True)
 
         elif post_type == 2 or post_type == 6:
             content_type = 'image'
@@ -175,22 +170,28 @@ class Facebook():
 
         elif post_type == 3 or post_type == 4:
             content_type = 'text'
-            caption = f'{caption}'
+            description = f'{description}'
 
-            post_response = self.post_text(text= caption, link=link, title=title)
+            post_response = self.post_text(text= description, link=link, title=title)
 
         if post_response['result'] == 'success':
-            facebook_post = {
+            return {
                 'post_type': post_type ,
                 'social_id': post_response['extra'],
                 'title': custom_title ,
-                'description': caption,
+                'description': description,
                 'platform_shared': platform
-            }            
-
-            return facebook_post
+            }
+        else:
+            return self.post_on_facebook(
+                title,
+                description,
+                num_emojis,
+                post_type,
+                link,
+                media_url
+            )
     
-
     def share_facebook_post(self, post_id, yb_title):
         default_title = DefaultTilte.objects.random_title()
         url_to_share = f'https://www.facebook.com/{self.facebook_page_name}/posts/{post_id}&show_text=true'
@@ -198,17 +199,16 @@ class Facebook():
             post_type=4,
             default_title = default_title,
             has_default_title = True,
-            caption=f'{default_title.title} {yb_title}',
+            description=f'{default_title.title} {yb_title}',
             link = url_to_share)  
 
-
-    def create_fb_description(self, caption:str, link:str = None, hashtags:list = None):
+    def create_fb_description(self, description:str, link:str = None, hashtags:list = None):
         hashtags = '#'.join(hashtags)
         if link:
             link = f'Más en {link}'
         else:
             link = 'Prueba las herramientas que todo inversor inteligente necesita: https://inversionesyfinanzas.xyz'
-        face_description = f"""{caption}
+        face_description = f"""{description}
 
         {link}
         
