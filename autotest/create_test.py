@@ -7,7 +7,7 @@ class CreateTests:
     """
     In this class is where the test files, class and functions are created
     """
-    def inspect_app_folder(self, app):
+    def inspect_django_app_folder(self, app: str):
         """
         Given an app it looks over all the files and folders inside.
         If there isn't a test folder it creates it.

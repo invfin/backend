@@ -1,6 +1,7 @@
 import os
 from pathlib import Path
 import configparser
+import sys
 import importlib
 
 
@@ -78,20 +79,23 @@ class ConfigFiles:
             }
             with open('setup.cfg', 'w') as conf:
                 self.config_parser.write(conf)
+    
+    def check_environ(self):
+        return os.getenv("DJANGO_SETTINGS_MODULE", default=None)
 
     @classmethod
-    def get_all_apps(cls):
+    def get_all_django_apps(cls):
         """
         It gets all the apps that the ConfigClass has found
         """
-        configuration = cls().find_django_config_file()
-        print(f"{configuration}")
-        os.environ.setdefault("DJANGO_SETTINGS_MODULE", configuration)
-        print(os.environ)
-        import django
-        django.setup()
-        # conf_import = importlib.import_module(configuration)
-        from django.conf import settings
-        apps = settings.LOCAL_APPS
-        print(os.environ)
+        configuration = cls().check_environ()
+        if not configuration:
+            configuration = cls().find_django_config_file()
+            os.environ.setdefault("DJANGO_SETTINGS_MODULE", configuration)
+        sys.path.insert(0, configuration.replace(".", "/"))
+        print(sys.modules)
+        conf_import = importlib.import_module(configuration)
+        
+
+        print(conf_import)
         return apps
