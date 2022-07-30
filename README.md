@@ -2,7 +2,14 @@
 The main purpose of the webapp is to centralise information about investing, in spanish.
 
 # CURRENT PARTS
-The webapp is composed (by the moment) of 3 majors parts.
+* Q&A
+* Screener
+* Public Blog
+* Roboadvisor
+* SuperInvestors
+* Portfolio
+* Dicctionary
+
 
 ## Q&A
 One part is the written content where users can vote, read definitions, share content, ask and answer questions (like SO), improve some definitions or create their own newsletter.
@@ -36,9 +43,15 @@ A tag to create utm parameters for the urls. source and campaign are at the end 
 
 
 # TODO
-- Create recommendation sys for dashboard companies, terms, writters, etc...
-- Improve roboadvisor brain
-- Add ETFs
+1. [ ] Improve recommendations
+2. [ ] Improve roboadvisor
+3. [ ] Add ETFs
+4. [ ] Add other assets
+5. [ ] Enable categories on portfolio
+6. [ ] Add random prize
+7. [ ] Improve emailing
+8. [ ] Improve noitfications
+9. [ ] Improve tests
 
 
 # How to start locally
