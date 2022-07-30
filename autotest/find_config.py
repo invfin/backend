@@ -9,8 +9,14 @@ class ConfigFiles:
     A class to find and/or create configuration files to be able to
     create tests easily in all the local apps installed in the django project.
     """
-    current_path = Path(__file__).parent.resolve()
+    current_path = Path(__file__).parent.resolve().parent
     config_parser = configparser.ConfigParser()
+
+    def __init__(self) -> None:
+        self.files_to_look_for = {
+            "setup.cfg": {"visited": False, "function": self.parse_setup_cfg},
+            "pytest.ini": {"visited": False, "function": self.parse_pytest_ini},
+        }
 
     def parse_pytest_ini(self, file_path):
         """
@@ -50,16 +56,28 @@ class ConfigFiles:
         to find a setup, pytest o manage file to be able to find the settings
         files/directory of the django project to know which apps are installed
         """
-        django_config_file = None
         for file in os.listdir(self.current_path):
-            if file == 'setup.cfg':
-                django_config_file = self.parse_setup_cfg(file)
-            elif file == 'pytest.ini':
-                django_config_file = self.parse_pytest_ini(file)
-            if django_config_file:
-                return django_config_file
+            if file in self.files_to_look_for.keys():
+                if not self.files_to_look_for[file]["visited"]:
+                    django_config_file = self.files_to_look_for[file]["function"](file)
+                    if django_config_file:
+                        return django_config_file
+                    self.files_to_look_for[file]["visited"] = True
             continue
-        assert "No config files found"
+    
+    def create_config_settings(self, django_settings_module, django_local_apps):
+        if not "setup.cfg" in os.listdir(self.current_path):
+            with open(f'{self.current_path}/setup.cfg', 'w') as f:
+                f.close()
+        self.config_parser.read("setup.cfg")
+        sections = self.config_parser.sections()
+        if not "autotest" in sections:
+            self.config_parser["autotest"] = {
+                "django_settings_module": django_settings_module,
+                "django_local_apps": ",".join(django_local_apps)
+            }
+            with open('setup.cfg', 'w') as conf:
+                self.config_parser.write(conf)
 
     @classmethod
     def get_all_apps(cls):
@@ -67,5 +85,13 @@ class ConfigFiles:
         It gets all the apps that the ConfigClass has found
         """
         configuration = cls().find_django_config_file()
-        conf_import = importlib.import_module(configuration)
-        return conf_import.LOCAL_APPS
+        print(f"{configuration}")
+        os.environ.setdefault("DJANGO_SETTINGS_MODULE", configuration)
+        print(os.environ)
+        import django
+        django.setup()
+        # conf_import = importlib.import_module(configuration)
+        from django.conf import settings
+        apps = settings.LOCAL_APPS
+        print(os.environ)
+        return apps
