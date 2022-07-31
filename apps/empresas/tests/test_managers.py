@@ -7,7 +7,7 @@ from .constants import *
 from .factories import CompanyFactory, ExchangeFactory, ExchangeOrganisationFactory
 
 
-class CompanyManagersTest(TestCase):
+class TestCompanyManagers(TestCase):
     def setUp(self) -> None:
         self.fr_main = ExchangeOrganisationFactory(
             name='France'

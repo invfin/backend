@@ -16,7 +16,7 @@ company_vcr = vcr.VCR(
 )
 
 
-class RetrieveCompanyDataTest(TestCase):
+class TestRetrieveCompanyData(TestCase):
     @classmethod
     def setUpTestData(cls) -> None:
         cls.company = CompanyFactory()

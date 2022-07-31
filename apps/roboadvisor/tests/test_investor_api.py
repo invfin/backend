@@ -18,7 +18,7 @@ from ..views import RoboAdvisorResultView
 from .factories import RoboAdvisorServiceFactory, RoboAdvisorServiceStepFactory
 
 
-class InvoicesAllAPITest(APITestCase):
+class TestInvoicesAllAPI(APITestCase):
     def setUp(self):
         self.user = UserFactory()
         self.company = CompanyFactory()

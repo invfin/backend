@@ -33,7 +33,7 @@ poster_vcr = vcr.VCR(
 )
 
 
-class PosterTest(TestCase):
+class TestPoster(TestCase):
     @classmethod
     def setUpTestData(cls):
         # cls.question = Question.objects.create(**QUESTION)

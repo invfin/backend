@@ -111,7 +111,6 @@ THIRD_PARTY_APPS = [
     "import_export",
     "admin_honeypot",
     'widget_tweaks',
-    "autotest"
 ]
 
 LOCAL_APPS = [

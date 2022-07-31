@@ -26,7 +26,7 @@ twitter_vcr = vcr.VCR(
 )
 
 
-class PosterTest(TestCase):
+class TestPoster(TestCase):
     def setUp(self) -> None:
         self.emoji = EmojiFactory()
         self.def_title = DefaultTilteFactory()

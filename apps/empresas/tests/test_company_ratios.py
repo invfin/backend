@@ -15,7 +15,7 @@ company_vcr = vcr.VCR(
 )
 
 
-class ScrapCompanyInfoTest(TestCase):
+class TestScrapCompanyInfo(TestCase):
     @classmethod
     def setUpTestData(cls) -> None:
         cls.company = CompanyFactory()

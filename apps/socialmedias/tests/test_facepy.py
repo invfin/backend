@@ -29,7 +29,7 @@ facebook_vcr = vcr.VCR(
 )
 
 
-class FacePosterTest(TestCase):
+class TestFacePoster(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.facebook_poster = Facebook(settings.NEW_FACEBOOK_ID, settings.NEW_FB_PAGE_ACCESS_TOKEN)

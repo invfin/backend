@@ -17,7 +17,7 @@ from apps.web.models import (
 )
 
 
-class WebsiteContentCreationTest(TestCase):
+class TestWebsiteContentCreation(TestCase):
     @classmethod
     def setUpClass(cls):
         import django
