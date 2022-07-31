@@ -1,4 +1,4 @@
-from django.forms import ModelForm, Textarea, ValidationError
+from django.forms import ModelForm
 
 from .models import TermCorrection
 

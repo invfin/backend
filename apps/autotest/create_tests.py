@@ -122,9 +122,10 @@ class CreateTests:
         # the module_name should be created differently. I should check the actual module name
         app_name = tests_info["app_name"]
         for file in tests_info["files_to_test"]:
-            module_name = f"{app_name}.{file}"
             test_file_name = self.file_namig.replace("*", file)
-            output_from_parsed_template = self.create_test_content(module_name, file)
-            with open(f'{tests_info["test_folder_path"]}/{test_file_name}.py', 'w') as f:
-                f.write(output_from_parsed_template)
-                f.close()
+            if not os.path.exists(f'{tests_info["test_folder_path"]}/{test_file_name}.py'):
+                module_name = f"{app_name}.{file}"                
+                output_from_parsed_template = self.create_test_content(module_name, file)
+                with open(f'{tests_info["test_folder_path"]}/{test_file_name}.py', 'w') as f:
+                    f.write(output_from_parsed_template)
+                    f.close()

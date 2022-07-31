@@ -20,14 +20,16 @@ class CreateQuestionForm(ModelForm):
             'is_answered',
             'has_accepted_answer',
             'tags',
+            "upvotes",
+            "downvotes",
             'category']
     
     def clean_title(self):
         title = self.cleaned_data['title']
-        if title.endswith('?') == False:
+        if not title.endswith('?') == False:
             raise ValidationError("Añade puntuación a tu pregunta ¿ ?")
 
-        if len(title) < 10:
+        if len(title) < 8:
             raise ValidationError("Formula tu pregunta para que la comunidad pueda ayudarte")
         
         if title == '¿Cuál es tu pregunta?':
@@ -51,4 +53,6 @@ class CreateAnswerForm(ModelForm):
             'question_related',
             'created_at',
             'is_accepted',
+            "upvotes",
+            "downvotes",
             'total_votes']
