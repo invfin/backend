@@ -18,12 +18,13 @@ from django.db.models import (
 from django.template.defaultfilters import slugify
 from django.urls import reverse
 from django.utils import timezone
+from django.conf import settings
 
 from apps.general.bases import BaseComment, BaseEscrito, BaseFavoritesHistorial
 
 from .managers import TermManager
 
-DOMAIN = Site.objects.get_current().domain
+DOMAIN = settings.FULL_DOMAIN
 User = get_user_model()
 
 class Term(BaseEscrito):
@@ -45,7 +46,7 @@ class Term(BaseEscrito):
         return TermContent.objects.filter(term_related= self)
     
     def link(self):
-        return f'https://{DOMAIN}{self.get_absolute_url()}'
+        return f'{DOMAIN}{self.get_absolute_url()}'
 
 
 class TermContent(Model):
@@ -68,7 +69,7 @@ class TermContent(Model):
         return f'{path}#{slug}'
     
     def link(self):
-        return f'https://{DOMAIN}{self.get_absolute_url()}'
+        return f'{DOMAIN}{self.get_absolute_url()}'
 
 
 class TermCorrection(Model):

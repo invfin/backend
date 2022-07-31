@@ -1,7 +1,8 @@
-import vcr
 from model_bakery import baker
 
+from django.conf import settings
 from django.test import TestCase
+from django.template.defaultfilters import slugify
 
 from apps.escritos.models import (
 FavoritesTermsHistorial,
@@ -13,83 +14,49 @@ TermsComment,
 TermsRelatedToResume,
 )
 
-escritos_vcr = vcr.VCR(
-    cassette_library_dir='cassettes/escritos/models/',
-    path_transformer=vcr.VCR.ensure_suffix('.yaml'),
-)
+FULL_DOMAIN = settings.FULL_DOMAIN
 
-
-class TestFavoritesTermsHistorial(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        pass
-    
-    def test___str__(self):
-        pass
-    
-
-class TestFavoritesTermsList(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        pass
-    
-    def test___str__(self):
-        pass
-    
 
 class TestTerm(TestCase):
     @classmethod
     def setUpTestData(cls):
-        pass
-    
-    def test_get_absolute_url(self):
-        pass
+        cls.term = term = baker.make(
+            Term,
+            title="test contenido",
+            slug="test-contenido"
+        )
     
     def test_link(self):
-        pass
+        self.assertEqual(
+            f'{FULL_DOMAIN}/definicion/test-contenido/',
+            self.term.link()
+        )
     
 
 class TestTermContent(TestCase):
     @classmethod
     def setUpTestData(cls):
-        pass
-    
-    def test___str__(self):
-        pass
+        cls.term_contet = baker.make(
+            TermContent,
+            title="test contenido",
+            term_related=baker.make(
+                Term,
+                slug="test-main-contenido"
+            )
+        )
     
     def test_get_absolute_url(self):
-        pass
+        slug = "test-contenido"
+        path = "/definicion/test-main-contenido/"
+        self.assertEqual(
+            f'{path}#{slug}',
+            self.term_contet.get_absolute_url()
+        )
     
     def test_link(self):
-        pass
-    
-
-class TestTermCorrection(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        pass
-    
-    def test___str__(self):
-        pass
-    
-    def test_get_absolute_url(self):
-        pass
-    
-    def test_save(self):
-        pass
-    
-
-class TestTermsComment(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        pass
-    
-    def test_get_absolute_url(self):
-        pass
-    
-
-class TestTermsRelatedToResume(TestCase):
-    @classmethod
-    def setUpTestData(cls):
-        pass
-    
+        slug = "test-contenido"
+        path = "/definicion/test-main-contenido/"
+        self.assertEqual(
+            f'{FULL_DOMAIN}{path}#{slug}',
+            self.term_contet.link()
+        )

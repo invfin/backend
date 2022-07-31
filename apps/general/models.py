@@ -10,16 +10,15 @@ from django.db.models import (
     Model,
     DateField
 )
-from django.template.defaultfilters import slugify
 
 User = get_user_model()
 
-from apps.general.bases import BaseEmail, BaseGenericModels
+from apps.general.bases import BaseEmail, BaseGenericModels, BaseToAll
 
 from .constants import NOTIFICATIONS_TYPE
 
 
-class EscritosClassification(Model):
+class EscritosClassification(BaseToAll):
     name = CharField(max_length=500,null = True, blank=True, unique = True)
     slug = CharField(max_length=500,null = True, blank=True, unique = True)
 
@@ -31,7 +30,7 @@ class EscritosClassification(Model):
 
     def save(self, *args, **kwargs): # new
         if not self.slug:
-            self.slug = slugify(self.name)
+            self.slug = self.save_unique_field("slug", self.name)
         return super().save(*args, **kwargs)
 
 
