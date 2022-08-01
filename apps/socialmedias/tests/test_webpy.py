@@ -19,11 +19,6 @@ from apps.web.models import (
 
 class WebsiteContentCreationTest(TestCase):
     @classmethod
-    def setUpClass(cls):
-        import django
-        django.setup()
-        
-    @classmethod
     def setUpTestData(cls) -> None:        
         cls.content = baker.make(DefaultContent, **cls.filters) 
         cls.title = baker.make(DefaultTilte, **cls.filters) 
@@ -66,4 +61,32 @@ class WebsiteContentCreationTest(TestCase):
         )
 
     def test_create_save_email(self):
-        WebsiteContentCreation.create_save_email()
+        base_filters = {
+            "for_content": social_constants.WEB,
+            "purpose": web_constants.CONTENT_FOR_ENGAGEMENT
+        }
+        title_filter = {}
+        content_filter = {}
+        title_filter.update(base_filters)
+        content_filter.update(base_filters)
+
+        title_dict = WebsiteContentCreation().create_title(title, title_filter)
+        content_dict = WebsiteContentCreation().create_content(content, content_filter)
+        first_emoji, last_emoji = WebsiteContentCreation().create_emojis()
+
+        title = title_dict["title"]
+        title_dict["title"] = f"{first_emoji}{title}{last_emoji}"
+        type_related, created = WebsiteEmailsType.objects.get_or_create(slug=web_email_type)
+
+        expected_web_email = WebsiteEmail.objects.create(
+            type_related=type_related,
+            **title_dict,
+            **content_dict,
+        )
+        expected_web_email.title_emojis.add(*[first_emoji, last_emoji])
+
+        web_email = WebsiteContentCreation.create_save_email(
+            web_constants.CONTENT_FOR_ENGAGEMENT
+        )
+
+        self.assertEqual(expected_web_email, web_email)

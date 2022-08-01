@@ -6,8 +6,20 @@ from .models import (
     WebsiteEmailTrack, 
     WebsiteLegalPage,
     Promotion,
-    PromotionCampaign
+    PromotionCampaign,
+    UserAndVisiteurCategory
 )
+
+
+@admin.register(UserAndVisiteurCategory)
+class UserAndVisiteurCategoryAdmin(admin.ModelAdmin):
+    list_display = [
+        'id',
+        "name",
+        "slug",
+        "name_for_user",
+        "show_to_user",
+    ]
 
 
 @admin.register(PromotionCampaign)

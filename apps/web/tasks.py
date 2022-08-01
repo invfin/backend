@@ -6,8 +6,8 @@ from config import celery_app
 from apps.general.tasks import enviar_email_task
 from apps.socialmedias.socialposter.webpy import WebsiteContentCreation
 
-from . import constants
-from .models import WebsiteEmail, WebsiteEmailTrack
+from apps.web import constants
+from apps.web.models import WebsiteEmail, WebsiteEmailTrack
 
 User = get_user_model()
 

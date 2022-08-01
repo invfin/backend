@@ -3,7 +3,8 @@ from .base import env
 
 # GENERAL
 # ------------------------------------------------------------------------------
-CURRENT_DOMAIN = f'example.com{PORT}'
+BASAE_DOMAIN = "example.com"
+CURRENT_DOMAIN = f"{CURRENT_DOMAIN}{PORT}"
 FULL_DOMAIN = f'{PROTOCOL}{CURRENT_DOMAIN}'
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#debug
@@ -37,14 +38,14 @@ CACHES = {
 # https://docs.djangoproject.com/en/dev/ref/settings/#session-cookie-httponly
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_NAME = "sessionid"
-SESSION_COOKIE_DOMAIN = f".{CURRENT_DOMAIN}"
+SESSION_COOKIE_DOMAIN = f".{BASAE_DOMAIN}"
 # Whether to save the session data on every request.
 SESSION_SAVE_EVERY_REQUEST = False
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
 # https://docs.djangoproject.com/en/dev/ref/settings/#csrf-cookie-httponly
 CSRF_COOKIE_HTTPONLY = True
-CSRF_COOKIE_DOMAIN = f".{CURRENT_DOMAIN}"
-CSRF_TRUSTED_ORIGINS = [f".{CURRENT_DOMAIN}", f"{CURRENT_DOMAIN}"]
+CSRF_COOKIE_DOMAIN = f".{BASAE_DOMAIN}"
+CSRF_TRUSTED_ORIGINS = [f".{BASAE_DOMAIN}", f"{BASAE_DOMAIN}"]
 # https://docs.djangoproject.com/en/dev/ref/settings/#secure-browser-xss-filter
 SECURE_BROWSER_XSS_FILTER = True
 # https://docs.djangoproject.com/en/dev/ref/settings/#x-frame-options
