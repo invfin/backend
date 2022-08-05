@@ -1,5 +1,6 @@
 from model_bakery import baker
 
+from django.core import mail
 from django.test import TestCase
 
 from apps.web.models import (
@@ -12,5 +13,5 @@ from apps.web.models import (
 )
 
 
-class FormTest(TestCase):
+class TestContactForm(TestCase):
     pass

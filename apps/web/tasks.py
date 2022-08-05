@@ -8,10 +8,9 @@ from apps.general.tasks import send_email_task
 from apps.general.constants import EMAIL_FOR_WEB
 from apps.socialmedias.socialposter.webpy import WebsiteContentCreation
 
-from . import constants
-from .models import WebsiteEmail, WebsiteEmailTrack
+from apps.web import constants
+from apps.web.models import WebsiteEmail, WebsiteEmailTrack
 from .utils import more_than_month
-
 User = get_user_model()
 
 # @shared_task(autoretry_for=(Exception,), max_retries=3)
@@ -40,7 +39,7 @@ def send_website_email_engagement():
                 user.last_time_seen and
                 more_than_month(user.last_time_seen, last_email_engagement.date_to_send)
                 # If the user hasn't visited the web in the last month (29 days)
-                
+
             ):
                 web_objective = constants.CONTENT_FOR_ENGAGEMENT_USER_LITTLE_ACTIVE
             elif (
@@ -51,7 +50,7 @@ def send_website_email_engagement():
                 web_objective = constants.CONTENT_FOR_ENGAGEMENT_USER_NO_ACTIVE
         else:
             web_objective = constants.CONTENT_FOR_ENGAGEMENT_USER_FIRST_CALL
-        
+
         email_to_send = WebsiteContentCreation.create_save_email(web_objective)
 
         send_email_task.delay(email_to_send.dict_for_task, user.id, EMAIL_FOR_WEB, web_objective)
