@@ -51,7 +51,7 @@ class SeoInformation:
         seo = self.meta_information(request)
         visiteur = self.get_visiteur_by_old_session(request)
         if visiteur is False:
-            find_visiteur = Visiteur.objects.filter(ip = seo['ip'])
+            find_visiteur = Visiteur.objects.filter(ip=seo['ip'])
             if find_visiteur.exists():
                 if find_visiteur.count() != 1:
                     second_filter = find_visiteur.filter(HTTP_USER_AGENT = seo['http_user_agent'])
@@ -59,12 +59,12 @@ class SeoInformation:
                         if second_filter.count() != 1:
                             visiteur = self.create_visiteur(request)
                         else:
-                            visiteur = Visiteur.objects.get(ip = seo['ip'], HTTP_USER_AGENT = seo['http_user_agent'])
+                            visiteur = Visiteur.objects.get(ip=seo['ip'], HTTP_USER_AGENT = seo['http_user_agent'])
                             self.update_visiteur_session(visiteur, request)
                     else:
                         visiteur = self.create_visiteur(request)
                 else:
-                    visiteur = Visiteur.objects.get(ip = seo['ip'])
+                    visiteur = Visiteur.objects.get(ip=seo['ip'])
                     self.update_visiteur_session(visiteur, request)
             else:
                 visiteur = self.create_visiteur(request)

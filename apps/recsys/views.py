@@ -26,22 +26,22 @@ class RecommendationClickedRedirectView(RedirectView):
     def get_and_save_model(self):
         pk = self.kwargs['pk']
         object_name = self.kwargs['object_name']
-        obj = apps.get_model("recsys", object_name, require_ready=True).objects.get(id=pk)
+        obj = apps.get_model("recsys", object_name, require_ready=True)._default_manager.get(id=pk)
         obj.clicked = True
         obj.save(update_fields=['clicked'])
         return obj
-    
+
     def generate_url(
         self,
         obj: Model,
         medium: str='webapp',
         source: str='invfin',
-        campaign:str='recsys'
+        campaign: str='recsys'
         ):
-        content=obj.location
-        term=obj.model_recommended
-        place=obj.place
-        kind=obj.kind
+        content = obj.location
+        term = obj.model_recommended
+        place = obj.place
+        kind = obj.kind
         utm_source = f'utm_source={source}'
         utm_medium = f'utm_medium={medium}'
         utm_campaign = f'utm_campaign={campaign}'
@@ -55,7 +55,7 @@ class RecommendationClickedRedirectView(RedirectView):
         path = obj.model_recommended.get_absolute_url()
         return f"{path}{path_params}"
 
-# Hacer vistas para mostrar recomendaciones de terms, comps, etc... 
+# Hacer vistas para mostrar recomendaciones de terms, comps, etc...
 # despues crear api views para que si el usuario tiene algo para recomendarle
 # mostrarselo.
 # Hay que hacer un algoritmo que busque en el seo journey las búsquedas y las empareje con los usuarios.
@@ -83,12 +83,12 @@ class BaseRecommendationView(TemplateView):
             return apps.get_model("recsys", object_name, require_ready=True)
 
         return self.recommendation_log_model
-    
+
     def create_recommendations(
         self,
         recommendations: Union[QuerySet, List],
         recommendation_explained: Dict = None
-        ) -> List:
+    ) -> List:
         """
         recommendation_explained may be empty and the explcations of the recommendations could come inside
         the recommendations list
@@ -107,31 +107,30 @@ class BaseRecommendationView(TemplateView):
                 model_recommended=recommendation
             )
             final_recommendations.append(recom)
-            
+
         return final_recommendations
-    
+
     def generate_recommendations(self) -> Union[QuerySet, List]:
         """
         Meant to be overwritten and return the list or queryset of recommendations
         """
         return
-    
+
     def generate_recommendations_explanations(self) -> Union[Dict, List]:
         """
         Meant to be overwritten and return the list or a dict with the recommendations
         explanations
         """
         return
-    
-    def return_recommendations(self,
-        ) -> Union[QuerySet, List]:
+
+    def return_recommendations(self) -> Union[QuerySet, List]:
         recommendations = self.generate_recommendations()
         recommendations_explanations = self.generate_recommendations_explanations()
         if self.slice_recommedations:
             recommendations = recommendations[:self.slice_recommedations]
         final_recommendations = self.create_recommendations(recommendations, recommendations_explanations)
         return final_recommendations
-    
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update(
@@ -146,7 +145,7 @@ class BaseCompanyVisitedRecommendationView(BaseRecommendationView):
     model_to_recommend = Company
 
     def get_specific_company_recommendations(
-        self, 
+        self,
         companies_visited: List
     ) -> QuerySet:
         unique_sectors_id = set()
@@ -158,7 +157,7 @@ class BaseCompanyVisitedRecommendationView(BaseRecommendationView):
             unique_industries_id.add(company['industry_id'])
             unique_countries_id.add(company['country_id'])
             unique_exchanges_id.add(company['exchange_id'])
-        
+
         unique_sectors_id = list(unique_sectors_id)
         unique_industries_id = list(unique_industries_id)
         unique_countries_id = list(unique_countries_id)
@@ -174,10 +173,10 @@ class BaseCompanyVisitedRecommendationView(BaseRecommendationView):
             countries,
             exchanges,
         )
-    
+
     def get_random_companies_recommendations(self) -> QuerySet:
         return Company.objects.get_most_visited_companies()
-            
+
     def get_companies_visited(self) -> Union[None, List]:
         if 'companies_visited' in self.request.session:
             companies_visited = self.request.session['companies_visited']
@@ -186,7 +185,7 @@ class BaseCompanyVisitedRecommendationView(BaseRecommendationView):
                     company = Company.objects.get(ticker=company_visited['ticker'])
                     company_visited.update(
                         {
-                            'ticker': company.ticker, 
+                            'ticker': company.ticker,
                             'img': company.image,
                             "sector_id": company.sector.id,
                             "industry_id": company.industry.id,
@@ -196,15 +195,15 @@ class BaseCompanyVisitedRecommendationView(BaseRecommendationView):
                     )
                     self.request.session.modified = True
             return companies_visited
-        
+
     def generate_recommendations(self) -> Union[QuerySet, List]:
         companies_visited = self.get_companies_visited()
         if companies_visited:
-            recommendations =  self.get_specific_company_recommendations(companies_visited)
+            recommendations = self.get_specific_company_recommendations(companies_visited)
         else:
             recommendations = self.get_random_companies_recommendations()
         return recommendations
-    
+
     def generate_recommendations_explanations(self) -> Union[Dict, List]:
         """
         Meant to be overwritten and return the list or a dict with the recommendations
