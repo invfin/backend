@@ -10,13 +10,10 @@ class SeoInformation:
     def get_client_ip(request):
         x_forwarded_for = request.META.get('HTTP_X_FORWARDED_FOR')
         if x_forwarded_for:
-            
             ip = x_forwarded_for.split(',')[-1].strip()
         elif request.META.get('HTTP_X_REAL_IP'):
-            
             ip = request.META.get('HTTP_X_REAL_IP')
         else:
-            
             ip = request.META.get('REMOTE_ADDR')
         return ip
 
@@ -25,13 +22,11 @@ class SeoInformation:
         ip = self.get_client_ip(request)
         if settings.DEBUG:
             ip = '162.158.50.77'
-        meta = {
-            'http_user_agent' : request.META.get("HTTP_USER_AGENT"),
-            'location':g.city(ip),
-            'ip':ip
+        return {
+            'http_user_agent': request.META.get("HTTP_USER_AGENT"),
+            'location': g.city(ip),
+            'ip': ip
         }
-        
-        return meta
 
     def update_visiteur_session(self, visiteur, request):
         if not request.session or not request.session.session_key:
@@ -43,19 +38,19 @@ class SeoInformation:
         return visiteur
 
     def get_visiteur_by_old_session(self, request):
-        session = Session.objects.filter(session_key = request.session.session_key)
+        session = Session.objects.filter(session_key=request.session.session_key)
         visiteur = False
         if session.exists():
-            session_obj = Session.objects.get(session_key = request.session.session_key)
+            session_obj = Session.objects.get(session_key=request.session.session_key)
             session_obj_visiteur_id = session_obj.get_decoded().get("visiteur_id")
             if session_obj_visiteur_id:
-                visiteur = Visiteur.objects.get(id = session_obj_visiteur_id)
+                visiteur = Visiteur.objects.get(id=session_obj_visiteur_id)
         return visiteur
 
     def find_visiteur(self, request):
         seo = self.meta_information(request)
         visiteur = self.get_visiteur_by_old_session(request)
-        if visiteur == False:
+        if visiteur is False:
             find_visiteur = Visiteur.objects.filter(ip = seo['ip'])
             if find_visiteur.exists():
                 if find_visiteur.count() != 1:
@@ -74,28 +69,28 @@ class SeoInformation:
             else:
                 visiteur = self.create_visiteur(request)
         return visiteur
-    
+
     def create_visiteur(self, request):
         seo = self.meta_information(request)
         if not request.session or not request.session.session_key:
             request.session.save()
         session_id = request.session.session_key
         visiteur = Visiteur.objects.create(
-            ip = seo['ip'],
-            session_id = session_id,
-            country_code = seo['location']['country_code'],
-            country_name = seo['location']['country_name'],
-            dma_code = seo['location']['dma_code'],
-            is_in_european_union = seo['location']['is_in_european_union'],
-            latitude = seo['location']['latitude'],
-            longitude = seo['location']['longitude'],
-            city = seo['location']['city'],
-            region = seo['location']['region'],
-            time_zone = seo['location']['time_zone'],
-            postal_code = seo['location']['postal_code'],
-            continent_code = seo['location']['continent_code'],
-            continent_name = seo['location']['continent_name'],
-            HTTP_USER_AGENT = seo['http_user_agent']
+            ip=seo['ip'],
+            session_id=session_id,
+            country_code=seo['location']['country_code'],
+            country_name=seo['location']['country_name'],
+            dma_code=seo['location']['dma_code'],
+            is_in_european_union=seo['location']['is_in_european_union'],
+            latitude=seo['location']['latitude'],
+            longitude=seo['location']['longitude'],
+            city=seo['location']['city'],
+            region=seo['location']['region'],
+            time_zone=seo['location']['time_zone'],
+            postal_code=seo['location']['postal_code'],
+            continent_code=seo['location']['continent_code'],
+            continent_name=seo['location']['continent_name'],
+            HTTP_USER_AGENT=seo['http_user_agent']
         )
         request.session['visiteur_id'] = visiteur.id
         request.session.modified = True
