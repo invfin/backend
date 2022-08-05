@@ -1,6 +1,5 @@
 from django.test import TestCase, RequestFactory
 from django.contrib.sessions.middleware import SessionMiddleware
-from django.contrib.sessions.models import Session
 
 from apps.seo.models import Visiteur
 from apps.seo.utils import SeoInformation

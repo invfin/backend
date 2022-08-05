@@ -235,7 +235,7 @@ TEMPLATES = [
         "DIRS": [Path(f"{APPS_DIR}/templates/")],
         # https://docs.djangoproject.com/en/dev/ref/settings/#app-dirs
         "APP_DIRS": True,
-        
+
         "OPTIONS": {
             # https://docs.djangoproject.com/en/dev/ref/settings/#template-context-processors
             "context_processors": [
@@ -610,7 +610,7 @@ TWITTER_ACCESS_TOKEN_SECRET = env.str('TWITTER_ACCESS_TOKEN_SECRET')
 # ------------------------------------------------------------------------------
 IMAGEKIT_PRIVATE_KEY = env.str('IMAGEKIT_PRIVATE_KEY')
 IMAGEKIT_PUBLIC_KEY = env.str('IMAGEKIT_PUBLIC_KEY')
-IMAGEKIT_URL_ENDPOINT = env.str('IMAGEKIT_URL_ENDPOINT')    
+IMAGEKIT_URL_ENDPOINT = env.str('IMAGEKIT_URL_ENDPOINT')
 
 IMAGE_KIT = ImageKit(
     private_key = IMAGEKIT_PRIVATE_KEY,

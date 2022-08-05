@@ -103,7 +103,7 @@ ls_backups:
 	docker-compose -f local.yml exec postgres backups
 
 rt_backups:
-	dcpb
+	echo ls  -Art $PWD/backups/*.sql.gz | tail -n 1
 
 restore:
 	docker-compose -f local.yml stop
