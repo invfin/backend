@@ -13,15 +13,15 @@ reboot:
 
 clean-start:
 	make requirements
-	docker-compose -f local.yml build django
+	docker-compose -f local.yml build invfin
 	make up-b
 
 restart:
 	docker-compose -f local.yml restart $(ar)
 
 up-b:
-	docker-compose -f local.yml up -d django
-	docker-compose -f local.yml logs -f django
+	docker-compose -f local.yml up -d invfin
+	docker-compose -f local.yml logs -f invfin
 
 up:
 	docker-compose -f local.yml up $(ar)
@@ -30,64 +30,64 @@ buildsemi:
 	docker-compose -f semiprod.yml build
 
 upsemi:
-	docker-compose -f semiprod.yml up nginx django
+	docker-compose -f semiprod.yml up nginx invfin
 
 stop:
 	docker-compose -f local.yml stop
 
 shell:
-	docker-compose -f local.yml exec django /bin/bash
+	docker-compose -f local.yml exec invfin /bin/bash
 
 # Django
 up-d:
-	docker-compose -f local.yml up django
+	docker-compose -f local.yml up invfin
 
 dbshell:
-	docker-compose -f local.yml run --rm django python -u manage.py dbshell --settings=config.settings.local
+	docker-compose -f local.yml run --rm invfin python -u manage.py dbshell --settings=config.settings.local
 
 log:
-	docker-compose -f local.yml logs -f django
+	docker-compose -f local.yml logs -f invfin
 
 migrations:
-	docker-compose -f local.yml run --rm django python -u manage.py makemigrations $(ar) --settings=config.settings.local
+	docker-compose -f local.yml run --rm invfin python -u manage.py makemigrations $(ar) --settings=config.settings.local
 
 migrate:
-	docker-compose -f local.yml run --rm django python -u manage.py migrate $(ar) --settings=config.settings.local
+	docker-compose -f local.yml run --rm invfin python -u manage.py migrate $(ar) --settings=config.settings.local
 
 allmig:
-	docker-compose -f local.yml run --rm django python -u manage.py makemigrations $(ar) --settings=config.settings.local
-	docker-compose -f local.yml run --rm django python -u manage.py migrate $(ar) --settings=config.settings.local
+	docker-compose -f local.yml run --rm invfin python -u manage.py makemigrations $(ar) --settings=config.settings.local
+	docker-compose -f local.yml run --rm invfin python -u manage.py migrate $(ar) --settings=config.settings.local
 
 shell_plus:
-	docker-compose -f local.yml run --rm django ./manage.py shell_plus --settings=config.settings.local
+	docker-compose -f local.yml run --rm invfin ./manage.py shell_plus --settings=config.settings.local
 
 manage:
-	docker-compose -f local.yml run --rm django ./manage.py $(ar) --settings=config.settings.local
+	docker-compose -f local.yml run --rm invfin ./manage.py $(ar) --settings=config.settings.local
 
 collectstatic:
-	docker-compose -f local.yml run --rm django ./manage.py collectstatic --noinput --settings=config.settings.local
+	docker-compose -f local.yml run --rm invfin ./manage.py collectstatic --noinput --settings=config.settings.local
 
 col-share-static:
-	docker-compose -f local.yml run --rm django ./manage.py collectstatic --noinput --settings=config.settings.local
+	docker-compose -f local.yml run --rm invfin ./manage.py collectstatic --noinput --settings=config.settings.local
 	docker-compose -f local.yml build
 
 run:
-	docker-compose -f local.yml run --rm django $(ar)
+	docker-compose -f local.yml run --rm invfin $(ar)
 
 pip:
 	docker exec -ti invfin_local_django pip install $(ar)
 
 pdb:
-	docker-compose -f local.yml stop django
-	docker-compose -f local.yml run --rm --service-ports django
+	docker-compose -f local.yml stop invfin
+	docker-compose -f local.yml run --rm --service-ports invfin
 
 pdb_manage:
-	docker-compose -f local.yml stop django
-	docker-compose -f local.yml run --rm --service-ports django  ./manage.py $(ar) --settings=config.settings.local
+	docker-compose -f local.yml stop invfin
+	docker-compose -f local.yml run --rm --service-ports invfin  ./manage.py $(ar) --settings=config.settings.local
 
 requirements:
-	docker-compose -f local.yml run django /requirements.sh "temp_venv/bin/pip"
-	docker-compose -f local.yml run django rm -rf temp_venv/
+	docker-compose -f local.yml run invfin /requirements.sh "temp_venv/bin/pip"
+	docker-compose -f local.yml run invfin rm -rf temp_venv/
 
 # Postgres
 shell_db:
@@ -112,35 +112,35 @@ restore:
 
 # Documentation
 docs_check:
-	docker-compose -f local.yml run --rm django ./manage.py generate_swagger --settings=config.settings.local
+	docker-compose -f local.yml run --rm invfin ./manage.py generate_swagger --settings=config.settings.local
 
 # Testing
 new-test:
-	docker-compose -f local.yml run --rm django python -u manage.py test $(ar) --noinput --settings=config.settings.test
+	docker-compose -f local.yml run --rm invfin python -u manage.py test $(ar) --noinput --settings=config.settings.test
 
 test:
-	docker-compose -f local.yml run --rm django python -u manage.py test $(ar) --noinput --keepdb --settings=config.settings.local
+	docker-compose -f local.yml run --rm invfin python -u manage.py test $(ar) --noinput --keepdb --settings=config.settings.local
 
 pytest:
-	docker-compose -f local.yml run --rm django pytest
+	docker-compose -f local.yml run --rm invfin pytest
 
 cov:
-	docker-compose -f local.yml run --rm django coverage run --source='.' manage.py test $(ar) --noinput --settings=config.settings.test
-	docker-compose -f local.yml run --rm django coverage report
+	docker-compose -f local.yml run --rm invfin coverage run --source='.' manage.py test $(ar) --noinput --settings=config.settings.test
+	docker-compose -f local.yml run --rm invfin coverage report
 
 pycov:
-	docker-compose -f local.yml run --rm django coverage run -m pytest
-	docker-compose -f local.yml run --rm django coverage report
+	docker-compose -f local.yml run --rm invfin coverage run -m pytest
+	docker-compose -f local.yml run --rm invfin coverage report
 
 # Style
 flake:
-	docker-compose -f local.yml run django flake8 $(ar)
+	docker-compose -f local.yml run invfin flake8 $(ar)
 
 isort:
-	docker-compose -f local.yml run django isort .
+	docker-compose -f local.yml run invfin isort .
 
 black:
-	docker-compose -f local.yml run django black ${BLACK_FOLDERS}
+	docker-compose -f local.yml run invfin black ${BLACK_FOLDERS}
 
 format:
-	docker-compose -f local.yml run django flake8 && isort . && black ${BLACK_FOLDERS}
+	docker-compose -f local.yml run invfin flake8 && isort . && black ${BLACK_FOLDERS}
