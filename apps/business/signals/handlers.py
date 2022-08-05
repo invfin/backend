@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.template.defaultfilters import slugify
 from django.utils import timezone
 
@@ -17,6 +16,8 @@ from apps.users.models import CreditUsageHistorial
 
 
 class BusinessSignal:
+    stripe = StripeManagement()
+
     @classmethod
     def generate_content(cls, instance):
         prod = getattr(instance, 'product', None)
@@ -24,34 +25,31 @@ class BusinessSignal:
             description = prod.description
         else:
             description = instance.title
-        
+
         if not instance.description:
             instance.description = description
 
         if not instance.slug:
             instance.slug = slugify(instance.title)
-    
+
     @classmethod
     def product_pre_save(cls, sender, instance: Product, **kwargs):
-        stripe = StripeManagement()
         if not instance.pk:
             BusinessSignal.generate_content(instance)
-            stripe_product = stripe.create_product(instance.title, instance.description, instance.is_active)
+            stripe_product = cls.stripe.create_product(instance.title, instance.description, instance.is_active)
             instance.stripe_id = stripe_product['id']
-            
+
         else:
-            stripe_product = stripe.update_product(
-                instance.stripe_id, 
-                instance.title, 
-                instance.description, 
+            stripe_product = cls.stripe.update_product(
+                instance.stripe_id,
+                instance.title,
+                instance.description,
                 instance.is_active
             )
         instance.updated_at = timezone.now()
 
     @classmethod
     def product_complementary_pre_save(cls, sender, instance: Product, **kwargs):
-        stripe = StripeManagement()
-
         is_recurring = False
         subscription_period = None
         subscription_interval = None
@@ -60,8 +58,9 @@ class BusinessSignal:
             subscription_period = instance.subscription_period
             subscription_interval = instance.subscription_interval
         if not instance.pk:
+            instance.for_testing = instance.product.for_testing
             BusinessSignal.generate_content(instance)
-            stripe_product_complementary = stripe.create_product_complementary(
+            stripe_product_complementary = cls.stripe.create_product_complementary(
                 instance.product.stripe_id,
                 instance.price,
                 instance.currency.currency,
@@ -72,7 +71,7 @@ class BusinessSignal:
             )
             instance.stripe_id = stripe_product_complementary['id']
         else:
-            stripe_product_complementary = stripe.update_product_complementary(
+            stripe_product_complementary = cls.stripe.update_product_complementary(
                 instance.stripe_id,
                 instance.is_active
             )
@@ -80,22 +79,21 @@ class BusinessSignal:
 
     @classmethod
     def complementary_payment_link_pre_save(cls, sender, instance: ProductComplementaryPaymentLink, **kwargs):
-        stripe = StripeManagement()
         if not instance.pk and instance.for_website:
-            payment_link = stripe.create_payment_link(instance)
+            payment_link = cls.stripe.create_payment_link(instance)
             instance.link = payment_link['url']
             instance.stripe_id = payment_link['id']
-    
+
     @classmethod
     def product_discount_pre_save(cls, sender, instance: ProductDiscount, **kwargs):
-        stripe = StripeManagement()
-    
+        cls.stripe
+
     @classmethod
     def transaction_post_save(cls, sender, instance: TransactionHistorial, **kwargs):
         user = instance.customer.user
         if instance.product_complementary.purchase_result == constants.ADD_CREDITS:
             CreditUsageHistorial.objects.update_credits(
-                user, 
+                user,
                 int(instance.product_complementary.product_result),
                 credits_constants.BOUGHT_CREDITS,
                 credits_constants.ADD,

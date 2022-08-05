@@ -13,12 +13,11 @@ STRIPE_PUBLIC = settings.STRIPE_PUBLIC
 
 
 class StripeManagement:
-    def __init__(self) -> None:
-        stripe.api_key = STRIPE_PRIVATE
-        self.stripe_product = stripe.Product
-        self.stripe_price = stripe.Price
-        self.stripe_customer = stripe.Customer
-    
+    stripe.api_key = STRIPE_PRIVATE
+    stripe_product = stripe.Product
+    stripe_price = stripe.Price
+    stripe_customer = stripe.Customer
+
     def create_product(self, name:str, description:str, active:bool = False) -> dict:
         product = self.stripe_product.create(
         name=name,
@@ -27,7 +26,7 @@ class StripeManagement:
         )
         return product
 
-    def update_product(self, stripe_id:str, name:str, description:str, active:bool) -> dict:
+    def update_product(self, stripe_id:str, name:str, description: str, active: bool) -> dict:
         product = self.stripe_product.modify(
             sid=stripe_id,
             name=name,
@@ -35,11 +34,11 @@ class StripeManagement:
             active=active,
         )
         return product
-    
+
     def disable_product(self, stripe_id:str) -> dict:
         product = self.stripe_product.modify(sid=stripe_id, active=False)
         return product
-    
+
     def create_product_complementary(
         self,
         stripe_id:str,
@@ -60,10 +59,10 @@ class StripeManagement:
                 "interval": subscription_period,
                 "interval_count": subscription_interval
             }
-        
+
         price = self.stripe_price.create(**price_data)
         return price
-    
+
     def update_product_complementary(
         self,
         stripe_id:str,
@@ -77,7 +76,7 @@ class StripeManagement:
 
         price = self.stripe_price.modify(**price_data)
         return price
-    
+
     def create_customer(
         self,
         currency:str,
@@ -99,7 +98,7 @@ class StripeManagement:
             ],
         )
         return subscription
-    
+
     def create_payment_link(self, stripe_price_obj: ProductComplementaryPaymentLink) -> dict:
         payment_link = stripe.PaymentLink.create(
             line_items=[
