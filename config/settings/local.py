@@ -7,8 +7,6 @@ BASAE_DOMAIN = "example.com"
 CURRENT_DOMAIN = f"{CURRENT_DOMAIN}{PORT}"
 FULL_DOMAIN = f'{PROTOCOL}{CURRENT_DOMAIN}'
 
-# https://docs.djangoproject.com/en/dev/ref/settings/#debug
-DEBUG = True
 # https://docs.djangoproject.com/en/dev/ref/settings/#secret-key
 SECRET_KEY = env(
     "DJANGO_SECRET_KEY",
@@ -16,7 +14,6 @@ SECRET_KEY = env(
 )
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = ["localhost", "0.0.0.0", "127.0.0.1", ".example.com"]
-
 
 # CACHES
 # ------------------------------------------------------------------------------
@@ -36,7 +33,6 @@ CACHES = {
 # SECURITY
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#session-cookie-httponly
-SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_NAME = "sessionid"
 SESSION_COOKIE_DOMAIN = f".{BASAE_DOMAIN}"
 # Whether to save the session data on every request.

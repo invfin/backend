@@ -24,7 +24,7 @@ CURRENT_DOMAIN = 'example.com'
 FULL_DOMAIN = f'{PROTOCOL}{CURRENT_DOMAIN}'
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#debug
-DEBUG = env.bool("DJANGO_DEBUG", False)
+DEBUG = env.bool("DJANGO_DEBUG", True)
 
 # Local time zone. Choices are
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -69,8 +69,15 @@ THOUSAND_SEPARATOR = "."
 # DATABASES
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
-DATABASES = {"default":env.db("DATABASE_URL")}
+
+if DEBUG:
+    DATABASE_URL = env.db("LOCAL_DATABASE_URL")
+else:
+    DATABASE_URL = env.db("DATABASE_URL")
+
+DATABASES = {"default": DATABASE_URL}
 DATABASES["default"]["ATOMIC_REQUESTS"] = True
+
 # https://docs.djangoproject.com/en/stable/ref/settings/#std:setting-DEFAULT_AUTO_FIELD
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 

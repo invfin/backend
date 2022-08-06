@@ -9,12 +9,12 @@ PINTEREST = 'pinterest'
 TUMBLR = 'tumblr'
 
 SOCIAL_MEDIAS = [
-    (FACEBOOK, 'Facebook'), 
-    (TWITTER, 'Twitter'), 
-    (REDDIT, 'Reddit'), 
-    (WHATSAPP, 'Whatsapp'), 
-    (LINKEDIN, 'Linkedin'), 
-    (PINTEREST, 'Pinterest'), 
+    (FACEBOOK, 'Facebook'),
+    (TWITTER, 'Twitter'),
+    (REDDIT, 'Reddit'),
+    (WHATSAPP, 'Whatsapp'),
+    (LINKEDIN, 'Linkedin'),
+    (PINTEREST, 'Pinterest'),
     (TUMBLR, 'Tumblr'),
     (YOUTUBE, 'Youtube'),
     (INSTAGRAM, 'Instagram')
@@ -49,12 +49,12 @@ POST_TYPE_SHORTS = 7
 POST_TYPE_THREAD = 8
 
 POST_TYPE = (
-    (POST_TYPE_VIDEO, 'Video'), 
-    (POST_TYPE_IMAGE, 'Image'), 
+    (POST_TYPE_VIDEO, 'Video'),
+    (POST_TYPE_IMAGE, 'Image'),
     (POST_TYPE_TEXT, 'Text'),
-    (POST_TYPE_REPOST, 'Repost'), 
-    (POST_TYPE_TEXT_VIDEO, 'Text and video'), 
-    (POST_TYPE_TEXT_IMAGE, 'Text and image'), 
+    (POST_TYPE_REPOST, 'Repost'),
+    (POST_TYPE_TEXT_VIDEO, 'Text and video'),
+    (POST_TYPE_TEXT_IMAGE, 'Text and image'),
     (POST_TYPE_SHORTS, 'Shorts'),
     (POST_TYPE_THREAD, 'Thread'))
 
@@ -63,3 +63,5 @@ FACEBOOK_GRAPH_URL = 'https://graph.facebook.com/'
 FACEBOOK_GRAPH_VIDEO_URL = "https://graph-video.facebook.com/"
 
 INSTAGRAM_GRAPH_URL = 'https://graph.instagram.com/'
+
+TWEET_MAX_LENGTH = 174
