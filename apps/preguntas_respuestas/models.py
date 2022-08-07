@@ -147,6 +147,10 @@ class Answer(CommonMixin):
         return self.question_related.get_absolute_url()
 
     @property
+    def title(self):
+        return self.question_related.title
+
+    @property
     def own_url(self):
         domain = Site.objects.get_current().domain
         return f'https://{domain}/question/{self.question_related.slug}/#{self.id}'

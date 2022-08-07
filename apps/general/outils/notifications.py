@@ -154,27 +154,30 @@ class NotificationSystem:
     def announce_new_answer(self, answer, notif_type):
         notif_info = []
         question = answer.question_related
-        for user in question.related_users:
-            title = question.title[:15]
-            subject = f"{title}... tiene una nueva respuesta"
-            if question.author == user:
-                subject = "Tu pregunta tiene una nueva respuesta"
-            email = self.save_notif(
-                answer,
-                user,
-                notif_type,
-                {
-                    "subject": subject,
-                    "content": answer.content,
-                }
-            )
-            notif_info.append(
-                {
-                    "email": email,
-                    "receiver_id": user.id,
-                    "is_for": constants.EMAIL_FOR_NOTIFICATION
-                }
-            )
+        users_relateds = question.related_users
+        users_relateds.append(question.author)
+        for user in users_relateds:
+            if user != answer.author:
+                title = question.title[:15]
+                subject = f"{title}... tiene una nueva respuesta"
+                if question.author == user:
+                    subject = "Tu pregunta tiene una nueva respuesta"
+                email = self.save_notif(
+                    answer,
+                    user,
+                    notif_type,
+                    {
+                        "subject": subject,
+                        "content": answer.content,
+                    }
+                )
+                notif_info.append(
+                    {
+                        "email": email,
+                        "receiver_id": user.id,
+                        "is_for": constants.EMAIL_FOR_NOTIFICATION
+                    }
+                )
         return notif_info
 
     def announce_answer_accepted(self, answer, notif_type):
@@ -183,7 +186,7 @@ class NotificationSystem:
         for user in question.related_users:
             title = question.title[:15]
             subject = f"{title}... tiene una respuesta acceptada"
-            if question.has_accepted_answer and question.accepted_answer.author == user:
+            if answer.author == user:
                 subject = "Tu respuesta ha sido acceptada"
             email = self.save_notif(
                 answer,

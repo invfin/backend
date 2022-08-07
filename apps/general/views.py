@@ -11,7 +11,7 @@ from django.shortcuts import redirect, render
 from django.utils import timezone
 from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
-from django.views.generic import ListView, TemplateView
+from django.views.generic import ListView, TemplateView, RedirectView
 
 from apps.empresas.models import Company
 from apps.escritos.models import FavoritesTermsHistorial, FavoritesTermsList, Term
@@ -216,6 +216,12 @@ class NotificationsListView(LoginRequiredMixin, ListView):
 		notifications = Notification.objects.filter(user = self.request.user)
 		notifications.update(is_seen = True)
 		return notifications
+
+
+class NotificationRedirectView(RedirectView):
+    def get(self, request, *args, **kwargs):
+        return super().get(request, *args, **kwargs)
+
 
 
 @login_required(login_url='login')
