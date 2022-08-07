@@ -36,33 +36,44 @@ class Question(BaseWrittenContent):
         ordering = ['-created_at']
         verbose_name = "Question"
         db_table = "questions"
-    
+
     def __str__(self):
         return self.title
-    
+
     def get_absolute_url(self):
         return reverse("preguntas_respuestas:question", kwargs={"slug": self.slug})
-    
+
     @property
     def related_users(self):
-        answers_users = ''
-        upvotes_users = ''
-        downvotes_users = ''
-        comments_users = ''
-        result_list = list(chain(answers_users, upvotes_users))
-        return 
-    
+        answers_users = [user.author for user in self.related_answers]
+        upvotes_users = self.upvotes.all()
+        downvotes_users = self.downvotes.all()
+        comments_users = [user.author for user in self.related_comments]
+        return list(set(chain(answers_users, upvotes_users, downvotes_users, comments_users)))
+
     @property
     def related_answers(self):
         return self.question_answers.all()
-    
-    def add_answer(self, answer):
-        Answer.objects.create(
-            author = self.author,
-            content = answer,
+
+    @property
+    def related_comments(self):
+        return self.comments_related.all()
+
+    @property
+    def accepted_answer(self):
+        return self.question_answers.filter(is_accepted=True).first()
+
+    def add_answer(self, author: User, answer_content: str, is_accepted: bool = False):
+        answer = Answer.objects.create(
+            author = author,
+            content = answer_content,
             question_related = self,
-            is_accepted = True,
+            is_accepted = is_accepted,
         )
+        if not self.is_answered:
+            self.is_answered =  True
+            self.save(update_fields=["is_answered"])
+        return answer
 
     @property
     def schema_org(self):
@@ -78,8 +89,8 @@ class Question(BaseWrittenContent):
         ques_schema['mainEntity']["dateCreated"] = self.created_at
         ques_schema['mainEntity']["author"] = {}
         ques_schema['mainEntity']["author"]["@type"] = "Person"
-        ques_schema['mainEntity']["author"]["name"] = self.author        
-        
+        ques_schema['mainEntity']["author"]["name"] = self.author
+
         ques_schema['mainEntity']["suggestedAnswer"] = []
 
         for answer in self.related_answers:
@@ -109,9 +120,9 @@ class Question(BaseWrittenContent):
 
 
 class Answer(CommonMixin):
-    author = ForeignKey(User, on_delete=SET_NULL, null=True, related_name='answers_apported') 
+    author = ForeignKey(User, on_delete=SET_NULL, null=True, related_name='answers_apported')
     created_at = DateTimeField(auto_now_add=True)
-    content = RichTextField(config_name='writter')    
+    content = RichTextField(config_name='writter')
     question_related = ForeignKey(
         Question,
         on_delete=CASCADE,
@@ -128,13 +139,13 @@ class Answer(CommonMixin):
         verbose_name = "Answer"
         db_table = "answers"
         # order_with_respect_to = 'question_related'
-    
+
     def __str__(self):
         return str(self.id)
-    
+
     def get_absolute_url(self):
         return self.question_related.get_absolute_url()
-    
+
     @property
     def own_url(self):
         domain = Site.objects.get_current().domain
@@ -150,7 +161,7 @@ class QuesitonComment(BaseComment):
     class Meta:
         verbose_name = "Question's comment"
         db_table = "question_comments"
-    
+
     def __str__(self):
         return str(self.id)
 
@@ -160,10 +171,10 @@ class AnswerComment(BaseComment):
         on_delete=CASCADE,
         null=True,
         related_name = "comments_related")
-    
+
     class Meta:
         verbose_name = "Answer's comment"
         db_table = "answer_comments"
-    
+
     def __str__(self):
         return str(self.id)

@@ -23,8 +23,9 @@ User = get_user_model()
 
 from ckeditor.fields import RichTextField
 
+from apps.general.constants import BASE_ESCRITO_STATUS
 from apps.general.mixins import (
-    BaseEscritosMixins, 
+    BaseEscritosMixins,
     CommonMixin,
     BaseToAll
 )
@@ -37,22 +38,22 @@ class BaseWrittenContent(CommonMixin):
     updated_at = DateTimeField(auto_now=True)
     total_votes = IntegerField(default=0)
     total_views = PositiveIntegerField(default=0)
-    times_shared = PositiveIntegerField(default=0)    
+    times_shared = PositiveIntegerField(default=0)
     category = ForeignKey("general.Category", on_delete=SET_NULL, blank=True, null=True)
     tags = ManyToManyField("general.Tag", blank=True)
     author = ForeignKey(User, on_delete=SET_NULL, null=True)
 
     class Meta:
         abstract = True
-    
+
     def save(self, *args, **kwargs): # new
         if not self.slug:
             self.slug = slugify(self.title)
         return super().save(*args, **kwargs)
-    
+
     def __str__(self):
         return self.title
-    
+
     def add_tags(self, tags):
         from apps.general.models import Tag
         for tag in tags:
@@ -62,23 +63,12 @@ class BaseWrittenContent(CommonMixin):
             if tag in self.tags.all():
                 continue
             self.tags.add(tag)
-    
-    @property
-    def shareable_link(self):        
-        try:
-            url = self.custom_url
-        except:
-            slug = self.get_absolute_url()
-            url = f"https://inversionesyfinanzas.xyz{slug}"
-        return url
 
 
 class BaseEscrito(BaseWrittenContent, BaseEscritosMixins):
-    STATUS = ((1, 'Publicado'), (2, 'Borrador'), (3, 'Programado'), (4, 'Necesita revisión'))
-
     resume = TextField(default='')
-    published_at = DateTimeField(auto_now=True)    
-    status = IntegerField(null=True, blank=True,choices=STATUS)
+    published_at = DateTimeField(auto_now=True)
+    status = IntegerField(null=True, blank=True,choices=BASE_ESCRITO_STATUS)
     # thumbnail = CloudinaryField('image', null=True, width_field='image_width', height_field='image_height')
     thumbnail = ImageField('image',blank=True, null=True, width_field='image_width', height_field='image_height')
     non_thumbnail_url = CharField(max_length=500,null=True, blank=True)
@@ -87,10 +77,10 @@ class BaseEscrito(BaseWrittenContent, BaseEscritosMixins):
 
     class Meta:
         abstract = True
-    
+
     def save(self, *args, **kwargs): # new
         return super().save(*args, **kwargs)
-    
+
     @property
     def image(self):
         image = self.non_thumbnail_url
@@ -109,12 +99,9 @@ class BaseComment(BaseToAll):
     class Meta:
         abstract = True
 
-    def save(self, *args, **kwargs): # new
-        return super().save(*args, **kwargs)        
-        # return self.create_notification(self.id)
-
-    def create_notification(self, id):
-        pass
+    @property
+    def title(self):
+        return self.content_related.title
 
 
 class BaseNewsletter(BaseToAll):
@@ -128,7 +115,7 @@ class BaseNewsletter(BaseToAll):
 
     class Meta:
         abstract = True
-    
+
     @property
     def opening_rate(self):
         all_emails = self.email_related.all().count()
@@ -155,7 +142,7 @@ class BaseGenericModels(BaseToAll):
 
     class Meta:
         abstract = True
-    
+
     def __str__(self):
         return str(self.id)
 

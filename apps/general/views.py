@@ -22,7 +22,9 @@ from apps.super_investors.models import (
     Superinvestor,
 )
 
-from .models import Notification
+from apps.general import constants
+from apps.general.models import Notification
+from apps.general.tasks import prepare_notification_task
 
 
 class MessagesTemplateview(TemplateView):
@@ -31,36 +33,44 @@ class MessagesTemplateview(TemplateView):
 
 @login_required
 def create_comment_view(request, url_encoded):
-	if request.method == 'POST':
-		user = request.user
-		if user.is_authenticated:
-			content = request.POST.get('comment_content')
-			decoded_url = force_text(urlsafe_base64_decode(url_encoded)).split("-")
-			id, app_label, object_name = decoded_url[0], decoded_url[1], decoded_url[2]
-			modelo = apps.get_model(app_label, object_name, require_ready=True).objects.get(id=id)
-			modelo.comments_related.create(author = user, content=content, content_related = modelo)
-			messages.success(request, 'Comentario agregado')
-		return redirect (modelo.get_absolute_url())
+    if request.method == 'POST':
+        user = request.user
+        if user.is_authenticated:
+            content = request.POST.get('comment_content')
+            decoded_url = force_text(urlsafe_base64_decode(url_encoded)).split("-")
+            id, app_label, object_name = decoded_url[0], decoded_url[1], decoded_url[2]
+            modelo = apps.get_model(app_label, object_name, require_ready=True).objects.get(id=id)
+            comment = modelo.comments_related.create(author = user, content=content, content_related = modelo)
+            prepare_notification_task.delay(
+                comment.dict_for_task,
+                constants.NEW_COMMENT
+            )
+            messages.success(request, 'Comentario agregado')
+        return redirect (modelo.get_absolute_url())
 
 
 @login_required
 def create_vote_view(request, url_encoded):
-	if request.method == 'POST':
-		user = request.user
-		if user.is_authenticated:
-			decoded_url = force_text(urlsafe_base64_decode(url_encoded)).split("-")
-			id, app_label, object_name, vote = decoded_url[0], decoded_url[1], decoded_url[2], decoded_url[3]
-			modelo = apps.get_model(app_label, object_name, require_ready=True).objects.get(id=id)
-			if modelo.author == user:
-				messages.error(request, 'No puedes votarte a ti mismo')
-				return redirect (modelo.get_absolute_url())
-			vote_result = modelo.vote(user, vote)
-			if vote_result == 0:
-				messages.error(request, 'Ya has votado')
-				return redirect (modelo.get_absolute_url())
-			messages.success(request, 'Voto aportado')
-		return redirect (modelo.get_absolute_url())
-		
+    if request.method == 'POST':
+        user = request.user
+        if user.is_authenticated:
+            decoded_url = force_text(urlsafe_base64_decode(url_encoded)).split("-")
+            id, app_label, object_name, vote = decoded_url[0], decoded_url[1], decoded_url[2], decoded_url[3]
+            modelo = apps.get_model(app_label, object_name, require_ready=True).objects.get(id=id)
+            if modelo.author == user:
+                messages.error(request, 'No puedes votarte a ti mismo')
+                return redirect (modelo.get_absolute_url())
+            vote_result = modelo.vote(user, vote)
+            if vote_result == 0:
+                messages.error(request, 'Ya has votado')
+                return redirect (modelo.get_absolute_url())
+            prepare_notification_task.delay(
+                modelo.dict_for_task,
+                constants.NEW_VOTE
+            )
+            messages.success(request, 'Voto aportado')
+        return redirect (modelo.get_absolute_url())
+
 
 def suggest_list_search(request):
 	if request.is_ajax():
@@ -70,17 +80,17 @@ def suggest_list_search(request):
 		no_bs = False,
 		no_cfs = False,
 			)[:4]
-		
+
 		# terms_availables = Term.objects.filter(Q(title__icontains=query), status = 1)[:3]
 		terms_availables = Term.objects.filter(Q(title__icontains=query))[:4]
-		
+
 		results = []
 		for company in companies_availables:
 			result = f'Empresa: {company.name} [{company.ticker}]'
 			results.append(result)
-		
+
 		for term in terms_availables:
-			result = f'Término: {term.title}'			
+			result = f'Término: {term.title}'
 			results.append(result)
 
 		data = json.dumps(results)
@@ -97,7 +107,7 @@ def search_results(request):
 			ticker = empresa_ticker[:-1]
 			empresa_busqueda = Company.objects.get(ticker = ticker)
 			redirect_to = empresa_busqueda.get_absolute_url()
-		
+
 		elif query == 'Término':
 			title = term.split(':')[1]
 			title = title[1:]
@@ -106,7 +116,7 @@ def search_results(request):
 			except Term.MultipleObjectsReturned:
 				term_busqueda = Term.objects.filter(title = title).first()
 			redirect_to = term_busqueda.get_absolute_url()
-		
+
 		else:
 			if term.isupper():
 				empresa_busqueda = Company.objects.filter(ticker = term)
@@ -119,7 +129,7 @@ def search_results(request):
 			else:
 				messages.warning(request, 'No hemos entendido tu búsqueda')
 				return redirect(request.META.get('HTTP_REFERER'))
-				
+
 		return redirect(redirect_to)
 	else:
 		return redirect(request.META.get('HTTP_REFERER'))
@@ -128,7 +138,7 @@ def search_results(request):
 @login_required
 def update_favorites(request):
 	user = request.user
-    
+
 	if request.method == 'POST':
 		data = json.load(request)
 
@@ -144,7 +154,7 @@ def update_favorites(request):
 				FavoritesStocksHistorial.objects.create(user = user, asset = current_stock, added = True)
 				user.favorites_companies.stock.add(current_stock)
 				is_favorite = True
-		
+
 		elif 'term' in data.keys():
 			term_id = data.get('term')
 			current_term = Term.objects.get(id = term_id)
@@ -160,7 +170,7 @@ def update_favorites(request):
 				FavoritesTermsHistorial.objects.create(user = user, term = current_term, added = True)
 				user.favorites_terms.term.add(current_term)
 				is_favorite = True
-		
+
 		elif 'investor' in data.keys():
 			superinvestor = data.get('investor')
 			current_superinvestor = Superinvestor.objects.get(slug = superinvestor)
@@ -176,7 +186,7 @@ def update_favorites(request):
 				FavoritesSuperinvestorsHistorial.objects.create(user=user, superinvestor=current_superinvestor, added=True)
 				user.favorites_superinvestors.superinvestor.add(current_superinvestor)
 				is_favorite = True
-				
+
 		return JsonResponse ({'is_favorite':is_favorite})
 
 
@@ -185,17 +195,17 @@ def coming_soon(request):
 
 
 def email_opened_view(request, uidb64):
-    
-    pixel_gif = base64.b64decode(b'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=')
-    
+    pixel_gif = base64.b64decode(
+        b'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='
+    )
     if request.method == 'GET':
         decoded_url = force_text(urlsafe_base64_decode(uidb64)).split("-")
         id, app_label, object_name = decoded_url[0], decoded_url[1], decoded_url[2]
         modelo = apps.get_model(app_label, object_name, require_ready=True).objects.get(id=id)
         modelo.opened = True
         modelo.date_opened = timezone.now()
-        modelo.save()
-        return HttpResponse(pixel_gif, content_type='image/gif')  
+        modelo.save(update_fields=["opened", "date_opened"])
+        return HttpResponse(pixel_gif, content_type='image/gif')
 
 
 class NotificationsListView(LoginRequiredMixin, ListView):

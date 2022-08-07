@@ -3,16 +3,18 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.messages.views import SuccessMessageMixin
-from django.shortcuts import redirect, render
-from django.views.generic import CreateView, DetailView, ListView, UpdateView, View
+from django.shortcuts import redirect
+from django.views.generic import CreateView, UpdateView
 
-from apps.general.tasks import prepare_notifications_task
+from apps.general.tasks import prepare_notification_task
+from apps.general import constants
 from apps.seo.views import SEODetailView, SEOListView
+from apps.preguntas_respuestas.forms import CreateQuestionForm
+from apps.preguntas_respuestas.models import Answer, Question
 
-from .forms import CreateQuestionForm
-from .models import Answer, Question
 
 User = get_user_model()
+
 
 class QuestionsView(SEOListView):
 	model = Question
@@ -27,15 +29,11 @@ class QuestionsView(SEOListView):
 
 
 class QuestionDetailsView(SEODetailView):
-	model = Question
-	template_name = 'QA_details.html'
-	context_object_name = "object"
-	slug_field = 'slug'
-
-	def get_context_data(self, **kwargs):
-		context = super().get_context_data(**kwargs)
-		self.update_views(self.get_object())
-		return context
+    model = Question
+    template_name = 'QA_details.html'
+    context_object_name = "object"
+    slug_field = 'slug'
+    update_visits = True
 
 
 class CreateQuestionView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
@@ -58,16 +56,19 @@ class CreateQuestionView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
 		form.instance.author = self.request.user
 		tags = self.request.POST['tags'].split(',')
 		selfanswer = self.request.POST['selfanswereditor']
-		modelo = form.save()
-		modelo.add_tags(tags)
+		question = form.save()
+		question.add_tags(tags)
 		if selfanswer !='':
-			modelo.add_answer(selfanswer)
-			modelo.is_answered = True
-			modelo.has_accepted_answer = True
-		
-		# prepare_notifications_task.delay(modelo.dict_for_task, 5)
+			question.add_answer(selfanswer)
+			question.is_answered = True
+			question.has_accepted_answer = True
+
+		prepare_notification_task.delay(
+            question.dict_for_task,
+            constants.NEW_QUESTION
+        )
 		return super().form_valid(form)
-	
+
 	def form_invalid(self, form):
 		return super().form_invalid(form)
 
@@ -88,7 +89,7 @@ class UpdateQuestionView(LoginRequiredMixin, UserPassesTestMixin, SuccessMessage
 	def form_valid(self, form):
 		form.instance.author = self.request.user
 		return super().form_valid(form)
-	
+
 	def test_func(self):
 		valid = False
 		if self.get_object().author == self.request.user:
@@ -103,36 +104,40 @@ class UpdateQuestionView(LoginRequiredMixin, UserPassesTestMixin, SuccessMessage
 
 @login_required
 def create_answer_view(request, slug):
-	if request.method == 'POST':
-		user = request.user
-		if request.user.is_anonymous:
-			user = User.objects.get_or_create_quick_user(request)
+    if request.method == 'POST':
+        user = request.user
+        if request.user.is_anonymous:
+            user = User.objects.get_or_create_quick_user(request)
 
-		question = Question.objects.get(slug = slug)
-		
-		answer = Answer.objects.create(
-		content = request.POST['content'],
-		author = user,	
-		question_related = question
-		)
-		question.is_answered = True
-		question.save(update_fields=['is_answered'])
-		messages.success(request, 'Gracias por tu respuesta')
-		return redirect(question.get_absolute_url())
+        question = Question.objects.get(slug = slug)
+        answer = question.add_answer(
+            user,
+            request.POST['content']
+        )
+        prepare_notification_task.delay(
+            answer.dict_for_task,
+            constants.NEW_ANSWER
+        )
+        messages.success(request, 'Gracias por tu respuesta')
+        return redirect(question.get_absolute_url())
 
 
 @login_required
 def accept_answer(request, question_id, answer_id):
-	question = Question.objects.get(id = question_id)
-	if request.user == question.author and question.has_accepted_answer == False:
-		answer = Answer.objects.get(id = answer_id)
-		if question.is_answered == False:
-			question.is_answered = True
-		
-		question.has_accepted_answer = True
-		question.save(update_fields=['is_answered', 'has_accepted_answer'])
-		answer.is_accepted = True
-		answer.save(update_fields=['is_accepted'])
-		answer.author.update_reputation(2)
-		messages.success(request, 'Gracias por tu ayuda')
-	return redirect(question.get_absolute_url())
+    question = Question.objects.get(id = question_id)
+    if request.user == question.author and question.has_accepted_answer == False:
+        answer = Answer.objects.get(id = answer_id)
+        if question.is_answered == False:
+            question.is_answered = True
+
+        question.has_accepted_answer = True
+        question.save(update_fields=['is_answered', 'has_accepted_answer'])
+        answer.is_accepted = True
+        answer.save(update_fields=['is_accepted'])
+        answer.author.update_reputation(2)
+        messages.success(request, 'Gracias por tu ayuda')
+        prepare_notification_task.delay(
+            answer.dict_for_task,
+            constants.ANSWER_ACCEPTED
+        )
+    return redirect(question.get_absolute_url())

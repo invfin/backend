@@ -22,6 +22,7 @@ class SEOViewMixin(RecommenderMixin):
     meta_category: str = None
     is_article: bool = False
     open_graph_type: str = 'website'
+    update_visits = False
 
     def update_views(self, instance):
         instance.total_views += 1
@@ -42,7 +43,7 @@ class SEOViewMixin(RecommenderMixin):
         if not meta_url:
             meta_url = self.request.path
         return meta_url
-    
+
     def get_meta_author(self, instance: object=None):
         meta_author = self.meta_author
         if not meta_author:
@@ -58,7 +59,7 @@ class SEOViewMixin(RecommenderMixin):
                 instance, ['meta_title', 'regularised_title', 'name', 'title'], 'Invierte correctamente'
                 )
         return meta_title
-    
+
     def get_meta_description(self, instance:object=None):
         meta_description = self.meta_description
         if not meta_description:
@@ -66,7 +67,7 @@ class SEOViewMixin(RecommenderMixin):
                 instance, ['meta_description', 'regularised_description', 'resume', 'description'], 'Todo lo que necesitas para ser un mejor inversor'
                 )
         return meta_description
-    
+
     def get_meta_image(self, instance: object = None):
         meta_image = self.meta_image
         if not meta_image:
@@ -87,18 +88,18 @@ class SEOViewMixin(RecommenderMixin):
                     ]
                 )
                 meta_image = f'/static/general/assets/img/{selected_image}'
-        
+
         if not meta_image.startswith('http'):
             meta_image = f'{FULL_DOMAIN}{meta_image}'
-            
+
         return meta_image
-    
+
     def get_meta_tags(self):
         meta_tags = self.meta_tags
         if not meta_tags:
             meta_tags = 'finanzas, blog financiero, blog el financiera, invertir'
         return meta_tags
-    
+
     def get_meta_category(self, instance: object = None):
         meta_category = self.meta_category
         if not meta_category:
@@ -106,13 +107,13 @@ class SEOViewMixin(RecommenderMixin):
                 instance, ['category'], 'Inversiones'
                 )
         return meta_category
-    
+
     def get_meta_twitter_author(self):
         return '@InvFinz'
-    
+
     def get_open_graph_type(self):
         return self.open_graph_type
-    
+
     def get_meta_published_time(self, instance: object = None):
         return self.get_possible_meta_attribute(
                 instance, ['published_at'], None
@@ -122,15 +123,15 @@ class SEOViewMixin(RecommenderMixin):
         return self.get_possible_meta_attribute(
             instance, ['updated_at'], None
             )
-    
+
     def get_schema_org(self, instance: object = None):
         try:
             schema_org = instance.schema_org
         except AttributeError:
             schema_org = {}
         return schema_org
-            
-    
+
+
     def get_base_meta_information(self, instance: object = None):
         return {
             "meta_description": self.get_meta_description(instance),
@@ -146,7 +147,7 @@ class SEOViewMixin(RecommenderMixin):
             "open_graph_type": self.get_open_graph_type(),
             "schema_org": self.get_schema_org(instance)
         }
-    
+
     def get_meta_information(self, instance: object = None):
         base_meta_information = self.get_base_meta_information(instance)
         if self.is_article:
@@ -165,4 +166,6 @@ class SEOViewMixin(RecommenderMixin):
         except:
             instance = None
         context.update(self.get_meta_information(instance))
+        if self.update_visits:
+            self.update_views(instance)
         return context

@@ -4,14 +4,15 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import redirect, render
-from django.views.generic import CreateView, DetailView, ListView, UpdateView
+from django.views.generic import CreateView, DetailView, UpdateView
 
+from apps.general import constants as general_constants
 from apps.general.forms import DefaultNewsletterForm
-from apps.general.tasks import prepare_notifications_task
+from apps.general.tasks import prepare_notification_task
 from apps.seo.views import SEODetailView, SEOListView
 
-from .forms import PublicBlogForm
-from .models import (
+from apps.public_blog.forms import PublicBlogForm
+from apps.public_blog.models import (
     NewsletterFollowers,
     PublicBlog,
     PublicBlogAsNewsletter,
@@ -22,19 +23,23 @@ User = get_user_model()
 
 
 def following_management_view(request):
-	if request.POST:
-		writter = request.POST['writter']
-		action = request.POST['what']
-		writter = User.objects.get(id = writter)
-		follower = User.objects.get_or_create_quick_user(request, just_newsletter=True)
-		update_follower = writter.update_followers(follower, action)
-		
-		if update_follower == 'already follower':
-			messages.success(request, f'Ya estás siguiendo a {writter.full_name}')
-			return redirect(request.META.get('HTTP_REFERER'))
+    if request.POST:
+        writter = request.POST['writter']
+        action = request.POST['what']
+        writter = User.objects.get(id = writter)
+        follower = User.objects.get_or_create_quick_user(request, just_newsletter=True)
+        update_follower = writter.update_followers(follower, action)
 
-		messages.success(request, f'A partir de ahora recibirás las newsletters de {writter.full_name}')
-		return redirect(request.META.get('HTTP_REFERER'))
+        if update_follower == 'already follower':
+            messages.success(request, f'Ya estás siguiendo a {writter.full_name}')
+            return redirect(request.META.get('HTTP_REFERER'))
+
+        prepare_notification_task.delay(
+            writter.dict_for_task,
+            general_constants.NEW_FOLLOWER
+        )
+        messages.success(request, f'A partir de ahora recibirás las newsletters de {writter.full_name}')
+        return redirect(request.META.get('HTTP_REFERER'))
 
 
 @login_required
@@ -43,10 +48,13 @@ def user_become_writter_view(request):
 		domain = request.POST['domain'].lower()
 		WritterProfile.objects.create(user = request.user, host_name = domain)
 		request.user.is_writter = True
-		request.user.save()
+		request.user.save(update_fields=["is_writter"])
 		NewsletterFollowers.objects.create(user = request.user)
-		messages.success(request, f'Pon al día tu perfil, \
-				añade tus redes sociales, una buena descripción y tu nombre para que la gente pueda conocerte.')
+		messages.success(
+            request,
+            f'Pon al día tu perfil, \
+				añade tus redes sociales, una buena descripción y tu nombre para que la gente pueda conocerte.'
+        )
 		return redirect('users:update')
 
 
@@ -78,22 +86,19 @@ class PublicBlogDetailsView(SEODetailView):
 
 	def get_context_data(self, **kwargs):
 		context = super().get_context_data(**kwargs)
-		self.update_views(self.get_object())	
+		self.update_views(self.get_object())
 		return context
 
 
-class WritterOnlyView(LoginRequiredMixin, UserPassesTestMixin, SuccessMessageMixin):
+class WritterOnlyMixin(LoginRequiredMixin, UserPassesTestMixin, SuccessMessageMixin):
     def test_func(self):
-        valid = False
-        if self.request.user.is_writter:
-            valid = True
-        return valid
+        return self.request.user.is_writter
 
     def handle_no_permission(self):
         return redirect("public_blog:blog_list")
 
 
-class WritterOwnBlogsListView(WritterOnlyView, DetailView):
+class WritterOwnBlogsListView(WritterOnlyMixin, SEODetailView):
 	model = User
 	template_name = 'profile/manage_blogs.html'
 	ordering = ['-published_at']
@@ -110,7 +115,7 @@ class WritterOwnBlogsListView(WritterOnlyView, DetailView):
 		return context
 
 
-class CreatePublicBlogPostView(WritterOnlyView, CreateView):
+class CreatePublicBlogPostView(WritterOnlyMixin, CreateView):
 	model = PublicBlog
 	form_class = PublicBlogForm
 	success_message = 'Escrito creado'
@@ -123,19 +128,22 @@ class CreatePublicBlogPostView(WritterOnlyView, CreateView):
 
 	def form_valid(self, form):
 		form.instance.author = self.request.user
-		tags = self.request.POST['tags'].split(',')		
+		tags = self.request.POST['tags'].split(',')
 		modelo = form.save()
 		modelo.add_tags(tags)
 		modelo.save_secondary_info('blog')
 		if modelo.send_as_newsletter == True:
+            # Prepare email and send it
 			return redirect('public_blog:create_newsletter_blog', kwargs={'slug':modelo.slug})
-		if modelo.status == 1:
-			pass
-			# prepare_notifications_task.delay(modelo.dict_for_task, 1)			
+		if modelo.status == general_constants.BASE_ESCRITO_PUBLISHED:
+			prepare_notification_task.delay(
+                modelo.dict_for_task,
+                general_constants.NEW_BLOG_POST
+            )
 		return super(CreatePublicBlogPostView, self).form_valid(form)
 
 
-class UpdatePublicBlogPostView(WritterOnlyView, UpdateView):
+class UpdatePublicBlogPostView(WritterOnlyMixin, UpdateView):
 	model = PublicBlog
 	form_class = PublicBlogForm
 	success_message = 'Escrito actualizado'
@@ -152,21 +160,20 @@ class UpdatePublicBlogPostView(WritterOnlyView, UpdateView):
 
 	def form_valid(self, form):
 		form.instance.author = self.request.user
-		tags = self.request.POST['tags'].split(',')		
+		tags = self.request.POST['tags'].split(',')
 		modelo = form.save()
 		modelo.add_tags(tags)
 		if modelo.send_as_newsletter == True:
 			return redirect('public_blog:create_newsletter_blog', kwargs={'slug':modelo.slug})
-		if modelo.status == 1:
-			pass
-			# prepare_notifications_task.delay(modelo.dict_for_task, 1)			
+		if modelo.status == general_constants.BASE_ESCRITO_PUBLISHED:
+			prepare_notification_task.delay(
+                modelo.dict_for_task,
+                general_constants.NEW_BLOG_POST
+            )
 		return super(UpdatePublicBlogPostView, self).form_valid(form)
 
 	def test_func(self):
-		valid = False
-		if self.get_object().author == self.request.user:
-			valid = True
-		return valid
+		return self.get_object().author == self.request.user
 
 
 @login_required
@@ -192,8 +199,8 @@ def create_newsletter_for_blog(request, slug):
 	else:
 		return redirect('public_blog:blog_details', kwargs={'slug':blog.slug})
 
-    
-class UpdateBlogNewsletterView(LoginRequiredMixin, UserPassesTestMixin, SuccessMessageMixin, UpdateView):
+
+class UpdateBlogNewsletterView(WritterOnlyMixin, UpdateView):
 	model = PublicBlogAsNewsletter
 	context_object_name = "newsletter_form"
 	success_message = 'Escrito actualizado'
@@ -204,12 +211,7 @@ class UpdateBlogNewsletterView(LoginRequiredMixin, UserPassesTestMixin, SuccessM
 		context['update'] = True
 		context['tags'] = self.get_object().blog_related.tags.all()
 		context["meta_title"] = 'Dashboard'
-		return 
-
-	
+		return
 
 	def test_func(self):
-		valid = False
-		if self.get_object().blog_related.author == self.request.user:
-			valid = True
-		return valid
+		return self.get_object().blog_related.author == self.request.user
