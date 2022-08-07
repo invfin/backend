@@ -2,8 +2,6 @@ from unittest.mock import patch
 
 from django.test import TestCase
 
-from apps.web.outils.content_creation import WebsiteContentCreation
-
 from apps.web import constants
 from apps.web.models import (
     WebsiteEmail,
@@ -11,14 +9,18 @@ from apps.web.models import (
     WebsiteEmailTrack,
     WebsiteLegalPage,
     Promotion,
-    PromotionCampaign
+    PromotionCampaign,
 )
+from apps.web.outils.content_creation import WebsiteContentCreation
+from apps.web.outils.engagement import EngagementMachine
+from apps.web.tests.facotries import WebsiteEmailExample
 
 
-class TestTasks(TestCase):
+class TestEngagementMachine(TestCase):
     @classmethod
     def setUpTestData(cls) -> None:
-        return super().setUpTestData()
+        WebsiteEmailExample.create_examples()
 
-    def test_send_website_email_engagement(self, mock_test_task):
+
+    def test_send_website_email_engagement(self):
         pass

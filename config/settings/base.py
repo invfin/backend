@@ -4,6 +4,8 @@ import environ
 from django.contrib.messages import constants as messages
 from imagekitio import ImageKit
 
+from .ckeditor import *
+
 ROOT_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 # invfin/
 APPS_DIR = ROOT_DIR / "apps"
@@ -17,11 +19,12 @@ if READ_DOT_ENV_FILE:
 # GENERAL
 # ------------------------------------------------------------------------------
 PROTOCOL = 'http://'
+SECURE_PROTOCOL = 'https://'
 MAIN_DOMAIN = 'inversionesyfinanzas.xyz'
 #CURRENT_DOMAIN = '0.0.0.0'
 PORT = ":8000"
 CURRENT_DOMAIN = 'example.com'
-FULL_DOMAIN = f'{PROTOCOL}{CURRENT_DOMAIN}'
+FULL_DOMAIN = f'{PROTOCOL}{CURRENT_DOMAIN}{PORT}'
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#debug
 DEBUG = env.bool("DJANGO_DEBUG", True)
@@ -45,8 +48,8 @@ USE_TZ = True
 LOCALE_PATHS = [str(ROOT_DIR / "locale")]
 
 DATE_INPUT_FORMATS = [
-    '%d/%m/%Y', # '10/25/06'
-    '%d-%m-%Y', # '10-25-06'
+    '%d/%m/%Y',  # '10/25/06'
+    '%d-%m-%Y',  # '10-25-06'
 ]
 
 DATETIME_INPUT_FORMATS = [
@@ -65,18 +68,6 @@ NUMBER_GROUPING = 3
 
 # Thousand separator symbol
 THOUSAND_SEPARATOR = "."
-
-# DATABASES
-# ------------------------------------------------------------------------------
-# https://docs.djangoproject.com/en/dev/ref/settings/#databases
-
-if DEBUG:
-    DATABASE_URL = env.db("LOCAL_DATABASE_URL")
-else:
-    DATABASE_URL = env.db("DATABASE_URL")
-
-DATABASES = {"default": DATABASE_URL}
-DATABASES["default"]["ATOMIC_REQUESTS"] = True
 
 # https://docs.djangoproject.com/en/stable/ref/settings/#std:setting-DEFAULT_AUTO_FIELD
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
@@ -198,6 +189,23 @@ MIDDLEWARE = [
     "general.middleware.SubdomainURLRoutingMiddleware",
     "seo.middleware.VisiteurMiddleware",
 ]
+
+# SECURITY
+# ------------------------------------------------------------------------------
+# https://docs.djangoproject.com/en/dev/ref/settings/#session-cookie-httponly
+SESSION_COOKIE_NAME = "sessionid"
+SESSION_COOKIE_DOMAIN = f".{CURRENT_DOMAIN}"
+# Whether to save the session data on every request.
+SESSION_SAVE_EVERY_REQUEST = False
+SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
+# https://docs.djangoproject.com/en/dev/ref/settings/#csrf-cookie-httponly
+CSRF_COOKIE_HTTPONLY = True
+CSRF_COOKIE_DOMAIN = f".{CURRENT_DOMAIN}"
+CSRF_TRUSTED_ORIGINS = [f".{CURRENT_DOMAIN}", f"{CURRENT_DOMAIN}"]
+# https://docs.djangoproject.com/en/dev/ref/settings/#secure-browser-xss-filter
+SECURE_BROWSER_XSS_FILTER = True
+# https://docs.djangoproject.com/en/dev/ref/settings/#x-frame-options
+X_FRAME_OPTIONS = "DENY"
 
 # STATIC
 # ------------------------------------------------------------------------------
@@ -321,6 +329,27 @@ LOGGING = {
     "root": {"level": "INFO", "handlers": ["console"]},
 }
 
+
+# django-allauth
+# ------------------------------------------------------------------------------
+ACCOUNT_ALLOW_REGISTRATION = env.bool("DJANGO_ACCOUNT_ALLOW_REGISTRATION", True)
+# https://django-allauth.readthedocs.io/en/latest/configuration.html
+ACCOUNT_AUTHENTICATION_METHOD = "username_email"
+# https://django-allauth.readthedocs.io/en/latest/configuration.html
+ACCOUNT_EMAIL_REQUIRED = True
+# https://django-allauth.readthedocs.io/en/latest/configuration.html
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+
+ACCOUNT_SESSION_REMEMBER = True
+# https://django-allauth.readthedocs.io/en/latest/configuration.html
+ACCOUNT_ADAPTER = "apps.users.adapters.AccountAdapter"
+# https://django-allauth.readthedocs.io/en/latest/forms.html
+ACCOUNT_FORMS = {"signup": "apps.users.forms.UserSignupForm"}
+# https://django-allauth.readthedocs.io/en/latest/configuration.html
+SOCIALACCOUNT_ADAPTER = "apps.users.adapters.SocialAccountAdapter"
+# https://django-allauth.readthedocs.io/en/latest/forms.html
+SOCIALACCOUNT_FORMS = {"signup": "apps.users.forms.UserSocialSignupForm"}
+
 # Celery
 # ------------------------------------------------------------------------------
 if USE_TZ:
@@ -344,41 +373,27 @@ CELERY_TASK_TIME_LIMIT = 5 * 60
 CELERY_TASK_SOFT_TIME_LIMIT = 60
 # http://docs.celeryproject.org/en/latest/userguide/configuration.html#beat-scheduler
 CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
-# django-allauth
-# ------------------------------------------------------------------------------
-ACCOUNT_ALLOW_REGISTRATION = env.bool("DJANGO_ACCOUNT_ALLOW_REGISTRATION", True)
-# https://django-allauth.readthedocs.io/en/latest/configuration.html
-ACCOUNT_AUTHENTICATION_METHOD = "username_email"
-# https://django-allauth.readthedocs.io/en/latest/configuration.html
-ACCOUNT_EMAIL_REQUIRED = True
-# https://django-allauth.readthedocs.io/en/latest/configuration.html
-ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 
-ACCOUNT_SESSION_REMEMBER = True
-# https://django-allauth.readthedocs.io/en/latest/configuration.html
-ACCOUNT_ADAPTER = "apps.users.adapters.AccountAdapter"
-# https://django-allauth.readthedocs.io/en/latest/forms.html
-ACCOUNT_FORMS = {"signup": "apps.users.forms.UserSignupForm"}
-# https://django-allauth.readthedocs.io/en/latest/configuration.html
-SOCIALACCOUNT_ADAPTER = "apps.users.adapters.SocialAccountAdapter"
-# https://django-allauth.readthedocs.io/en/latest/forms.html
-SOCIALACCOUNT_FORMS = {"signup": "apps.users.forms.UserSocialSignupForm"}
+if DEBUG:
+    CELERY_TASK_EAGER_PROPAGATES = True
 
 # django-rest-framework
 # -------------------------------------------------------------------------------
 # django-rest-framework - https://www.django-rest-framework.org/api-guide/settings/
-
-DRF_DEFAULT_RENDERER_CLASSES = ['rest_framework.renderers.JSONRenderer']
+DRF_DEFAULT_RENDERER_CLASSES = {"DRF_DEFAULT_RENDERER_CLASSES": 'rest_framework.renderers.JSONRenderer'}
+DEFAULT_SCHEMA_CLASS = {}
 if DEBUG:
-    DRF_DEFAULT_RENDERER_CLASSES = ['rest_framework.renderers.BrowsableAPIRenderer', 'rest_framework.renderers.JSONRenderer']
+    DRF_DEFAULT_RENDERER_CLASSES = {"DRF_DEFAULT_RENDERER_CLASSES": 'rest_framework.renderers.BrowsableAPIRenderer'}
+    DEFAULT_SCHEMA_CLASS = {"DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema"}
 
 REST_FRAMEWORK = {
+    **DEFAULT_SCHEMA_CLASS,
+    **DRF_DEFAULT_RENDERER_CLASSES,
     "DEFAULT_AUTHENTICATION_CLASSES": [
         'rest_framework.authentication.SessionAuthentication',
         "apps.api.authentication.KeyAuthentication",
         'rest_framework.authentication.BasicAuthentication',
     ],
-    'DEFAULT_RENDERER_CLASSES': DRF_DEFAULT_RENDERER_CLASSES,
     "DEFAULT_PERMISSION_CLASSES": ["apps.api.permissions.ReadOnly"],
     'DEFAULT_VERSIONING_CLASS': "rest_framework.versioning.NamespaceVersioning",
     'DEFAULT_PARSER_CLASSES': ['rest_framework.parsers.JSONParser'],
@@ -393,7 +408,6 @@ REST_FRAMEWORK = {
     # }
 }
 
-
 # By Default swagger ui is available only to admin user. You can change permission classs to change that
 # See more configuration options at https://drf-spectacular.readthedocs.io/en/latest/settings.html#settings
 SPECTACULAR_SETTINGS = {
@@ -402,15 +416,17 @@ SPECTACULAR_SETTINGS = {
     "VERSION": "1.0.0",
     "SERVE_PERMISSIONS": ["rest_framework.permissions.IsAdminUser"],
     "SERVERS": [
-        {"url": "http://0.0.0.0.:8000", "description": "Local Development server"},
-        {"url": "https://127.0.0.1:8000", "description": "Local Development server"},
-        {"url": "http://example.com:8000", "description": "Local Development server"},
-        {"url": "https://inversionesyfinanzas.xyz", "description": "Production server"},
+        {"url": f"{PROTOCOL}0.0.0.0{PORT}", "description": "Local Development server"},
+        {"url": f"{PROTOCOL}127.0.0.1{PORT}", "description": "Local Development server"},
+        {"url": f"{PROTOCOL}{CURRENT_DOMAIN}{PORT}", "description": "Local Development server"},
+        {"url": f"{SECURE_PROTOCOL}{MAIN_DOMAIN}", "description": "Production server"},
     ],
 }
 # API versions
 # ------------------------------------------------------------------------------
 API_VERSION = {'CURRENT_VERSION': 'v1'}
+
+
 
 # Tags
 # ------------------------------------------------------------------------------
@@ -427,141 +443,6 @@ MESSAGE_TAGS = {
 # GEOIP
 # ------------------------------------------------------------------------------
 GEOIP_PATH = str(ROOT_DIR / "geoip")
-
-# CKEditor
-# ------------------------------------------------------------------------------
-# CKEDITOR_BASEPATH = STATIC_ROOT+"/ckeditor/ckeditor/"
-
-CKEDITOR_UPLOAD_PATH = "uploads/"
-
-CKEDITOR_CONFIGS ={
-    'default': {
-        'toolbar': 'Full',
-        'toolbar_Full':
-            [
-                {
-                    'name': 'clipboard',
-                    'items': [
-                        'Cut', 'Copy', 'Paste', 'PasteText', 'PasteFromWord', '-', 'Undo', 'Redo',
-                    ]
-                },
-                {
-                    'name': 'editing',
-                    'items': [
-                        'Find', 'Replace', '-', 'SelectAll', '-', 'SpellChecker', 'Scayt',
-                    ]
-                },
-                {
-                    'name': 'basics',
-                    'items': [
-                        'Bold', 'Italic', 'Underline', 'NumberedList', 'BulletedList', 'Link',
-                        'Unlink', 'Anchor', 'Table',
-                    ]
-                },
-                {
-                    'name': 'tools',
-                    'items': [
-                        'Maximize',
-                    ],
-                },
-                {
-                    'name': 'insert',
-                    'items': [
-                        'Image', 'Source',
-                    ],
-                },
-            ],
-        'startupFocus': False,
-        'pasteFromWordPromptCleanup': True,
-        'pasteFromWordRemoveFontStyles': True,
-        'disableNativeSpellChecker': False,
-        'extraPlugins': 'scayt',
-        'scayt_autoStartup': True,
-        'removePlugins': 'elementspath',
-        'resize_enabled': False,
-        'forcePasteAsPlainText': True,
-        'ignoreEmptyParagraph': True,
-        'removeFormatAttributes': True,
-        'allowedContent': True
-    },
-    'simple' : {
-        'toolbar' : [
-		{ 'name': 'insert', 'items': [ 'Smiley' ] },
-		{ 'name': 'styles', 'items': [ 'Styles' ] },
-		{ 'name': 'colors', 'items': [ 'Colors' ] },
-        { 'name': 'links', 'items': [ 'Link', 'Unlink' ] },
-		{ 'name': 'basicstyles', 'items': [ 'Bold', 'Italic', 'Strike', '-', 'RemoveFormat' ] },
-	],
-    'width': 'auto',
-    },
-
-    'writter' : {
-        'toolbar': [
-        { 'name': 'clipboard', 'items': [ 'Undo', 'Redo' ] },
-        { 'name': 'styles', 'items': [ 'Styles', 'Format' ] },
-        { 'name': 'basicstyles', 'items': [ 'Bold', 'Italic', 'Strike', '-', 'RemoveFormat' ] },
-        { 'name': 'paragraph', 'items': [ 'NumberedList', 'BulletedList', '-', 'Outdent', 'Indent', '-', 'Blockquote' ] },
-        { 'name': 'links', 'items': [ 'Link', 'Unlink' ] },
-        { 'name': 'insert', 'items': [ 'Image', 'EmbedSemantic', 'Table' ] },
-        { 'name': 'tools', 'items': [ 'Maximize' ] },
-        { 'name': 'editing', 'items': [ 'Scayt' ] }
-    ],
-    'width': 'auto',
-    'extraPlugins': 'autoembed,embedsemantic,image2,uploadimage',
-
-    'removePlugins': 'image',
-
-    'bodyClass': 'article-editor',
-
-    'format_tags': 'p;h1;h2;h3;pre',
-
-    'removeDialogTabs': 'image:advanced;link:advanced',
-
-    'stylesSet': [
-
-        { 'name': 'Marker',			'element': 'span', 'attributes': { 'class': 'marker' } },
-        { 'name': 'Cited Work',		'element': 'cite' },
-        { 'name': 'Inline Quotation',	'element': 'q' },
-
-
-        {
-            'name': 'Special Container',
-            'element': 'div',
-            'styles': {
-                'padding': '5px 10px',
-                'background': '#eee',
-                'border': '1px solid #ccc'
-            }
-        },
-        {
-            'name': 'Compact table',
-            'element': 'table',
-            'attributes': {
-                'cellpadding': '5',
-                'cellspacing': '0',
-                'border': '1',
-                'bordercolor': '#ccc'
-            },
-            'styles': {
-                'border-collapse': 'collapse'
-            }
-        },
-        { 'name': 'Borderless Table',		'element': 'table',	'styles': { 'border-style': 'hidden', 'background-color': '#E6E6FA' } },
-        { 'name': 'Square Bulleted List',	'element': 'ul',		'styles': { 'list-style-type': 'square' } },
-
-
-        { 'name': 'Illustration', 'type': 'widget', 'widget': 'image', 'attributes': { 'class': 'image-illustration' } },
-
-        { 'name': '240p', 'type': 'widget', 'widget': 'embedSemantic', 'attributes': { 'class': 'embed-240p' } },
-        { 'name': '360p', 'type': 'widget', 'widget': 'embedSemantic', 'attributes': { 'class': 'embed-360p' } },
-        { 'name': '480p', 'type': 'widget', 'widget': 'embedSemantic', 'attributes': { 'class': 'embed-480p' } },
-        { 'name': '720p', 'type': 'widget', 'widget': 'embedSemantic', 'attributes': { 'class': 'embed-720p' } },
-        { 'name': '1080p', 'type': 'widget', 'widget': 'embedSemantic', 'attributes': { 'class': 'embed-1080p' } }
-    ]
-    }
-}
-
-
 
 # FInancial data KEYS
 # ------------------------------------------------------------------------------
@@ -612,9 +493,9 @@ IMAGEKIT_PUBLIC_KEY = env.str('IMAGEKIT_PUBLIC_KEY')
 IMAGEKIT_URL_ENDPOINT = env.str('IMAGEKIT_URL_ENDPOINT')
 
 IMAGE_KIT = ImageKit(
-    private_key = IMAGEKIT_PRIVATE_KEY,
-    public_key = IMAGEKIT_PUBLIC_KEY,
-    url_endpoint = IMAGEKIT_URL_ENDPOINT
+    private_key=IMAGEKIT_PRIVATE_KEY,
+    public_key=IMAGEKIT_PUBLIC_KEY,
+    url_endpoint=IMAGEKIT_URL_ENDPOINT
 )
 
 # STRIPE

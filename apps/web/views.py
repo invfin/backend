@@ -6,10 +6,9 @@ from django.contrib import messages
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views.generic import (
-    CreateView, 
+    CreateView,
     DetailView,
     ListView,
-    TemplateView,
     RedirectView
 )
 from django.contrib.auth.mixins import UserPassesTestMixin
@@ -22,7 +21,7 @@ from apps.web.models import WebsiteLegalPage, WebsiteEmail
 from apps.web.forms import ContactForm, WebEmailForm
 
 
-class HomePage(SEOTemplateView):    
+class HomePage(SEOTemplateView):
     def render_to_response(self, context, **response_kwargs):
         writter = HostChecker(self.request).return_writter()
         if writter:
@@ -75,10 +74,10 @@ def soporte_view(request):
     form = ContactForm(initial=initial)
     public_key = settings.GOOGLE_RECAPTCHA_PUBLIC_KEY
     context = {
-        'form':form, 
+        'form':form,
         'public_key':public_key,
         'meta_title':'Soporte'}
-        
+
     if request.method == 'POST':
         form = ContactForm(request.POST)
         if form.is_valid():
@@ -107,7 +106,7 @@ def soporte_view(request):
 
 class ExcelRedirectView(RedirectView):
     permanent = True
-    
+
     def get_redirect_url(self, *args, **kwargs):
         return reverse("business:product", kwargs={"slug": "excel-inteligente-inifito"})
 
@@ -129,7 +128,7 @@ class CreateWebEmailView(BaseWebView, CreateView):
 
     def get_success_url(self) -> str:
         return reverse("web:manage_engagement_web")
-    
+
 
 def handler403(request, exception):
     return render(request, 'errors/403.html')

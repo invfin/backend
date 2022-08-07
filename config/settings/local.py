@@ -3,10 +3,6 @@ from .base import env
 
 # GENERAL
 # ------------------------------------------------------------------------------
-BASAE_DOMAIN = "example.com"
-CURRENT_DOMAIN = f"{CURRENT_DOMAIN}{PORT}"
-FULL_DOMAIN = f'{PROTOCOL}{CURRENT_DOMAIN}'
-
 # https://docs.djangoproject.com/en/dev/ref/settings/#secret-key
 SECRET_KEY = env(
     "DJANGO_SECRET_KEY",
@@ -14,6 +10,12 @@ SECRET_KEY = env(
 )
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = ["localhost", "0.0.0.0", "127.0.0.1", ".example.com"]
+
+# DATABASES
+# ------------------------------------------------------------------------------
+# https://docs.djangoproject.com/en/dev/ref/settings/#databases
+DATABASES = {"default": env.db("DATABASE_URL")}
+DATABASES["default"]["ATOMIC_REQUESTS"] = True
 
 # CACHES
 # ------------------------------------------------------------------------------
@@ -29,23 +31,6 @@ CACHES = {
         'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
     }
 }
-
-# SECURITY
-# ------------------------------------------------------------------------------
-# https://docs.djangoproject.com/en/dev/ref/settings/#session-cookie-httponly
-SESSION_COOKIE_NAME = "sessionid"
-SESSION_COOKIE_DOMAIN = f".{BASAE_DOMAIN}"
-# Whether to save the session data on every request.
-SESSION_SAVE_EVERY_REQUEST = False
-SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
-# https://docs.djangoproject.com/en/dev/ref/settings/#csrf-cookie-httponly
-CSRF_COOKIE_HTTPONLY = True
-CSRF_COOKIE_DOMAIN = f".{BASAE_DOMAIN}"
-CSRF_TRUSTED_ORIGINS = [f".{BASAE_DOMAIN}", f"{BASAE_DOMAIN}"]
-# https://docs.djangoproject.com/en/dev/ref/settings/#secure-browser-xss-filter
-SECURE_BROWSER_XSS_FILTER = True
-# https://docs.djangoproject.com/en/dev/ref/settings/#x-frame-options
-X_FRAME_OPTIONS = "DENY"
 
 # EMAIL
 # ------------------------------------------------------------------------------
@@ -92,14 +77,6 @@ if env("USE_DOCKER") == "yes":
 # ------------------------------------------------------------------------------
 # https://django-extensions.readthedocs.io/en/latest/installation_instructions.html#configuration
 INSTALLED_APPS += ["django_extensions"]  # noqa F405
-# Celery
-# ------------------------------------------------------------------------------
-
-# http://docs.celeryproject.org/en/latest/userguide/configuration.html#task-eager-propagates
-CELERY_TASK_EAGER_PROPAGATES = True
-# Your stuff...
-# ------------------------------------------------------------------------------
-REST_FRAMEWORK['DEFAULT_SCHEMA_CLASS'] = "drf_spectacular.openapi.AutoSchema"
 
 # CORS
 # ------------------------------------------------------------------------------

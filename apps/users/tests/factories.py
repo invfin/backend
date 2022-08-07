@@ -5,6 +5,10 @@ from factory import Faker, post_generation
 from factory.django import DjangoModelFactory
 
 
+class ExampleUser:
+    pass
+
+
 class UserFactory(DjangoModelFactory):
     id = 1
     username = 'Lucas'

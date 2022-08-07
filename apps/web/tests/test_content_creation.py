@@ -20,13 +20,13 @@ from apps.web.models import (
 class WebsiteContentCreationTest(TestCase):
     @classmethod
     def setUpTestData(cls) -> None:
-        cls.content = baker.make(DefaultContent, **cls.filters)
-        cls.title = baker.make(DefaultTilte, **cls.filters)
-        cls.emojis = baker.make(Emoji, 2)
         cls.filters = {
             "for_content": social_constants.WEB,
             "purpose": web_constants.CONTENT_FOR_ENGAGEMENT
         }
+        cls.content = baker.make(DefaultContent, **cls.filters)
+        cls.title = baker.make(DefaultTilte, **cls.filters)
+        cls.emojis = baker.make(Emoji, 2)
 
     def test_create_title(self):
         custom_title = "Custom title"
@@ -61,17 +61,19 @@ class WebsiteContentCreationTest(TestCase):
         )
 
     def test_create_save_email(self):
+        web_email_type = web_constants.CONTENT_FOR_ENGAGEMENT
         base_filters = {
             "for_content": social_constants.WEB,
-            "purpose": web_constants.CONTENT_FOR_ENGAGEMENT
+            "purpose": web_email_type
         }
+
         title_filter = {}
         content_filter = {}
         title_filter.update(base_filters)
         content_filter.update(base_filters)
 
-        title_dict = WebsiteContentCreation().create_title(title, title_filter)
-        content_dict = WebsiteContentCreation().create_content(content, content_filter)
+        title_dict = WebsiteContentCreation().create_title(None, title_filter)
+        content_dict = WebsiteContentCreation().create_content(None, content_filter)
         first_emoji, last_emoji = WebsiteContentCreation().create_emojis()
 
         title = title_dict["title"]
@@ -86,7 +88,7 @@ class WebsiteContentCreationTest(TestCase):
         expected_web_email.title_emojis.add(*[first_emoji, last_emoji])
 
         web_email = WebsiteContentCreation.create_save_email(
-            web_constants.CONTENT_FOR_ENGAGEMENT
+            web_email_type
         )
 
         self.assertEqual(expected_web_email, web_email)
