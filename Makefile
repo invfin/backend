@@ -91,7 +91,7 @@ requirements:
 	docker-compose -f local.yml run invfin rm -rf temp_venv/
 
 reset_migrations:
-	docker-compose -f local.yml run --rm django /reset_migrations.sh
+	docker-compose -f local.yml run --rm invfin /reset_migrations.sh
 
 # Postgres
 shell_db:
