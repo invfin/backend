@@ -5,7 +5,8 @@ from apps.socialmedias import constants as social_constants
 
 
 class WebsiteContentCreation:
-    def create_title(self, title:str=None, filter:Dict={}) -> Dict:
+    @classmethod
+    def create_title(cls, title: str = None, filter: Dict = {}) -> Dict:
         title_dict = {"title": title}
         if not title:
             title = DefaultTilte.objects.random_title(filter)
@@ -13,25 +14,27 @@ class WebsiteContentCreation:
             title_dict['title'] = title.title
         return title_dict
 
-    def create_content(self, content:str=None, filter:Dict={}) -> Dict:
+    @classmethod
+    def create_content(cls, content: str = None, filter: Dict = {}) -> Dict:
         content_dict = {"content": content}
         if not content:
             content = DefaultContent.objects.random_content(filter)
             content_dict['default_content'] = content
             content_dict['content'] = content.content
         return content_dict
-    
-    def create_emojis(self) -> Tuple[Emoji, Emoji]:
+
+    @classmethod
+    def create_emojis(cls) -> Tuple[Emoji, Emoji]:
         emojis = Emoji.objects.random_emojis(2)
         first_emoji = emojis[0]
         last_emoji = emojis[1]
         return first_emoji, last_emoji
-    
+
     @classmethod
     def create_save_email(
         cls,
         web_email_type: str,
-        title: str = None, 
+        title: str = None,
         content: str = None,
         title_filter: Dict = {},
         content_filter: Dict = {}
@@ -43,9 +46,9 @@ class WebsiteContentCreation:
         title_filter.update(base_filters)
         content_filter.update(base_filters)
 
-        title_dict = cls().create_title(title, title_filter)
-        content_dict = cls().create_content(content, content_filter)
-        first_emoji, last_emoji = cls().create_emojis()
+        title_dict = cls.create_title(title, title_filter)
+        content_dict = cls.create_content(content, content_filter)
+        first_emoji, last_emoji = cls.create_emojis()
 
         title = title_dict["title"]
         title_dict["title"] = f"{first_emoji}{title}{last_emoji}"

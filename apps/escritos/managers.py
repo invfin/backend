@@ -2,6 +2,8 @@ import random
 
 from django.db.models import Manager
 
+# from apps.general.constants import
+
 
 class TermManager(Manager):
     def get_random(self, query=None):
@@ -11,9 +13,9 @@ class TermManager(Manager):
 
     def clean_terms(self):
         return self.filter(status = 1)
-    
+
     def clean_terms_with_resume(self):
         return self.filter(status = 1, resume__isnull=False)
-    
+
     def random_clean(self):
         return self.get_random(self.clean_terms_with_resume())

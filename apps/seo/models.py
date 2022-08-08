@@ -1,4 +1,3 @@
-from ckeditor.fields import RichTextField
 from django.contrib.auth import get_user_model
 from django.db.models import (
     CASCADE,
@@ -8,21 +7,19 @@ from django.db.models import (
     DateTimeField,
     ForeignKey,
     JSONField,
-    ManyToManyField,
     Model,
     PositiveBigIntegerField,
-    SlugField,
     TextField,
 )
 from django.utils import timezone
 
+from apps.general.mixins import BaseToAll
 from apps.empresas.models import Company
 from apps.escritos.models import Term
 from apps.preguntas_respuestas.models import Question
 from apps.public_blog.models import PublicBlog
 from apps.socialmedias.constants import SOCIAL_MEDIAS
-
-from . import constants
+from apps.seo.managers import VisiteurManager
 
 User = get_user_model()
 
@@ -33,7 +30,7 @@ User = get_user_model()
 
 # from django.contrib.sessions.models import Session
 
-class Visiteur(Model):
+class Visiteur(BaseToAll):
     ip = CharField(max_length=50, null=True, blank=True)
     session_id = CharField(max_length=1000, null=True, blank=True)
     HTTP_USER_AGENT = CharField(max_length=1000, null=True, blank=True)
@@ -51,22 +48,15 @@ class Visiteur(Model):
     continent_name = CharField(max_length=300, null=True, blank=True)
     first_visit_date = DateTimeField(auto_now_add=True)
     is_bot = BooleanField(default=False)
+    objects = VisiteurManager()
 
     class Meta:
         verbose_name = "Visiteur"
         db_table = "visiteurs"
-    
+
     def __str__(self):
         return str(self.id)
-    
-    @property
-    def app_label(self):
-        return self._meta.app_label
-    
-    @property
-    def object_name(self):
-        return self._meta.object_name
-    
+
 
 class MetaParameters(Model):
     meta_title = CharField(max_length=999,null=True, blank=True)
@@ -77,7 +67,7 @@ class MetaParameters(Model):
     meta_author = ForeignKey(User, on_delete=SET_NULL, null=True)
     published_time = DateTimeField(auto_now=True)
     modified_time = DateTimeField(auto_now=True)
-    created_at = DateTimeField(default=timezone.now)    
+    created_at = DateTimeField(default=timezone.now)
     views = PositiveBigIntegerField(default=0)
     schema_org = JSONField(null=True, blank=True)
 
@@ -119,7 +109,7 @@ class VisiteurJourney(Journey):
     class Meta:
         verbose_name = "Historial visitas anónimos"
         db_table = "visits_historial_visiteurs"
-    
+
 
 class UserJourney(Journey):
     user = ForeignKey(User, null = True, blank=True, on_delete=CASCADE, related_name="journeys")
@@ -144,7 +134,7 @@ class BaseModelVisited(Model):
 
     class Meta:
         abstract = True
-    
+
     def __str__(self) -> str:
         try:
             response = self.user.username
@@ -164,27 +154,27 @@ class BaseVisiteurModelVisited(BaseModelVisited):
 class BaseUserModelVisited(BaseModelVisited):
     user = ForeignKey(User, on_delete=SET_NULL, null=True)
     visit = ForeignKey(UserJourney, on_delete=SET_NULL, null=True)
-    
+
     class Meta:
         abstract = True
 
 
 class VisiteurCompanyVisited(BaseVisiteurModelVisited):
     model_visited = ForeignKey(
-        Company, 
-        on_delete=SET_NULL, 
+        Company,
+        on_delete=SET_NULL,
         null=True,
     )
 
     class Meta:
         verbose_name = "Company visited by visiteur"
         db_table = "seo_companies_visited_visiteurs"
-    
+
 
 class UserCompanyVisited(BaseUserModelVisited):
     model_visited = ForeignKey(
-        Company, 
-        on_delete=SET_NULL, 
+        Company,
+        on_delete=SET_NULL,
         null=True,
     )
 
@@ -199,7 +189,7 @@ class VisiteurPublicBlogVisited(BaseVisiteurModelVisited):
     class Meta:
         verbose_name = "PublicBlog visited by visiteur"
         db_table = "seo_public_blogs_visited_visiteurs"
-    
+
 
 class UserPublicBlogVisited(BaseUserModelVisited):
     model_visited = ForeignKey(PublicBlog, on_delete=SET_NULL, null=True)
@@ -215,7 +205,7 @@ class VisiteurQuestionVisited(BaseVisiteurModelVisited):
     class Meta:
         verbose_name = "Question visited by visiteur"
         db_table = "seo_questions_visited_visiteurs"
-    
+
 
 class UserQuestionVisited(BaseUserModelVisited):
     model_visited = ForeignKey(Question, on_delete=SET_NULL, null=True)
@@ -231,7 +221,7 @@ class VisiteurTermVisited(BaseVisiteurModelVisited):
     class Meta:
         verbose_name = "Term visited by visiteur"
         db_table = "seo_terms_visited_visiteurs"
-    
+
 
 class UserTermVisited(BaseUserModelVisited):
     model_visited = ForeignKey(Term, on_delete=SET_NULL, null=True)

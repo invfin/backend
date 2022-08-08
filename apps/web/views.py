@@ -6,21 +6,22 @@ from django.contrib import messages
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views.generic import (
-    CreateView, 
+    CreateView,
     DetailView,
+    ListView,
     RedirectView
 )
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth.mixins import UserPassesTestMixin
 
 from apps.general.utils import HostChecker
 from apps.public_blog.models import WritterProfile
 from apps.seo.views import SEOTemplateView
-from apps.web.models import WebsiteLegalPage
+from apps.web.models import WebsiteLegalPage, WebsiteEmail
 
-from .forms import ContactForm, WebEmailForm
+from apps.web.forms import ContactForm, WebEmailForm
 
 
-class HomePage(SEOTemplateView):    
+class HomePage(SEOTemplateView):
     def render_to_response(self, context, **response_kwargs):
         writter = HostChecker(self.request).return_writter()
         if writter:
@@ -73,10 +74,10 @@ def soporte_view(request):
     form = ContactForm(initial=initial)
     public_key = settings.GOOGLE_RECAPTCHA_PUBLIC_KEY
     context = {
-        'form':form, 
+        'form':form,
         'public_key':public_key,
         'meta_title':'Soporte'}
-        
+
     if request.method == 'POST':
         form = ContactForm(request.POST)
         if form.is_valid():
@@ -105,27 +106,28 @@ def soporte_view(request):
 
 class ExcelRedirectView(RedirectView):
     permanent = True
-    
+
     def get_redirect_url(self, *args, **kwargs):
         return reverse("business:product", kwargs={"slug": "excel-inteligente-inifito"})
 
 
-class CreateWebEmailView(UserPassesTestMixin, CreateView):
-    form_class = WebEmailForm
-    template_name = 'mandar_emails.html'
+class BaseWebView(UserPassesTestMixin):
+    def test_func(self):
+        return self.request.user.is_superuser
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        return context
+
+class WebEngagementView(BaseWebView, ListView):
+    template_name = 'engagement/email_management.html'
+    model = WebsiteEmail
+    context_object_name = "web_emails"
+
+
+class CreateWebEmailView(BaseWebView, CreateView):
+    form_class = WebEmailForm
+    template_name = 'engagement/mandar_emails.html'
 
     def get_success_url(self) -> str:
-        return reverse("users:user_inicio")
-
-    def test_func(self):
-        valid = False
-        if self.request.user.is_superuser:
-            valid = True
-        return valid
+        return reverse("web:manage_engagement_web")
 
 
 def handler403(request, exception):

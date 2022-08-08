@@ -10,6 +10,10 @@ User = get_user_model()
 super_user = baker.make(User, is_superuser=True)
 regular_user = baker.make(User, is_superuser=False)
 
+class ExampleUser:
+    pass
+
+
 class UserFactory(DjangoModelFactory):
     id = 1
     username = 'Lucas'
