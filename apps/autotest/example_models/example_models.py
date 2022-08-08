@@ -3,7 +3,7 @@ import os
 import random
 import string
 
-from autotest.exceptions import ArgsAndKwargsExcpetion
+from example_models.exceptions import ArgsAndKwargsExcpetion
 
 
 class ExampleModel:

@@ -3,8 +3,7 @@ from django.test import TestCase
 from apps.empresas.company.update import UpdateCompany
 from apps.empresas.models import Company
 
-from .constants import *
-from .factories import CompanyFactory, ExchangeFactory, ExchangeOrganisationFactory
+from apps.empresas.tests.factories import CompanyFactory, ExchangeFactory, ExchangeOrganisationFactory
 
 
 class TestCompanyManagers(TestCase):
@@ -19,7 +18,7 @@ class TestCompanyManagers(TestCase):
             exchange_ticker='NYSE',
             main_org=self.usa_main
         )
-        
+
         self.euro = ExchangeFactory(
             exchange_ticker='EURO',
             main_org=self.fr_main
@@ -38,9 +37,9 @@ class TestCompanyManagers(TestCase):
             ticker='INTC',
             exchange=self.euro
         )
-        
-        
-    
+
+
+
     def test_clean_companies(self):
         all_clean = Company.objects.clean_companies()
         all_clean_by_exchange = Company.objects.clean_companies_by_main_exchange('France')

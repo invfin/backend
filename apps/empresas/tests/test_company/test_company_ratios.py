@@ -1,14 +1,12 @@
 import time
 import vcr
 
-import vcr
-
 from django.test import TestCase
 
 from apps.empresas.company.update import UpdateCompany
 
-from .constants import *
-from .factories import CompanyFactory
+from apps.empresas.tests import data
+from apps.empresas.tests.factories import CompanyFactory
 
 
 company_vcr = vcr.VCR(
@@ -38,10 +36,16 @@ class TestScrapCompanyInfo(TestCase):
         self.assertEqual(need_update2, 'updated')
 
     def test_all_data(self):
-        income_statements, balance_sheets, cashflow_statements = INCOME_STATEMENT, BALANCE_SHEET, CASHFLOW_STATEMENT
-
-        current_data = self.company_update.generate_current_data(income_statements, balance_sheets, cashflow_statements)
-        last_year_data = self.company_update.generate_last_year_data(income_statements, balance_sheets, cashflow_statements)
+        current_data = self.company_update.generate_current_data(
+            data.INCOME_STATEMENT,
+            data.BALANCE_SHEET,
+            data.CASHFLOW_STATEMENT
+            )
+        last_year_data = self.company_update.generate_last_year_data(
+            data.INCOME_STATEMENT,
+            data.BALANCE_SHEET,
+            data.CASHFLOW_STATEMENT
+            )
 
         all_data = current_data
         all_data.update(last_year_data)
