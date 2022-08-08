@@ -9,8 +9,8 @@ from django.views.generic import RedirectView
 
 from apps.general.models import Currency
 from apps.seo.views import SEODetailView, SEOListView, SEOTemplateView
+from apps.business.models import Customer, Product, ProductComplementary, TransactionHistorial
 
-from .models import Customer, Product, ProductComplementary, TransactionHistorial
 
 User = get_user_model()
 stripe.api_key = settings.STRIPE_PRIVATE
@@ -93,8 +93,7 @@ class CheckoutRedirectView(RedirectView):
         customer, created = Customer.objects.get_or_create(user=user,defaults={'stripe_id': session.customer})
         self.save_transaction(session, customer, product_complementary)
         messages.success(request, 'Gracias por tu confianza.')
-        url = reverse('business:all_products')
-        return HttpResponseRedirect(url)
+        return HttpResponseRedirect(reverse('business:all_products'))
 
 
 class CreateUserFromCustomerRecentPurchase(SEOTemplateView):

@@ -10,7 +10,6 @@ from django.db.models import (
     ForeignKey,
     IntegerField,
     JSONField,
-    Model,
     OneToOneField,
     SlugField,
 )
@@ -22,7 +21,7 @@ from apps.general.models import Currency
 from apps.general.mixins import BaseToAll
 from apps.web.models import Promotion
 
-from .managers import ProductManager
+from apps.business.managers import ProductManager
 
 User = get_user_model()
 
