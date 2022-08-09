@@ -7,7 +7,7 @@ import datetime
 
 class DataCreator:
     @staticmethod
-    def create_random_string(min_value: int = 1, max_value: int = 1000):
+    def create_random_string(min_value: int = 10, max_value: int = 10000, **kwargs):
         characters = string.ascii_letters + string.digits + string.punctuation
         number = random.randint(min_value, max_value)
         return ''.join(random.choice(characters) for _ in range(number))
@@ -17,8 +17,8 @@ class DataCreator:
         return bool(random.randint(0, 1) == 1)
 
     @staticmethod
-    def create_random_slug(max_value: int = 1000):
-        return str(uuid.UUID(bytes=os.urandom(max_value), version=4))
+    def create_random_slug():
+        return str(uuid.uuid4())
 
     @staticmethod
     def create_random_date(day: int = None, month: int = None, year: int = None):
