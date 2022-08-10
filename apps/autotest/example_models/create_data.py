@@ -7,10 +7,10 @@ from .constants import LIST_EMAIL_DOMAINS
 
 class DataCreator:
     @staticmethod
-    def create_random_string(min_value: int = 10, max_value: int = 800, separation: str = ""):
+    def create_random_string(min_value: int = 10, max_value: int = 800):
         characters = string.ascii_letters + string.digits + string.punctuation
         number = random.randint(min_value, max_value)
-        return separation.join(random.choice(characters) for _ in range(number))[:max_value]
+        return "".join(random.choice(characters) for _ in range(number))[:max_value]
 
     @staticmethod
     def create_random_text(min_value: int = 1000, max_value: int = 1000000, separation: str = " "):

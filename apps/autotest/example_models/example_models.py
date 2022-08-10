@@ -3,17 +3,17 @@ from ..example_models.exceptions import ArgsAndKwargsExcpetion
 
 
 class ExampleModel(DataCreator):
-    # def __init__(
-    #     self,
-    #     model,
-    #     quantity: int,
-    #     in_bulk: bool,
-    #     full_all_fields: bool,
-    # ) -> None:
-    #     self.model = model
-    #     self.quantity = quantity
-    #     self.in_bulk = in_bulk
-    #     self.full_all_fields = full_all_fields
+    def __init__(
+        self,
+        model,
+        quantity: int,
+        in_bulk: bool,
+        full_all_fields: bool,
+    ) -> None:
+        self.model = model
+        self.quantity = quantity
+        self.in_bulk = in_bulk
+        self.full_all_fields = full_all_fields
 
     @classmethod
     def create(
@@ -24,43 +24,47 @@ class ExampleModel(DataCreator):
         full_all_fields: bool = True,
         **kwargs
     ):
+        creator = cls(model, quantity, in_bulk, full_all_fields)
         if quantity > 1:
             if in_bulk:
-                return cls().get_model_manager(model).bulk_create([
-                    model(
-                        cls().inspect_model(model, full_all_fields, **kwargs)
-                    ) for number in range(quantity)
-                ])
+                return creator.create_in_bulk(**kwargs)
             else:
-                return [cls().create_model(model, full_all_fields, **kwargs) for number in range(quantity)]
+                return [creator.create_model(**kwargs) for number in range(quantity)]
         else:
-            return cls().create_model(model, full_all_fields, **kwargs)
+            return creator.create_model(**kwargs)
 
-    def get_model_manager(self, model: type) -> type:
+    def get_model_manager(self) -> type:
         try:
-            manager = model._default_manager
+            manager = self.model._default_manager
         except AttributeError:
-            manager = model.objects
+            manager = self.model.objects
         finally:
             return manager
 
-    def create_model(self, model: type, full_all_fields: bool, **kwargs) -> type:
-        model_data = self.inspect_model(model, full_all_fields, **kwargs)
-        kwargs.update(model_data)
-        return self.get_model_manager(model).create(**kwargs)
+    def create_in_bulk(self, **kwargs):
+        pre_objects = [
+            self.model(
+                **self.inspect_model(**kwargs)
+            ) for number in range(self.quantity)
+        ]
+        return self.get_model_manager().bulk_create(pre_objects)
 
-    def inspect_model(self, model: type, full_all_fields: bool, **kwargs) -> dict:
+    def create_model(self, **kwargs) -> type:
+        model_data = self.inspect_model(**kwargs)
+        kwargs.update(model_data)
+        return self.get_model_manager().create(**kwargs)
+
+    def inspect_model(self, **kwargs) -> dict:
         fields_info = dict()
         # all_model_fields = model._meta.get_fields()
-        for field in model._meta.fields:
+        for field in self.model._meta.fields:
             field_name = field.name
             if field_name == "id":
                 continue
-
             if field_name in kwargs:
                 fields_info[field_name] = kwargs.pop(field_name)
             else:
-                if not full_all_fields:
+                if not self.full_all_fields:
                     if field.__dict__.get("null"):
                         continue
                 fields_info.update(self.inspect_field(field, field_name, **kwargs))
