@@ -1,5 +1,4 @@
 from .create_data import DataCreator
-from ..example_models.exceptions import ArgsAndKwargsExcpetion
 
 
 class ExampleModel(DataCreator):
@@ -64,20 +63,24 @@ class ExampleModel(DataCreator):
             if field_name in kwargs:
                 fields_info[field_name] = kwargs.pop(field_name)
             else:
-                if not self.full_all_fields:
-                    if field.__dict__.get("null"):
+                if self.full_all_fields is False:
+                    field_allow_null = field.__dict__.get("null")
+                    if field_allow_null and field_allow_null is True:
+                        fields_info.update({field_name: None})
                         continue
-                fields_info.update(self.inspect_field(field, field_name, **kwargs))
+
+                fields_info.update(self.inspect_field(field, field_name))
 
         return fields_info
 
-    def inspect_field(self, field: type, field_name: str, **kwargs) -> dict:
+    def inspect_field(self, field: type, field_name: str) -> dict:
         field_type = field.get_internal_type()
         field_specs = field.__dict__
         max_length = field_specs.get("max_length")
+        extra_params = {}
         if max_length:
-            kwargs["max_value"] = max_length
-        return {field_name: self.generate_random_data_per_field(field_type, **kwargs)}
+            extra_params["max_value"] = max_length
+        return {field_name: self.generate_random_data_per_field(field_type, **extra_params)}
 
     def generate_random_data_per_field(
         self,
@@ -126,10 +129,13 @@ class ExampleModel(DataCreator):
             "BooleanField": ExampleModel.create_random_bool,
             "NullBooleanField": ExampleModel.create_random_bool,
 
-            "ForeignKey": self.create_model,
-            "OneToOneField": self.create_model,
+            "ForeignKey": self.return_none_by_now,
+            "OneToOneField": self.return_none_by_now,
             # "ManyToManyField": ExampleModel.alg(),
         }
         return data_generator[field_type](**kwargs)
+
+    def return_none_by_now(self, **kwargs):
+        return None
 
 

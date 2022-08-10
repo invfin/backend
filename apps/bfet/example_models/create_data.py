@@ -2,37 +2,53 @@ import uuid
 import random
 import string
 import datetime
+import textwrap
 
-from .constants import LIST_EMAIL_DOMAINS
+from .constants import LIST_EMAIL_DOMAINS, LOREM_TEXT
 
 class DataCreator:
     @staticmethod
-    def create_random_string(min_value: int = 10, max_value: int = 800):
-        characters = string.ascii_letters + string.digits + string.punctuation
-        number = random.randint(min_value, max_value)
-        return "".join(random.choice(characters) for _ in range(number))[:max_value]
+    def create_random_string(
+        max_value: int = 800,
+        use_punctuation: bool = False,
+        use_digits: bool = True
+    ):
+
+        characters = string.ascii_letters
+        if use_digits:
+            characters += string.digits
+        if use_punctuation:
+            characters += string.punctuation
+
+        number = random.randint(10, max_value)
+        return "".join(random.choice(characters) for _ in range(number))
 
     @staticmethod
-    def create_random_text(min_value: int = 1000, max_value: int = 1000000, separation: str = " "):
-        return DataCreator.create_random_string(min_value, max_value, separation)
+    def create_random_text(max_value: int = 1000):
+        return textwrap.wrap(LOREM_TEXT, max_value)[0]
 
     @staticmethod
     def create_random_bool() -> bool:
         return bool(random.randint(0, 1) == 1)
 
     @staticmethod
-    def create_random_slug(min_value: int = 10, max_value: int = 800, separation: str = "-"):
-        return DataCreator.create_random_string(min_value, max_value, separation)
+    def create_random_slug(max_value: int = 800, use_digits: bool = True):
+        return "-".join(
+            [
+                DataCreator.create_random_string(3, 10, False, use_digits) for _ in range(4)
+            ]
+        )[:max_value]
+
 
     @staticmethod
-    def create_random_email(min_value: int = 10, max_value: int = 25):
-        email_name = DataCreator.create_random_string(min_value, max_value)
+    def create_random_email(max_value: int = 25):
+        email_name = DataCreator.create_random_string(max_value)
         email_domain = random.choice(LIST_EMAIL_DOMAINS)
         return f"{email_name}@{email_domain}"
 
     @staticmethod
-    def create_random_url(min_value: int = 10, max_value: int = 100, secure = True):
-        domain = DataCreator.create_random_string(min_value, max_value)
+    def create_random_url(max_value: int = 100, secure = True):
+        domain = DataCreator.create_random_string(max_value)
         top_level_domain = random.choice(LIST_EMAIL_DOMAINS).split(".")[-1]
         protocol = "https" if secure else "http"
         return f"{protocol}://{domain}.{top_level_domain}"

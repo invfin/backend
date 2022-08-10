@@ -1,5 +1,5 @@
-from autotest.create_tests import CreateTests
-from autotest.settings import ConfigFiles
+from .create_tests import CreateTests
+from .settings import ConfigFiles
 
 class Autotest(ConfigFiles, CreateTests):
     @classmethod
