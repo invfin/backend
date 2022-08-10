@@ -1,24 +1,51 @@
 import uuid
-import os
 import random
 import string
 import datetime
 
+from .constants import LIST_EMAIL_DOMAINS
 
 class DataCreator:
     @staticmethod
-    def create_random_string(min_value: int = 10, max_value: int = 10000, **kwargs):
+    def create_random_string(min_value: int = 10, max_value: int = 800, separation: str = ""):
         characters = string.ascii_letters + string.digits + string.punctuation
         number = random.randint(min_value, max_value)
-        return ''.join(random.choice(characters) for _ in range(number))
+        return separation.join(random.choice(characters) for _ in range(number))[:max_value]
+
+    @staticmethod
+    def create_random_text(min_value: int = 1000, max_value: int = 1000000, separation: str = " "):
+        return DataCreator.create_random_string(min_value, max_value, separation)
 
     @staticmethod
     def create_random_bool() -> bool:
         return bool(random.randint(0, 1) == 1)
 
     @staticmethod
-    def create_random_slug():
-        return str(uuid.uuid4())
+    def create_random_slug(min_value: int = 10, max_value: int = 800, separation: str = "-"):
+        return DataCreator.create_random_string(min_value, max_value, separation)
+
+    @staticmethod
+    def create_random_email(min_value: int = 10, max_value: int = 25):
+        email_name = DataCreator.create_random_string(min_value, max_value)
+        email_domain = random.choice(LIST_EMAIL_DOMAINS)
+        return f"{email_name}@{email_domain}"
+
+    @staticmethod
+    def create_random_url(min_value: int = 10, max_value: int = 100, secure = True):
+        domain = DataCreator.create_random_string(min_value, max_value)
+        top_level_domain = random.choice(LIST_EMAIL_DOMAINS).split(".")[-1]
+        protocol = "https" if secure else "http"
+        return f"{protocol}://{domain}.{top_level_domain}"
+
+    @staticmethod
+    def create_random_uuid(kind: int = 4, **kwargs):
+        uuids = {
+            1: uuid.uuid1,
+            3: uuid.uuid3,
+            4: uuid.uuid4,
+            5: uuid.uuid5
+        }
+        return uuids[kind](**kwargs)
 
     @staticmethod
     def create_random_date(day: int = None, month: int = None, year: int = None):
