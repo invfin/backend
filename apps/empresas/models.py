@@ -1,6 +1,5 @@
 from datetime import datetime
 
-from django.contrib.auth import get_user_model
 from django.db.models import (
     SET_NULL,
     BooleanField,
@@ -18,10 +17,8 @@ from django.db.models import (
 from django.urls import reverse
 
 from apps.empresas.company.extension import CompanyExtended
+from apps.empresas.managers import CompanyManager, CompanyUpdateLogManager
 
-from .managers import CompanyManager, CompanyUpdateLogManager
-
-User = get_user_model()
 
 
 class ExchangeOrganisation(Model):
@@ -46,7 +43,7 @@ class Exchange(Model):
     country = ForeignKey("general.Country", on_delete=SET_NULL, null=True, blank=True)
     main_org = ForeignKey(ExchangeOrganisation, on_delete=SET_NULL, null=True, blank=True)
 
-    class Meta:        
+    class Meta:
         ordering = ['-exchange_ticker']
         verbose_name = "Exchange"
         verbose_name_plural = "Exchanges"
@@ -109,41 +106,41 @@ class Company(CompanyExtended):
 
     objects = CompanyManager()
 
-    class Meta:        
+    class Meta:
         verbose_name = "Company"
         verbose_name_plural = "Companies"
         db_table = "assets_companies"
         ordering = ['ticker']
-    
+
     def __str__(self):
         return str(self.ticker)
-    
+
     def get_absolute_url(self):
         return reverse("screener:company", kwargs={"ticker": self.ticker})
-    
+
     @property
     def full_name(self):
         return f'{self.ticker} {self.name}'
-    
+
     @property
     def has_meta_image(self):
         if (
-            'has_meta_image' in self.checkings and 
+            'has_meta_image' in self.checkings and
             self.check_checkings('has_meta_image')
         ):
             return True
         if self.remote_image_imagekit or self.remote_image_cloudinary:
             return True
         return False
-    
+
     @property
     def meta_image(self):
         return self.remote_image_imagekit if self.remote_image_imagekit else self.remote_image_cloudinary
-    
+
     @property
     def most_recent_year(self):
         return self.inc_statements.latest().date
-    
+
     @property
     def short_introduction(self):
         current_ratios = self.calculate_current_ratios()
@@ -161,19 +158,19 @@ class Company(CompanyExtended):
         f"La empresa cotiza a {round(current_ratios['current_price'], 2)}{currency} por acción, con "
         f"{current_ratios['average_shares_out']} acciones en circulación la empresa obtiene una capitalización "
         f"bursátil de {round(current_ratios['marketcap'], 2)}{currency}")
-    
+
     def check_checkings(self, main_dict: str) -> bool:
         status = self.checkings[main_dict]['state']
         if status == 'no':
             return False
         return True
-    
+
     def modify_checkings(self, main_dict: str, dict_state: str):
         dt = datetime.now()
         ts = datetime.timestamp(dt)
         self.checkings.update(
             {
-                main_dict: 
+                main_dict:
                 {
                     'state': dict_state,
                     'time': ts
@@ -241,7 +238,7 @@ class IncomeStatement(Model):
     net_total_other_income_expenses = FloatField(default=0, blank=True, null=True)
     income_before_tax = FloatField(default=0, blank=True, null=True)
     income_tax_expenses = FloatField(default=0, blank=True, null=True)
-    net_income = FloatField(default=0, blank=True, null=True)   
+    net_income = FloatField(default=0, blank=True, null=True)
     weighted_average_shares_outstanding = FloatField(default=0, blank=True, null=True)
     weighted_average_diluated_shares_outstanding = FloatField(default=0, blank=True, null=True)
 
@@ -251,7 +248,7 @@ class IncomeStatement(Model):
         verbose_name = "Income Statement"
         verbose_name_plural = "Income Statements"
         db_table = "assets_companies_income_statements"
-    
+
     def __str__(self):
         return self.company.ticker + str(self.date)
 
@@ -300,7 +297,7 @@ class BalanceSheet(Model):
     total_investments = FloatField(default=0, blank=True, null=True)
     total_debt = FloatField(default=0, blank=True, null=True)
     net_debt = FloatField(default=0, blank=True, null=True)
-   
+
     class Meta:
         get_latest_by = 'date'
         ordering = ['-date']
@@ -347,7 +344,7 @@ class CashflowStatement(Model):
     operating_cf = FloatField(default=0, blank=True, null=True)
     capex = FloatField(default=0, blank=True, null=True)
     fcf = FloatField(default=0, blank=True, null=True)
-    
+
     class Meta:
         get_latest_by = 'date'
         ordering = ['-date']
@@ -357,7 +354,7 @@ class CashflowStatement(Model):
 
     def __str__(self):
         return self.company.ticker + str(self.date)
-    
+
     @property
     def cash_conversion_ratio(self):
         return self.fcf / self.net_income if self.net_income != 0 else 0
@@ -366,11 +363,11 @@ class RentabilityRatio(Model):
     date = IntegerField(default=0)
     year = DateField(auto_now=True)
     company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="rentability_ratios")
-    roa = FloatField(default=0, blank=True, null=True) 
+    roa = FloatField(default=0, blank=True, null=True)
     roe = FloatField(default=0, blank=True, null=True)
     roc = FloatField(default=0, blank=True, null=True)
-    roce = FloatField(default=0, blank=True, null=True) 
-    rota = FloatField(default=0, blank=True, null=True) 
+    roce = FloatField(default=0, blank=True, null=True)
+    rota = FloatField(default=0, blank=True, null=True)
     roic = FloatField(default=0, blank=True, null=True)
     nopatroic = FloatField(default=0, blank=True, null=True)
     rogic = FloatField(default=0, blank=True, null=True)
@@ -388,7 +385,7 @@ class RentabilityRatio(Model):
 
 class LiquidityRatio(Model):
     date = IntegerField(default=0)
-    year = DateField(auto_now=True) 
+    year = DateField(auto_now=True)
     company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="liquidity_ratios")
     cash_ratio = FloatField(default=0, blank=True, null=True)
     current_ratio = FloatField(default=0, blank=True, null=True)
@@ -405,11 +402,11 @@ class LiquidityRatio(Model):
 
     def __str__(self):
         return self.company.ticker + str(self.date)
-    
+
 
 class MarginRatio(Model):
     date = IntegerField(default=0)
-    year = DateField(auto_now=True) 
+    year = DateField(auto_now=True)
     company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="margins")
     gross_margin = FloatField(default=0, blank=True, null=True)
     ebitda_margin = FloatField(default=0, blank=True, null=True)
@@ -433,7 +430,7 @@ class MarginRatio(Model):
 
 class FreeCashFlowRatio(Model):
     date = IntegerField(default=0)
-    year = DateField(auto_now=True) 
+    year = DateField(auto_now=True)
     company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="fcf_ratios")
     fcf_equity = FloatField(default=0, blank=True, null=True)
     unlevered_fcf = FloatField(default=0, blank=True, null=True)
@@ -453,7 +450,7 @@ class FreeCashFlowRatio(Model):
 
 class PerShareValue(Model):
     date = IntegerField(default=0)
-    year = DateField(auto_now=True) 
+    year = DateField(auto_now=True)
     company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="per_share_values")
     sales_ps = FloatField(default=0, blank=True, null=True)
     book_ps = FloatField(default=0, blank=True, null=True)
@@ -478,10 +475,10 @@ class PerShareValue(Model):
 
 class NonGaap(Model):
     date = IntegerField(default=0)
-    year = DateField(auto_now=True) 
+    year = DateField(auto_now=True)
     company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="non_gaap_figures")
     normalized_income = FloatField(default=0, blank=True, null=True)
-    effective_tax_rate = FloatField(default=0, blank=True, null=True)    
+    effective_tax_rate = FloatField(default=0, blank=True, null=True)
     nopat = FloatField(default=0, blank=True, null=True)
     net_working_cap = FloatField(default=0, blank=True, null=True)
     average_inventory = FloatField(default=0, blank=True, null=True)
@@ -502,7 +499,7 @@ class NonGaap(Model):
         ordering = ['-date']
         verbose_name = "Non GAAP figure"
         verbose_name_plural = "Non GAAP figures"
-        db_table = "assets_companies_non_gaap"    
+        db_table = "assets_companies_non_gaap"
 
     def __str__(self):
         return  str(self.date)
@@ -510,7 +507,7 @@ class NonGaap(Model):
 
 class OperationRiskRatio(Model):
     date = IntegerField(default=0)
-    year = DateField(auto_now=True) 
+    year = DateField(auto_now=True)
     company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="operation_risks_ratios")
     asset_coverage_ratio = FloatField(default=0, blank=True, null=True)
     cashFlowCoverageRatios = FloatField(default=0, blank=True, null=True)
@@ -527,15 +524,15 @@ class OperationRiskRatio(Model):
         ordering = ['-date']
         verbose_name = "Operation Risk Ratio"
         verbose_name_plural = "Operation Risk Ratios"
-        db_table = "assets_companies_operations_risk_ratio"    
+        db_table = "assets_companies_operations_risk_ratio"
 
     def __str__(self):
         return self.company.ticker + str(self.date)
-    
+
 
 class EnterpriseValueRatio(Model):
     date = IntegerField(default=0)
-    year = DateField(auto_now=True) 
+    year = DateField(auto_now=True)
     company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="ev_ratios")
     market_cap = FloatField(default=0, blank=True, null=True)
     enterprise_value = FloatField(default=0, blank=True, null=True)
@@ -558,7 +555,7 @@ class EnterpriseValueRatio(Model):
 
 class CompanyGrowth(Model):
     date = IntegerField(default=0)
-    year = DateField(auto_now=True) 
+    year = DateField(auto_now=True)
     company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="growth_rates")
     revenue_growth = FloatField(default=0, blank=True, null=True)
     cost_revenue_growth = FloatField(default=0, blank=True, null=True)
@@ -584,7 +581,7 @@ class CompanyGrowth(Model):
 
 class EficiencyRatio(Model):
     date = IntegerField(default=0)
-    year = DateField(auto_now=True) 
+    year = DateField(auto_now=True)
     company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="efficiency_ratios")
     asset_turnover = FloatField(default=0, blank=True, null=True)
     inventory_turnover = FloatField(default=0, blank=True, null=True)
@@ -610,7 +607,7 @@ class EficiencyRatio(Model):
 
 class PriceToRatio(Model):
     date = IntegerField(default=0)
-    year = DateField(auto_now=True) 
+    year = DateField(auto_now=True)
     company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="price_to_ratios")
     price_book = FloatField(default=0, blank=True, null=True)
     price_cf = FloatField(default=0, blank=True, null=True)
@@ -631,7 +628,7 @@ class PriceToRatio(Model):
 
     def __str__(self):
         return self.company.ticker + str(self.date)
-    
+
 
 class InstitutionalOrganization(Model):
     name = CharField(max_length=500, blank=True, null=True)
@@ -649,11 +646,11 @@ class TopInstitutionalOwnership(Model):
     date = IntegerField(default=0)
     year = DateField(blank=True, null=True)
     company = ForeignKey(
-        Company, on_delete=SET_NULL, null=True, 
+        Company, on_delete=SET_NULL, null=True,
         blank=True, related_name="top_institutional_ownership"
     )
     organization = ForeignKey(
-        InstitutionalOrganization, on_delete=SET_NULL, null=True, 
+        InstitutionalOrganization, on_delete=SET_NULL, null=True,
         blank=True, related_name="institution"
     )
     percentage_held = FloatField(default=0, blank=True, null=True)
