@@ -107,7 +107,7 @@ ls_backups:
 	docker-compose -f local.yml exec postgres backups
 
 rt_backups:
-	echo ls  -Art $PWD/backups/*.sql.gz | tail -n 1
+	@echo ls -Art $PWD/backups/*.sql.gz | tail -n 1
 
 restore:
 	docker-compose -f local.yml stop
@@ -123,7 +123,7 @@ docs_check:
 
 # Testing
 new-test:
-	docker-compose -f local.yml run --rm invfin python -u manage.py test $(ar) --noinput --settings=config.settings.test
+	docker-compose -f local.yml run --rm invfin python -u manage.py test $(ar) --noinput --settings=config.settings.local
 
 test:
 	docker-compose -f local.yml run --rm invfin python -u manage.py test $(ar) --noinput --keepdb --settings=config.settings.local
