@@ -87,37 +87,37 @@ class CompanyStockPriceSerializer(ModelSerializer):
 
 
 class ExcelIncomeStatementSerializer(ModelSerializer):
+    reported_currency = StringRelatedField(many=False)
 
     class Meta:
         model = IncomeStatement
         exclude = [
             'id',
             'year',
-            "reported_currency",
             "company",
         ]
 
 
 class ExcelBalanceSheetSerializer(ModelSerializer):
+    reported_currency = StringRelatedField(many=False)
 
     class Meta:
         model = BalanceSheet
         exclude = [
             'id',
             'year',
-            "reported_currency",
             "company",
         ]
 
 
 class ExcelCashflowStatementSerializer(ModelSerializer):
+    reported_currency = StringRelatedField(many=False)
 
     class Meta:
         model = CashflowStatement
         exclude = [
             'id',
             'year',
-            "reported_currency",
             "company",
         ]
 
