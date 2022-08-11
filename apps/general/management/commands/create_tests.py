@@ -1,11 +1,11 @@
 from django.core.management import BaseCommand
 from django.conf import settings
 import sys
-from autotest.autotest import Autotest
+from bfet import Autotest
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        
+
         # mods = []
         # for m in sys.modules.keys():
         #     if m.startswith("apps.seo"):

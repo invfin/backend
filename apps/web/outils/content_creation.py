@@ -59,5 +59,5 @@ class WebsiteContentCreation:
             **title_dict,
             **content_dict,
         )
-        web_email.title_emojis.add(*[first_emoji, last_emoji])
+        web_email.title_emojis.add(first_emoji, last_emoji)
         return web_email

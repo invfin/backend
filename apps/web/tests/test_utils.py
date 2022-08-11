@@ -13,5 +13,5 @@ class TestUtils(TestCase):
         now_less_twenty = datetime.now() - timedelta(20)
         self.assertFalse(more_than_month(now_less_twenty))
 
-        now_less_thirty = datetime.now() - timedelta(30)
+        now_less_thirty = datetime.now() - timedelta(40)
         self.assertTrue(more_than_month(now_less_thirty))

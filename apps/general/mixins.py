@@ -37,11 +37,11 @@ class BaseToAll(Model):
     @property
     def app_label(self):
         return self._meta.app_label
-    
+
     @property
     def object_name(self):
         return self._meta.object_name
-    
+
     @property
     def regularised_description(self):
         if self.object_name == 'Question':
@@ -54,7 +54,7 @@ class BaseToAll(Model):
             regularised_description = self.resume
 
         return regularised_description
-    
+
     @property
     def regularised_title(self):
         if self.object_name == 'Company':
@@ -63,7 +63,7 @@ class BaseToAll(Model):
             regularised_title = self.title
 
         return regularised_title
-    
+
     @property
     def dict_for_task(self):
         return {
@@ -71,7 +71,7 @@ class BaseToAll(Model):
             'object_name': self.object_name,
             'id': self.pk,
         }
-    
+
     @property
     def dict_for_email(self):
         dict_task = self.dict_for_task
@@ -82,19 +82,19 @@ class BaseToAll(Model):
             }
         )
         return dict_task
-    
+
     @property
     def encoded_url(self):
         url = f'{self.id}-{self.app_label}-{self.object_name}'
         return urlsafe_base64_encode(force_bytes(url))
-    
+
     def save_unique_field(self, field, value, extra:int=None):
         max_length = self._meta.get_field(field).max_length
         if extra:
             value = slugify(f"{value}-{extra}")
         if len(value) > max_length:
             value = value[:max_length+1]
-        if self.__class__.objects.filter(field=value).exists():
+        if self.__class__.objects.filter(**{field:value}).exists():
             extra += 1
             return self.save_unique_field(field, value, extra)
         return value
@@ -103,19 +103,19 @@ class BaseToAll(Model):
 class CommonMixin(BaseToAll):
     class Meta:
         abstract = True
-    
+
     @property
     def related_comments(self):
         return self.comments_related.all()
-    
+
     @property
     def encoded_url_comment(self):
         return self.encoded_url
-    
+
     @property
     def encoded_url_up(self):
         return urlsafe_base64_encode(force_bytes(f'{self.encoded_url}-up'))
-    
+
     @property
     def encoded_url_down(self):
         return urlsafe_base64_encode(force_bytes(f'{self.encoded_url}-down'))
@@ -148,12 +148,12 @@ class CommonMixin(BaseToAll):
                 self.downvotes.add(user)
                 vote_result = -1
                 update_fields += ['downvotes']
-        
+
         self.author.update_reputation(vote_result)
         self.total_votes += vote_result
         self.save(update_fields=update_fields)
         return vote_result
-    
+
     @property
     def schema_org(self):
         if self.object_name == 'Question':
@@ -218,11 +218,11 @@ class CommonMixin(BaseToAll):
 
         return meta_info
 
-   
+
 class BaseEscritosMixins(Model):
     class Meta:
         abstract = True
-    
+
     def search_image(self, content):
         soup = bs(content, 'html.parser')
         images = [img for img in soup.find_all('img')]
@@ -243,11 +243,11 @@ class BaseEscritosMixins(Model):
 
     def create_meta_information(self, type_content):
         from apps.seo.models import MetaParameters, MetaParametersHistorial
-        
+
         meta_url = f'{FULL_DOMAIN}/definicion/{self.slug}/'
         if type_content == 'blog':
-            meta_url = f'{self.author.custom_url}/p/{self.slug}/'            
-            
+            meta_url = f'{self.author.custom_url}/p/{self.slug}/'
+
         meta = MetaParameters.objects.create(
             meta_title = self.title,
             meta_description = self.resume,
@@ -288,7 +288,7 @@ class BaseEscritosMixins(Model):
         )
 
         self.meta_information = meta_historial
-    
+
     def save_secondary_info(self, content_type):
         if content_type != 'blog':
             for term_part in self.term_parts.all():

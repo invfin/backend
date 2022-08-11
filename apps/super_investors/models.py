@@ -3,11 +3,9 @@ from django.db.models import (
     SET_NULL,
     BooleanField,
     CharField,
-    DateField,
     DateTimeField,
     FloatField,
     ForeignKey,
-    IntegerField,
     ManyToManyField,
     Model,
     OneToOneField,
@@ -21,7 +19,7 @@ from apps.empresas.models import Company
 from apps.general.bases import BaseFavoritesHistorial
 from apps.general.models import Period
 
-from .managers import SuperinvestorManager, SuperinvestorHistoryManager
+from apps.super_investors.managers import SuperinvestorManager, SuperinvestorHistoryManager
 
 User = get_user_model()
 
@@ -41,18 +39,18 @@ class Superinvestor(Model):
         verbose_name = "Superinvestor"
         verbose_name_plural = "Superinvestors"
         db_table = "superinvestors"
-    
+
     def __str__(self):
         return self.name
-    
+
     def get_absolute_url(self):
         return reverse("super_investors:superinvestor", kwargs={"slug": self.slug})
-    
+
     def save(self, *args, **kwargs): # new
         if not self.slug:
             self.slug = slugify((self.name))
         return super().save(*args, **kwargs)
-    
+
     @property
     def portfolio_information(self):
         all_history = self.history.prefetch_related(
@@ -67,18 +65,18 @@ class Superinvestor(Model):
             last_query_company_history = query_company_history.last()
             if last_query_company_history.shares != 0:
                 portfolio.append(last_query_company_history)
-        
+
         total_number_of_holdings = len(portfolio)
         portfolio_value = sum(position.total_value for position in portfolio)
         top_holdings = sorted(portfolio, key=lambda x : x.portfolio_weight)
         sectors_invested = set()
         for company in portfolio:
             sectors_invested.add(company.company_sector)
-                
-            
+
+
         num_sectors = len(sectors_invested)
         return {
-            'portfolio': portfolio, 
+            'portfolio': portfolio,
             'all_history': all_history,
             'total_number_of_holdings': total_number_of_holdings,
             'portfolio_value': portfolio_value,
@@ -86,7 +84,7 @@ class Superinvestor(Model):
             'sectors_invested': sectors_invested,
             'num_sectors': num_sectors
         }
-    
+
     @property
     def all_information(self):
         portfolio_information = self.portfolio_information
@@ -126,19 +124,19 @@ class BaseSuperinvestorHoldingsInformation(Model):
     not_registered_company = BooleanField(default=False)
     need_verify_company = BooleanField(default=False)
     portfolio_change = FloatField(null=True, blank=True)
-    
+
     class Meta:
         abstract = True
-    
+
     @property
     def actual_company(self):
         actual_company = {}
         if self.company:
             actual_company['company'] = self.company
-        else: 
+        else:
             actual_company['company_name'] = self.company_name
         return actual_company
-    
+
     @property
     def actual_company_info(self):
         actual_company_info = {}
@@ -152,7 +150,7 @@ class BaseSuperinvestorHoldingsInformation(Model):
             actual_company_info['image'] = None
             actual_company_info['ticker'] = None
         return actual_company_info
-    
+
     @property
     def company_sector(self):
         sector = None
@@ -165,7 +163,7 @@ class SuperinvestorActivity(BaseSuperinvestorHoldingsInformation):
     MOVE = ((1, 'Compra'), (2, 'Venta'))
 
     superinvestor_related = ForeignKey(
-        Superinvestor, on_delete=SET_NULL, 
+        Superinvestor, on_delete=SET_NULL,
         null=True, blank=True, related_name='positions'
     )
     percentage_share_change = FloatField(null=True, blank=True)
@@ -182,18 +180,18 @@ class SuperinvestorActivity(BaseSuperinvestorHoldingsInformation):
 
     def __str__(self):
         return f'{self.superinvestor_related.name}-{self.period_related}-{self.actual_company}'
-    
+
     @property
     def movement_type(self):
         movement_type = {'move': 'Venta', 'color': 'danger'}
         if self.movement == 1:
             movement_type = {'move': 'Compra', 'color': 'success'}
         return movement_type
-    
+
 
 class SuperinvestorHistory(BaseSuperinvestorHoldingsInformation):
     superinvestor_related = ForeignKey(
-        Superinvestor, on_delete=SET_NULL, 
+        Superinvestor, on_delete=SET_NULL,
         null=True, blank=True, related_name='history'
     )
     movement = CharField(max_length=500, null=True, blank=True)
@@ -208,14 +206,14 @@ class SuperinvestorHistory(BaseSuperinvestorHoldingsInformation):
         db_table = "superinvestors_history"
         ordering = ['period_related']
         get_latest_by = ['period_related']
-    
+
     def __str__(self):
         return f'{self.superinvestor_related.name}-{self.period_related}-{self.actual_company}'
-    
+
     @property
     def total_value(self):
         return self.shares * self.reported_price
-    
+
     @property
     def movement_type(self):
         movement_type = {'move': 'Venta', 'color': 'danger'}

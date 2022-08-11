@@ -1,54 +1,132 @@
 from django.test import TestCase
 
-from apps.empresas.company.update import UpdateCompany
-from apps.empresas.models import Company
+from apps.bfet import ExampleModel
 
-from apps.empresas.tests.factories import CompanyFactory, ExchangeFactory, ExchangeOrganisationFactory
+from apps.empresas.company.update import UpdateCompany
+from apps.general.models import Sector, Industry
+
+from apps.empresas.models import (
+    Company,
+    Exchange,
+    ExchangeOrganisation,
+    IncomeStatement
+)
 
 
 class TestCompanyManagers(TestCase):
-    def setUp(self) -> None:
-        self.fr_main = ExchangeOrganisationFactory(
+    @classmethod
+    def setUpTestData(cls):
+        cls.sector = ExampleModel.create(
+            Sector,
+            sector='sector'
+        )
+        cls.industry = ExampleModel.create(
+            Industry,
+            industry='industry'
+        )
+        cls.fr_main = ExampleModel.create(
+            ExchangeOrganisation,
             name='France'
         )
-        self.usa_main = ExchangeOrganisationFactory(
+        cls.usa_main = ExampleModel.create(
+            ExchangeOrganisation,
             name='Estados Unidos'
         )
-        self.nyse = ExchangeFactory(
+        cls.nyse = ExampleModel.create(
+            Exchange,
             exchange_ticker='NYSE',
-            main_org=self.usa_main
+            main_org=cls.usa_main
         )
-
-        self.euro = ExchangeFactory(
+        cls.euro = ExampleModel.create(
+            Exchange,
             exchange_ticker='EURO',
-            main_org=self.fr_main
+            main_org=cls.fr_main
         )
-        self.apple = CompanyFactory(
-            no_incs=True,
-            no_bs=True,
-            no_cfs=True,
-            exchange=self.nyse
+        cls.apple = ExampleModel.create(
+            Company,
+            ticker='AAPL',
+            no_incs=False,
+            no_bs=False,
+            no_cfs=False,
+            sector=cls.sector,
+            industry=cls.industry,
+            description_translated = True,
+            updated=False,
+            has_error=True,
+            exchange=cls.nyse
         )
-        self.zinga = CompanyFactory(
+        cls.google = ExampleModel.create(
+            Company,
+            ticker='GOOGL',
+            no_incs=False,
+            no_bs=False,
+            no_cfs=False,
+            sector=cls.sector,
+            industry=cls.industry,
+            description_translated = False,
+            exchange=cls.nyse,
+            updated=False,
+            has_error=False,
+        )
+        cls.zinga = ExampleModel.create(
+            Company,
             ticker='ZNGA',
-            exchange=self.nyse
+            no_incs = True,
+            no_bs = True,
+            no_cfs = True,
+            sector=cls.sector,
+            industry=cls.industry,
+            description_translated = False,
+            updated=True,
+            has_error=True,
+            exchange=cls.nyse
         )
-        self.intel = CompanyFactory(
+        cls.intel = ExampleModel.create(
+            Company,
             ticker='INTC',
-            exchange=self.euro
+            no_incs = True,
+            no_bs = True,
+            no_cfs = True,
+            industry=cls.industry,
+            description_translated = True,
+            exchange=cls.euro,
+            updated=True,
+            has_error=True,
         )
 
-
+    def test_companies_by_main_exchange(self):
+        self.assertEqual(
+            [self.apple, self.google, self.zinga],
+            list(Company.objects.companies_by_main_exchange("Estados Unidos"))
+        )
 
     def test_clean_companies(self):
-        all_clean = Company.objects.clean_companies()
-        all_clean_by_exchange = Company.objects.clean_companies_by_main_exchange('France')
-        random_clean = Company.objects.random_clean_company()
+        self.assertEqual(
+            [self.apple, self.google],
+            list(Company.objects.clean_companies())
+        )
 
-        print(all_clean)
-        print(all_clean_by_exchange)
-        print(random_clean)
+    def test_clean_companies_by_main_exchange(self):
+        self.assertEqual(
+            [self.apple, self.google],
+            list(Company.objects.clean_companies_by_main_exchange("Estados Unidos"))
+        )
 
-        self.assertEqual(all_clean.count(), 2)
+    def test_complete_companies_by_main_exchange(self):
+        self.assertEqual(
+            [self.apple],
+            list(Company.objects.complete_companies_by_main_exchange("Estados Unidos"))
+        )
 
-        self.assertEqual(all_clean_by_exchange.count(), 1)
+    def test_get_similar_companies(self):
+        self.assertEqual(
+            [self.apple, self.google],
+            list(Company.objects.get_similar_companies(self.sector.id, self.industry.id))
+        )
+
+    def test_clean_companies_to_update(self):
+        self.assertEqual(
+            [self.google],
+            list(Company.objects.clean_companies_to_update("Estados Unidos"))
+        )
+

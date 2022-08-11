@@ -1,30 +1,14 @@
-from model_bakery import baker
-
+from apps.bfet import ExampleModel
+from apps.web.constants import CONTENT_PURPOSES
 from apps.web.models import (
-Promotion,
-PromotionCampaign,
-WebsiteEmail,
-WebsiteEmailTrack,
-WebsiteEmailsType,
-WebsiteLegalPage,
+    WebsiteEmail,
+    WebsiteEmailsType,
+    WebsiteEmailTrack,
+    WebsiteLegalPage,
+    Promotion,
+    PromotionCampaign,
 )
 
-
-promotion_campaign = baker.make(PromotionCampaign)
-promotion = baker.make(
-    Promotion, 
-    campaign_related=baker.make(PromotionCampaign)
-)
-website_email_type = baker.make(WebsiteEmailsType)
-website_email = baker.make(
-    WebsiteEmail, 
-    type_related=baker.make(WebsiteEmailsType)
-)
-website_email_track = baker.make(
-    WebsiteEmailTrack, 
-    email_related=baker.make(
-        WebsiteEmail, 
-        type_related=baker.make(WebsiteEmailsType)
-    )
-)
-website_legal_page = baker.make(WebsiteLegalPage)
+def generate_web_models():
+    for purpose in CONTENT_PURPOSES:
+        ExampleModel.create()
