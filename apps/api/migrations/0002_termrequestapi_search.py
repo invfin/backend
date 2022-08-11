@@ -9,14 +9,14 @@ class Migration(migrations.Migration):
     initial = True
 
     dependencies = [
-        ('general', '0001_initial'),
-        ('cartera', '0001_initial'),
+        ('api', '0001_initial'),
+        ('escritos', '0001_initial'),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='spend',
-            name='currency',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='general.currency'),
+            model_name='termrequestapi',
+            name='search',
+            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.SET_NULL, to='escritos.term'),
         ),
     ]
