@@ -276,9 +276,9 @@ class BalanceSheet(Model):
     other_assets = FloatField(default=0, blank=True, null=True)
     total_assets = FloatField(default=0, blank=True, null=True)
     account_payables = FloatField(default=0, blank=True, null=True)
-    shortTermDebt = FloatField(default=0, blank=True, null=True)
-    taxPayables = FloatField(default=0, blank=True, null=True)
-    deferredRevenue = FloatField(default=0, blank=True, null=True)
+    short_term_debt = FloatField(default=0, blank=True, null=True)
+    tax_payables = FloatField(default=0, blank=True, null=True)
+    deferred_revenue = FloatField(default=0, blank=True, null=True)
     other_current_liabilities = FloatField(default=0, blank=True, null=True)
     total_current_liabilities = FloatField(default=0, blank=True, null=True)
     long_term_debt = FloatField(default=0, blank=True, null=True)
@@ -369,7 +369,7 @@ class RentabilityRatio(Model):
     roce = FloatField(default=0, blank=True, null=True)
     rota = FloatField(default=0, blank=True, null=True)
     roic = FloatField(default=0, blank=True, null=True)
-    nopatroic = FloatField(default=0, blank=True, null=True)
+    nopat_roic = FloatField(default=0, blank=True, null=True)
     rogic = FloatField(default=0, blank=True, null=True)
 
     class Meta:
@@ -510,14 +510,14 @@ class OperationRiskRatio(Model):
     year = DateField(auto_now=True)
     company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="operation_risks_ratios")
     asset_coverage_ratio = FloatField(default=0, blank=True, null=True)
-    cashFlowCoverageRatios = FloatField(default=0, blank=True, null=True)
+    cash_flow_coverage_ratios = FloatField(default=0, blank=True, null=True)
     cash_coverage = FloatField(default=0, blank=True, null=True)
     debt_service_coverage = FloatField(default=0, blank=True, null=True)
-    interestCoverage = FloatField(default=0, blank=True, null=True)
+    interest_coverage = FloatField(default=0, blank=True, null=True)
     operating_cashflow_ratio = FloatField(default=0, blank=True, null=True)
-    debtRatio = FloatField(default=0, blank=True, null=True)
-    longTermDebtToCapitalization = FloatField(default=0, blank=True, null=True)
-    totalDebtToCapitalization = FloatField(default=0, blank=True, null=True)
+    debt_ratio = FloatField(default=0, blank=True, null=True)
+    long_term_debt_to_capitalization = FloatField(default=0, blank=True, null=True)
+    total_debt_to_capitalization = FloatField(default=0, blank=True, null=True)
 
     class Meta:
         get_latest_by = 'date'

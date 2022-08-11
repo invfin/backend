@@ -23,7 +23,7 @@ from apps.etfs.models import Etf
 from apps.general.models import Currency
 from apps.general.utils import ChartSerializer
 
-User = get_user_model()    
+User = get_user_model()
 
 import random
 from decimal import Decimal
@@ -38,14 +38,14 @@ class Asset(Model):
     is_etf = BooleanField(default=False)
     is_crypto = BooleanField(default=False)
 
-    class Meta:        
+    class Meta:
         verbose_name = "Asset"
         verbose_name_plural = "Assets"
         db_table = "cartera_assets"
 
-    def __str__(self):       
+    def __str__(self):
         return str(self.object.name)
-    
+
     @property
     def amount_invested(self):
         return sum(move.movement_cost for move in self.movements.filter(asset_related = self))
@@ -64,7 +64,7 @@ class PositionMovement(Model):
     observacion = TextField("Observaciones", default='')
     fee = DecimalField ("Comisión", max_digits=100, decimal_places=2, default=0)
 
-    class Meta:        
+    class Meta:
         ordering = ['-date']
         verbose_name = "Position movement"
         verbose_name_plural = "Position movements"
@@ -72,14 +72,14 @@ class PositionMovement(Model):
 
     def __str__(self):
         return str(self.id)
-    
+
     @property
     def movement_cost(self):
         total = (self.price * self.quantity) + self.fee
         if self.move_type == 2:
             total = total * (-1)
         return total
-    
+
     @property
     def movement(self):
         return 'Compra' if self.move_type == 1 else 'Venta'
@@ -93,7 +93,7 @@ class CashflowMovementCategory(Model):
         verbose_name = "Cashflow category"
         verbose_name_plural = "Cashflow categories"
         db_table = "cartera_cashflow_category"
-    
+
     def __str__(self):
         return self.name
 
@@ -109,9 +109,9 @@ class CashflowMovement(Model):
     category = ForeignKey(CashflowMovementCategory,  on_delete=SET_NULL, null=True, blank=True)
 
     class Meta:
-        abstract = True      
+        abstract = True
         ordering = ['-date']
-    
+
     def __str__(self):
         return self.name
 
@@ -131,8 +131,8 @@ class Spend(CashflowMovement):
 
 
 class FinancialObjectif(Model):
-    user = ForeignKey(User, 
-        on_delete=SET_NULL, 
+    user = ForeignKey(User,
+        on_delete=SET_NULL,
         null=True, blank=True
     )
     name = CharField("Nombre",max_length=1000)
@@ -142,12 +142,12 @@ class FinancialObjectif(Model):
     observation = TextField("Observaciones", default='')
     accomplished = BooleanField(default=False)
     abandoned = BooleanField(default=False)
-    percentage = DecimalField ("Porcentaje", 
-        max_digits=100, decimal_places=2, 
+    percentage = DecimalField ("Porcentaje",
+        max_digits=100, decimal_places=2,
         default=0
     )
-    amount = DecimalField ("Monto", 
-        max_digits=100, decimal_places=2, 
+    amount = DecimalField ("Monto",
+        max_digits=100, decimal_places=2,
         default=0
     )
     is_rule = BooleanField(default=False)
@@ -156,7 +156,7 @@ class FinancialObjectif(Model):
     start_date = DateTimeField(null=True, blank=True)
     end_date = DateTimeField(null=True, blank=True)
 
-    class Meta:        
+    class Meta:
         ordering = ['date_created']
         verbose_name = "Objetivo financiero"
         verbose_name_plural = "Objetivo financieros"
@@ -164,20 +164,20 @@ class FinancialObjectif(Model):
 
 
 class Patrimonio(Model, ChartSerializer):
-    user = OneToOneField(User, 
-        on_delete=SET_NULL, 
-        null=True, blank=True, 
+    user = OneToOneField(User,
+        on_delete=SET_NULL,
+        null=True, blank=True,
         related_name='user_patrimoine'
     )
     assets = ManyToManyField(Asset, blank=True)
     objectives = ManyToManyField(FinancialObjectif, blank=True)
-    default_currency = ForeignKey(Currency, 
-        on_delete=SET_NULL, 
-        null=True, blank=True, 
+    default_currency = ForeignKey(Currency,
+        on_delete=SET_NULL,
+        null=True, blank=True,
         default='1'
     )
 
-    class Meta:        
+    class Meta:
         verbose_name = "Patrimonio"
         verbose_name_plural = "Patrimonios"
         db_table = "cartera_patrimoine"
@@ -191,11 +191,11 @@ class Patrimonio(Model, ChartSerializer):
         if gastos_totales == None:
             gastos_totales = 0
         return {
-            'total':gastos_totales, 
+            'total':gastos_totales,
             'spends':spends,
             'percentage': ((gastos_totales / ingresos_totales) * 100) if ingresos_totales != 0 else 0
             }
-    
+
     @property
     def ingresos_totales(self):
         incomes = Income.objects.filter(user = self.user)
@@ -203,7 +203,7 @@ class Patrimonio(Model, ChartSerializer):
         if total == None:
             total = 0
         return {'total':total, 'incomes':incomes}
-    
+
     def cantidad_total_invertida(self, ingresos_totales):
         cantidad_total_invertida = sum(item.amount_invested for item in self.assets.all())
         if cantidad_total_invertida == None:
@@ -212,7 +212,7 @@ class Patrimonio(Model, ChartSerializer):
             'total':cantidad_total_invertida,
             'percentage': ((cantidad_total_invertida / ingresos_totales) * 100) if ingresos_totales != 0 else 0
         }
-    
+
     def ahorros_totales(self, ingresos_totales, gastos_totales, cantidad_total_invertida):
         ahorros_totales = ingresos_totales - gastos_totales - cantidad_total_invertida
         return {
@@ -231,7 +231,7 @@ class Patrimonio(Model, ChartSerializer):
         percentage_saved = income_saved['percentage']
         percentage_invested = income_invested['percentage']
         percentage_earned = 100 - percentage_spend - percentage_saved - percentage_invested
-        
+
         incomes_and_spends = list(total_income_earned['incomes']) + list(total_income_spend['spends'])
         income_earned = total_income_earned['total']
         income_spend = total_income_spend['total']
@@ -243,7 +243,7 @@ class Patrimonio(Model, ChartSerializer):
             'income_spend': f'{income_spend}',
             'income_saved': f'{income_saved}',
             'income_invested': f'{income_invested}',
-            
+
             'incomes_and_spends':incomes_and_spends,
 
             'percentage_earned': percentage_earned,
@@ -251,7 +251,7 @@ class Patrimonio(Model, ChartSerializer):
             'percentage_saved': percentage_saved,
             'percentage_invested': percentage_invested,
         }
-    
+
     def prepare_chart_data(self, main_key, main_dict):
         data = {
             'labels': [],
@@ -268,7 +268,7 @@ class Patrimonio(Model, ChartSerializer):
             data['labels'].append(key)
             dataset['data'].append(value)
             dataset['backgroundColor'].append("#"+''.join([random.choice('ABCDEF0123456789') for i in range(6)]))
-        
+
         data['datasets'].append(dataset)
 
         chart_data = {
@@ -288,9 +288,9 @@ class Patrimonio(Model, ChartSerializer):
                 }
             }
         }
-        
+
         return chart_data
-    
+
     @property
     def overall_portfolio_information(self):
         income_invested = self.cantidad_total_invertida(self.ingresos_totales['total'])
@@ -301,13 +301,13 @@ class Patrimonio(Model, ChartSerializer):
             'average_roce': 0,
             'average_gross_margin': 0,
             'average_net_income_margin': 0,
-            'average_interestCoverage': 0,
+            'average_interest_coverage': 0,
             'average_roic': 0,
             'average_price_earnings': 0,
             'average_current_ratio': 0,
             'average_quick_ratio': 0,
         }
-        
+
         for asset in self.assets.filter(is_stock=True):
             amount_invested = float(asset.amount_invested)
             empresa = asset.object
@@ -318,7 +318,7 @@ class Patrimonio(Model, ChartSerializer):
             overall_portfolio_information['average_roce'] += (ratios['average_roce'] * percentage_invested) / 100
             overall_portfolio_information['average_gross_margin'] += (ratios['average_gross_margin'] * percentage_invested) / 100
             overall_portfolio_information['average_net_income_margin'] += (ratios['average_net_income_margin'] * percentage_invested) / 100
-            overall_portfolio_information['average_interestCoverage'] += (ratios['average_interestCoverage'] * percentage_invested) / 100
+            overall_portfolio_information['average_interest_coverage'] += (ratios['average_interest_coverage'] * percentage_invested) / 100
             overall_portfolio_information['average_roic'] += (ratios['average_roic'] * percentage_invested) / 100
             overall_portfolio_information['average_price_earnings'] += (ratios['average_price_earnings'] * percentage_invested) / 100
             overall_portfolio_information['average_current_ratio'] += (ratios['average_current_ratio'] * percentage_invested) / 100
@@ -345,7 +345,7 @@ class Patrimonio(Model, ChartSerializer):
             'Países': {},
             'Mercados': {}
         }
-        
+
         for empresa in self.assets.filter(is_stock=True):
             amount_invested = float(empresa.amount_invested)
             empresa = empresa.object
@@ -358,17 +358,17 @@ class Patrimonio(Model, ChartSerializer):
                 segmentation['Sectores'][empresa_sector] = 1
             else:
                 segmentation['Sectores'][empresa_sector] += 1
-            
+
             if empresa_industry not in segmentation['Indústrias']:
                 segmentation['Indústrias'][empresa_industry] = 1
             else:
                 segmentation['Indústrias'][empresa_industry] += 1
-            
+
             if empresa_country not in segmentation['Países']:
                 segmentation['Países'][empresa_country] = 1
             else:
                 segmentation['Países'][empresa_country] += 1
-            
+
             if empresa_exchange not in segmentation['Mercados']:
                 segmentation['Mercados'][empresa_exchange] = 1
             else:
@@ -385,9 +385,9 @@ class Patrimonio(Model, ChartSerializer):
         for key, value in segmentation.items():
             chart_data = self.prepare_chart_data(key, value)
             positions_information['segmentation'].append(chart_data)
-        
+
         return positions_information
-    
+
     @property
     def balance_sheet(self):
         income_invested = self.cantidad_total_invertida(self.ingresos_totales['total'])

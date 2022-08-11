@@ -27,7 +27,7 @@ class UpdateCompany(CalculateCompanyFinancialRatios):
         self.retreive_data = RetrieveCompanyData(self.ticker)
         self.yf_company = yf.Ticker(self.ticker)
         self.yq_company = yq.Ticker(self.ticker)
-    
+
     def get_most_recent_price(self) -> float:
         if 'currentPrice' in self.yf_company.info:
             current_price = self.yf_company.info['currentPrice']
@@ -35,7 +35,7 @@ class UpdateCompany(CalculateCompanyFinancialRatios):
             current_price = self.yq_company.financial_data['currentPrice']
         return {'currentPrice':current_price}
 
-    def add_logo(self):        
+    def add_logo(self):
         try:
             self.company.image = self.yf_company.info['logo_url']
             self.company.has_logo = True
@@ -45,8 +45,8 @@ class UpdateCompany(CalculateCompanyFinancialRatios):
             log_message = e
         finally:
             CompanyUpdateLog.objects.create_log(self.company, 'add_logo', log_message)
-    
-    def save_logo_remotely(self):        
+
+    def save_logo_remotely(self):
         try:
             sector = 'Sin-sector'
             if self.company.sector.sector:
@@ -57,8 +57,8 @@ class UpdateCompany(CalculateCompanyFinancialRatios):
                 options= {
                     "folder" : f"/companies/{sector}/",
                 "tags": [
-                    self.company.ticker, self.company.exchange.exchange, 
-                    self.company.country.country, self.company.sector.sector, 
+                    self.company.ticker, self.company.exchange.exchange,
+                    self.company.country.country, self.company.sector.sector,
                     self.company.industry.industry
                     ],
                     "is_private_file": False,
@@ -93,14 +93,14 @@ class UpdateCompany(CalculateCompanyFinancialRatios):
         finally:
             CompanyUpdateLog.objects.create_log(self.company, 'add_description', log_message)
 
-    def general_update(self):        
+    def general_update(self):
         if self.company.has_logo is False:
             self.add_logo()
         if self.company.description_translated is False:
             self.add_description()
         if self.company.has_logo is True and not self.company.remote_image_imagekit:
             self.save_logo_remotely()
-    
+
     def financial_update(self):
         log_message = 'all right'
         try:
@@ -109,17 +109,17 @@ class UpdateCompany(CalculateCompanyFinancialRatios):
                     finprep_data = self.retreive_data.request_finprep()
 
                     all_ratios = self.calculate_all_ratios(
-                        finprep_data["income_statements"], 
-                        finprep_data["balance_sheets"], 
+                        finprep_data["income_statements"],
+                        finprep_data["balance_sheets"],
                         finprep_data["cashflow_statements"]
                     )
                 except Exception as e:
                     log_message = e
                     self.company.has_error = True
                     self.company.error_message = e
-                    self.company.save(update_fields=['has_error', 'error_message'])                
+                    self.company.save(update_fields=['has_error', 'error_message'])
                 else:
-                    try:                        
+                    try:
                         self.create_all_ratios(all_ratios)
                         self.company.updated = True
                         self.company.last_update = datetime.now()
@@ -146,7 +146,7 @@ class UpdateCompany(CalculateCompanyFinancialRatios):
             self.company.save(update_fields=['has_error', 'error_message'])
         finally:
             CompanyUpdateLog.objects.create_log(self.company, 'last_step_financial_update', log_message)
-    
+
     def create_all_ratios(self, all_ratios: dict):
         self.create_current_stock_price(price = all_ratios["current_data"]['currentPrice'])
         self.create_rentability_ratios(all_ratios["rentability_ratios"])
@@ -168,7 +168,7 @@ class UpdateCompany(CalculateCompanyFinancialRatios):
         if least_recent_year != self.company.most_recent_year:
             return 'need update'
         return 'updated'
-    
+
     def generate_current_data(
         self,
         income_statements: list,
@@ -192,7 +192,7 @@ class UpdateCompany(CalculateCompanyFinancialRatios):
         current_data.update(current_fecha)
 
         return current_data
-    
+
     def generate_last_year_data(
         self,
         income_statements: list,
@@ -240,9 +240,9 @@ class UpdateCompany(CalculateCompanyFinancialRatios):
             net_income = inc_stt['netIncome'],
             weighted_average_shares_outstanding = inc_stt['weightedAverageShsOut'],
             weighted_average_diluated_shares_outstanding = inc_stt['weightedAverageShsOutDil'],)
-        
+
         return income_statement
-    
+
     def create_balance_sheet(self, bal_sht:dict):
         balance_sheet = self.company.balance_sheets.create(
             date = bal_sht['calendarYear'],
@@ -266,13 +266,13 @@ class UpdateCompany(CalculateCompanyFinancialRatios):
             other_assets = bal_sht['otherAssets'],
             total_assets = bal_sht['totalAssets'],
             account_payables = bal_sht['accountPayables'],
-            shortTermDebt = bal_sht['shortTermDebt'],
-            taxPayables = bal_sht['taxPayables'],
-            deferredRevenue = bal_sht['deferredRevenue'],
+            short_term_debt = bal_sht['short_term_debt'],
+            tax_payables = bal_sht['tax_payables'],
+            deferred_revenue = bal_sht['deferred_revenue'],
             other_current_liabilities = bal_sht['otherCurrentLiabilities'],
             total_current_liabilities = bal_sht['totalCurrentLiabilities'],
             long_term_debt = bal_sht['longTermDebt'],
-            deferred_revenue_non_current = bal_sht['deferredRevenueNonCurrent'],
+            deferred_revenue_non_current = bal_sht['deferred_revenueNonCurrent'],
             deferred_tax_liabilities_non_current = bal_sht['deferredTaxLiabilitiesNonCurrent'],
             other_non_current_liabilities = bal_sht['otherNonCurrentLiabilities'],
             total_non_current_liabilities = bal_sht['totalNonCurrentLiabilities'],
@@ -287,10 +287,10 @@ class UpdateCompany(CalculateCompanyFinancialRatios):
             total_investments = bal_sht['totalInvestments'],
             total_debt = bal_sht['totalDebt'],
             net_debt = bal_sht['netDebt'],)
-        
+
         return balance_sheet
-    
-    def create_cashflow_statement(self, csf_stt:dict):       
+
+    def create_cashflow_statement(self, csf_stt:dict):
         cashflow_statement = self.company.cf_statements.create(
             date = csf_stt['calendarYear'],
             year = csf_stt['date'],
@@ -325,9 +325,9 @@ class UpdateCompany(CalculateCompanyFinancialRatios):
             operating_cf = csf_stt['operatingCashFlow'],
             capex = csf_stt['capitalExpenditure'],
             fcf = csf_stt['freeCashFlow'],)
-        
+
         return cashflow_statement
-    
+
     def create_current_stock_price(self, price):
         stock_prices = self.company.stock_prices.create(price=price)
         return stock_prices
@@ -375,7 +375,7 @@ class UpdateCompany(CalculateCompanyFinancialRatios):
     def create_price_to_ratio(self, data:dict):
         price_to_ratios = self.company.price_to_ratios.create(**data)
         return price_to_ratios
-    
+
     def institutional_ownership(self):
         df = self.yq_company.institution_ownership
         df = df.reset_index()
