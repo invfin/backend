@@ -6,7 +6,7 @@ from django.test import TestCase
 from apps.empresas.company.update import UpdateCompany
 from apps.empresas.company.retrieve_data import RetrieveCompanyData
 
-from apps.empresas.tests import data
+from apps.empresas.tests import finprep_data
 from apps.empresas.tests.factories import CompanyFactory
 
 
@@ -26,9 +26,7 @@ class TestRetrieveCompanyData(TestCase):
             ticker='ZNGA'
         )
 
-    @company_vcr.use_cassette(filter_query_parameters=['apikey'])
-    def test_request_finprep(self):
-        comp_data = RetrieveCompanyData(self.zinga.ticker).request_finprep()
+
 
     @company_vcr.use_cassette()
     def test_get_current_price_not_found(self):

@@ -5,7 +5,7 @@ from django.test import TestCase
 
 from apps.empresas.company.update import UpdateCompany
 
-from apps.empresas.tests import data
+from apps.empresas.tests import finprep_data
 from apps.empresas.tests.factories import CompanyFactory
 
 

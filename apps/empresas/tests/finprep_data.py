@@ -660,3 +660,9 @@ CASHFLOW_STATEMENT = [{'acceptedDate': '2021-10-28 18:04:28',
   'salesMaturitiesOfInvestments': 126339000000,
   'stockBasedCompensation': 4840000000,
   'symbol': 'AAPL'}]
+
+DICT_STATEMENTS = {
+    "income_statements": INCOME_STATEMENT,
+    "balance_sheets": BALANCE_SHEET,
+    "cashflow_statements": CASHFLOW_STATEMENT,
+}
