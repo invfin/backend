@@ -18,13 +18,13 @@ if READ_DOT_ENV_FILE:
 
 # GENERAL
 # ------------------------------------------------------------------------------
-PROTOCOL = 'http://'
-SECURE_PROTOCOL = 'https://'
-MAIN_DOMAIN = 'inversionesyfinanzas.xyz'
-#CURRENT_DOMAIN = '0.0.0.0'
-PORT = ":8000"
-CURRENT_DOMAIN = 'example.com'
-FULL_DOMAIN = f'{PROTOCOL}{CURRENT_DOMAIN}{PORT}'
+CURRENT_DOMAIN = env("CURRENT_DOMAIN")
+MAIN_DOMAIN = env("MAIN_DOMAIN")
+FULL_DOMAIN = env("FULL_DOMAIN")
+
+PROD_ENV = CURRENT_DOMAIN != MAIN_DOMAIN
+
+PROTOCOL = "https://" if PROD_ENV else "http://"
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#debug
 DEBUG = env.bool("DJANGO_DEBUG", True)
@@ -194,14 +194,14 @@ MIDDLEWARE = [
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#session-cookie-httponly
 SESSION_COOKIE_NAME = "sessionid"
-SESSION_COOKIE_DOMAIN = f".inversionesyfinanzas.xyz"
+SESSION_COOKIE_DOMAIN = f".{CURRENT_DOMAIN}"
 # Whether to save the session data on every request.
 SESSION_SAVE_EVERY_REQUEST = False
 SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
 # https://docs.djangoproject.com/en/dev/ref/settings/#csrf-cookie-httponly
 CSRF_COOKIE_HTTPONLY = True
-CSRF_COOKIE_DOMAIN = f".inversionesyfinanzas.xyz"
-CSRF_TRUSTED_ORIGINS = [f".inversionesyfinanzas.xyz", f"inversionesyfinanzas.xyz"]
+CSRF_COOKIE_DOMAIN = f".{CURRENT_DOMAIN}"
+CSRF_TRUSTED_ORIGINS = [f".{CURRENT_DOMAIN}", f"{CURRENT_DOMAIN}"]
 # https://docs.djangoproject.com/en/dev/ref/settings/#secure-browser-xss-filter
 SECURE_BROWSER_XSS_FILTER = True
 # https://docs.djangoproject.com/en/dev/ref/settings/#x-frame-options
@@ -416,10 +416,10 @@ SPECTACULAR_SETTINGS = {
     "VERSION": "1.0.0",
     "SERVE_PERMISSIONS": ["rest_framework.permissions.IsAdminUser"],
     "SERVERS": [
-        {"url": f"{PROTOCOL}0.0.0.0{PORT}", "description": "Local Development server"},
-        {"url": f"{PROTOCOL}127.0.0.1{PORT}", "description": "Local Development server"},
-        {"url": f"{PROTOCOL}{CURRENT_DOMAIN}{PORT}", "description": "Local Development server"},
-        {"url": f"{SECURE_PROTOCOL}{MAIN_DOMAIN}", "description": "Production server"},
+        {"url": f"http://0.0.0.0:8000", "description": "Local Development server"},
+        {"url": f"http://127.0.0.1:8000", "description": "Local Development server"},
+        {"url": f"http://example.com:8000", "description": "Local Development server"},
+        {"url": f"https://inversionesyfinanzas.xyz", "description": "Production server"},
     ],
 }
 # API versions

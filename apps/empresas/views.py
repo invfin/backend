@@ -34,6 +34,7 @@ class ExcelAPIIncome(BaseAPIView):
     serializer_class = ExcelIncomeStatementSerializer
     query_name = ['ticker']
     fk_lookup_model = 'company__ticker'
+    limited = True
 
 
 class ExcelAPIBalance(BaseAPIView):
@@ -41,6 +42,7 @@ class ExcelAPIBalance(BaseAPIView):
     serializer_class = ExcelBalanceSheetSerializer
     query_name = ['ticker']
     fk_lookup_model = 'company__ticker'
+    limited = True
 
 
 class ExcelAPICashflow(BaseAPIView):
@@ -48,3 +50,4 @@ class ExcelAPICashflow(BaseAPIView):
     serializer_class = ExcelCashflowStatementSerializer
     query_name = ['ticker']
     fk_lookup_model = 'company__ticker'
+    limited = True
