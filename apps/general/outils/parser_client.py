@@ -7,31 +7,41 @@ from apps.general.constants import HEADERS, REQUESTS_MAX_RETRIES
 
 
 class ParserClient:
-    @staticmethod
+    base_path: str = None
+    api_version: str = None
+    auth: Dict[str, str] = None
+
     def _build_full_path(
-        base_path: str,
+        self,
         path: str,
-        api_version: str = None,
+        different_api_version: str = None,
         str_params: str = None,
-        dict_params: dict = None
+        **dict_params: dict
     ) -> str:
         """
         It receives the path from path to make the get requests. It accepts url depending on
         the information required and extra_params that can vary from one url to another.
         """
-        full_path = base_path
-        if api_version:
-            full_path = f"{full_path}{api_version}/"
+        full_path = self.base_path
+        dict_params_separator = "?"
+        if different_api_version:
+            full_path = f"{full_path}{different_api_version}/"
+        if not different_api_version and self.api_version:
+            full_path = f"{full_path}{self.api_version}/"
         full_path = f"{full_path}{path}"
         if str_params:
             full_path = f"{path}/{str_params}"
+        if self.auth:
+            auth_dict = urllib.parse.urlencode(self.auth)
+            full_path = f'{full_path}?{auth_dict}'
+            dict_params_separator = "&"
         if dict_params:
             dict_params = urllib.parse.urlencode(dict_params)
-            full_path = f'{full_path}&{dict_params}'
+            full_path = f'{full_path}{dict_params_separator}{dict_params}'
         return full_path
 
-    @staticmethod
     def _request_content(
+        self,
         full_url: str
     ) -> Union[Dict[str, Any], str, str, requests.Response]:
         """
@@ -54,11 +64,10 @@ class ParserClient:
 
     def request(
         self,
-        base_path: str,
         path: str,
-        api_version: str = None,
+        different_api_version: str = None,
         str_params: str = None,
-        dict_params: dict = None
-    ) -> requests.Response:
-        full_path = self._build_full_path(base_path, path, api_version, str_params, dict_params)
+        **dict_params: dict
+    ) -> Union[Dict[str, Any], str, str, requests.Response]:
+        full_path = self._build_full_path(path, different_api_version, str_params, dict_params)
         return self._request_content(full_path)

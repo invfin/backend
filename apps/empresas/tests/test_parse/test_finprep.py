@@ -12,7 +12,7 @@ parse_vcr = vcr.VCR(
 )
 
 
-class TestParseFinprep(TestCase):
+class TestFinprep(TestCase):
     @classmethod
     def setUpTestData(cls) -> None:
         cls.parser = ParseFinprep()

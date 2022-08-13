@@ -15,6 +15,7 @@ from django.db.models import (
     TextField,
 )
 from django.urls import reverse
+from apps.empresas import constants
 
 from apps.empresas.company.extension import CompanyExtended
 from apps.empresas.managers import CompanyManager, CompanyUpdateLogManager
@@ -42,6 +43,11 @@ class Exchange(Model):
     exchange = CharField(max_length=250, null=True, blank=True)
     country = ForeignKey("general.Country", on_delete=SET_NULL, null=True, blank=True)
     main_org = ForeignKey(ExchangeOrganisation, on_delete=SET_NULL, null=True, blank=True)
+    data_source = CharField(
+        max_length=100,
+        choices=constants.DATA_SOURCES,
+        default=constants.DATA_SOURCE_FINPREP
+    )
 
     class Meta:
         ordering = ['-exchange_ticker']
@@ -103,6 +109,11 @@ class Company(CompanyExtended):
     remote_image_imagekit = CharField(max_length=500 , default='', blank=True)
     remote_image_cloudinary = CharField(max_length=500 , default='', blank=True)
     checkings = JSONField(default=DEFAULT_CHECKINGS)
+    data_source = CharField(
+        max_length=100,
+        choices=constants.DATA_SOURCES,
+        default=constants.DATA_SOURCE_FINPREP
+    )
 
     objects = CompanyManager()
 
@@ -185,6 +196,11 @@ class CompanyStockPrice(Model):
     date = IntegerField(default=0)
     year = DateTimeField(auto_now=True)
     price = FloatField(default=0, blank=True, null=True)
+    data_source = CharField(
+        max_length=100,
+        choices=constants.DATA_SOURCES,
+        default=constants.DATA_SOURCE_YFINANCE
+    )
 
     class Meta:
         get_latest_by = 'date'

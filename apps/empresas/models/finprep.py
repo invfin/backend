@@ -2,15 +2,35 @@ from django.db.models import (
     SET_NULL,
     FloatField,
     ForeignKey,
+    DateField,
+    DateTimeField,
+    CharField
 )
 
 from apps.empresas.models.base import BaseStatement
 
 
-class IncomeStatementFinprep(BaseStatement):
+class BaseFinprep(BaseStatement):
+    accepted_date = DateTimeField(blank=True, null=True)
+    filling_date = DateField(blank=True, null=True)
+    final_link = CharField(max_length=10000, blank=True, null=True)
+    link = CharField(max_length=10000, blank=True, null=True)
     reported_currency = ForeignKey("general.Currency", on_delete=SET_NULL, null=True, blank=True)
+
+    class Meta:
+        abstract = True
+
+
+class IncomeStatementFinprep(BaseFinprep):
     revenue = FloatField(default=0, blank=True, null=True)
     cost_of_revenue = FloatField(default=0, blank=True, null=True)
+    ebitdaratio = FloatField(default=0, blank=True, null=True)
+    eps = FloatField(default=0, blank=True, null=True)
+    epsdiluted = FloatField(default=0, blank=True, null=True)
+    gross_profit_ratio = FloatField(default=0, blank=True, null=True)
+    income_before_tax_ratio = FloatField(default=0, blank=True, null=True)
+    net_income_ratio = FloatField(default=0, blank=True, null=True)
+    operating_income_ratio = FloatField(default=0, blank=True, null=True)
     gross_profit = FloatField(default=0, blank=True, null=True)
     rd_expenses = FloatField(default=0, blank=True, null=True)
     general_administrative_expenses = FloatField(default=0, blank=True, null=True)
@@ -39,16 +59,20 @@ class IncomeStatementFinprep(BaseStatement):
         return self.company.ticker + str(self.date)
 
 
-class BalanceSheetFinprep(BaseStatement):
-    reported_currency = ForeignKey("general.Currency", on_delete=SET_NULL, null=True, blank=True)
+class BalanceSheetFinprep(BaseFinprep):
+    preferred_stock = FloatField(default=0, blank=True, null=True)
+    capital_lease_obligations = FloatField(default=0, blank=True, null=True)
+    total_equity = FloatField(default=0, blank=True, null=True)
+    property_plant_equipment_net = FloatField(default=0, blank=True, null=True)
+    minority_interest = FloatField(default=0, blank=True, null=True)
     cash_and_cash_equivalents = FloatField(default=0, blank=True, null=True)
     short_term_investments = FloatField(default=0, blank=True, null=True)
-    cash_and_short_term_investements = FloatField(default=0, blank=True, null=True)
+    cash_and_short_term_investments = FloatField(default=0, blank=True, null=True)
     net_receivables = FloatField(default=0, blank=True, null=True)
     inventory = FloatField(default=0, blank=True, null=True)
     other_current_assets = FloatField(default=0, blank=True, null=True)
     total_current_assets = FloatField(default=0, blank=True, null=True)
-    property_plant_equipement = FloatField(default=0, blank=True, null=True)
+    property_plant_equipment = FloatField(default=0, blank=True, null=True)
     goodwill = FloatField(default=0, blank=True, null=True)
     intangible_assets = FloatField(default=0, blank=True, null=True)
     goodwill_and_intangible_assets = FloatField(default=0, blank=True, null=True)
@@ -76,7 +100,7 @@ class BalanceSheetFinprep(BaseStatement):
     accumulated_other_comprehensive_income_loss = FloatField(default=0, blank=True, null=True)
     othertotal_stockholders_equity = FloatField(default=0, blank=True, null=True)
     total_stockholders_equity = FloatField(default=0, blank=True, null=True)
-    total_liabilities_and_stockholders_equity = FloatField(default=0, blank=True, null=True)
+    total_liabilities_and_total_equity = FloatField(default=0, blank=True, null=True)
     total_investments = FloatField(default=0, blank=True, null=True)
     total_debt = FloatField(default=0, blank=True, null=True)
     net_debt = FloatField(default=0, blank=True, null=True)
@@ -90,8 +114,7 @@ class BalanceSheetFinprep(BaseStatement):
         return self.company.ticker + str(self.date)
 
 
-class CashflowStatement(BaseStatement):
-    reported_currency = ForeignKey("general.Currency", on_delete=SET_NULL, null=True, blank=True)
+class CashflowStatement(BaseFinprep):
     net_income = FloatField(default=0, blank=True, null=True)
     depreciation_amortization = FloatField(default=0, blank=True, null=True)
     deferred_income_tax = FloatField(default=0, blank=True, null=True)
