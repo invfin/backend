@@ -4,7 +4,7 @@ from apps.general.models import Currency
 
 
 class NormalizeFinprep:
-    def create_income_statement(
+    def create_income_statement_dict(
         self,
         inc_stt: Dict[str, Union[float, int, str, Any]]
     ) -> Dict[str, Union[float, int, str, Any]]:
