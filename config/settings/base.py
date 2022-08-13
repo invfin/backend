@@ -446,7 +446,8 @@ GEOIP_PATH = str(ROOT_DIR / "geoip")
 
 # FInancial data KEYS
 # ------------------------------------------------------------------------------
-FINHUB_TOKEN = env.str("FINHUB_TOKEN")
+FINNHUB_TOKEN = env.str("FINNHUB_TOKEN")
+FINNHUB_SANDBOX_TOKEN = env.str("FINNHUB_SANDBOX_TOKEN")
 FINPREP_KEY = env.str("FINPREP_KEY")
 
 # GOOGLE KEYS

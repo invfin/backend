@@ -16,7 +16,7 @@ class ParseFinhub:
         str_params: str,
         dict_params: Dict[str, str] = {}
     ) -> Union[Dict[str, Any], str, requests.Response]:
-        dict_params.update({"token": settings.FINHUB_TOKEN})
+        dict_params.update({"token": settings.FINNHUB_TOKEN})
         return ParserClient().request(
             constants.FINNHUB_BASE_URL,
             path=path,
@@ -411,4 +411,4 @@ class ParseFinhub:
     # def get_news(self, symbol):
     #     day = str(int(datetime.now().strftime("%Y-%m-%d")[-2:])-2)
     #     final_date = (datetime.now().strftime(f"%Y-%m-{day}"))
-    #     return requests.get(f'https://finnhub.io/api/v1/company-news?symbol={symbol}&from={final_date}&to={datetime.now().strftime("%Y-%m-%d")}&token={FINHUB_TOKEN}').json()
+    #     return requests.get(f'https://finnhub.io/api/v1/company-news?symbol={symbol}&from={final_date}&to={datetime.now().strftime("%Y-%m-%d")}&token={FINNHUB_TOKEN}').json()
