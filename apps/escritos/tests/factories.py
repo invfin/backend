@@ -1,4 +1,4 @@
-from model_bakery import baker
+from apps.bfet import ExampleModel
 
 from apps.escritos.tests.data import TERM, TERM_CONTENT, EMPTY_TERM
 from apps.escritos.models import (
@@ -12,13 +12,13 @@ TermsRelatedToResume,
 )
 
 
-favs_terms_historial = baker.make(FavoritesTermsHistorial)
-favs_terms_list = baker.make(FavoritesTermsList)
+favs_terms_historial = ExampleModel.create(FavoritesTermsHistorial)
+favs_terms_list = ExampleModel.create(FavoritesTermsList)
 
 
-term_correction = baker.make(TermCorrection)
-term_comment = baker.make(TermsComment)
-term_to_resume = baker.make(TermsRelatedToResume)
+term_correction = ExampleModel.create(TermCorrection)
+term_comment = ExampleModel.create(TermsComment)
+term_to_resume = ExampleModel.create(TermsRelatedToResume)
 
 
 class GenerateEscritosExample:

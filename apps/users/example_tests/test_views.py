@@ -10,7 +10,7 @@ from django.urls import reverse
 
 from apps.users.forms import UserAdminChangeForm
 from apps.users.models import User
-from apps.users.tests.factories import UserFactory
+from apps.users.example_tests.factories import UserFactory
 
 pytestmark = pytest.mark.django_db
 

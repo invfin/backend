@@ -1,3 +1,5 @@
+from typing import Dict
+
 import uuid
 import random
 import string
@@ -30,6 +32,23 @@ class DataCreator:
     @staticmethod
     def create_random_bool() -> bool:
         return bool(random.randint(0, 1) == 1)
+
+    @staticmethod
+    def create_random_json() -> Dict:
+        random_dict = {}
+        choices = {
+            1: DataCreator.create_random_string(),
+            2: DataCreator.create_random_bool(),
+            3: DataCreator.create_random_datetime().strftime("%m/%d/%Y, %H:%M:%S"),
+            4: DataCreator.create_random_float(),
+        }
+        for index in range(3):
+            key = random.randint(1, 4)
+            value = random.randint(1, 4)
+            key = choices[key]
+            value = choices[value]
+            random_dict[f"{key}"] = value
+        return random_dict
 
     @staticmethod
     def create_random_slug(max_value: int = 800, use_digits: bool = True):

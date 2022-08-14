@@ -1,12 +1,12 @@
 import time
 import vcr
+from unittest import skip
 
 from django.test import TestCase
 
+from apps.bfet import ExampleModel
 from apps.empresas.company.update import UpdateCompany
-
-from apps.empresas.tests import finprep_data
-from apps.empresas.tests.factories import CompanyFactory
+from apps.empresas.models import Company
 
 
 company_vcr = vcr.VCR(
@@ -14,16 +14,14 @@ company_vcr = vcr.VCR(
     path_transformer=vcr.VCR.ensure_suffix('.yaml'),
 )
 
-
+@skip("Don't want to test")
 class TestScrapCompanyInfo(TestCase):
     @classmethod
     def setUpTestData(cls) -> None:
-        cls.company = CompanyFactory()
+        cls.company = ExampleModel.create(Company)
         cls.company_update = UpdateCompany(cls.company)
         cls.company.inc_statements.create(date=2018)
-        cls.zinga = CompanyFactory(
-            ticker='ZNGA'
-        )
+        cls.zinga = ExampleModel.create(Company, ticker='ZNGA')
 
     @company_vcr.use_cassette
     def test_need_update(self):

@@ -13,8 +13,8 @@ from apps.empresas.models.base import BaseStatement
 class BaseFinprep(BaseStatement):
     accepted_date = DateTimeField(blank=True, null=True)
     filling_date = DateField(blank=True, null=True)
-    final_link = CharField(max_length=10000, blank=True, null=True)
-    link = CharField(max_length=10000, blank=True, null=True)
+    final_link = CharField(max_length=1000, blank=True, null=True)
+    link = CharField(max_length=1000, blank=True, null=True)
     reported_currency = ForeignKey("general.Currency", on_delete=SET_NULL, null=True, blank=True)
 
     class Meta:

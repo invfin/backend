@@ -1,4 +1,4 @@
-from model_bakery import baker
+from apps.bfet import ExampleModel
 
 from django.conf import settings
 from django.test import TestCase
@@ -20,31 +20,31 @@ FULL_DOMAIN = settings.FULL_DOMAIN
 class TestTerm(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.term = term = baker.make(
+        cls.term = ExampleModel.create(
             Term,
             title="test contenido",
             slug="test-contenido"
         )
-    
+
     def test_link(self):
         self.assertEqual(
             f'{FULL_DOMAIN}/definicion/test-contenido/',
             self.term.link()
         )
-    
+
 
 class TestTermContent(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.term_contet = baker.make(
+        cls.term_contet = ExampleModel.create(
             TermContent,
             title="test contenido",
-            term_related=baker.make(
+            term_related=ExampleModel.create(
                 Term,
                 slug="test-main-contenido"
             )
         )
-    
+
     def test_get_absolute_url(self):
         slug = "test-contenido"
         path = "/definicion/test-main-contenido/"
@@ -52,7 +52,7 @@ class TestTermContent(TestCase):
             f'{path}#{slug}',
             self.term_contet.get_absolute_url()
         )
-    
+
     def test_link(self):
         slug = "test-contenido"
         path = "/definicion/test-main-contenido/"

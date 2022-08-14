@@ -196,7 +196,7 @@ class TestNormalizeFinprep(TestCase):
 class TestFinprepInfo(TestCase):
     @classmethod
     def setUpTestData(cls) -> None:
-        cls.company = ExampleModel(Company, ticker="AAPL")
+        cls.company = ExampleModel.create(Company, ticker="AAPL")
         cls.parser = FinprepInfo(cls.company)
         cls.normalizer = NormalizeFinprep()
 

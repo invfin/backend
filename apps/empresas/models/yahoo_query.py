@@ -6,7 +6,7 @@ from apps.empresas.models.base import BaseStatement
 class IncomeStatementYahooQuery(BaseStatement):
     as_of_date = DateTimeField(blank=True, null=True)
     period_type = CharField(max_length=10, blank=True, null=True)
-    currency_code = FloatField(default=0, blank=True, null=True)
+    currency_code = CharField(max_length=10, blank=True, null=True)
     basic_average_shares = FloatField(default=0, blank=True, null=True)
     basic_eps = FloatField(default=0, blank=True, null=True)
     cost_of_revenue = FloatField(default=0, blank=True, null=True)
@@ -57,9 +57,9 @@ class IncomeStatementYahooQuery(BaseStatement):
 
 
 class BalanceSheetYahooQuery(BaseStatement):
-    as_of_date
-    period_type = FloatField(default=0, blank=True, null=True)
-    currency_code = FloatField(default=0, blank=True, null=True)
+    as_of_date = DateTimeField(blank=True, null=True)
+    period_type = CharField(max_length=10, blank=True, null=True)
+    currency_code = CharField(max_length=10, blank=True, null=True)
     accounts_payable = FloatField(default=0, blank=True, null=True)
     accounts_receivable = FloatField(default=0, blank=True, null=True)
     accumulated_depreciation = FloatField(default=0, blank=True, null=True)
@@ -131,9 +131,9 @@ class BalanceSheetYahooQuery(BaseStatement):
 
 
 class CashflowStatementYahooQuery(BaseStatement):
-    as_of_date = FloatField(default=0, blank=True, null=True)
-    period_type = FloatField(default=0, blank=True, null=True)
-    currency_code = FloatField(default=0, blank=True, null=True)
+    as_of_date = DateTimeField(blank=True, null=True)
+    period_type = CharField(max_length=10, blank=True, null=True)
+    currency_code = CharField(max_length=10, blank=True, null=True)
     beginning_cash_position = FloatField(default=0, blank=True, null=True)
     capital_expenditure = FloatField(default=0, blank=True, null=True)
     cash_dividends_paid = FloatField(default=0, blank=True, null=True)
