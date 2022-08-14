@@ -1,13 +1,10 @@
-import requests
-from datetime import datetime
-
 from django.conf import settings
 
 from apps.general.outils.parser_client import ParserClient
 from apps.empresas import constants
 
 
-class ParseFinhub(ParserClient):
+class ParseFinnhub(ParserClient):
     base_path = constants.FINNHUB_BASE_URL
     api_version = constants.FINNHUB_API_VERSION
     auth = {"token": settings.FINNHUB_TOKEN}
