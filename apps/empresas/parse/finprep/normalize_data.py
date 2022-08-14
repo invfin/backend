@@ -5,11 +5,14 @@ from apps.general.models import Currency
 
 
 class NormalizeFinprep:
-    def create_income_statement_finprep(
+    def normalize_income_statements_finprep(
         self,
         finprep_dict: Dict[str, Union[float, int, str, Any]]
     ) -> Dict[str, Union[float, int, str, Any]]:
         return dict(
+            date=finprep_dict["calendarYear"],
+            year=finprep_dict["date"],
+            company=self.company,
             accepted_date=finprep_dict["acceptedDate"],
             ebitdaratio=finprep_dict["ebitdaratio"],
             eps=finprep_dict["eps"],
@@ -25,9 +28,7 @@ class NormalizeFinprep:
             reported_currency=finprep_dict["reportedCurrency"],
             date=finprep_dict['calendarYear'],
             year=finprep_dict['date'],
-            reported_currency=Currency.objects.get_or_create(
-                currency=finprep_dict['reportedCurrency']
-            )[0],
+            reported_currency=Currency.objects.financial_currency(finprep_dict['reportedCurrency']),
             revenue=finprep_dict['revenue'],
             cost_of_revenue=finprep_dict['costOfRevenue'],
             gross_profit=finprep_dict['grossProfit'],
@@ -50,11 +51,14 @@ class NormalizeFinprep:
             weighted_average_diluated_shares_outstanding=finprep_dict['weightedAverageShsOutDil']
         )
 
-    def create_balance_sheet_finprep(
+    def normalize_balance_sheets_finprep(
         self,
         finprep_dict: Dict[str, Union[float, int, str, Any]]
     ) -> Dict[str, Union[float, int, str, Any]]:
         return dict(
+            date=finprep_dict["calendarYear"],
+            year=finprep_dict["date"],
+            company=self.company,
             accepted_date=finprep_dict["acceptedDate"],
             filling_date=finprep_dict["fillingDate"],
             final_link=finprep_dict["finalLink"],
@@ -62,9 +66,7 @@ class NormalizeFinprep:
             period=PERIOD_FOR_YEAR,
             date=finprep_dict['calendarYear'],
             year=finprep_dict['date'],
-            reported_currency=Currency.objects.get_or_create(
-                currency=finprep_dict['reportedCurrency']
-            )[0],
+            reported_currency=Currency.objects.financial_currency(finprep_dict['reportedCurrency']),
             account_payables=['accountPayables'],
             accumulated_other_comprehensive_income_loss=['accumulatedOtherComprehensiveIncomeLoss'],
             capital_lease_obligations=['capitalLeaseObligations'],
@@ -112,11 +114,14 @@ class NormalizeFinprep:
             total_stockholders_equity=['totalStockholdersEquity']
         )
 
-    def create_cashflow_statement_finprep(
+    def normalize_cashflow_statements_finprep(
         self,
         finprep_dict: Dict[str, Union[float, int, str, Any]]
     ) -> Dict[str, Union[float, int, str, Any]]:
         return dict(
+            date=finprep_dict["calendarYear"],
+            year=finprep_dict["date"],
+            company=self.company,
             accepted_date=finprep_dict["acceptedDate"],
             filling_date=finprep_dict["fillingDate"],
             final_link=finprep_dict["finalLink"],
@@ -124,9 +129,7 @@ class NormalizeFinprep:
             period=PERIOD_FOR_YEAR,
             date=finprep_dict['calendarYear'],
             year=finprep_dict['date'],
-            reported_currency=Currency.objects.get_or_create(
-                currency=finprep_dict['reportedCurrency']
-            )[0],
+            reported_currency=Currency.objects.financial_currency(finprep_dict['reportedCurrency']),
             net_income=finprep_dict['netIncome'],
             depreciation_amortization=finprep_dict['depreciationAndAmortization'],
             deferred_income_tax=finprep_dict['deferredIncomeTax'],

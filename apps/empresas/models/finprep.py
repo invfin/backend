@@ -114,7 +114,7 @@ class BalanceSheetFinprep(BaseFinprep):
         return self.company.ticker + str(self.date)
 
 
-class CashflowStatement(BaseFinprep):
+class CashflowStatementFinprep(BaseFinprep):
     net_income = FloatField(default=0, blank=True, null=True)
     depreciation_amortization = FloatField(default=0, blank=True, null=True)
     deferred_income_tax = FloatField(default=0, blank=True, null=True)

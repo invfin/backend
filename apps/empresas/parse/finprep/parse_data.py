@@ -46,7 +46,7 @@ class ParseFinprep(ParserClient):
             dict_params=dict_params
         )
 
-    def request_finprep_financials(
+    def request_financials_finprep(
         self,
         ticker,
         dict_params: Dict[str, str] = {"limit": 120}

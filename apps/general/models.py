@@ -14,7 +14,7 @@ from django.db.models import (
 User = get_user_model()
 
 from apps.general.bases import BaseEmail, BaseGenericModels, BaseToAll
-
+from apps.general.managers import PeriodManager, CurrencyManager
 from apps.general import constants
 
 
@@ -96,6 +96,7 @@ class Currency(Model):
         null=True,
         related_name = "currency"
     )
+    objects = CurrencyManager()
 
     class Meta:
         verbose_name = "Currency"
@@ -126,7 +127,9 @@ class EmailNotification(BaseEmail):
 
 class Period(Model):
     year = DateField(null=True, blank=True)
+    for_year = IntegerField(null=True, blank=True)
     period = IntegerField(choices=constants.PERIODS, null=True, blank=True)
+    objects = PeriodManager()
 
     class Meta:
         verbose_name = "Period"

@@ -1,83 +1,115 @@
-class NormalizeYFinance:
-    def create_balance_sheet_y_finance():
-       y_data = {}
-       return dict(
-        intangible_assets = y_data["Intangible Assets"],
-        total_liab = y_data["Total Liab"],
-        total_stockholder_equity = y_data["Total Stockholder Equity"],
-        other_current_liab = y_data["Other Current Liab"],
-        total_assets = y_data["Total Assets"],
-        common_stock = y_data["Common Stock"],
-        other_current_assets = y_data["Other Current Assets"],
-        retained_earnings = y_data["Retained Earnings"],
-        other_liab = y_data["Other Liab"],
-        good_will = y_data["Good Will"],
-        gains_losses_not_affecting_retained_earnings = y_data["Gains Losses Not Affecting Retained Earnings"],
-        other_assets = y_data["Other Assets"],
-        cash = y_data["Cash"],
-        total_current_liabilities = y_data["Total Current Liabilities"],
-        deferred_long_term_asset_charges = y_data["Deferred Long Term Asset Charges"],
-        short_long_term_debt = y_data["Short Long Term Debt"],
-        other_stockholder_equity = y_data["Other Stockholder Equity"],
-        property_plant_equipment = y_data["Property Plant Equipment"],
-        total_current_assets = y_data["Total Current Assets"],
-        long_term_investments = y_data["Long Term Investments"],
-        net_tangible_assets = y_data["Net Tangible Assets"],
-        short_term_investments = y_data["Short Term Investments"],
-        net_receivables = y_data["Net Receivables"],
-        long_term_debt = y_data["Long Term Debt"],
-        inventory = y_data["Inventory"],
-        accounts_payable = y_data["Accounts Payable"]
-       )
+from typing import Dict, Union, Any, Type, Callable
+import datetime
+import pandas as pd
 
-    def create_cashflow_statement_y_finance():
-        y_data = {}
+
+class NormalizeYFinance:
+    def initial_data(
+        self,
+        column: Type[pd.Timestamp],
+        period: Callable
+    )-> Dict[str, Union[int, datetime.datetime, Callable, Type["Company"]]]:
         return dict(
-            investments = y_data["Investments"],
-            change_to_liabilities = y_data["Change To Liabilities"],
-            total_cashflows_from_investing_activities = y_data["Total Cashflows From Investing Activities"],
-            net_borrowings = y_data["Net Borrowings"],
-            total_cash_from_financing_activities = y_data["Total Cash From Financing Activities"],
-            change_to_operating_activities = y_data["Change To Operating Activities"],
-            issuance_of_stock = y_data["Issuance Of Stock"],
-            net_income = y_data["Net Income"],
-            change_in_cash = y_data["Change In Cash"],
-            repurchase_of_stock = y_data["Repurchase Of Stock"],
-            effect_of_exchange_rate = y_data["Effect Of Exchange Rate"],
-            total_cash_from_operating_activities = y_data["Total Cash From Operating Activities"],
-            depreciation = y_data["Depreciation"],
-            other_cashflows_from_investing_activities = y_data["Other Cashflows From Investing Activities"],
-            dividends_paid = y_data["Dividends Paid"],
-            change_to_inventory = y_data["Change To Inventory"],
-            change_to_account_receivables = y_data["Change To Account Receivables"],
-            other_cashflows_from_financing_activities = y_data["Other Cashflows From Financing Activities"],
-            change_to_netincome = y_data["Change To Netincome"],
-            capital_expenditures = y_data["Capital Expenditures"],
+            date=column.year,
+            year=column.to_pydatetime().date(),
+            company=self.company,
+            period=period(column.year)
         )
 
-    def create_income_statement_y_finance():
-        y_data = {}
+    def normalize_balance_sheets_yfinance(
+        self,
+        yfinance_serie: pd.Series,
+        column: Type[pd.Timestamp],
+        period: Callable
+    )-> Dict[str, Union[float, int, str, Any]]:
+       return dict(
+            self.initial_data(column, period),
+            intangible_assets=yfinance_serie["Intangible Assets"],
+            total_liab=yfinance_serie["Total Liab"],
+            total_stockholder_equity=yfinance_serie["Total Stockholder Equity"],
+            other_current_liab=yfinance_serie["Other Current Liab"],
+            total_assets=yfinance_serie["Total Assets"],
+            common_stock=yfinance_serie["Common Stock"],
+            other_current_assets=yfinance_serie["Other Current Assets"],
+            retained_earnings=yfinance_serie["Retained Earnings"],
+            other_liab=yfinance_serie["Other Liab"],
+            good_will=yfinance_serie["Good Will"],
+            gains_losses_not_affecting_retained_earnings=yfinance_serie["Gains Losses Not Affecting Retained Earnings"],
+            other_assets=yfinance_serie["Other Assets"],
+            cash=yfinance_serie["Cash"],
+            total_current_liabilities=yfinance_serie["Total Current Liabilities"],
+            deferred_long_term_asset_charges=yfinance_serie["Deferred Long Term Asset Charges"],
+            short_long_term_debt=yfinance_serie["Short Long Term Debt"],
+            other_stockholder_equity=yfinance_serie["Other Stockholder Equity"],
+            property_plant_equipment=yfinance_serie["Property Plant Equipment"],
+            total_current_assets=yfinance_serie["Total Current Assets"],
+            long_term_investments=yfinance_serie["Long Term Investments"],
+            net_tangible_assets=yfinance_serie["Net Tangible Assets"],
+            short_term_investments=yfinance_serie["Short Term Investments"],
+            net_receivables=yfinance_serie["Net Receivables"],
+            long_term_debt=yfinance_serie["Long Term Debt"],
+            inventory=yfinance_serie["Inventory"],
+            accounts_payable=yfinance_serie["Accounts Payable"]
+        )
+
+    def normalize_cashflow_statements_yfinance(
+        self,
+        yfinance_serie: pd.Series,
+        column: Type[pd.Timestamp],
+        period: Callable
+    )-> Dict[str, Union[float, int, str, Any]]:
         return dict(
-        research_development = y_data["Research Development"],
-        effect_of_accounting_charges = y_data["Effect Of Accounting Charges"],
-        income_before_tax = y_data["Income Before Tax"],
-        minority_interest = y_data["Minority Interest"],
-        net_income = y_data["Net Income"],
-        selling_general_administrative = y_data["Selling General Administrative"],
-        gross_profit = y_data["Gross Profit"],
-        ebit = y_data["Ebit"],
-        operating_income = y_data["Operating Income"],
-        other_operating_expenses = y_data["Other Operating Expenses"],
-        interest_expense = y_data["Interest Expense"],
-        extraordinary_items = y_data["Extraordinary Items"],
-        non_recurring = y_data["Non Recurring"],
-        other_items = y_data["Other Items"],
-        income_tax_expense = y_data["Income Tax Expense"],
-        total_revenue = y_data["Total Revenue"],
-        total_operating_expenses = y_data["Total Operating Expenses"],
-        cost_of_revenue = y_data["Cost Of Revenue"],
-        total_other_income_expense_net = y_data["Total Other Income Expense Net"],
-        discontinued_operations = y_data["Discontinued Operations"],
-        net_income_from_continuing_ops = y_data["Net Income From Continuing Ops"],
-        net_income_applicable_to_common_shares = y_data["Net Income Applicable To Common Shares"],
-    )
+            self.initial_data(column, period),
+            investments=yfinance_serie["Investments"],
+            change_to_liabilities=yfinance_serie["Change To Liabilities"],
+            total_cashflows_from_investing_activities=yfinance_serie["Total Cashflows From Investing Activities"],
+            net_borrowings=yfinance_serie["Net Borrowings"],
+            total_cash_from_financing_activities=yfinance_serie["Total Cash From Financing Activities"],
+            change_to_operating_activities=yfinance_serie["Change To Operating Activities"],
+            issuance_of_stock=yfinance_serie["Issuance Of Stock"],
+            net_income=yfinance_serie["Net Income"],
+            change_in_cash=yfinance_serie["Change In Cash"],
+            repurchase_of_stock=yfinance_serie["Repurchase Of Stock"],
+            effect_of_exchange_rate=yfinance_serie["Effect Of Exchange Rate"],
+            total_cash_from_operating_activities=yfinance_serie["Total Cash From Operating Activities"],
+            depreciation=yfinance_serie["Depreciation"],
+            other_cashflows_from_investing_activities=yfinance_serie["Other Cashflows From Investing Activities"],
+            dividends_paid=yfinance_serie["Dividends Paid"],
+            change_to_inventory=yfinance_serie["Change To Inventory"],
+            change_to_account_receivables=yfinance_serie["Change To Account Receivables"],
+            other_cashflows_from_financing_activities=yfinance_serie["Other Cashflows From Financing Activities"],
+            change_to_netincome=yfinance_serie["Change To Netincome"],
+            capital_expenditures=yfinance_serie["Capital Expenditures"],
+        )
+
+    def normalize_income_statements_yfinance(
+        self,
+        yfinance_serie: pd.Series,
+        column: Type[pd.Timestamp],
+        period: Callable
+    )-> Dict[str, Union[float, int, str, Any]]:
+        return dict(
+            self.initial_data(column, period),
+            research_development=yfinance_serie["Research Development"],
+            effect_of_accounting_charges=yfinance_serie["Effect Of Accounting Charges"],
+            income_before_tax=yfinance_serie["Income Before Tax"],
+            minority_interest=yfinance_serie["Minority Interest"],
+            net_income=yfinance_serie["Net Income"],
+            selling_general_administrative=yfinance_serie["Selling General Administrative"],
+            gross_profit=yfinance_serie["Gross Profit"],
+            ebit=yfinance_serie["Ebit"],
+            operating_income=yfinance_serie["Operating Income"],
+            other_operating_expenses=yfinance_serie["Other Operating Expenses"],
+            interest_expense=yfinance_serie["Interest Expense"],
+            extraordinary_items=yfinance_serie["Extraordinary Items"],
+            non_recurring=yfinance_serie["Non Recurring"],
+            other_items=yfinance_serie["Other Items"],
+            income_tax_expense=yfinance_serie["Income Tax Expense"],
+            total_revenue=yfinance_serie["Total Revenue"],
+            total_operating_expenses=yfinance_serie["Total Operating Expenses"],
+            cost_of_revenue=yfinance_serie["Cost Of Revenue"],
+            total_other_income_expense_net=yfinance_serie["Total Other Income Expense Net"],
+            discontinued_operations=yfinance_serie["Discontinued Operations"],
+            net_income_from_continuing_ops=yfinance_serie["Net Income From Continuing Ops"],
+            net_income_applicable_to_common_shares=yfinance_serie["Net Income Applicable To Common Shares"],
+        )

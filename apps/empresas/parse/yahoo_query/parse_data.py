@@ -2,8 +2,11 @@ import yahooquery as yq
 
 
 class ParseYahooQuery:
+    def __init__(self, ticker) -> None:
+        self.yqcompany = yq.Ticker(ticker)
+
     def institutional_ownership(self):
-        df = self.yq_company.institution_ownership
+        df = self.yqcompany.institution_ownership
         df = df.reset_index()
         df = df.drop(columns=['symbol', 'row', 'maxAge'])
         try:
@@ -13,21 +16,30 @@ class ParseYahooQuery:
         except:
             pass
 
-    def get_current_price(self):
-        current_price = 0
-        current_currency = 'None'
+    def request_income_statements_yahooquery(self, frequency: str = "a", trailing=False):
+        return self.yqcompany.income_statement(frequency=frequency, trailing=trailing)
 
-        try:
-            else:
-                company_info = yq.Ticker(self.ticker).financial_data
-                if 'currentPrice' in company_info:
-                    current_price = company_info['currentPrice']
-                    current_currency = company_info['financialCurrency']
+    def request_balance_sheets_yahooquery(self, frequency: str = "a", trailing=False):
+        return self.yqcompany.balance_sheet(frequency=frequency, trailing=trailing)
 
-        except Exception as e:
-            current_price, current_currency = self.scrap_price_yahoo()
+    def request_cashflow_statements_yahooquery(self, frequency: str = "a", trailing=False):
+        return self.yqcompany.cash_flow(frequency=frequency, trailing=trailing)
 
-        return {
-            'current_price': current_price,
-            'current_currency': current_currency,
-        }
+    # def get_current_price(self):
+    #     current_price = 0
+    #     current_currency = 'None'
+
+    #     try:
+    #         else:
+    #             company_info = yq.Ticker(self.ticker).financial_data
+    #             if 'currentPrice' in company_info:
+    #                 current_price = company_info['currentPrice']
+    #                 current_currency = company_info['financialCurrency']
+
+    #     except Exception as e:
+    #         current_price, current_currency = self.scrap_price_yahoo()
+
+    #     return {
+    #         'current_price': current_price,
+    #         'current_currency': current_currency,
+    #     }
