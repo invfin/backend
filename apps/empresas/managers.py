@@ -69,40 +69,40 @@ class CompanyManager(Manager):
         return random.choice(list(query))
 
     def companies_by_main_exchange(self, name=None):
-        return self.filter(exchange__main_org__name = name)
+        return self.filter(exchange__main_org__name=name)
 
     def clean_companies(self):
         return self.filter(
-            no_incs = False,
-            no_bs = False,
-            no_cfs = False
+            no_incs=False,
+            no_bs=False,
+            no_cfs=False
         )
 
     def clean_companies_by_main_exchange(self, name=None):
         return self.filter(
-            no_incs = False,
-            no_bs = False,
-            no_cfs = False,
-            exchange__main_org__name = name
+            no_incs=False,
+            no_bs=False,
+            no_cfs=False,
+            exchange__main_org__name=name
             )
 
     def complete_companies_by_main_exchange(self, name=None):
         return self.filter(
-            no_incs = False,
-            no_bs = False,
-            no_cfs = False,
-            description_translated = True,
-            exchange__main_org__name = name
+            no_incs=False,
+            no_bs=False,
+            no_cfs=False,
+            description_translated=True,
+            exchange__main_org__name=name
             )
 
     def get_similar_companies(self, sector_id, industry_id):
         return self.filter(
-            no_incs = False,
-            no_bs = False,
-            no_cfs = False,
-            description_translated = True,
-            sector_id = sector_id,
-            industry_id = industry_id
+            no_incs=False,
+            no_bs=False,
+            no_cfs=False,
+            description_translated=True,
+            sector_id=sector_id,
+            industry_id=industry_id
             )
 
     def random_clean_company(self):
@@ -116,21 +116,21 @@ class CompanyManager(Manager):
 
     def clean_companies_to_update(self, name=None):
         return self.filter(
-            no_incs = False,
-            no_bs = False,
-            no_cfs = False,
-            exchange__main_org__name = name,
+            no_incs=False,
+            no_bs=False,
+            no_cfs=False,
+            exchange__main_org__name=name,
             updated=False,
             has_error=False
             )
 
     def get_random_most_visited_clean_company(self):
         return self.get_random(self.filter(
-            no_incs = False,
-            no_bs = False,
-            no_cfs = False,
+            no_incs=False,
+            no_bs=False,
+            no_cfs=False,
             has_error=False,
-            description_translated = True
+            description_translated=True
         ).annotate(
             visited_by_user=Count('usercompanyvisited'),
             visited_by_visiteur=Count('visiteurcompanyvisited'),
@@ -142,9 +142,9 @@ class CompanyManager(Manager):
         Based on most visited companies
         """
         return self.filter(
-            no_incs = False,
-            no_bs = False,
-            no_cfs = False
+            no_incs=False,
+            no_bs=False,
+            no_cfs=False
         ).annotate(
             visited_by_user=Count('usercompanyvisited'),
             visited_by_visiteur=Count('visiteurcompanyvisited'),
@@ -163,9 +163,9 @@ class CompanyManager(Manager):
             Q(exchange__id__in=exchage) |
             Q(industry__id__in=industry) |
             Q(country__id__in=country),
-            no_incs = False,
-            no_bs = False,
-            no_cfs = False
+            no_incs=False,
+            no_bs=False,
+            no_cfs=False
         ).annotate(
             visited_by_user=Count('usercompanyvisited'),
             visited_by_visiteur=Count('visiteurcompanyvisited'),

@@ -52,6 +52,8 @@ class TestNormalizeFinprep(TestCase):
     @classmethod
     def setUpTestData(cls) -> None:
         cls.parser = NormalizeFinprep()
+        cls.company = ExampleModel.create(Company, ticker="AAPL")
+        cls.parser.company = cls.company
         cls.income_statement = finprep_data.INCOME_STATEMENT[0]
         cls.balance_sheet = finprep_data.BALANCE_SHEET[0]
         cls.cashflow_statement = finprep_data.CASHFLOW_STATEMENT[0]

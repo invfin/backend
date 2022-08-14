@@ -4,12 +4,13 @@ from apps.general.outils.parser_client import ParserClient
 
 
 class TestParserClient(TestCase):
+    @classmethod
     def setUpTestData(cls) -> None:
         cls.parser_client = ParserClient()
-        cls.base_path = "https://www.google.com/"
+        cls.parser_client.base_path = "https://www.google.com/"
+        cls.parser_client.api_version = None
+        cls.parser_client.auth = None
         cls.path = "search"
-        cls.api_version = None
-        cls.str_params = None
         cls.dict_params = {
             "q": "galletas",
             "oq": "galletas",
@@ -24,14 +25,27 @@ class TestParserClient(TestCase):
             '&aqs=chrome..69i57.1073j0j1&sourceid=chrome&ie=UTF-8'
         )
         self.assertEqual(
-            f"{self.base_path}{self.path}",
-            self.parser_client._build_full_path(self.base_path, self.path)
+            f"https://www.google.com/{self.path}",
+            self.parser_client._build_full_path(self.path)
         )
         self.assertEqual(
-            f"{self.base_path}{self.path}",
-            self.parser_client._build_full_path(self.base_path, self.path,self. api_version, self.str_params)
+            f"https://www.google.com/V6/{self.path}",
+            self.parser_client._build_full_path(self.path, "V6", )
+        )
+        self.assertEqual(
+            f"https://www.google.com/V6/{self.path}/str-params",
+            self.parser_client._build_full_path(self.path, "V6", "str-params")
         )
         self.assertEqual(
             multiple_params_url,
-            self.parser_client._build_full_path(self.base_path, self.path, self.api_version, self.str_params, self.dict_params)
+            self.parser_client._build_full_path(self.path, None, None, **self.dict_params)
+        )
+        multiple_params_url_with_auth = (
+            'https://www.google.com/search?token=password&q=galletas&oq=galletas'
+            '&aqs=chrome..69i57.1073j0j1&sourceid=chrome&ie=UTF-8'
+        )
+        self.parser_client.auth = {"token": "password"}
+        self.assertEqual(
+            multiple_params_url_with_auth,
+            self.parser_client._build_full_path(self.path, None, None, **self.dict_params)
         )

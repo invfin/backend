@@ -50,7 +50,7 @@ class TestCompanyManagers(TestCase):
             no_cfs=False,
             sector=cls.sector,
             industry=cls.industry,
-            description_translated = True,
+            description_translated=True,
             updated=False,
             has_error=True,
             exchange=cls.nyse
@@ -63,7 +63,7 @@ class TestCompanyManagers(TestCase):
             no_cfs=False,
             sector=cls.sector,
             industry=cls.industry,
-            description_translated = False,
+            description_translated=True,
             exchange=cls.nyse,
             updated=False,
             has_error=False,
@@ -71,27 +71,27 @@ class TestCompanyManagers(TestCase):
         cls.zinga = ExampleModel.create(
             Company,
             ticker='ZNGA',
-            no_incs = True,
-            no_bs = True,
-            no_cfs = True,
+            no_incs=False,
+            no_bs=False,
+            no_cfs=False,
             sector=cls.sector,
             industry=cls.industry,
-            description_translated = False,
+            description_translated=False,
             updated=True,
-            has_error=True,
+            has_error=False,
             exchange=cls.nyse
         )
         cls.intel = ExampleModel.create(
             Company,
             ticker='INTC',
-            no_incs = True,
-            no_bs = True,
-            no_cfs = True,
+            no_incs=True,
+            no_bs=False,
+            no_cfs=False,
             industry=cls.industry,
-            description_translated = True,
+            description_translated=False,
             exchange=cls.euro,
-            updated=True,
-            has_error=True,
+            updated=False,
+            has_error=False,
         )
 
     def test_companies_by_main_exchange(self):
@@ -102,19 +102,19 @@ class TestCompanyManagers(TestCase):
 
     def test_clean_companies(self):
         self.assertEqual(
-            [self.apple, self.google],
+            [self.apple, self.google, self.zinga],
             list(Company.objects.clean_companies())
         )
 
     def test_clean_companies_by_main_exchange(self):
         self.assertEqual(
-            [self.apple, self.google],
+            [self.apple, self.google, self.zinga],
             list(Company.objects.clean_companies_by_main_exchange("Estados Unidos"))
         )
 
     def test_complete_companies_by_main_exchange(self):
         self.assertEqual(
-            [self.apple],
+            [self.apple, self.google],
             list(Company.objects.complete_companies_by_main_exchange("Estados Unidos"))
         )
 

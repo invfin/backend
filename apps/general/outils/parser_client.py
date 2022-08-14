@@ -30,7 +30,7 @@ class ParserClient:
             full_path = f"{full_path}{self.api_version}/"
         full_path = f"{full_path}{path}"
         if str_params:
-            full_path = f"{path}/{str_params}"
+            full_path = f"{full_path}/{str_params}"
         if self.auth:
             auth_dict = urllib.parse.urlencode(self.auth)
             full_path = f'{full_path}?{auth_dict}'
@@ -69,5 +69,5 @@ class ParserClient:
         str_params: str = None,
         **dict_params: dict
     ) -> Union[Dict[str, Any], str, str, requests.Response]:
-        full_path = self._build_full_path(path, different_api_version, str_params, dict_params)
+        full_path = self._build_full_path(path, different_api_version, str_params, **dict_params)
         return self._request_content(full_path)

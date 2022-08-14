@@ -66,7 +66,7 @@ class DataCreator:
         return f"{email_name}@{email_domain}"
 
     @staticmethod
-    def create_random_url(max_value: int = 100, secure = True):
+    def create_random_url(max_value: int = 100, secure=True):
         domain = DataCreator.create_random_string(max_value)
         top_level_domain = random.choice(LIST_EMAIL_DOMAINS).split(".")[-1]
         protocol = "https" if secure else "http"
@@ -84,16 +84,22 @@ class DataCreator:
 
     @staticmethod
     def create_random_date(day: int = None, month: int = None, year: int = None):
-        day = day if day else random.randint(1, 30)
         month = month if month else random.randint(1, 12)
+        if month == 2:
+            max_day = 28
+        elif month in [1, 3, 5, 6, 8, 10, 12]:
+            max_day = 31
+        else:
+            max_day = 30
+        day = day if day else random.randint(1, max_day)
         year = year if year else random.randint(1900, 2100)
         return datetime.date(year=year, month=month, day=day)
 
     @staticmethod
     def create_random_hour(hour: int = None, minute: int = None, second: int = None):
-        hour = hour if hour else random.randint(0, 24)
-        minute = minute if minute else random.randint(0, 60)
-        second = second if second else random.randint(0, 60)
+        hour = hour if hour else random.randint(0, 23)
+        minute = minute if minute else random.randint(0, 59)
+        second = second if second else random.randint(0, 59)
         return datetime.time(hour, minute, second)
 
     @staticmethod

@@ -13,8 +13,8 @@ class YFinanceInfo(DFInfoCreator, NormalizeYFinance, ParseYFinance):
     cashflow_statement_model = CashflowStatementYFinance
 
     def __init__(self, company) -> None:
+        super().__init__()
         self.company = company
-        super().__init__(company.ticker)
         self.normalize_income_statement = self.normalize_income_statements_yfinance
         self.normalize_balance_sheet = self.normalize_balance_sheets_yfinance
         self.normalize_cashflow_statement = self.normalize_cashflow_statements_yfinance
@@ -34,7 +34,7 @@ class YFinanceInfo(DFInfoCreator, NormalizeYFinance, ParseYFinance):
 
     def create_quarterly_financials_yfinance(self):
         self.create_financials(
-            self.request_quarterly_earnings_yfinance,
+            self.request_quarterly_financials_yfinance,
             self.request_quarterly_balance_sheet_yfinance,
             self.request_quarterly_cashflow_yfinance,
             self.period_quarter
@@ -42,7 +42,7 @@ class YFinanceInfo(DFInfoCreator, NormalizeYFinance, ParseYFinance):
 
     def create_yearly_financials_yfinance(self):
         self.create_financials(
-            self.request_earnings_yfinance,
+            self.request_financials_yfinance,
             self.request_balance_sheet_yfinance,
             self.request_cashflow_yfinance,
             self.period_year

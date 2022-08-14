@@ -15,14 +15,11 @@ parse_vcr = vcr.VCR(
 )
 
 
-class TestYFinanceInfo:
+class TestYFinanceInfo(TestCase):
     @classmethod
     def setUpTestData(cls) -> None:
         cls.company = ExampleModel.create(Company, ticker="AAPL")
         cls.parser = YFinanceInfo(cls.company)
-
-    def test_create_statements_from_df(self):
-        self.parser.create_statements_from_df
 
     @parse_vcr.use_cassette
     def test_create_quarterly_financials_yfinance(self):

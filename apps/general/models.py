@@ -126,8 +126,7 @@ class EmailNotification(BaseEmail):
 
 
 class Period(Model):
-    year = DateField(null=True, blank=True)
-    for_year = IntegerField(null=True, blank=True)
+    year = IntegerField(null=True, blank=True)
     period = IntegerField(choices=constants.PERIODS, null=True, blank=True)
     objects = PeriodManager()
 
@@ -149,4 +148,4 @@ class Period(Model):
 
     @property
     def period_year(self):
-        return self.year.year
+        return self.year

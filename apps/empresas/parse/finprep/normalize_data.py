@@ -1,10 +1,11 @@
 from typing import Dict, Union, Any
 
-from apps.general.constants import PERIOD_FOR_YEAR
-from apps.general.models import Currency
+from apps.general.models import Currency, Period
 
 
 class NormalizeFinprep:
+    company = None
+
     def normalize_income_statements_finprep(
         self,
         finprep_dict: Dict[str, Union[float, int, str, Any]]
@@ -24,7 +25,7 @@ class NormalizeFinprep:
             link=finprep_dict["link"],
             net_income_ratio=finprep_dict["netIncomeRatio"],
             operating_income_ratio=finprep_dict["operatingIncomeRatio"],
-            period=PERIOD_FOR_YEAR,
+            period=Period.objects.for_year_period(finprep_dict["calendarYear"]),
             reported_currency=Currency.objects.financial_currency(finprep_dict['reportedCurrency']),
             revenue=finprep_dict['revenue'],
             cost_of_revenue=finprep_dict['costOfRevenue'],
@@ -60,7 +61,7 @@ class NormalizeFinprep:
             filling_date=finprep_dict["fillingDate"],
             final_link=finprep_dict["finalLink"],
             link=finprep_dict["link"],
-            period=PERIOD_FOR_YEAR,
+            period=Period.objects.for_year_period(finprep_dict["calendarYear"]),
             reported_currency=Currency.objects.financial_currency(finprep_dict['reportedCurrency']),
             account_payables=['accountPayables'],
             accumulated_other_comprehensive_income_loss=['accumulatedOtherComprehensiveIncomeLoss'],
@@ -120,7 +121,7 @@ class NormalizeFinprep:
             filling_date=finprep_dict["fillingDate"],
             final_link=finprep_dict["finalLink"],
             link=finprep_dict["link"],
-            period=PERIOD_FOR_YEAR,
+            period=Period.objects.for_year_period(finprep_dict["calendarYear"]),
             reported_currency=Currency.objects.financial_currency(finprep_dict['reportedCurrency']),
             net_income=finprep_dict['netIncome'],
             depreciation_amortization=finprep_dict['depreciationAndAmortization'],

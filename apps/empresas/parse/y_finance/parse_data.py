@@ -4,8 +4,10 @@ import yfinance as yf
 
 
 class ParseYFinance:
-    def __init__(self, ticker) -> None:
-        self.yfcompany = yf.Ticker(ticker)
+    company = None
+    @property
+    def yfcompany(self):
+        return yf.Ticker(self.company.ticker)
 
     @property
     def request_info_yfinance(self) -> Dict[str, Any]:

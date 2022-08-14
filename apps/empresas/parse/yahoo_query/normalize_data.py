@@ -6,6 +6,9 @@ from apps.general.models import Currency
 
 
 class NormalizeYahooQuery:
+    def __init__(self, company) -> None:
+        self.company = company
+
     def initial_data(
         self,
         date: Type[pd.Timestamp],

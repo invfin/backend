@@ -4,16 +4,18 @@ import pandas as pd
 
 
 class NormalizeYFinance:
+    company = None
+
     def initial_data(
         self,
         column: Type[pd.Timestamp],
         period: Callable
-    )-> Dict[str, Union[int, datetime.datetime, Callable, Type["Company"]]]:
+    ) -> Dict[str, Union[int, datetime.datetime, Callable, Type["Company"]]]:
         return dict(
             date=column.year,
             year=column.to_pydatetime().date(),
             company=self.company,
-            period=period(column.year)
+            period=period(int(column.year))
         )
 
     def normalize_balance_sheets_yfinance(
