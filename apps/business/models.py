@@ -26,6 +26,26 @@ from apps.business.managers import ProductManager
 User = get_user_model()
 
 
+def default_dict():
+    return dict(
+        title="¿Qué incluye?",
+        include=[
+            {
+                "icon":"<i class='fas fa-infinity'></i>",
+                "text":"Acceso de por vida"
+            },
+            {
+                "icon":"<i class='fas fa-file-archive'></i>",
+                "text":"Actualizaciones constantes"
+            },
+            {
+                "icon":"<i class='fas fa-book'></i>",
+                "text":"Ebook de regalo"
+            }
+        ]
+    )
+
+
 class StripeFields(BaseToAll):
     stripe_id = CharField(max_length=500, null=True, blank=True)
     for_testing = BooleanField(default=False)
@@ -72,23 +92,6 @@ class Product(StripeFields):
 
 
 class ProductComplementary(StripeFields):
-    EXTRAS = dict(
-   title="¿Qué incluye?",
-   include=[
-      {
-         "icon":"<i class='fas fa-infinity'></i>",
-         "text":"Acceso de por vida"
-      },
-      {
-         "icon":"<i class='fas fa-file-archive'></i>",
-         "text":"Actualizaciones constantes"
-      },
-      {
-         "icon":"<i class='fas fa-book'></i>",
-         "text":"Ebook de regalo"
-      }
-   ])
-
     product = ForeignKey(Product,
         on_delete=CASCADE,
         null=True,
@@ -106,7 +109,7 @@ class ProductComplementary(StripeFields):
     subscription_interval = IntegerField(default=0, blank=True)
     created_at = DateTimeField(auto_now_add=True)
     updated_at = DateTimeField(null=True, blank=True)
-    extras = JSONField(default=EXTRAS)
+    extras = JSONField(default=default_dict)
     purchase_result = CharField(max_length=300, blank=True, choices=constants.PURCHASE_RESULT)
     product_result = CharField(max_length=300, blank=True, default='')
 

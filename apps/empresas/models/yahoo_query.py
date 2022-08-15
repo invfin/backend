@@ -4,7 +4,7 @@ from apps.empresas.models.base import BaseStatement
 
 
 class BaseUnknownField(BaseStatement):
-    financials = JSONField(default={})
+    financials = JSONField(default=dict)
 
     class Meta:
         abstract = True

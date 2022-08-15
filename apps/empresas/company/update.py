@@ -23,16 +23,24 @@ class UpdateCompany(CalculateCompanyFinancialRatios, RetrieveCompanyData):
         super().__init__()
         self.company: Type["Company"] = company
 
-    def get_most_recent_price(self) -> float:
-        if 'currentPrice' in self..info:
-            current_price = self..info['currentPrice']
-        else:
-            current_price = self..financial_data['currentPrice']
+    def get_most_recent_price(self):
+        # if 'currentPrice' in self..info:
+        #     current_price = self..info['currentPrice']
+        # else:
+        #     current_price = self..financial_data['currentPrice']
         return {'currentPrice':current_price}
 
     @log_company
+    def update_all_financials_from_finprep(self):
+        self.create_financials_finprep()
+
+    @log_company
+    def update_all_financials_from_finnhub(self):
+        self.save_financials_as_reported()
+
+    @log_company
     def add_logo(self):
-        self.company.image = self..info['logo_url']
+        self.company.image = self.request_info_yfinance['logo_url']
         self.company.has_logo = True
         self.company.save(update_fields=['has_logo', 'image'])
 
@@ -43,56 +51,19 @@ class UpdateCompany(CalculateCompanyFinancialRatios, RetrieveCompanyData):
         self.company.save(update_fields=['description_translated', 'description'])
 
     def general_update(self):
-        if self.company.has_logo is False:
+        if not self.company.image:
             self.add_logo()
         if self.company.description_translated is False:
             self.add_description()
 
-    def financial_update(self):
-        log_message = 'all right'
-        try:
-            if self.check_last_filing() == 'need update':
-                try:
-                    finprep_data = self.retreive_data.request_finprep_financials()
-
-                    all_ratios = self.calculate_all_ratios(
-                        finprep_data["income_statements"],
-                        finprep_data["balance_sheets"],
-                        finprep_data["cashflow_statements"]
-                    )
-                except Exception as e:
-                    log_message = e
-                    self.company.has_error = True
-                    self.company.error_message = e
-                    self.company.save(update_fields=['has_error', 'error_message'])
-                else:
-                    try:
-                        self.create_all_ratios(all_ratios)
-                        self.company.updated = True
-                        self.company.last_update = datetime.now()
-                        self.company.save(update_fields=['updated', 'last_update'])
-                    except Exception as e:
-                        log_message = e
-                        CompanyUpdateLog.objects.create_log(self.company, 'second_step_financial_update', log_message)
-                        self.company.has_error = True
-                        self.company.error_message = e
-                        self.company.save(update_fields=['has_error', 'error_message'])
-                    finally:
-                        CompanyUpdateLog.objects.create_log(self.company, 'first_step_financial_update', log_message)
-                finally:
-                    CompanyUpdateLog.objects.create_log(self.company, 'first_step_financial_update', log_message)
-            else:
-                from apps.empresas.tasks import update_company_financials_task
-                self.company.date_updated = True
-                self.company.save(update_fields=['date_updated'])
-                update_company_financials_task.delay()
-        except Exception as e:
-            log_message = e
-            self.company.has_error = True
-            self.company.error_message = e
-            self.company.save(update_fields=['has_error', 'error_message'])
-        finally:
-            CompanyUpdateLog.objects.create_log(self.company, 'last_step_financial_update', log_message)
+    @log_company
+    def check_last_filing(self):
+        least_recent_date = self.yq_company.balance_sheet()
+        least_recent_date = least_recent_date['asOfDate'].max().value // 10**9 # normalize time
+        least_recent_year = datetime.fromtimestamp(least_recent_date).year
+        if least_recent_year != self.company.most_recent_year:
+            return 'need update'
+        return 'updated'
 
     @log_company
     def create_all_ratios(self, all_ratios: dict):
@@ -108,63 +79,6 @@ class UpdateCompany(CalculateCompanyFinancialRatios, RetrieveCompanyData):
         self.create_enterprise_value_ratio(all_ratios["enterprise_value_ratio"])
         self.create_eficiency_ratio(all_ratios["eficiency_ratio"])
         self.create_company_growth(all_ratios["company_growth"])
-
-    @log_company
-    def check_last_filing(self):
-        least_recent_date = self.yq_company.balance_sheet()
-        least_recent_date = least_recent_date['asOfDate'].max().value // 10**9 # normalize time
-        least_recent_year = datetime.fromtimestamp(least_recent_date).year
-        if least_recent_year != self.company.most_recent_year:
-            return 'need update'
-        return 'updated'
-
-    def generate_current_data(
-        self,
-        income_statements: list,
-        balance_sheets: list,
-        cashflow_statements: list
-    )-> dict:
-
-        current_data = {}
-        current_price = self.get_most_recent_price()
-        current_income_statements = income_statements[0]
-        current_balance_sheets = balance_sheets[0]
-        current_cashflow_statements = cashflow_statements[0]
-        current_fecha = {
-            'date': current_income_statements['calendarYear'],
-            'year': current_income_statements['date'],
-        }
-        current_data.update(current_price)
-        current_data.update(current_income_statements)
-        current_data.update(current_balance_sheets)
-        current_data.update(current_cashflow_statements)
-        current_data.update(current_fecha)
-
-        return current_data
-
-    def generate_last_year_data(
-        self,
-        income_statements: list,
-        balance_sheets: list,
-        cashflow_statements: list
-    )-> dict:
-
-        ly_data = {}
-        ly_income_statements = income_statements[1]
-        ly_balance_sheets = balance_sheets[1]
-        ly_cashflow_statements = cashflow_statements[1]
-        ly_fecha = {
-            'date': ly_income_statements['calendarYear'],
-            'year': ly_income_statements['date'],
-        }
-        ly_data.update(ly_income_statements)
-        ly_data.update(ly_balance_sheets)
-        ly_data.update(ly_cashflow_statements)
-        ly_data.update(ly_fecha)
-
-        return self.last_year_data(ly_data)
-
-
 
     @log_company
     def create_current_stock_price(self, price):

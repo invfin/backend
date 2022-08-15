@@ -1,24 +1,16 @@
 import math
 import operator
-from statistics import mean
 
 from django.db.models import Avg
 
 from apps.empresas.valuations import discounted_cashflow
 from apps.general.utils import ChartSerializer
 from apps.general.mixins import BaseToAll
-from apps.general.models import Currency
-
-from .retrieve_data import RetrieveCompanyData
 
 
 class CompanyExtended(BaseToAll, ChartSerializer):
     class Meta:
         abstract = True
-
-    @property
-    def show_news(self):
-        return RetrieveCompanyData(self.ticker).get_news()
 
     def all_income_statements(self, limit) ->list:
         inc = self.inc_statements.all()

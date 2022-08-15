@@ -6,8 +6,8 @@ from django.db.models import Q
 
 from config import celery_app
 
-from .company.update import UpdateCompany
-from .models import Company
+from apps.empresas.company.update import UpdateCompany
+from apps.empresas.models import Company
 
 
 @celery_app.task()
@@ -36,22 +36,15 @@ def update_basic_info_company_task():
 
 
 @celery_app.task()
-def save_remote_images_company_task():
-    companies_without_info = Company.objects.filter(has_logo=True, exchange__main_org__name='Estados Unidos')
-    if companies_without_info.exists():
-        company = companies_without_info.first()
-        if company.has_meta_image is False:
-            return UpdateCompany(company).save_logo_remotely()
-    else:
-        return send_mail('No companies left', 'All companies have images', settings.EMAIL_DEFAULT, [settings.EMAIL_DEFAULT])
-
-
-@celery_app.task()
 def update_company_financials_task():
-    org_name = 'Rest of comapnies'
     companies_without_info = Company.objects.clean_companies().filter(date_updated=False)
     if companies_without_info.exists():
         company = companies_without_info.first()
         return UpdateCompany(company).financial_update()
     else:
-        return send_mail('No companies left to update financials', f'All companies have info for {org_name}', settings.EMAIL_DEFAULT, [settings.EMAIL_DEFAULT])
+        return send_mail(
+            'No companies left to update financials',
+            f'All companies have info for {org_name}',
+            settings.EMAIL_DEFAULT,
+            [settings.EMAIL_DEFAULT]
+        )

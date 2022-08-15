@@ -6,7 +6,7 @@ from apps.empresas.models import Company
 
 class StatementsFinnhub(Model):
     company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True)
-    financials = JSONField(default={})
+    financials = JSONField(default=dict)
 
     class Meta:
         verbose_name = "Finnhub All Statements"

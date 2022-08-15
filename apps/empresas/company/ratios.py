@@ -1,4 +1,50 @@
 class CalculateCompanyFinancialRatios:
+    def generate_current_data(
+        self,
+        income_statements: list,
+        balance_sheets: list,
+        cashflow_statements: list
+    )-> dict:
+
+        current_data = {}
+        current_price = self.get_most_recent_price()
+        current_income_statements = income_statements[0]
+        current_balance_sheets = balance_sheets[0]
+        current_cashflow_statements = cashflow_statements[0]
+        current_fecha = {
+            'date': current_income_statements['calendarYear'],
+            'year': current_income_statements['date'],
+        }
+        current_data.update(current_price)
+        current_data.update(current_income_statements)
+        current_data.update(current_balance_sheets)
+        current_data.update(current_cashflow_statements)
+        current_data.update(current_fecha)
+
+        return current_data
+
+    def generate_last_year_data(
+        self,
+        income_statements: list,
+        balance_sheets: list,
+        cashflow_statements: list
+    )-> dict:
+
+        ly_data = {}
+        ly_income_statements = income_statements[1]
+        ly_balance_sheets = balance_sheets[1]
+        ly_cashflow_statements = cashflow_statements[1]
+        ly_fecha = {
+            'date': ly_income_statements['calendarYear'],
+            'year': ly_income_statements['date'],
+        }
+        ly_data.update(ly_income_statements)
+        ly_data.update(ly_balance_sheets)
+        ly_data.update(ly_cashflow_statements)
+        ly_data.update(ly_fecha)
+
+        return self.last_year_data(ly_data)
+
     def calculate_all_ratios(
         self,
         income_statements: list,

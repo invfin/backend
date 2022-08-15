@@ -1,11 +1,7 @@
 from django.db.models import (
     SET_NULL,
-    CharField,
-    DateField,
     FloatField,
     ForeignKey,
-    IntegerField,
-    Model,
 )
 
 from apps.empresas.models.base import BaseStatement, Company
@@ -13,7 +9,6 @@ from apps.empresas.models.base import BaseStatement, Company
 
 class IncomeStatement(BaseStatement):
     company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="inc_statements")
-    reported_currency = ForeignKey("general.Currency", on_delete=SET_NULL, null=True, blank=True)
     revenue = FloatField(default=0, blank=True, null=True)
     cost_of_revenue = FloatField(default=0, blank=True, null=True)
     gross_profit = FloatField(default=0, blank=True, null=True)
@@ -46,7 +41,6 @@ class IncomeStatement(BaseStatement):
 
 class BalanceSheet(BaseStatement):
     company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="balance_sheets")
-    reported_currency = ForeignKey("general.Currency", on_delete=SET_NULL, null=True, blank=True)
     cash_and_cash_equivalents = FloatField(default=0, blank=True, null=True)
     short_term_investments = FloatField(default=0, blank=True, null=True)
     cash_and_short_term_investments = FloatField(default=0, blank=True, null=True)
@@ -98,7 +92,6 @@ class BalanceSheet(BaseStatement):
 
 class CashflowStatement(BaseStatement):
     company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="cf_statements")
-    reported_currency = ForeignKey("general.Currency", on_delete=SET_NULL, null=True, blank=True)
     net_income = FloatField(default=0, blank=True, null=True)
     depreciation_amortization = FloatField(default=0, blank=True, null=True)
     deferred_income_tax = FloatField(default=0, blank=True, null=True)

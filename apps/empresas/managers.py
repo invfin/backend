@@ -172,6 +172,11 @@ class CompanyManager(Manager):
             total_visits=F('visited_by_user') + F('visited_by_visiteur')
         ).order_by('total_visits')
 
+    def filter_checkings(self, check: str, has_it: bool):
+        checking = f"has_{check}"
+        state = "yes" if has_it else "no"
+        return self.filter(**{f"checkings__{checking}__state": state})
+
 
 class CompanyUpdateLogManager(Manager):
     pass

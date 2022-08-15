@@ -24,12 +24,6 @@ from apps.seo.managers import VisiteurManager
 User = get_user_model()
 
 
-# class URLHistorial(Model):
-#     old_url
-#     new_url
-
-# from django.contrib.sessions.models import Session
-
 class Visiteur(BaseToAll):
     ip = CharField(max_length=50, null=True, blank=True)
     session_id = CharField(max_length=1000, null=True, blank=True)

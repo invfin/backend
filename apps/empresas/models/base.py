@@ -22,6 +22,15 @@ from apps.empresas.managers import CompanyManager, CompanyUpdateLogManager
 from apps.general.models import Period
 
 
+def default_dict():
+    {
+        'has_institutionals': {
+            'state': 'no',
+            'time': ''
+        }
+    }
+
+
 class ExchangeOrganisation(Model):
     name = CharField(max_length=250, null=True, blank=True)
     image = CharField(max_length=250, null=True, blank=True)
@@ -64,12 +73,6 @@ class Exchange(Model):
 
 
 class Company(CompanyExtended):
-    DEFAULT_CHECKINGS = {
-        'has_institutionals': {
-            'state': 'no',
-            'time': ''
-        }
-    }
     ticker = CharField(max_length=30, unique=True, db_index=True)
     name = CharField(max_length=700, null=True, blank=True)
     currency = ForeignKey("general.Currency", on_delete=SET_NULL, null=True, blank=True)
@@ -108,7 +111,7 @@ class Company(CompanyExtended):
     error_message = TextField( null=True, blank=True)
     remote_image_imagekit = CharField(max_length=500, default='', blank=True)
     remote_image_cloudinary = CharField(max_length=500, default='', blank=True)
-    checkings = JSONField(default=DEFAULT_CHECKINGS)
+    checkings = JSONField(default=default_dict)
 
     objects = CompanyManager()
 
@@ -168,16 +171,17 @@ class Company(CompanyExtended):
                 )
 
     def check_checkings(self, main_dict: str) -> bool:
-        return self.checkings[main_dict]['state'] == 'yes'
+        return self.checkings[f"has_{main_dict}"]['state'] == 'yes'
 
-    def modify_checkings(self, main_dict: str, dict_state: str):
+    def modify_checkings(self, main_dict: str, has_it: bool):
         dt = datetime.now()
         ts = datetime.timestamp(dt)
+        state = "yes" if has_it else "no"
         self.checkings.update(
             {
-                main_dict:
+                f"has_{main_dict}":
                 {
-                    'state': dict_state,
+                    'state': state,
                     'time': ts
                 }
             }
@@ -205,6 +209,10 @@ class CompanyStockPrice(Model):
 
     def __str__(self):
         return str(self.company_related.ticker)
+
+    def save(self, *args, **kwargs):
+        self.date = self.year.year
+        return super().save(*args, **kwargs)
 
 
 class CompanyUpdateLog(Model):
