@@ -5,7 +5,7 @@ from unittest import skip
 from django.test import TestCase
 
 from apps.bfet import ExampleModel
-from apps.empresas.parse.yahoo_finance import ParseYahooFinance
+from apps.empresas.parse.others.yahoo_finance import ParseYahooFinance
 
 
 parse_vcr = vcr.VCR(

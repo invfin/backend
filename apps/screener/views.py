@@ -12,12 +12,12 @@ from apps.seo.views import SEODetailView, SEOListView
 from apps.users import constants as users_constants
 from apps.users.models import CreditUsageHistorial
 
-from .models import CompanyInformationBought, YahooScreener
+from apps.screener.models import CompanyInformationBought, YahooScreener
 
 
 class CompanyLookUpView(RedirectView):
     def get(self, request, *args, **kwargs):
-        
+
         company = self.request.GET['stock']
         path = company_searched(company, self.request)
         return HttpResponseRedirect(path)
@@ -45,7 +45,7 @@ class CompanyScreenerInicioView(SEOListView):
     slug_url_kwarg = 'slug'
     meta_description = 'Estudia todas las empresas que quieras para ser el mejor inversor. Ten acceso a más de 30000 empresas y 30 años de información.'
     meta_tags = 'empresas, inversiones, analisis de empresas, invertir'
-    # meta_title = 
+    # meta_title =
 
     def get_queryset(self, **kwargs):
        return Company.objects.clean_companies_by_main_exchange(self.kwargs['slug'])
@@ -95,9 +95,9 @@ class CompanyDetailsView(SEODetailView):
             response, _ = Company.objects.get_or_create(
                 name='Need-parsing',
                 ticker=ticker
-            )            
+            )
         return response
-    
+
     def save_company_in_session(self, empresa):
         if 'companies_visited' not in self.request.session:
             companies_visited = self.request.session['companies_visited'] = []
@@ -107,7 +107,7 @@ class CompanyDetailsView(SEODetailView):
         if empresa.ticker not in tickers:
             companies_visited.append(
                 {
-                    'ticker': empresa.ticker, 
+                    'ticker': empresa.ticker,
                     'img': empresa.image,
                     "sector_id": empresa.sector.id,
                     "industry_id": empresa.industry.id,
@@ -138,12 +138,12 @@ class CompanyDetailsView(SEODetailView):
             if CompanyInformationBought.objects.filter(user=user, company=empresa).exists():
                 limit_years = 0
                 has_bought = True
-        
+
         context['has_bought'] = has_bought
         context['company_is_fav'] = company_is_fav
         context['complete_info'] = empresa.complete_info(limit_years)
         return context
-    
+
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
         if self.object.name == 'Need-parsing':
@@ -162,7 +162,7 @@ class BuyCompanyInfo(RedirectView):
         )
         CompanyInformationBought.objects.create(user=user, company=company)
         messages.success(
-            request, 
+            request,
             f'Ahora que conoces toda la historia financiera de {company.name}, '
             'no olvides hacer un análisis FODA'
         )

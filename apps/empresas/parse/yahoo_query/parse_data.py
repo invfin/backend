@@ -6,16 +6,37 @@ class ParseYahooQuery:
     @property
     def yqcompany(self):
         return yq.Ticker(self.company.ticker)
-    def institutional_ownership(self):
-        df = self.yqcompany.institution_ownership
-        df = df.reset_index()
-        df = df.drop(columns=['symbol', 'row', 'maxAge'])
-        try:
-            log_message = 'all right'
-            for index, data in df.iterrows():
-                pass
-        except:
-            pass
+
+    # def institutional_ownership(self):
+    #     df = self.yq_company.institution_ownership
+    #     df = df.reset_index()
+    #     df = df.drop(columns=['symbol','row','maxAge'])
+    #     try:
+    #         log_message = 'all right'
+    #         for index, data in df.iterrows():
+    #             institution, _ = InstitutionalOrganization.objects.get_or_create(
+    #                 name=data['organization']
+    #             )
+    #             if TopInstitutionalOwnership.objects.filter(
+    #                 year=data['reportDate'],
+    #                 company=self.company,
+    #                 organization=institution,
+    #             ).exists():
+    #                 continue
+    #             TopInstitutionalOwnership.objects.create(
+    #                 date=data['reportDate'][:4],
+    #                 year=data['reportDate'],
+    #                 company=self.company,
+    #                 organization=institution,
+    #                 percentage_held=data['pctHeld'],
+    #                 position=data['position'],
+    #                 value=data['value']
+    #             )
+    #     except Exception as e:
+    #         log_message = e
+    #     finally:
+    #         CompanyUpdateLog.objects.create_log(self.company, 'institutional_ownership', log_message)
+    #         return log_message
 
     def request_income_statements_yahooquery(self, frequency: str = "a", trailing=False):
         return self.yqcompany.income_statement(frequency=frequency, trailing=trailing)

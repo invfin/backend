@@ -174,14 +174,4 @@ class CompanyManager(Manager):
 
 
 class CompanyUpdateLogManager(Manager):
-
-    def create_log(self, company, where: str, error_message: str = None):
-        had_error = False
-        if error_message:
-            had_error = True
-        self.create(
-            company=company,
-            where=where,
-            had_error=had_error,
-            error_message=error_message,
-        )
+    pass
