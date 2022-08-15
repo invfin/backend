@@ -28,7 +28,9 @@ class YFinanceInfo(DFInfoCreator, NormalizeYFinance, ParseYFinance):
     ):
         for column in df:
             model.objects.create(
-                **function(df[column], column, period)
+                financials=df[column].to_dict(),
+                # **function(df[column], column, period)
+                **self.initial_data(column, period)
             )
         return
 

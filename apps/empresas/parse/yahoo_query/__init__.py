@@ -14,7 +14,6 @@ class YahooQueryInfo(DFInfoCreator, NormalizeYahooQuery, ParseYahooQuery):
 
     def __init__(self, company) -> None:
         self.company = company
-        super().__init__(company.ticker)
         self.normalize_income_statement = self.normalize_income_statements_yahooquery
         self.normalize_balance_sheet = self.normalize_balance_sheets_yahooquery
         self.normalize_cashflow_statement = self.normalize_cashflow_statements_yahooquery
@@ -27,12 +26,16 @@ class YahooQueryInfo(DFInfoCreator, NormalizeYahooQuery, ParseYahooQuery):
         model: Type
     ):
         """
-        :function is the normalizer to regularise the data to be saved
-        :model is the model where the data is saved
+        param: function is the normalizer to regularise the data to be saved
+        param: model is the model where the data is saved
         """
         for index, data in df.iterrows():
+            financials_data = data.to_dict()
+            financials_data["asOfDate"] = financials_data["asOfDate"].to_pydatetime().date().strftime("%m/%d/%Y")
             model.objects.create(
-                **function(data, period)
+                financials=financials_data,
+                **self.initial_data(data["asOfDate"], period, data["currencyCode"])
+                # **function(data, period)
             )
         return
 

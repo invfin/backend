@@ -65,7 +65,7 @@ class Exchange(Model):
 
 class Company(CompanyExtended):
     DEFAULT_CHECKINGS = {
-        'has_institutionals':{
+        'has_institutionals': {
             'state': 'no',
             'time': ''
         }
@@ -75,12 +75,12 @@ class Company(CompanyExtended):
     currency = ForeignKey("general.Currency", on_delete=SET_NULL, null=True, blank=True)
     industry = ForeignKey("general.Industry", on_delete=SET_NULL, null=True, blank=True)
     sector = ForeignKey("general.Sector", on_delete=SET_NULL, null=True, blank=True)
-    website  = CharField(max_length=250 , null=True, blank=True)
+    website = CharField(max_length=250 , null=True, blank=True)
     state = CharField(max_length=250 , null=True, blank=True)
-    country =  ForeignKey("general.Country", on_delete=SET_NULL, null=True, blank=True)
+    country = ForeignKey("general.Country", on_delete=SET_NULL, null=True, blank=True)
     ceo = CharField(max_length=250 , null=True, blank=True)
     image = CharField(max_length=250 , null=True, blank=True)
-    city  = CharField(max_length=250 , null=True, blank=True)
+    city = CharField(max_length=250 , null=True, blank=True)
     employees = CharField(max_length=250 , null=True, blank=True)
     address = CharField(max_length=250 , null=True, blank=True)
     zip_code = CharField(max_length=250 , null=True, blank=True)
@@ -106,14 +106,9 @@ class Company(CompanyExtended):
     date_updated = BooleanField(default=False)
     has_error = BooleanField(default=False)
     error_message = TextField( null=True, blank=True)
-    remote_image_imagekit = CharField(max_length=500 , default='', blank=True)
-    remote_image_cloudinary = CharField(max_length=500 , default='', blank=True)
+    remote_image_imagekit = CharField(max_length=500, default='', blank=True)
+    remote_image_cloudinary = CharField(max_length=500, default='', blank=True)
     checkings = JSONField(default=DEFAULT_CHECKINGS)
-    data_source = CharField(
-        max_length=100,
-        choices=constants.DATA_SOURCES,
-        default=constants.DATA_SOURCE_FINPREP
-    )
 
     objects = CompanyManager()
 
@@ -162,19 +157,18 @@ class Company(CompanyExtended):
         except TypeError:
             cagr = 0
 
-        return (f"{self.ticker} ha tenido un crecimiento en sus ingresos del "
-        f"{cagr}% anualizado durante los últimos 10 años. "
-        f"Actualmente la empresa genera {round(last_income_statement.revenue, 2)}{currency} "
-        f"con gastos elevándose a {round(last_income_statement.cost_of_revenue, 2)}{currency}. "
-        f"La empresa cotiza a {round(current_ratios['current_price'], 2)}{currency} por acción, con "
-        f"{current_ratios['average_shares_out']} acciones en circulación la empresa obtiene una capitalización "
-        f"bursátil de {round(current_ratios['marketcap'], 2)}{currency}")
+        return (
+            f"{self.ticker} ha tenido un crecimiento en sus ingresos del "
+            f"{cagr}% anualizado durante los últimos 10 años. "
+            f"Actualmente la empresa genera {round(last_income_statement.revenue, 2)} {currency} "
+            f"con gastos elevándose a {round(last_income_statement.cost_of_revenue, 2)} {currency}. "
+            f"La empresa cotiza a {round(current_ratios['current_price'], 2)} {currency} por acción, con "
+            f"{current_ratios['average_shares_out']} acciones en circulación la empresa obtiene una capitalización "
+            f"bursátil de {round(current_ratios['marketcap'], 2)} {currency}"
+                )
 
     def check_checkings(self, main_dict: str) -> bool:
-        status = self.checkings[main_dict]['state']
-        if status == 'no':
-            return False
-        return True
+        return self.checkings[main_dict]['state'] == 'yes'
 
     def modify_checkings(self, main_dict: str, dict_state: str):
         dt = datetime.now()

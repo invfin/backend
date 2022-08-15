@@ -23,8 +23,8 @@ class NormalizeYFinance:
         yfinance_serie: pd.Series,
         column: Type[pd.Timestamp],
         period: Callable
-    )-> Dict[str, Union[float, int, str, Any]]:
-       return dict(
+    ) -> Dict[str, Union[float, int, str, Any]]:
+        return dict(
             self.initial_data(column, period),
             intangible_assets=yfinance_serie["Intangible Assets"],
             total_liab=yfinance_serie["Total Liab"],
@@ -59,7 +59,7 @@ class NormalizeYFinance:
         yfinance_serie: pd.Series,
         column: Type[pd.Timestamp],
         period: Callable
-    )-> Dict[str, Union[float, int, str, Any]]:
+    ) -> Dict[str, Union[float, int, str, Any]]:
         return dict(
             self.initial_data(column, period),
             investments=yfinance_serie["Investments"],
@@ -89,7 +89,7 @@ class NormalizeYFinance:
         yfinance_serie: pd.Series,
         column: Type[pd.Timestamp],
         period: Callable
-    )-> Dict[str, Union[float, int, str, Any]]:
+    ) -> Dict[str, Union[float, int, str, Any]]:
         return dict(
             self.initial_data(column, period),
             research_development=yfinance_serie["Research Development"],

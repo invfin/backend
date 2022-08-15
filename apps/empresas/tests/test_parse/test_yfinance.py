@@ -23,19 +23,38 @@ class TestYFinanceInfo(TestCase):
 
     @parse_vcr.use_cassette
     def test_create_quarterly_financials_yfinance(self):
-        BalanceSheetYFinance.objects.filter().count()
-        CashflowStatementYFinance.objects.filter().count()
-        IncomeStatementYFinance.objects.filter().count()
+        period_2021 = Period.objects.first_quarter_period(2021)
+        period_2022 = Period.objects.first_quarter_period(2022)
+        self.assertEqual(0, BalanceSheetYFinance.objects.filter(period=period_2021).count())
+        self.assertEqual(0, CashflowStatementYFinance.objects.filter(period=period_2021).count())
+        self.assertEqual(0, IncomeStatementYFinance.objects.filter(period=period_2021).count())
+        self.assertEqual(0, BalanceSheetYFinance.objects.filter(period=period_2022).count())
+        self.assertEqual(0, CashflowStatementYFinance.objects.filter(period=period_2022).count())
+        self.assertEqual(0, IncomeStatementYFinance.objects.filter(period=period_2022).count())
         self.parser.create_quarterly_financials_yfinance()
+        self.assertEqual(2, BalanceSheetYFinance.objects.filter(period=period_2021).count())
+        self.assertEqual(2, CashflowStatementYFinance.objects.filter(period=period_2021).count())
+        self.assertEqual(2, IncomeStatementYFinance.objects.filter(period=period_2021).count())
+        self.assertEqual(self.company, BalanceSheetYFinance.objects.filter(period=period_2021).first().company)
+        self.assertEqual(self.company, CashflowStatementYFinance.objects.filter(period=period_2021).first().company)
+        self.assertEqual(self.company, IncomeStatementYFinance.objects.filter(period=period_2021).first().company)
+        self.assertEqual(2, BalanceSheetYFinance.objects.filter(period=period_2022).count())
+        self.assertEqual(2, CashflowStatementYFinance.objects.filter(period=period_2022).count())
+        self.assertEqual(2, IncomeStatementYFinance.objects.filter(period=period_2022).count())
+        self.assertEqual(self.company, BalanceSheetYFinance.objects.filter(period=period_2022).first().company)
+        self.assertEqual(self.company, CashflowStatementYFinance.objects.filter(period=period_2022).first().company)
+        self.assertEqual(self.company, IncomeStatementYFinance.objects.filter(period=period_2022).first().company)
 
     @parse_vcr.use_cassette
     def test_create_yearly_financials_yfinance(self):
-        BalanceSheetYFinance.objects.filter().count()
-        CashflowStatementYFinance.objects.filter().count()
-        IncomeStatementYFinance.objects.filter().count()
+        self.assertEqual(0, BalanceSheetYFinance.objects.all().count())
+        self.assertEqual(0, CashflowStatementYFinance.objects.all().count())
+        self.assertEqual(0, IncomeStatementYFinance.objects.all().count())
         self.parser.create_yearly_financials_yfinance()
-
-class TestNormalizeYFinance(TestCase):
-    @classmethod
-    def setUpTestData(cls) -> None:
-        cls.normalizer = NormalizeYFinance()
+        for index in range(1, 4):
+            year = 2018 + index
+            period = Period.objects.for_year_period(year)
+            with self.subTest(period):
+                self.assertEqual(1, BalanceSheetYFinance.objects.filter(period=period).count())
+                self.assertEqual(1, CashflowStatementYFinance.objects.filter(period=period).count())
+                self.assertEqual(1, IncomeStatementYFinance.objects.filter(period=period).count())

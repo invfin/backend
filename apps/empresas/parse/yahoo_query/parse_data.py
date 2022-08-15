@@ -2,9 +2,10 @@ import yahooquery as yq
 
 
 class ParseYahooQuery:
-    def __init__(self, ticker) -> None:
-        self.yqcompany = yq.Ticker(ticker)
-
+    company = None
+    @property
+    def yqcompany(self):
+        return yq.Ticker(self.company.ticker)
     def institutional_ownership(self):
         df = self.yqcompany.institution_ownership
         df = df.reset_index()
