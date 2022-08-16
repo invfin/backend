@@ -10,7 +10,9 @@ from apps.empresas.models import (
     Company,
     BalanceSheetYahooQuery,
     IncomeStatementYahooQuery,
-    CashflowStatementYahooQuery
+    CashflowStatementYahooQuery,
+    InstitutionalOrganization,
+    TopInstitutionalOwnership
 )
 from apps.empresas.parse.yahoo_query import ParseYahooQuery, YahooQueryInfo
 
@@ -51,7 +53,6 @@ class TestYahooQueryInfo(TestCase):
         self.assertEqual(self.company, CashflowStatementYahooQuery.objects.filter(period=period_2022).first().company)
         self.assertEqual(self.company, IncomeStatementYahooQuery.objects.filter(period=period_2022).first().company)
 
-
     def test_create_yearly_financials_yfinance(self):
         self.assertEqual(0, BalanceSheetYahooQuery.objects.all().count())
         self.assertEqual(0, CashflowStatementYahooQuery.objects.all().count())
@@ -64,3 +65,10 @@ class TestYahooQueryInfo(TestCase):
                 self.assertEqual(1, BalanceSheetYahooQuery.objects.filter(period=period).count())
                 self.assertEqual(1, CashflowStatementYahooQuery.objects.filter(period=period).count())
                 self.assertEqual(1, IncomeStatementYahooQuery.objects.filter(period=period).count())
+
+    def test_create_institutionals_yahooquery(self):
+        self.assertEqual(0, InstitutionalOrganization.objects.all().count())
+        self.assertEqual(0, TopInstitutionalOwnership.objects.all().count())
+        self.parser.normalize_institutional_yahooquery()
+        print(InstitutionalOrganization.objects.all())
+        print(TopInstitutionalOwnership.objects.all())

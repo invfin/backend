@@ -7,7 +7,7 @@ class FinnhubInfo(ParseFinnhub):
         super().__init__()
         self.company = company
 
-    def save_financials_as_reported(self):
+    def create_financials_finnhub(self):
         financials = self.financials_reported(symbol=self.company.ticker)
         StatementsFinnhub.objects.create(
             company=self.company,

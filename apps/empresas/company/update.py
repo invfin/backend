@@ -31,14 +31,6 @@ class UpdateCompany(CalculateCompanyFinancialRatios, RetrieveCompanyData):
         return {'currentPrice':current_price}
 
     @log_company
-    def update_all_financials_from_finprep(self):
-        self.create_financials_finprep()
-
-    @log_company
-    def update_all_financials_from_finnhub(self):
-        self.save_financials_as_reported()
-
-    @log_company
     def add_logo(self):
         self.company.image = self.request_info_yfinance['logo_url']
         self.company.has_logo = True

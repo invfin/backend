@@ -39,6 +39,7 @@ from .yahoo_query import (
     BalanceSheetYahooQuery,
     CashflowStatementYahooQuery,
     IncomeStatementYahooQuery,
+    KeyStatsYahooQuery
 )
 from .finnhub import (
     StatementsFinnhub
@@ -80,6 +81,7 @@ __all__ = [
     "BalanceSheetYahooQuery",
     "CashflowStatementYahooQuery",
     "IncomeStatementYahooQuery",
+    "KeyStatsYahooQuery",
 
     "StatementsFinnhub",
 ]

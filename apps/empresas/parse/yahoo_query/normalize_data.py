@@ -214,3 +214,51 @@ class NormalizeYahooQuery:
             total_revenue=yahooquery_serie["TotalRevenue"]
         )
 
+    def normalize_institutional_yahooquery(self):
+        df = self.yq_company.institution_ownership
+        df = df.reset_index()
+        df = df.drop(columns=['symbol','row','maxAge'])
+        return df
+
+    def normalize_key_stats_yahooquery(self, key_stats):
+        return dict(
+            date=datetime.datetime.now().year,
+            year=datetime.datetime.now(),
+            company=self.company,
+            max_age=key_stats.get('maxAge'),
+            price_hint=key_stats.get('priceHint'),
+            enterprise_value=key_stats.get('enterpriseValue'),
+            forward_pe=key_stats.get('forwardPE'),
+            profit_margins=key_stats.get('profitMargins'),
+            float_shares=key_stats.get('floatShares'),
+            shares_outstanding=key_stats.get('sharesOutstanding'),
+            shares_short=key_stats.get('sharesShort'),
+            shares_short_prior_month=key_stats.get('sharesShortPriorMonth'),
+            shares_short_previous_month_date=key_stats.get('sharesShortPreviousMonthDate'),
+            date_short_interest=key_stats.get('dateShortInterest'),
+            shares_percent_shares_out=key_stats.get('sharesPercentSharesOut'),
+            held_percent_insiders=key_stats.get('heldPercentInsiders'),
+            held_percent_institutions=key_stats.get('heldPercentInstitutions'),
+            short_ratio=key_stats.get('shortRatio'),
+            short_percent_of_float=key_stats.get('shortPercentOfFloat'),
+            beta=key_stats.get('beta'),
+            category=key_stats.get('category'),
+            book_value=key_stats.get('bookValue'),
+            price_to_book=key_stats.get('priceToBook'),
+            fund_family=key_stats.get('fundFamily'),
+            legal_type=key_stats.get('legalType'),
+            last_fiscal_year_end=key_stats.get('lastFiscalYearEnd'),
+            next_fiscal_year_end=key_stats.get('nextFiscalYearEnd'),
+            most_recent_quarter=key_stats.get('mostRecentQuarter'),
+            earnings_quarterly_growth=key_stats.get('earningsQuarterlyGrowth'),
+            net_income_to_common=key_stats.get('netIncomeToCommon'),
+            trailing_eps=key_stats.get('trailingEps'),
+            forward_eps=key_stats.get('forwardEps'),
+            peg_ratio=key_stats.get('pegRatio'),
+            last_split_factor=key_stats.get('lastSplitFactor'),
+            last_split_date=key_stats.get('lastSplitDate'),
+            enterprise_to_revenue=key_stats.get('enterpriseToRevenue'),
+            enterprise_to_ebitda=key_stats.get('enterpriseToEbitda'),
+            week_change_52=key_stats.get('52WeekChange'),
+            sand_p52_week_change=key_stats.get('SandP52WeekChange'),
+        )

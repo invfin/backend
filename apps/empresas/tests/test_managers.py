@@ -53,7 +53,13 @@ class TestCompanyManagers(TestCase):
             description_translated=True,
             updated=False,
             has_error=True,
-            exchange=cls.nyse
+            exchange=cls.nyse,
+            checkings={
+                'has_institutionals': {
+                    'state': 'no',
+                    'time': ''
+                }
+            }
         )
         cls.google = ExampleModel.create(
             Company,
@@ -67,6 +73,12 @@ class TestCompanyManagers(TestCase):
             exchange=cls.nyse,
             updated=False,
             has_error=False,
+            checkings={
+                'has_institutionals': {
+                    'state': 'no',
+                    'time': ''
+                }
+            }
         )
         cls.zinga = ExampleModel.create(
             Company,
@@ -79,7 +91,13 @@ class TestCompanyManagers(TestCase):
             description_translated=False,
             updated=True,
             has_error=False,
-            exchange=cls.nyse
+            exchange=cls.nyse,
+            checkings={
+                'has_institutionals': {
+                    'state': 'yes',
+                    'time': ''
+                }
+            }
         )
         cls.intel = ExampleModel.create(
             Company,
@@ -92,6 +110,22 @@ class TestCompanyManagers(TestCase):
             exchange=cls.euro,
             updated=False,
             has_error=False,
+            checkings={
+                'has_institutionals': {
+                    'state': 'no',
+                    'time': ''
+                }
+            }
+        )
+
+    def test_filter_checkings(self):
+        self.assertEqual(
+            [self.zinga],
+            list(Company.objects.filter_checkings("institutionals", True))
+        )
+        self.assertEqual(
+            [self.apple, self.google, self.intel],
+            list(Company.objects.filter_checkings("institutionals", False))
         )
 
     def test_companies_by_main_exchange(self):
