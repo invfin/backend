@@ -10,7 +10,7 @@ import yfinance as yf
 
 from django.conf import settings
 
-FINHUB_TOKEN = settings.FINHUB_TOKEN
+FINNHUB_TOKEN = settings.FINNHUB_TOKEN
 FINPREP_KEY = settings.FINPREP_KEY
 
 HEADERS = {
@@ -22,7 +22,7 @@ HEADERS = {
 class RetrieveCompanyData:
     def __init__(self, ticker) -> None:
         self.ticker = ticker
-    
+
     def get_current_price(self):
         current_price = 0
         current_currency = 'None'
@@ -40,7 +40,7 @@ class RetrieveCompanyData:
 
         except Exception as e:
             current_price, current_currency = self.scrap_price_yahoo()
-        
+
         return {
             'current_price': current_price,
             'current_currency': current_currency,
@@ -53,11 +53,11 @@ class RetrieveCompanyData:
         current_currency = [infos['meta']['currency'] for infos in current_price_jsn][0]
 
         return current_price, current_currency
-    
+
     def get_news(self):
         day = str(int(datetime.now().strftime("%Y-%m-%d")[-2:])-2)
         final_date = (datetime.now().strftime(f"%Y-%m-{day}"))
-        return requests.get(f'https://finnhub.io/api/v1/company-news?symbol={self.ticker}&from={final_date}&to={datetime.now().strftime("%Y-%m-%d")}&token={FINHUB_TOKEN}').json()
+        return requests.get(f'https://finnhub.io/api/v1/company-news?symbol={self.ticker}&from={final_date}&to={datetime.now().strftime("%Y-%m-%d")}&token={FINNHUB_TOKEN}').json()
 
     def request_income_statements_finprep(self) -> list:
         url_income_st = f'https://financialmodelingprep.com/api/v3/income-statement/{self.ticker}?limit=120&apikey={FINPREP_KEY}'
@@ -73,7 +73,7 @@ class RetrieveCompanyData:
         url_cashflow_st = f'https://financialmodelingprep.com/api/v3/cash-flow-statement/{self.ticker}?limit=120&apikey={FINPREP_KEY}'
         csf_stt = requests.get(url_cashflow_st,headers=HEADERS).json()
         return csf_stt
-    
+
     def request_finprep(self) -> Dict[List, List]:
         random_int = random.randint(5,10)
         income_statements = self.request_income_statements_finprep()

@@ -37,7 +37,7 @@ def discounted_cashflow(
     today_value += pv_future_cf_tv
     fair_value = today_value / shares_outs if shares_outs != 0 else 0
 
-    return round(fair_value, 2)
+    return round(fair_value.real, 2)
 
 
 

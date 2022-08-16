@@ -44,11 +44,14 @@ class SocialPosting:
     # instagram_poster
     twitter_poster = Twitter()
     # youtube_poster
-    
+
     def news_content(self, content:Company=None):
         if not content:
             content = Company.objects.get_random_most_visited_clean_company()
-        news = content.show_news[0]
+        news = content.show_news
+        if not news:
+            return self.news_content()
+        news = news[0]
         title = news['headline']
         description = news['summary']
         description = google_translator().translate(description, lang_src='en', lang_tgt='es')
@@ -125,7 +128,7 @@ class SocialPosting:
             "content_shared": content,
             "shared_model_historial": shared_model_historial,
         }
-    
+
     def prepare_data_to_be_saved(self, social_media_fnct:Callable, content:Dict) -> Dict:
         social_media_post_response = social_media_fnct(**content)
         if type(social_media_post_response) == list:
@@ -153,14 +156,16 @@ class SocialPosting:
             social_media_fnct = social_media_actions[social_media["platform"]]
             data_to_save = self.prepare_data_to_be_saved(social_media_fnct, content)
             social_media_content += data_to_save
-            
+
         return social_media_content
 
     def save_post(self, data:List, shared_model_historial:Model):
         #Create a list inside the dict returned to generate multiples models and saved them in bulk
         default_manager = shared_model_historial._default_manager
+        if "multiple_posts" in data:
+            data=data["posts"]
         default_manager.bulk_create([shared_model_historial(**post) for post in data])
-    
+
     @classmethod
     def share_content(cls, model_for_social_medias_content:int, social_medias:List, specific_model:Model = None):
         social_media_content = {
