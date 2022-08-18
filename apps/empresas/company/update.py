@@ -28,7 +28,7 @@ class UpdateCompany(CalculateCompanyFinancialRatios, RetrieveCompanyData):
         #     current_price = self..info['currentPrice']
         # else:
         #     current_price = self..financial_data['currentPrice']
-        return {'currentPrice':current_price}
+        return {'currentPrice':"current_price"}
 
     @log_company
     def add_logo(self):
