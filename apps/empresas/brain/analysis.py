@@ -1,15 +1,11 @@
-import yfinance as yf
-
-from ..models import Company
+from apps.empresas.parse.y_finance import YFinanceInfo
 
 
 def simple_stock_analysis(empresa):
-    
-    empresa_info = yf.Ticker(empresa.ticker)
-    inf = empresa_info.info
+    inf = YFinanceInfo(empresa).request_info_yfinance
 
     result_buy = {'result': 1}
-    
+
     result_sell = {'result': 2}
 
     result_hold = {'result': 3}

@@ -1,8 +1,54 @@
 class CalculateCompanyFinancialRatios:
+    def generate_current_data(
+        self,
+        income_statements: list,
+        balance_sheets: list,
+        cashflow_statements: list
+    )-> dict:
+
+        current_data = {}
+        current_price = self.get_most_recent_price()
+        current_income_statements = income_statements[0]
+        current_balance_sheets = balance_sheets[0]
+        current_cashflow_statements = cashflow_statements[0]
+        current_fecha = {
+            'date': current_income_statements['calendarYear'],
+            'year': current_income_statements['date'],
+        }
+        current_data.update(current_price)
+        current_data.update(current_income_statements)
+        current_data.update(current_balance_sheets)
+        current_data.update(current_cashflow_statements)
+        current_data.update(current_fecha)
+
+        return current_data
+
+    def generate_last_year_data(
+        self,
+        income_statements: list,
+        balance_sheets: list,
+        cashflow_statements: list
+    )-> dict:
+
+        ly_data = {}
+        ly_income_statements = income_statements[1]
+        ly_balance_sheets = balance_sheets[1]
+        ly_cashflow_statements = cashflow_statements[1]
+        ly_fecha = {
+            'date': ly_income_statements['calendarYear'],
+            'year': ly_income_statements['date'],
+        }
+        ly_data.update(ly_income_statements)
+        ly_data.update(ly_balance_sheets)
+        ly_data.update(ly_cashflow_statements)
+        ly_data.update(ly_fecha)
+
+        return self.last_year_data(ly_data)
+
     def calculate_all_ratios(
         self,
-        income_statements: list, 
-        balance_sheets: list, 
+        income_statements: list,
+        balance_sheets: list,
         cashflow_statements: list
     ) -> dict:
         current_data = self.generate_current_data(income_statements, balance_sheets, cashflow_statements)
@@ -20,7 +66,7 @@ class CalculateCompanyFinancialRatios:
         ps_value = self.calculate_ps_value(all_data)
         all_data.update(ps_value)
 
-        company_growth = self.calculate_company_growth(all_data)        
+        company_growth = self.calculate_company_growth(all_data)
         all_data.update(company_growth)
 
         non_gaap = self.calculate_non_gaap(all_data)
@@ -67,7 +113,7 @@ class CalculateCompanyFinancialRatios:
         last_year_owner_earnings = data['netIncome'] + data['depreciationAndAmortization'] + data['changeInWorkingCapital'] + data['capitalExpenditure']
         last_year_current_assets = data['totalCurrentAssets']
         last_year_current_liabilities = data['totalCurrentLiabilities']
-        
+
         return {
             'last_year_inventory':last_year_inventory,
             'last_year_accounts_payable':last_year_accounts_payable,
@@ -95,7 +141,7 @@ class CalculateCompanyFinancialRatios:
         grossInvestedCapital = netWorkingCapital + data['propertyPlantEquipmentNet'] + data['depreciationAndAmortization']
         effectiveTaxRate = (data['incomeTaxExpense'] /data['operatingIncome']) if data['operatingIncome'] !=0 else 0
         netTangibleEquity = (data['totalCurrentAssets'] + data['propertyPlantEquipmentNet']) - data['totalLiabilities']
-        nopat = data['operatingIncome'] * (1-(data['incomeTaxExpense'] /data['operatingIncome'])) if data['operatingIncome'] !=0 else 0 
+        nopat = data['operatingIncome'] * (1-(data['incomeTaxExpense'] /data['operatingIncome'])) if data['operatingIncome'] !=0 else 0
         debtAndEquity = data['totalDebt'] + data['totalStockholdersEquity']
         non_cash_workcap = netWorkingCapital - data['cashAndCashEquivalents']
         investedCapital = data['propertyPlantEquipmentNet'] + non_cash_workcap
@@ -112,7 +158,7 @@ class CalculateCompanyFinancialRatios:
             'debtAndEquity':debtAndEquity,
             'non_cash_workcap':non_cash_workcap,
             'investedCapital':investedCapital,
-        }    
+        }
 
     def calculate_rentability_ratios(self, data:dict) -> dict:
         capitalEmployed = data['totalAssets'] - data['totalCurrentLiabilities']
@@ -122,7 +168,7 @@ class CalculateCompanyFinancialRatios:
         roce = (data['operatingIncome'] /  capitalEmployed) *100 if capitalEmployed  !=0 else 0
         rota = (data['netIncome'] /  data['tangible_assets'])  *100 if data['tangible_assets']  !=0 else 0
         roic =( (data['netIncome'] - data['dividendsPaid']) /  data['investedCapital'])  *100 if data['investedCapital']  !=0 else 0
-        nopatroic = (data['nopat'] /  data['investedCapital'])  *100 if data['investedCapital']  !=0 else 0
+        nopat_roic = (data['nopat'] /  data['investedCapital'])  *100 if data['investedCapital']  !=0 else 0
         rogic = (data['nopat'] / data['grossInvestedCapital']) *100 if data['grossInvestedCapital']  !=0 else 0
 
         return {
@@ -132,7 +178,7 @@ class CalculateCompanyFinancialRatios:
                 'roce':roce,
                 'rota':rota,
                 'roic':roic,
-                'nopatroic':nopatroic,
+                'nopat_roic':nopat_roic,
                 'rogic':rogic,
         }
 
@@ -208,9 +254,9 @@ class CalculateCompanyFinancialRatios:
             'total_assets_ps':total_assets_ps,
         }
 
-    def calculate_non_gaap(self, data:dict) -> dict:                
+    def calculate_non_gaap(self, data:dict) -> dict:
         normalized_income = data['netIncome'] - data['totalOtherIncomeExpensesNet']
-        effective_tax_rate = (data['incomeTaxExpense'] /data['operatingIncome']) if data['operatingIncome'] !=0 else 0 
+        effective_tax_rate = (data['incomeTaxExpense'] /data['operatingIncome']) if data['operatingIncome'] !=0 else 0
         nopat = data['nopat']
         net_working_cap = data['totalCurrentAssets'] - data['totalCurrentLiabilities']
         average_inventory = ((data['last_year_inventory'] + data['inventory'])/2)
@@ -247,27 +293,27 @@ class CalculateCompanyFinancialRatios:
         }
 
     def calculate_operation_risk_ratio(self, data:dict) -> dict:
-        asset_coverage_ratio = (data['totalAssets'] - data['goodwillAndIntangibleAssets'] - data['totalCurrentLiabilities'] - data['shortTermDebt']) / data['interestExpense'] if data['interestExpense'] != 0 else 0
-        cashFlowCoverageRatios = data['netCashProvidedByOperatingActivities'] / data['totalDebt'] if data['totalDebt'] != 0 else 0
+        asset_coverage_ratio = (data['totalAssets'] - data['goodwillAndIntangibleAssets'] - data['totalCurrentLiabilities'] - data['short_term_debt']) / data['interestExpense'] if data['interestExpense'] != 0 else 0
+        cash_flow_coverage_ratios = data['netCashProvidedByOperatingActivities'] / data['totalDebt'] if data['totalDebt'] != 0 else 0
         cash_coverage = data['cashAndShortTermInvestments'] / data['interestExpense'] if data['interestExpense'] != 0 else 0
         debt_service_coverage = data['operatingIncome'] / data['totalDebt'] if data['totalDebt'] != 0 else 0
-        interestCoverage = data['operatingIncome'] / data['interestExpense'] if data['interestExpense'] != 0 else 0
+        interest_coverage = data['operatingIncome'] / data['interestExpense'] if data['interestExpense'] != 0 else 0
         operating_cashflow_ratio = data['netCashProvidedByOperatingActivities'] / data['totalCurrentLiabilities'] if data['totalCurrentLiabilities'] != 0 else 0
-        debtRatio = data['totalDebt'] / data['totalAssets'] if data['totalAssets'] != 0 else 0
+        debt_ratio = data['totalDebt'] / data['totalAssets'] if data['totalAssets'] != 0 else 0
         longdebtandcomstock = data['longTermDebt'] + data['commonStock']
-        longTermDebtToCapitalization = data['longTermDebt'] / longdebtandcomstock if longdebtandcomstock != 0 else 0
-        totalDebtToCapitalization = data['totalDebt'] / data['debtAndEquity'] if data['debtAndEquity'] != 0 else 0
+        long_term_debt_to_capitalization = data['longTermDebt'] / longdebtandcomstock if longdebtandcomstock != 0 else 0
+        total_debt_to_capitalization = data['totalDebt'] / data['debtAndEquity'] if data['debtAndEquity'] != 0 else 0
 
         return {
             'asset_coverage_ratio':asset_coverage_ratio,
-            'cashFlowCoverageRatios':cashFlowCoverageRatios,
+            'cash_flow_coverage_ratios':cash_flow_coverage_ratios,
             'cash_coverage':cash_coverage,
             'debt_service_coverage':debt_service_coverage,
-            'interestCoverage':interestCoverage,
+            'interest_coverage':interest_coverage,
             'operating_cashflow_ratio':operating_cashflow_ratio,
-            'debtRatio':debtRatio,
-            'longTermDebtToCapitalization':longTermDebtToCapitalization,
-            'totalDebtToCapitalization':totalDebtToCapitalization,
+            'debt_ratio':debt_ratio,
+            'long_term_debt_to_capitalization':long_term_debt_to_capitalization,
+            'total_debt_to_capitalization':total_debt_to_capitalization,
         }
 
     def calculate_enterprise_value_ratio(self, data:dict) -> dict:
@@ -278,7 +324,7 @@ class CalculateCompanyFinancialRatios:
         ev_sales = enterprise_value / data['revenue'] if data['revenue'] != 0 else 0
         company_equity_multiplier = data['totalAssets'] / data['totalStockholdersEquity'] if data['totalStockholdersEquity'] != 0 else 0
         ev_multiple = enterprise_value / data['ebitda'] if data['ebitda'] != 0 else 0
-        
+
         return {
             'market_cap':market_cap,
             'enterprise_value':enterprise_value,
@@ -291,15 +337,15 @@ class CalculateCompanyFinancialRatios:
 
     def calculate_company_growth(self, data:dict) -> dict:
         revenue_growth = (data['revenue'] - data['last_year_revenue']) / data['last_year_revenue'] if data['last_year_revenue'] !=0 else 0
-        cost_revenue_growth =(data['costOfRevenue'] - data['last_year_cost_revenue']) / data['last_year_cost_revenue'] if data['last_year_cost_revenue'] !=0 else 0 
-        operating_expenses_growth =(data['costAndExpenses'] - data['last_year_cost_expense']) / data['last_year_cost_expense'] if data['last_year_cost_expense'] !=0 else 0 
-        net_income_growth =(data['netIncome'] - data['last_year_net_income']) / data['last_year_net_income'] if data['last_year_net_income'] !=0 else 0 
-        shares_buyback =(data['weightedAverageShsOut'] - data['last_year_shares_outstanding']) / data['last_year_shares_outstanding'] if data['last_year_shares_outstanding'] !=0 else 0 
-        eps_growth =(data['eps'] - data['last_year_eps']) / data['last_year_eps'] if data['last_year_eps'] !=0 else 0 
-        fcf_growth =(data['freeCashFlow'] - data['last_year_fcf']) / data['last_year_fcf'] if data['last_year_fcf'] !=0 else 0 
-        owners_earnings_growth =(data['owners_earnings'] - data['last_year_owner_earnings']) / data['last_year_owner_earnings'] if data['last_year_owner_earnings'] !=0 else 0 
-        capex_growth =(data['capitalExpenditure'] - data['last_year_capex']) / data['last_year_capex'] if data['last_year_capex'] !=0 else 0 
-        rd_expenses_growth =(data['researchAndDevelopmentExpenses'] - data['last_year_research_dev']) / data['last_year_research_dev'] if data['last_year_research_dev'] !=0 else 0 
+        cost_revenue_growth =(data['costOfRevenue'] - data['last_year_cost_revenue']) / data['last_year_cost_revenue'] if data['last_year_cost_revenue'] !=0 else 0
+        operating_expenses_growth =(data['costAndExpenses'] - data['last_year_cost_expense']) / data['last_year_cost_expense'] if data['last_year_cost_expense'] !=0 else 0
+        net_income_growth =(data['netIncome'] - data['last_year_net_income']) / data['last_year_net_income'] if data['last_year_net_income'] !=0 else 0
+        shares_buyback =(data['weightedAverageShsOut'] - data['last_year_shares_outstanding']) / data['last_year_shares_outstanding'] if data['last_year_shares_outstanding'] !=0 else 0
+        eps_growth =(data['eps'] - data['last_year_eps']) / data['last_year_eps'] if data['last_year_eps'] !=0 else 0
+        fcf_growth =(data['freeCashFlow'] - data['last_year_fcf']) / data['last_year_fcf'] if data['last_year_fcf'] !=0 else 0
+        owners_earnings_growth =(data['owners_earnings'] - data['last_year_owner_earnings']) / data['last_year_owner_earnings'] if data['last_year_owner_earnings'] !=0 else 0
+        capex_growth =(data['capitalExpenditure'] - data['last_year_capex']) / data['last_year_capex'] if data['last_year_capex'] !=0 else 0
+        rd_expenses_growth =(data['researchAndDevelopmentExpenses'] - data['last_year_research_dev']) / data['last_year_research_dev'] if data['last_year_research_dev'] !=0 else 0
 
         return {
             'revenue_growth':revenue_growth,
@@ -340,14 +386,14 @@ class CalculateCompanyFinancialRatios:
         }
 
     def calculate_price_to_ratio(self, data:dict) -> dict:
-        price_book = data['currentPrice'] / data['book_ps'] if data['book_ps'] !=0 else 0 
-        price_cf = data['currentPrice'] / data['cash_ps'] if data['cash_ps'] !=0 else 0 
-        price_earnings = data['currentPrice'] / data['eps'] if data['eps'] !=0 else 0 
-        price_earnings_growth =  (price_earnings / data['net_income_growth']).real if data['net_income_growth'] !=0 else 0 
-        price_sales = data['currentPrice'] / data['sales_ps'] if data['sales_ps'] !=0 else 0 
-        price_total_assets = data['currentPrice'] / data['total_assets_ps'] if data['total_assets_ps'] !=0 else 0 
-        price_fcf = data['currentPrice'] / data['fcf_ps'] if data['fcf_ps'] !=0 else 0 
-        price_operating_cf = data['currentPrice'] / data['operating_cf_ps'] if data['operating_cf_ps'] !=0 else 0 
+        price_book = data['currentPrice'] / data['book_ps'] if data['book_ps'] !=0 else 0
+        price_cf = data['currentPrice'] / data['cash_ps'] if data['cash_ps'] !=0 else 0
+        price_earnings = data['currentPrice'] / data['eps'] if data['eps'] !=0 else 0
+        price_earnings_growth =  (price_earnings / data['net_income_growth']).real if data['net_income_growth'] !=0 else 0
+        price_sales = data['currentPrice'] / data['sales_ps'] if data['sales_ps'] !=0 else 0
+        price_total_assets = data['currentPrice'] / data['total_assets_ps'] if data['total_assets_ps'] !=0 else 0
+        price_fcf = data['currentPrice'] / data['fcf_ps'] if data['fcf_ps'] !=0 else 0
+        price_operating_cf = data['currentPrice'] / data['operating_cf_ps'] if data['operating_cf_ps'] !=0 else 0
         price_tangible_assets = data['currentPrice'] / data['tangible_ps'] if data['tangible_ps'] !=0 else 0
 
         return {

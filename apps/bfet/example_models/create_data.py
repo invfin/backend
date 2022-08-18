@@ -1,3 +1,5 @@
+from typing import Dict
+
 import uuid
 import random
 import string
@@ -32,6 +34,23 @@ class DataCreator:
         return bool(random.randint(0, 1) == 1)
 
     @staticmethod
+    def create_random_json() -> Dict:
+        random_dict = {}
+        choices = {
+            1: DataCreator.create_random_string(),
+            2: DataCreator.create_random_bool(),
+            3: DataCreator.create_random_datetime().strftime("%m/%d/%Y, %H:%M:%S"),
+            4: DataCreator.create_random_float(),
+        }
+        for index in range(3):
+            key = random.randint(1, 4)
+            value = random.randint(1, 4)
+            key = choices[key]
+            value = choices[value]
+            random_dict[f"{key}"] = value
+        return random_dict
+
+    @staticmethod
     def create_random_slug(max_value: int = 800, use_digits: bool = True):
         return "-".join(
             [
@@ -47,7 +66,7 @@ class DataCreator:
         return f"{email_name}@{email_domain}"
 
     @staticmethod
-    def create_random_url(max_value: int = 100, secure = True):
+    def create_random_url(max_value: int = 100, secure=True):
         domain = DataCreator.create_random_string(max_value)
         top_level_domain = random.choice(LIST_EMAIL_DOMAINS).split(".")[-1]
         protocol = "https" if secure else "http"
@@ -65,16 +84,22 @@ class DataCreator:
 
     @staticmethod
     def create_random_date(day: int = None, month: int = None, year: int = None):
-        day = day if day else random.randint(1, 30)
         month = month if month else random.randint(1, 12)
+        if month == 2:
+            max_day = 28
+        elif month in [1, 3, 5, 6, 8, 10, 12]:
+            max_day = 31
+        else:
+            max_day = 30
+        day = day if day else random.randint(1, max_day)
         year = year if year else random.randint(1900, 2100)
         return datetime.date(year=year, month=month, day=day)
 
     @staticmethod
     def create_random_hour(hour: int = None, minute: int = None, second: int = None):
-        hour = hour if hour else random.randint(0, 24)
-        minute = minute if minute else random.randint(0, 60)
-        second = second if second else random.randint(0, 60)
+        hour = hour if hour else random.randint(0, 23)
+        minute = minute if minute else random.randint(0, 59)
+        second = second if second else random.randint(0, 59)
         return datetime.time(hour, minute, second)
 
     @staticmethod

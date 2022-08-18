@@ -11,7 +11,7 @@ from apps.empresas.models import (
     IncomeStatement
 )
 from apps.socialmedias.tests.data import AAPL
-from apps.empresas.tests.data import INCOME_STATEMENT, BALANCE_SHEET, CASHFLOW_STATEMENT
+from apps.empresas.tests.finprep_data import INCOME_STATEMENT, BALANCE_SHEET, CASHFLOW_STATEMENT
 
 class AppleExample:
 
