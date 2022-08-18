@@ -33,7 +33,9 @@ def get_investors_accronym():
         name=t.text,
         fund_name='',
         info_accronym=t.find('a', href=True)['href'].split('=')[1],
-        last_update=timezone.now()
+        defaults={
+            "last_update": timezone.now()
+            }
       )
       all_investors.append(superinvestor)
 
