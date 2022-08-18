@@ -131,10 +131,12 @@ class SocialPosting:
 
     def prepare_data_to_be_saved(self, social_media_fnct:Callable, content:Dict) -> Dict:
         social_media_post_response = social_media_fnct(**content)
-        if type(social_media_post_response) == list:
+        if "multiple_posts" in social_media_post_response:
+            social_media_post_response = social_media_post_response["posts"]
             for post in social_media_post_response:
                 post.update({"user": User.objects.get(username = 'Lucas')})
             return social_media_post_response
+
         else:
             social_media_post_response.update({"user": User.objects.get(username = 'Lucas')})
         return [social_media_post_response]
@@ -155,8 +157,6 @@ class SocialPosting:
         for social_media in social_medias:
             social_media_fnct = social_media_actions[social_media["platform"]]
             data_to_save = self.prepare_data_to_be_saved(social_media_fnct, content)
-            if "multiple_posts" in data_to_save:
-                data_to_save = data_to_save["posts"]
             social_media_content += data_to_save
 
         return social_media_content

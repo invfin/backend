@@ -224,6 +224,12 @@ class NormalizeYahooQuery:
         last_fiscal_year_end = key_stats.get('lastFiscalYearEnd')
         next_fiscal_year_end = key_stats.get('nextFiscalYearEnd')
         most_recent_quarter = key_stats.get('mostRecentQuarter')
+        last_split_date = key_stats.get('lastSplitDate')
+        if last_split_date:
+            last_split_date = datetime.datetime.strptime(
+                last_split_date,
+                '%Y-%m-%d %H:%M:%S'
+            ).date().strftime("%Y-%m-%d")
         if last_fiscal_year_end:
             last_fiscal_year_end = datetime.datetime.strptime(
                 last_fiscal_year_end,
@@ -274,7 +280,7 @@ class NormalizeYahooQuery:
             forward_eps=key_stats.get('forwardEps'),
             peg_ratio=key_stats.get('pegRatio'),
             last_split_factor=key_stats.get('lastSplitFactor'),
-            last_split_date=key_stats.get('lastSplitDate'),
+            last_split_date=last_split_date,
             enterprise_to_revenue=key_stats.get('enterpriseToRevenue'),
             enterprise_to_ebitda=key_stats.get('enterpriseToEbitda'),
             week_change_52=key_stats.get('52WeekChange'),
