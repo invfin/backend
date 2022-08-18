@@ -25,11 +25,10 @@ class NotificationSystem:
     The annonunce_ method return a list 'cause on the task we iterate over the emails to send
     """
     def save_notif(self, object_related, user, notif_type, email_data):
-
         notification = Notification.objects.create(
-        user = user,
-        object = object_related,
-        notification_type = notif_type,
+            user=user,
+            object=object_related,
+            notification_type=notif_type,
         )
         return {
             **email_data,
@@ -43,11 +42,11 @@ class NotificationSystem:
         time.sleep(10)
         app_label = object_related['app_label']
         object_name = object_related['object_name']
-        id = object_related['id']
+        pk = object_related['id']
 
         object_related = apps.get_model(
             app_label, object_name, require_ready=True
-        )._default_manager.get(pk=id)
+        )._default_manager.get(pk=pk)
 
         notif_type_fnct = {
             constants.NEW_BLOG_POST: self.announce_new_blog,

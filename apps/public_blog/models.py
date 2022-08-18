@@ -1,15 +1,11 @@
-from ckeditor.fields import RichTextField
 from django.contrib.auth import get_user_model
 from django.db.models import (
     CASCADE,
     SET_NULL,
-    Avg,
     BooleanField,
     CharField,
-    DateField,
     DateTimeField,
     ForeignKey,
-    IntegerField,
     ManyToManyField,
     Model,
     OneToOneField,
@@ -17,11 +13,13 @@ from django.db.models import (
 )
 from django.urls import reverse
 
-User = get_user_model()
+from ckeditor.fields import RichTextField
 
 from apps.general.bases import BaseComment, BaseEmail, BaseEscrito, BaseNewsletter
+from apps.public_blog.managers import PublicBlogManager
 
-from .managers import PublicBlogManager
+
+User = get_user_model()
 
 
 class WritterProfile(Model):
@@ -39,15 +37,15 @@ class WritterProfile(Model):
     class Meta:
         verbose_name = "User writter profile"
         db_table = "writter_profile"
-    
+
     @property
     def all_self_blogs(self):
         return PublicBlog.objects.filter(author = self.user)
-    
+
     @property
     def number_of_blogs(self):
         return self.all_self_blogs.count()
-    
+
     @property
     def average_opening_rate(self):
         total = sum(item.opening_rate for item in self.all_self_blogs)
@@ -56,7 +54,7 @@ class WritterProfile(Model):
     @property
     def total_visits(self):
         return self.all_self_blogs.aggregate(total_visits=Sum('total_views'))
-    
+
     @property
     def total_interactions(self):
         return self.all_self_blogs.aggregate(total_interactions=Sum('total_votes'))
@@ -91,9 +89,9 @@ class NewsletterFollowers(Model):
         User,
         on_delete=SET_NULL,
         null=True,
-        related_name = 'main_writter_followed')
+        related_name='main_writter_followed')
     followers = ManyToManyField(User, blank=True)
-    
+
     class Meta:
         verbose_name = "Base de seguidores del blog"
         db_table = "writter_followers_newsletters"
@@ -112,26 +110,26 @@ class PublicBlog(BaseEscrito):
         ordering = ['total_views']
         verbose_name = "Public blog post"
         db_table = "blog_post"
-    
+
     def get_absolute_url(self):
         return reverse('public_blog:blog_details', kwargs={"slug": self.slug})
-    
+
     @property
     def custom_url(self):
         return f'{self.author.custom_url}{self.get_absolute_url()}'
-    
+
     @property
     def has_newsletter(self):
         has_newsletter = False
         if self.public_blog_newsletter.exists():
             has_newsletter = True
         return has_newsletter
-    
+
     @property
     def number_comments(self):
         number_comments = self.comments_related.all().count()
         return number_comments
-    
+
     @property
     def opening_rate(self):
         result = 0
@@ -148,7 +146,7 @@ class PublicBlogAsNewsletter(BaseNewsletter):
         on_delete=SET_NULL,
         null=True,
         related_name = 'public_blog_newsletter')
-    
+
 
 class PublicBlogComment(BaseComment):
     content_related = ForeignKey(PublicBlog,
@@ -164,9 +162,9 @@ class PublicBlogComment(BaseComment):
 class EmailPublicBlog(BaseEmail):
     email_related = ForeignKey(
         PublicBlogAsNewsletter,
-        null=True, 
-        blank=True, 
-        on_delete=SET_NULL, 
+        null=True,
+        blank=True,
+        on_delete=SET_NULL,
         related_name = 'email_related'
     )
 
