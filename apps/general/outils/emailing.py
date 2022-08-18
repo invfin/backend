@@ -11,15 +11,15 @@ User = get_user_model()
 from apps.general import constants
 
 
-class EmailingSystem():
+class EmailingSystem:
     """
     Emailingsystem recieve information most of the times from celery, so all the data will be serialized.
     """
-    email_contacto = settings.EMAIL_CONTACT
-    email_lucas = settings.MAIN_EMAIL
-    email_cuentas = settings.EMAIL_ACCOUNTS
-    email_sugerencias = settings.EMAIL_SUGGESTIONS
-    email_no_responder = settings.EMAIL_DEFAULT
+    # settings.EMAIL_CONTACT
+    # settings.MAIN_EMAIL
+    # settings.EMAIL_ACCOUNTS
+    # settings.EMAIL_SUGGESTIONS
+    # settings.EMAIL_DEFAULT
 
     def __init__(self, is_for:str=None, web_objective:str=None) -> None:
         """
@@ -50,18 +50,19 @@ class EmailingSystem():
         return email_track.encoded_url
 
     def _prepare_email(self, email:Dict[str, str], receiver:User) -> Tuple[str, str]:
-        sender = self.prepare_sender(email.pop("sender", None))
+        sender = self._prepare_sender(email.pop("sender", None))
         message = self.prepare_message(email, receiver)
         return message, sender
 
-    def prepare_sender(self, sender:str=None) -> str:
+    def _prepare_sender(self, sender:str=None) -> str:
         if self.is_for == constants.EMAIL_FOR_PUBLIC_BLOG:
             email = settings.EMAIL_NEWSLETTER
         elif self.is_for == constants.EMAIL_FOR_NOTIFICATION:
             email = settings.EMAIL_DEFAULT
             sender = "InvFin"
         else:
-            email = "Lucas - InvFin"
+            email = settings.MAIN_EMAIL
+            sender = "Lucas - InvFin"
 
         return f"{sender} <{email}>"
 
@@ -88,5 +89,6 @@ class EmailingSystem():
         email_message.content_subtype = "html"
         email_message.send()
 
-    def simple_email(self, subject:str, message:str):
-        return send_mail(subject, message, self.email_no_responder, [self.email_no_responder])
+    @classmethod
+    def simple_email(cls, subject:str, message:str):
+        return send_mail(subject, message, settings.EMAIL_DEFAULT, [settings.EMAIL_DEFAULT])

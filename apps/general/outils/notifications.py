@@ -21,6 +21,8 @@ class NotificationSystem:
     new_answer       -----> related
     answer_accepted  -----> related
     purchase_successful-----> sinlge
+
+    The annonunce_ method return a list 'cause on the task we iterate over the emails to send
     """
     def save_notif(self, object_related, user, notif_type, email_data):
 
@@ -37,8 +39,7 @@ class NotificationSystem:
             'id': notification.pk
         }
 
-    @classmethod
-    def notify(cls, object_related: Dict, notif_type: str):
+    def notify(self, object_related: Dict, notif_type: str):
         time.sleep(10)
         app_label = object_related['app_label']
         object_name = object_related['object_name']
@@ -49,13 +50,13 @@ class NotificationSystem:
         )._default_manager.get(pk=id)
 
         notif_type_fnct = {
-            constants.NEW_BLOG_POST: cls().announce_new_blog,
-            constants.NEW_COMMENT: cls().announce_new_comment,
-            constants.NEW_VOTE: cls().announce_new_vote,
-            constants.NEW_FOLLOWER: cls().announce_new_follower,
-            constants.NEW_QUESTION: cls().announce_new_question,
-            constants.NEW_ANSWER: cls().announce_new_answer,
-            constants.ANSWER_ACCEPTED: cls().announce_answer_accepted,
+            constants.NEW_BLOG_POST: self.announce_new_blog,
+            constants.NEW_COMMENT: self.announce_new_comment,
+            constants.NEW_VOTE: self.announce_new_vote,
+            constants.NEW_FOLLOWER: self.announce_new_follower,
+            constants.NEW_QUESTION: self.announce_new_question,
+            constants.NEW_ANSWER: self.announce_new_answer,
+            constants.ANSWER_ACCEPTED: self.announce_answer_accepted,
         }
         return notif_type_fnct[notif_type](object_related, notif_type)
 
