@@ -18,6 +18,20 @@ def update_basic_info_company_task():
         return send_mail('No companies left', 'All companies have info', settings.EMAIL_DEFAULT, [settings.EMAIL_DEFAULT])
 
 
+@celery_app.task()
+def update_company_key_stats_task():
+    companies_without_info = Company.objects.filter_checkings("key_stats", False)
+    if companies_without_info.exists():
+        company = companies_without_info.first()
+        return UpdateCompany(company).create_key_stats_yahooquery()
+    else:
+        return send_mail(
+            'No companies left to update key_stats',
+            f'All companies have info for key_stats',
+            settings.EMAIL_DEFAULT,
+            [settings.EMAIL_DEFAULT]
+        )
+
 
 @celery_app.task()
 def update_company_institutionals_task():
