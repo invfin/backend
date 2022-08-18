@@ -27,7 +27,7 @@ def update_company_institutionals_task():
         return UpdateCompany(company).create_institutionals_yahooquery()
     else:
         return send_mail(
-            'No companies left to update financials for institutionals',
+            'No companies left to update institutionals',
             f'All companies have info for institutionals',
             settings.EMAIL_DEFAULT,
             [settings.EMAIL_DEFAULT]

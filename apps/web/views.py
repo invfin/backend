@@ -33,7 +33,7 @@ class HomePage(SEOTemplateView):
             "current_profile": writter
         }
             )
-            template_name = 'profile/public/profile.html'
+            template_name = 'public/profile.html'
         else:
             escritores = WritterProfile.objects.all()
             context['escritor1'] = escritores[0]
@@ -108,7 +108,7 @@ class ExcelRedirectView(RedirectView):
     permanent = True
 
     def get_redirect_url(self, *args, **kwargs):
-        return reverse("business:product", kwargs={"slug": "excel-inteligente-inifito"})
+        return reverse("business:product", kwargs={"slug": "excel-inteligente"})
 
 
 class BaseWebView(UserPassesTestMixin):

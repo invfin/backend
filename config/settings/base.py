@@ -444,7 +444,7 @@ MESSAGE_TAGS = {
 # ------------------------------------------------------------------------------
 GEOIP_PATH = str(ROOT_DIR / "geoip")
 
-# FInancial data KEYS
+# Financial data KEYS
 # ------------------------------------------------------------------------------
 FINNHUB_TOKEN = env.str("FINNHUB_TOKEN")
 FINNHUB_SANDBOX_TOKEN = env.str("FINNHUB_SANDBOX_TOKEN")

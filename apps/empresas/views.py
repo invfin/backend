@@ -36,6 +36,9 @@ class ExcelAPIIncome(BaseAPIView):
     fk_lookup_model = 'company__ticker'
     limited = True
 
+    def get(self, request):
+        return super().get(request)
+
 
 class ExcelAPIBalance(BaseAPIView):
     custom_queryset = BalanceSheet

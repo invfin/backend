@@ -213,50 +213,50 @@ class CashflowStatementYahooQuery(BaseUnknownField):
         return self.company.ticker + str(self.date)
 
 
-    class KeyStatsYahooQuery(BaseUnknownField):
-        period = None
-        reported_currency = None
-        max_age = FloatField(default=0, blank=True, null=True)
-        price_hint = FloatField(default=0, blank=True, null=True)
-        enterprise_value = FloatField(default=0, blank=True, null=True)
-        forward_pe = FloatField(default=0, blank=True, null=True)
-        profit_margins = FloatField(default=0, blank=True, null=True)
-        float_shares = FloatField(default=0, blank=True, null=True)
-        shares_outstanding = FloatField(default=0, blank=True, null=True)
-        shares_short = FloatField(default=0, blank=True, null=True)
-        shares_short_prior_month = FloatField(default=0, blank=True, null=True)
-        shares_short_previous_month_date = DateField(blank=True, null=True)
-        date_short_interest = DateField(blank=True, null=True)
-        shares_percent_shares_out = FloatField(default=0, blank=True, null=True)
-        held_percent_insiders = FloatField(default=0, blank=True, null=True)
-        held_percent_institutions = FloatField(default=0, blank=True, null=True)
-        short_ratio = FloatField(default=0, blank=True, null=True)
-        short_percent_of_float = FloatField(default=0, blank=True, null=True)
-        beta = FloatField(default=0, blank=True, null=True)
-        category = FloatField(default=0, blank=True, null=True)
-        book_value = FloatField(default=0, blank=True, null=True)
-        price_to_book = FloatField(default=0, blank=True, null=True)
-        fund_family = FloatField(default=0, blank=True, null=True)
-        legal_type = FloatField(default=0, blank=True, null=True)
-        last_fiscal_year_end = DateField(blank=True, null=True)
-        next_fiscal_year_end = DateField(blank=True, null=True)
-        most_recent_quarter = DateField(blank=True, null=True)
-        earnings_quarterly_growth = FloatField(default=0, blank=True, null=True)
-        net_income_to_common = FloatField(default=0, blank=True, null=True)
-        trailing_eps = FloatField(default=0, blank=True, null=True)
-        forward_eps = FloatField(default=0, blank=True, null=True)
-        peg_ratio = FloatField(default=0, blank=True, null=True)
-        last_split_factor = CharField(max_length=10, blank=True, null=True)
-        last_split_date = DateField(blank=True, null=True)
-        enterprise_to_revenue = FloatField(default=0, blank=True, null=True)
-        enterprise_to_ebitda = FloatField(default=0, blank=True, null=True)
-        week_change_52 = FloatField(default=0, blank=True, null=True)
-        sand_p52_week_change = FloatField(default=0, blank=True, null=True)
+class KeyStatsYahooQuery(BaseUnknownField):
+    period = None
+    reported_currency = None
+    max_age = FloatField(default=0, blank=True, null=True)
+    price_hint = FloatField(default=0, blank=True, null=True)
+    enterprise_value = FloatField(default=0, blank=True, null=True)
+    forward_pe = FloatField(default=0, blank=True, null=True)
+    profit_margins = FloatField(default=0, blank=True, null=True)
+    float_shares = FloatField(default=0, blank=True, null=True)
+    shares_outstanding = FloatField(default=0, blank=True, null=True)
+    shares_short = FloatField(default=0, blank=True, null=True)
+    shares_short_prior_month = FloatField(default=0, blank=True, null=True)
+    shares_short_previous_month_date = DateField(blank=True, null=True)
+    date_short_interest = DateField(blank=True, null=True)
+    shares_percent_shares_out = FloatField(default=0, blank=True, null=True)
+    held_percent_insiders = FloatField(default=0, blank=True, null=True)
+    held_percent_institutions = FloatField(default=0, blank=True, null=True)
+    short_ratio = FloatField(default=0, blank=True, null=True)
+    short_percent_of_float = FloatField(default=0, blank=True, null=True)
+    beta = FloatField(default=0, blank=True, null=True)
+    category = FloatField(default=0, blank=True, null=True)
+    book_value = FloatField(default=0, blank=True, null=True)
+    price_to_book = FloatField(default=0, blank=True, null=True)
+    fund_family = FloatField(default=0, blank=True, null=True)
+    legal_type = FloatField(default=0, blank=True, null=True)
+    last_fiscal_year_end = DateField(blank=True, null=True)
+    next_fiscal_year_end = DateField(blank=True, null=True)
+    most_recent_quarter = DateField(blank=True, null=True)
+    earnings_quarterly_growth = FloatField(default=0, blank=True, null=True)
+    net_income_to_common = FloatField(default=0, blank=True, null=True)
+    trailing_eps = FloatField(default=0, blank=True, null=True)
+    forward_eps = FloatField(default=0, blank=True, null=True)
+    peg_ratio = FloatField(default=0, blank=True, null=True)
+    last_split_factor = CharField(max_length=10, blank=True, null=True)
+    last_split_date = DateField(blank=True, null=True)
+    enterprise_to_revenue = FloatField(default=0, blank=True, null=True)
+    enterprise_to_ebitda = FloatField(default=0, blank=True, null=True)
+    week_change_52 = FloatField(default=0, blank=True, null=True)
+    sand_p52_week_change = FloatField(default=0, blank=True, null=True)
 
-        class Meta(BaseStatement.Meta):
-            verbose_name = "Yahooquery Key stats"
-            verbose_name_plural = "Yahooquery Key stats"
-            db_table = "assets_companies_key stats_yahooquery"
+    class Meta(BaseStatement.Meta):
+        verbose_name = "Yahooquery Key stats"
+        verbose_name_plural = "Yahooquery Key stats"
+        db_table = "assets_companies_key stats_yahooquery"
 
-        def __str__(self):
-            return self.company.ticker + str(self.date)
+    def __str__(self):
+        return self.company.ticker + str(self.date)
