@@ -32,14 +32,16 @@ class CompanyFODAListView(ListView):
 
 
 def get_company_price(request, ticker):
-    prices = RetrieveCompanyData(ticker).get_current_price()
+    prices = Company.objects.get(ticker=ticker).get_most_recent_price()
     return render(request, 'headers/company_price.html', {
         'prices': prices,
     })
 
 
 def get_company_news(request, ticker):
-    news = RetrieveCompanyData(ticker).get_news()
+    # company = Company.objects.get(ticker=ticker)
+    # news = RetrieveCompanyData(company).get_news()
+    news = []
     return render(request, 'empresas/company_parts/resume/news.html', {
         'show_news': news,
     })

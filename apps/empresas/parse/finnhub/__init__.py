@@ -4,7 +4,7 @@ from apps.empresas.parse.finnhub.parse_data import ParseFinnhub
 
 class FinnhubInfo(ParseFinnhub):
     def __init__(self, company) -> None:
-        super().__init__()
+        super().__init__(company)
         self.company = company
 
     def create_financials_finnhub(self):

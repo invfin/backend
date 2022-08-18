@@ -84,7 +84,7 @@ class YahooQueryInfo(DFInfoCreator, NormalizeYahooQuery, ParseYahooQuery):
             )
 
     def create_key_stats_yahooquery(self):
-        key_stats = self.request_key_stats()
+        key_stats = self.request_key_stats_yahooquery
         for key in key_stats.keys():
             KeyStatsYahooQuery.objects.create(
                 **self.normalize_key_stats_yahooquery(key_stats[key])

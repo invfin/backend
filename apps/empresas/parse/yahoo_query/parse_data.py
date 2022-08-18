@@ -3,11 +3,17 @@ import yahooquery as yq
 
 class ParseYahooQuery:
     company = None
+
     @property
     def yqcompany(self):
         return yq.Ticker(self.company.ticker)
 
-    def request_key_stats(self):
+    @property
+    def request_price_info_yahooquery(self):
+        return self.yqcompany.price
+
+    @property
+    def request_key_stats_yahooquery(self):
         return self.yqcompany.key_stats
 
     def request_income_statements_yahooquery(self, frequency: str = "a", trailing=False):

@@ -8,7 +8,7 @@ from django.db.models import (
     CharField
 )
 
-from apps.empresas.models.base import BaseStatement
+from apps.empresas.models.statements import BaseStatement
 
 
 class BaseFinprep(BaseStatement):

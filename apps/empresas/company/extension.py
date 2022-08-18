@@ -1,6 +1,9 @@
 import math
 import operator
 
+import yfinance as yf
+import yahooquery as yq
+
 from django.db.models import Avg
 
 from apps.empresas.valuations import discounted_cashflow
@@ -171,7 +174,7 @@ class CompanyExtended(BaseToAll, ChartSerializer):
                 'url':"#!",
                 'percent': 'false',
                 'short': 'false',
-                'values':[data.cash_and_short_term_investements for data in bls]},
+                'values':[data.cash_and_short_term_investments for data in bls]},
                 {'title':'Cuentas por cobrar',
                 'url':"#!",
                 'percent': 'false',
@@ -196,7 +199,7 @@ class CompanyExtended(BaseToAll, ChartSerializer):
                 'url':"#!",
                 'percent': 'false',
                 'short': 'false',
-                'values':[data.property_plant_equipement for data in bls]},
+                'values':[data.property_plant_equipment for data in bls]},
                 {'title':'Goodwill',
                 'url':"#!",
                 'percent': 'false',
@@ -336,7 +339,7 @@ class CompanyExtended(BaseToAll, ChartSerializer):
                 'url':"#!",
                 'percent': 'false',
                 'short': 'false',
-                'values':[data.total_liabilities_and_stockholders_equity for data in bls]},
+                'values':[data.total_liabilities_and_total_equity for data in bls]},
                 {'title':'Inversiones totales',
                 'url':"#!",
                 'percent': 'false',
@@ -1664,6 +1667,18 @@ class CompanyExtended(BaseToAll, ChartSerializer):
             valuation_result['average_color'] = 'warning'
         return valuation_result
 
+    def get_most_recent_price(self):
+        yfinance_info = yf.Ticker(self.ticker).info
+        if 'currentPrice' in yfinance_info:
+            current_price = yfinance_info['currentPrice']
+            current_currency = yfinance_info['currency']
+        else:
+            yahooquery_info = yq.Ticker(self.ticker).price
+            for key in yahooquery_info.keys():
+                current_price = yahooquery_info[key]['regularMarketPrice']
+                current_currency = yahooquery_info[key]['currency']
+        return {'current_price': current_price, 'current_currency': current_currency}
+
     def calculate_current_ratios(
             self,
             all_balance_sheets: list = None,
@@ -1679,7 +1694,7 @@ class CompanyExtended(BaseToAll, ChartSerializer):
             all_operation_risks_ratios: list = None,
             all_ev_ratios: list = None,
     ) -> dict:
-        current_price = RetrieveCompanyData(self.ticker).get_current_price()['current_price']
+        current_price = self.get_most_recent_price()['current_price']
 
         all_balance_sheets = all_balance_sheets if all_balance_sheets else self.all_balance_sheets(10)
         all_per_share = all_per_share if all_per_share else self.all_per_share_values(10)
@@ -1771,7 +1786,7 @@ class CompanyExtended(BaseToAll, ChartSerializer):
         except ZeroDivisionError:
             ps = 0
 
-        ev = marketcap + last_balance_sheet.total_debt - last_balance_sheet.cash_and_short_term_investements
+        ev = marketcap + last_balance_sheet.total_debt - last_balance_sheet.cash_and_short_term_investments
 
         try:
             evebitda = (ev / last_income_statement.ebitda)

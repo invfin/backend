@@ -14,7 +14,7 @@ from django.db.models import (
 from django.utils import timezone
 
 from apps.general.mixins import BaseToAll
-from apps.empresas.models import Company
+# from apps.empresas.models import Company
 from apps.escritos.models import Term
 from apps.preguntas_respuestas.models import Question
 from apps.public_blog.models import PublicBlog
@@ -155,7 +155,7 @@ class BaseUserModelVisited(BaseModelVisited):
 
 class VisiteurCompanyVisited(BaseVisiteurModelVisited):
     model_visited = ForeignKey(
-        Company,
+        "empresas.Company",
         on_delete=SET_NULL,
         null=True,
     )
@@ -167,7 +167,7 @@ class VisiteurCompanyVisited(BaseVisiteurModelVisited):
 
 class UserCompanyVisited(BaseUserModelVisited):
     model_visited = ForeignKey(
-        Company,
+        "empresas.Company",
         on_delete=SET_NULL,
         null=True,
     )

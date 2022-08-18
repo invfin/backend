@@ -1,6 +1,6 @@
 from django.db.models import FloatField, JSONField
 
-from apps.empresas.models.base import BaseStatement
+from apps.empresas.models import BaseStatement
 
 
 class BaseUnknownField(BaseStatement):

@@ -6,7 +6,7 @@ from django.db.models import (
     DateField
 )
 
-from apps.empresas.models.base import BaseStatement
+from apps.empresas.models import BaseStatement
 
 
 class BaseUnknownField(BaseStatement):

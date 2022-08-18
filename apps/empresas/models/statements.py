@@ -2,9 +2,26 @@ from django.db.models import (
     SET_NULL,
     FloatField,
     ForeignKey,
+    Model,
+    IntegerField,
+    DateField
 )
 
-from apps.empresas.models.base import BaseStatement, Company
+from apps.empresas.models import Company
+from apps.general.models import Period
+
+
+class BaseStatement(Model):
+    date = IntegerField(default=0)
+    year = DateField(null=True, blank=True)
+    company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True)
+    period = ForeignKey(Period, on_delete=SET_NULL, null=True, blank=True)
+    reported_currency = ForeignKey("general.Currency", on_delete=SET_NULL, null=True, blank=True)
+
+    class Meta:
+        abstract = True
+        get_latest_by = 'date'
+        ordering = ['-date']
 
 
 class IncomeStatement(BaseStatement):

@@ -1,34 +1,16 @@
 from typing import Type
 from datetime import datetime
 
-from django.conf import settings
-
 from apps.translate.google_trans_new import google_translator
-from apps.empresas.models import (
-    CompanyUpdateLog,
-    InstitutionalOrganization,
-    TopInstitutionalOwnership,
-)
 from apps.empresas.utils import log_company
 from apps.empresas.company.ratios import CalculateCompanyFinancialRatios
 from apps.empresas.company.retrieve_data import RetrieveCompanyData
 
 
-IMAGEKIT_URL_ENDPOINT = settings.IMAGEKIT_URL_ENDPOINT
-IMAGE_KIT = settings.IMAGE_KIT
-
-
 class UpdateCompany(CalculateCompanyFinancialRatios, RetrieveCompanyData):
     def __init__(self, company: Type["Company"]) -> None:
-        super().__init__()
+        super().__init__(company)
         self.company: Type["Company"] = company
-
-    def get_most_recent_price(self):
-        # if 'currentPrice' in self..info:
-        #     current_price = self..info['currentPrice']
-        # else:
-        #     current_price = self..financial_data['currentPrice']
-        return {'currentPrice':"current_price"}
 
     @log_company
     def add_logo(self):

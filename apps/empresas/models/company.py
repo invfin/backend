@@ -19,7 +19,6 @@ from apps.empresas import constants
 
 from apps.empresas.company.extension import CompanyExtended
 from apps.empresas.managers import CompanyManager, CompanyUpdateLogManager
-from apps.general.models import Period
 
 
 def default_dict():
@@ -29,47 +28,6 @@ def default_dict():
             'time': ''
         }
     }
-
-
-class ExchangeOrganisation(Model):
-    name = CharField(max_length=250, null=True, blank=True)
-    image = CharField(max_length=250, null=True, blank=True)
-    sub_exchange1 = CharField(max_length=250, null=True, blank=True)
-    sub_exchange2 = CharField(max_length=250, null=True, blank=True)
-    order = PositiveIntegerField( null=True, blank=True)
-
-    class Meta:
-        verbose_name = "Organisation exchange"
-        verbose_name_plural = "Organisation exchanges"
-        db_table = "assets_exchanges_organisations"
-
-    def __str__(self):
-        return str(self.name)
-
-
-class Exchange(Model):
-    exchange_ticker = CharField(max_length=30, null=True, blank=True)
-    exchange = CharField(max_length=250, null=True, blank=True)
-    country = ForeignKey("general.Country", on_delete=SET_NULL, null=True, blank=True)
-    main_org = ForeignKey(ExchangeOrganisation, on_delete=SET_NULL, null=True, blank=True)
-    data_source = CharField(
-        max_length=100,
-        choices=constants.DATA_SOURCES,
-        default=constants.DATA_SOURCE_FINPREP
-    )
-
-    class Meta:
-        ordering = ['-exchange_ticker']
-        verbose_name = "Exchange"
-        verbose_name_plural = "Exchanges"
-        db_table = "assets_exchanges"
-
-    def __str__(self):
-        return str(self.exchange_ticker)
-
-    @property
-    def num_emps(self):
-        return Company.objects.filter(exchange = self).count()
 
 
 class Company(CompanyExtended):
@@ -88,7 +46,7 @@ class Company(CompanyExtended):
     address = CharField(max_length=250 , null=True, blank=True)
     zip_code = CharField(max_length=250 , null=True, blank=True)
     cik = CharField(max_length=250 , null=True, blank=True)
-    exchange = ForeignKey(Exchange, on_delete=SET_NULL, null=True, blank=True)
+    exchange = ForeignKey("empresas.Exchange", on_delete=SET_NULL, null=True, blank=True, related_name="companies")
     cusip = CharField(max_length=250 , null=True, blank=True)
     isin = CharField(max_length=250 , null=True, blank=True)
     description = TextField( null=True, blank=True)
@@ -232,16 +190,3 @@ class CompanyUpdateLog(Model):
 
     def __str__(self):
         return str(self.company.ticker)
-
-
-class BaseStatement(Model):
-    date = IntegerField(default=0)
-    year = DateField(null=True, blank=True)
-    company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True)
-    period = ForeignKey(Period, on_delete=SET_NULL, null=True, blank=True)
-    reported_currency = ForeignKey("general.Currency", on_delete=SET_NULL, null=True, blank=True)
-
-    class Meta:
-        abstract = True
-        get_latest_by = 'date'
-        ordering = ['-date']

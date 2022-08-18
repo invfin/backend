@@ -8,7 +8,7 @@ from django.db.models import (
     Model,
 )
 
-from apps.empresas.models.base import Company
+from apps.empresas.models import Company
 
 
 class InstitutionalOrganization(Model):
@@ -27,8 +27,11 @@ class TopInstitutionalOwnership(Model):
     date = IntegerField(default=0)
     year = DateField(blank=True, null=True)
     company = ForeignKey(
-        Company, on_delete=SET_NULL, null=True,
-        blank=True, related_name="top_institutional_ownership"
+        Company,
+        on_delete=SET_NULL,
+        null=True,
+        blank=True,
+        related_name="top_institutional_ownership"
     )
     organization = ForeignKey(
         InstitutionalOrganization, on_delete=SET_NULL, null=True,
