@@ -155,6 +155,8 @@ class SocialPosting:
         for social_media in social_medias:
             social_media_fnct = social_media_actions[social_media["platform"]]
             data_to_save = self.prepare_data_to_be_saved(social_media_fnct, content)
+            if "multiple_posts" in data_to_save:
+                data_to_save = data_to_save["posts"]
             social_media_content += data_to_save
 
         return social_media_content
@@ -162,8 +164,6 @@ class SocialPosting:
     def save_post(self, data, shared_model_historial:Model):
         #Create a list inside the dict returned to generate multiples models and saved them in bulk
         default_manager = shared_model_historial._default_manager
-        if type(data) == dict and "multiple_posts" in data:
-            data=data["posts"]
         default_manager.bulk_create([shared_model_historial(**post) for post in data])
 
     def share_content(self, model_for_social_medias_content:int, social_medias:List, specific_model:Model = None):
