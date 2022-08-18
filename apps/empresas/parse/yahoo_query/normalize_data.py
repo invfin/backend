@@ -225,11 +225,20 @@ class NormalizeYahooQuery:
         next_fiscal_year_end = key_stats.get('nextFiscalYearEnd')
         most_recent_quarter = key_stats.get('mostRecentQuarter')
         if last_fiscal_year_end:
-            last_fiscal_year_end=datetime.datetime.strptime(last_fiscal_year_end, '%Y-%m-%d %H:%M:%S').date()
+            last_fiscal_year_end = datetime.datetime.strptime(
+                last_fiscal_year_end,
+                '%Y-%m-%d %H:%M:%S'
+            ).date().strftime("%Y-%m-%d")
         if next_fiscal_year_end:
-            next_fiscal_year_end=datetime.datetime.strptime(next_fiscal_year_end, '%Y-%m-%d %H:%M:%S').date()
+            next_fiscal_year_end = datetime.datetime.strptime(
+                next_fiscal_year_end,
+                '%Y-%m-%d %H:%M:%S'
+                ).date().strftime("%Y-%m-%d")
         if most_recent_quarter:
-            most_recent_quarter=datetime.datetime.strptime(most_recent_quarter, '%Y-%m-%d %H:%M:%S').date()
+            most_recent_quarter = datetime.datetime.strptime(
+                most_recent_quarter,
+                '%Y-%m-%d %H:%M:%S'
+                ).date().strftime("%Y-%m-%d")
         return dict(
             date=datetime.datetime.now().year,
             year=datetime.datetime.now().date(),
