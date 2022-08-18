@@ -159,24 +159,23 @@ class SocialPosting:
 
         return social_media_content
 
-    def save_post(self, data:List, shared_model_historial:Model):
+    def save_post(self, data, shared_model_historial:Model):
         #Create a list inside the dict returned to generate multiples models and saved them in bulk
         default_manager = shared_model_historial._default_manager
-        if "multiple_posts" in data:
+        if type(data) == dict and "multiple_posts" in data:
             data=data["posts"]
         default_manager.bulk_create([shared_model_historial(**post) for post in data])
 
-    @classmethod
-    def share_content(cls, model_for_social_medias_content:int, social_medias:List, specific_model:Model = None):
+    def share_content(self, model_for_social_medias_content:int, social_medias:List, specific_model:Model = None):
         social_media_content = {
-            constants.QUESTION: cls.question_content,
-            constants.NEWS: cls.news_content,
-            constants.TERM: cls.term_content,
-            constants.BLOG: cls.publicblog_content,
-            constants.COMPANY: cls.company_content,
+            constants.QUESTION: self.question_content,
+            constants.NEWS: self.news_content,
+            constants.TERM: self.term_content,
+            constants.BLOG: self.publicblog_content,
+            constants.COMPANY: self.company_content,
         }
         social_media_content_from_obj = social_media_content[model_for_social_medias_content]
         content_for_social_media = social_media_content_from_obj(specific_model)
-        content_generated_and_posted = cls().generate_content(social_medias, content_for_social_media)
+        content_generated_and_posted = self.generate_content(social_medias, content_for_social_media)
         shared_model_historial = content_for_social_media.pop("shared_model_historial")
-        cls().save_post(content_generated_and_posted, shared_model_historial)
+        self.save_post(content_generated_and_posted, shared_model_historial)

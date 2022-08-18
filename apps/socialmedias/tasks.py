@@ -7,7 +7,7 @@ from .poster import SocialPosting
 
 @celery_app.task()
 def socialmedia_share_company():
-    SocialPosting.share_content(
+    SocialPosting().share_content(
         constants.COMPANY,
         [
             {"platform": constants.FACEBOOK, "post_type": constants.POST_TYPE_TEXT},
@@ -18,7 +18,7 @@ def socialmedia_share_company():
 
 @celery_app.task()
 def socialmedia_share_news():
-    SocialPosting.share_content(
+    SocialPosting().share_content(
         constants.NEWS,
         [
             {"platform": constants.FACEBOOK, "post_type": constants.POST_TYPE_TEXT},
@@ -29,7 +29,7 @@ def socialmedia_share_news():
 
 @celery_app.task()
 def socialmedia_share_term():
-    SocialPosting.share_content(
+    SocialPosting().share_content(
         constants.TERM,
         [
             {"platform": constants.FACEBOOK, "post_type": constants.POST_TYPE_TEXT},
@@ -40,7 +40,7 @@ def socialmedia_share_term():
 
 @celery_app.task()
 def socialmedia_share_blog():
-    SocialPosting.share_content(
+    SocialPosting().share_content(
         constants.BLOG,
         [
             {"platform": constants.FACEBOOK, "post_type": constants.POST_TYPE_TEXT_IMAGE},
@@ -51,8 +51,8 @@ def socialmedia_share_blog():
 
 @celery_app.task()
 def socialmedia_share_question():
-    
-    SocialPosting.share_content(
+
+    SocialPosting().share_content(
         constants.QUESTION,
         [
             {"platform": constants.FACEBOOK, "post_type": constants.POST_TYPE_TEXT},
