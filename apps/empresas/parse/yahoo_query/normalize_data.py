@@ -221,9 +221,18 @@ class NormalizeYahooQuery:
         return df
 
     def normalize_key_stats_yahooquery(self, key_stats):
+        last_fiscal_year_end = key_stats.get('lastFiscalYearEnd')
+        next_fiscal_year_end = key_stats.get('nextFiscalYearEnd')
+        most_recent_quarter = key_stats.get('mostRecentQuarter')
+        if last_fiscal_year_end:
+            last_fiscal_year_end=datetime.strptime(last_fiscal_year_end, '%y/%m/%d')
+        if next_fiscal_year_end:
+            next_fiscal_year_end=datetime.strptime(next_fiscal_year_end, '%y/%m/%d')
+        if most_recent_quarter:
+            most_recent_quarter=datetime.strptime(most_recent_quarter, '%y/%m/%d')
         return dict(
             date=datetime.datetime.now().year,
-            year=datetime.datetime.now(),
+            year=datetime.datetime.now().date(),
             company=self.company,
             max_age=key_stats.get('maxAge'),
             price_hint=key_stats.get('priceHint'),
@@ -247,9 +256,9 @@ class NormalizeYahooQuery:
             price_to_book=key_stats.get('priceToBook'),
             fund_family=key_stats.get('fundFamily'),
             legal_type=key_stats.get('legalType'),
-            last_fiscal_year_end=key_stats.get('lastFiscalYearEnd'),
-            next_fiscal_year_end=key_stats.get('nextFiscalYearEnd'),
-            most_recent_quarter=key_stats.get('mostRecentQuarter'),
+            last_fiscal_year_end=last_fiscal_year_end,
+            next_fiscal_year_end=next_fiscal_year_end,
+            most_recent_quarter=most_recent_quarter,
             earnings_quarterly_growth=key_stats.get('earningsQuarterlyGrowth'),
             net_income_to_common=key_stats.get('netIncomeToCommon'),
             trailing_eps=key_stats.get('trailingEps'),
