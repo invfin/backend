@@ -97,7 +97,7 @@ class BaseToAll(Model):
             value = slugify(f"{value}-{extra}")
         if len(value) > max_length:
             value = value[:max_length+1]
-        if self.__class__.objects.filter(field=value).exists():
+        if self.__class__.objects.filter(**{field:value}).exists():
             extra += 1
             return self.save_unique_field(field, value, extra)
         return value

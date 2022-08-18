@@ -11,9 +11,6 @@ from .base import env
 
 # GENERAL
 # ------------------------------------------------------------------------------
-PROTOCOL = 'https://'
-CURRENT_DOMAIN = MAIN_DOMAIN
-FULL_DOMAIN = f'{PROTOCOL}{CURRENT_DOMAIN}'
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#secret-key
 SECRET_KEY = env("DJANGO_SECRET_KEY")
@@ -22,7 +19,7 @@ ALLOWED_HOSTS = env.list("DJANGO_ALLOWED_HOSTS", default=[CURRENT_DOMAIN])
 
 # DATABASES
 # ------------------------------------------------------------------------------
-DATABASES["default"] = env.db("DATABASE_URL")  # noqa F405
+DATABASES = {"default": env.db("DATABASE_URL")}  # noqa F405
 DATABASES["default"]["ATOMIC_REQUESTS"] = True  # noqa F405
 DATABASES["default"]["CONN_MAX_AGE"] = env.int("CONN_MAX_AGE", default=60)  # noqa F405
 
@@ -45,19 +42,6 @@ CACHES = {
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#session-cookie-httponly
 SESSION_COOKIE_HTTPONLY = True
-SESSION_COOKIE_NAME = "sessionid"
-SESSION_COOKIE_DOMAIN = f".{CURRENT_DOMAIN}"
-# Whether to save the session data on every request.
-SESSION_SAVE_EVERY_REQUEST = False
-SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
-# https://docs.djangoproject.com/en/dev/ref/settings/#csrf-cookie-httponly
-CSRF_COOKIE_HTTPONLY = True
-CSRF_COOKIE_DOMAIN = f".{CURRENT_DOMAIN}"
-CSRF_TRUSTED_ORIGINS = [f".{CURRENT_DOMAIN}", f"{CURRENT_DOMAIN}"]
-# https://docs.djangoproject.com/en/dev/ref/settings/#secure-browser-xss-filter
-SECURE_BROWSER_XSS_FILTER = True
-# https://docs.djangoproject.com/en/dev/ref/settings/#x-frame-options
-X_FRAME_OPTIONS = "DENY"
 # https://docs.djangoproject.com/en/dev/ref/settings/#secure-proxy-ssl-header
 SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
 # https://docs.djangoproject.com/en/dev/ref/settings/#secure-ssl-redirect
@@ -84,11 +68,10 @@ SECURE_CONTENT_TYPE_NOSNIFF = env.bool(
 
 # STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
-
 # EMAIL
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#default-from-email
-DEFAULT_FROM_EMAIL = env('DEFAULT_EMAIL') 
+DEFAULT_FROM_EMAIL = env('DEFAULT_EMAIL')
 EMAIL_HOST = env('EMAIL_HOST')
 EMAIL_PORT = env('EMAIL_PORT')
 EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')

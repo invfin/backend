@@ -10,7 +10,6 @@ from django.db.models import (
     ForeignKey,
     IntegerField,
     JSONField,
-    Model,
     OneToOneField,
     SlugField,
 )
@@ -22,7 +21,7 @@ from apps.general.models import Currency
 from apps.general.mixins import BaseToAll
 from apps.web.models import Promotion
 
-from .managers import ProductManager
+from apps.business.managers import ProductManager
 
 User = get_user_model()
 
@@ -38,7 +37,6 @@ class StripeFields(BaseToAll):
 class Customer(StripeFields):
     user = OneToOneField(User, on_delete=SET_NULL, null=True)
     created_at = DateTimeField(auto_now_add=True)
-    # stripe_id = CharField(max_length=500, null=True, blank=True, unique=True, db_index=True)
 
     class Meta:
         verbose_name = 'Customer'
@@ -71,7 +69,7 @@ class Product(StripeFields):
 
     def get_absolute_url(self):
         return reverse("business:product", kwargs={"slug": self.slug})
-    
+
 
 class ProductComplementary(StripeFields):
     EXTRAS = dict(
@@ -119,11 +117,11 @@ class ProductComplementary(StripeFields):
 
     def __str__(self):
         return self.product.title
-    
+
     @property
     def final_price(self):
         return f'{self.price} {self.currency}'
-    
+
     @property
     def subscription_type(self):
         period = 'Mensual'
@@ -133,20 +131,20 @@ class ProductComplementary(StripeFields):
         if constants.PERIOD_YEARLY == self.subscription_period:
             period = 'Anual'
         return period
-    
+
     @property
     def payment(self):
         payment = constants.PAYMENT_TYPE[1][1]
         if self.payment_type == constants.TYPE_SUBSCRIPTION:
             payment = f'{constants.PAYMENT_TYPE[0][1]} {self.subscription_type}'
         return payment
-    
+
     @property
     def payment_link(self):
         return reverse('business:create_checkout', kwargs={"pk": self.pk})
 
 
-class ProductSubscriber(BaseToAll):    
+class ProductSubscriber(BaseToAll):
     product = ForeignKey(Product,
         on_delete=CASCADE,
         null=True,
@@ -178,33 +176,33 @@ class ProductComment(BaseComment):
         on_delete=CASCADE,
         null=True,
         related_name = "comments_related")
-    
+
     class Meta:
         verbose_name = 'Product'
         verbose_name_plural = 'Products comments'
         db_table = 'business_products_comments'
-    
+
     def __str__(self):
         return self.content_related.title
 
 
 class ProductDiscount(StripeFields):
     product = ForeignKey(
-        Product, 
-        on_delete=SET_NULL, 
+        Product,
+        on_delete=SET_NULL,
         null=True,
         blank=True
     )
     product_complementary = ForeignKey(
-        ProductComplementary, 
-        on_delete=SET_NULL, 
-        null=True, 
+        ProductComplementary,
+        on_delete=SET_NULL,
+        null=True,
         blank=True
     )
     promotion = ForeignKey(
-        Promotion, 
-        on_delete=SET_NULL, 
-        null=True, 
+        Promotion,
+        on_delete=SET_NULL,
+        null=True,
         blank=True,
         related_name="promotion_discount"
     )
@@ -218,7 +216,7 @@ class ProductDiscount(StripeFields):
         verbose_name = 'Product discount'
         verbose_name_plural = 'Products discounts'
         db_table = 'business_products_discounts'
-    
+
     def __str__(self):
         return self.product.title
 
@@ -229,9 +227,9 @@ class ProductComplementaryPaymentLink(StripeFields):
         null=True,
         related_name = "payment_links")
     promotion = ForeignKey(
-        Promotion, 
-        on_delete=SET_NULL, 
-        null=True, 
+        Promotion,
+        on_delete=SET_NULL,
+        null=True,
         blank=True,
         related_name="promotion_link_payment"
     )
@@ -252,20 +250,20 @@ class ProductComplementaryPaymentLink(StripeFields):
 
 class TransactionHistorial(BaseToAll):
     product = ForeignKey(
-        Product, 
-        on_delete=SET_NULL, 
+        Product,
+        on_delete=SET_NULL,
         null=True
     )
     product_complementary = ForeignKey(
-        ProductComplementary, 
-        on_delete=SET_NULL, 
-        null=True, 
+        ProductComplementary,
+        on_delete=SET_NULL,
+        null=True,
         blank=True
     )
     product_comment = ForeignKey(
-        ProductComment, 
-        on_delete=SET_NULL, 
-        null=True, 
+        ProductComment,
+        on_delete=SET_NULL,
+        null=True,
         blank=True
     )
     customer = ForeignKey(Customer, on_delete=SET_NULL, null=True)
@@ -287,20 +285,20 @@ class TransactionHistorial(BaseToAll):
 
 class StripeWebhookResponse(StripeFields):
     product = ForeignKey(
-        Product, 
-        on_delete=SET_NULL, 
+        Product,
+        on_delete=SET_NULL,
         null=True
     )
     product_complementary = ForeignKey(
-        ProductComplementary, 
-        on_delete=SET_NULL, 
-        null=True, 
+        ProductComplementary,
+        on_delete=SET_NULL,
+        null=True,
         blank=True
     )
     customer = ForeignKey(
-        Customer, 
-        on_delete=SET_NULL, 
-        null=True, 
+        Customer,
+        on_delete=SET_NULL,
+        null=True,
         blank=True
     )
     full_response = JSONField(default=dict)

@@ -80,16 +80,144 @@ class CompanyStockPriceSerializer(ModelSerializer):
 
     class Meta:
         model = CompanyStockPrice
-        exclude = ['id', 'year']
+        exclude = [
+            'id',
+            'year'
+        ]
+
+
+class ExcelIncomeStatementSerializer(ModelSerializer):
+    reported_currency = StringRelatedField(many=False)
+
+    class Meta:
+        model = IncomeStatement
+        fields = [
+            "date",
+            "reported_currency",
+            "revenue",
+            "cost_of_revenue",
+            "gross_profit",
+            "rd_expenses",
+            "general_administrative_expenses",
+            "selling_marketing_expenses",
+            "sga_expenses",
+            "other_expenses",
+            "operating_expenses",
+            "cost_and_expenses",
+            "interest_expense",
+            "depreciation_amortization",
+            "ebitda",
+            "operating_income",
+            "net_total_other_income_expenses",
+            "income_before_tax",
+            "income_tax_expenses",
+            "net_income",
+            "weighted_average_shares_outstanding",
+            "weighted_average_diluated_shares_outstanding",
+        ]
+
+
+class ExcelBalanceSheetSerializer(ModelSerializer):
+    reported_currency = StringRelatedField(many=False)
+
+    class Meta:
+        model = BalanceSheet
+        fields = [
+            "date",
+            "reported_currency",
+            "cash_and_cash_equivalents",
+            "short_term_investments",
+            "cash_and_short_term_investements",
+            "net_receivables",
+            "inventory",
+            "other_current_assets",
+            "total_current_assets",
+            "property_plant_equipement",
+            "goodwill",
+            "intangible_assets",
+            "goodwill_and_intangible_assets",
+            "long_term_investments",
+            "tax_assets",
+            "other_non_current_assets",
+            "total_non_current_assets",
+            "other_assets",
+            "total_assets",
+            "account_payables",
+            "shortTermDebt",
+            "taxPayables",
+            "deferredRevenue",
+            "other_current_liabilities",
+            "total_current_liabilities",
+            "long_term_debt",
+            "deferred_revenue_non_current",
+            "deferred_tax_liabilities_non_current",
+            "other_non_current_liabilities",
+            "total_non_current_liabilities",
+            "other_liabilities",
+            "total_liabilities",
+            "common_stocks",
+            "retained_earnings",
+            "accumulated_other_comprehensive_income_loss",
+            "othertotal_stockholders_equity",
+            "total_stockholders_equity",
+            "total_liabilities_and_stockholders_equity",
+            "total_investments",
+            "total_debt",
+            "net_debt",
+        ]
+
+
+class ExcelCashflowStatementSerializer(ModelSerializer):
+    reported_currency = StringRelatedField(many=False)
+
+    class Meta:
+        model = CashflowStatement
+        fields = [
+            "date",
+            "reported_currency",
+            "net_income",
+            "depreciation_amortization",
+            "deferred_income_tax",
+            "stock_based_compesation",
+            "change_in_working_capital",
+            "accounts_receivables",
+            "inventory",
+            "accounts_payable",
+            "other_working_capital",
+            "other_non_cash_items",
+            "operating_activities_cf",
+            "investments_property_plant_equipment",
+            "acquisitions_net",
+            "purchases_investments",
+            "sales_maturities_investments",
+            "other_investing_activites",
+            "investing_activities_cf",
+            "debt_repayment",
+            "common_stock_issued",
+            "common_stock_repurchased",
+            "dividends_paid",
+            "other_financing_activities",
+            "financing_activities_cf",
+            "effect_forex_exchange",
+            "net_change_cash",
+            "cash_end_period",
+            "cash_beginning_period",
+            "operating_cf",
+            "capex",
+            "fcf",
+        ]
 
 
 class IncomeStatementSerializer(ModelSerializer):
     reported_currency = StringRelatedField(many=False)
     company = StringRelatedField(many=False)
 
-    class Meta:        
+    class Meta:
         model = IncomeStatement
-        exclude = ['id', 'year']
+        exclude = [
+            'id',
+            'year'
+        ]
 
 
 class BalanceSheetSerializer(ModelSerializer):
@@ -98,16 +226,22 @@ class BalanceSheetSerializer(ModelSerializer):
 
     class Meta:
         model = BalanceSheet
-        exclude = ['id', 'year']
+        exclude = [
+            'id',
+            'year'
+        ]
 
 
 class CashflowStatementSerializer(ModelSerializer):
     reported_currency = StringRelatedField(many=False)
     company = StringRelatedField(many=False)
-    
+
     class Meta:
         model = CashflowStatement
-        exclude = ['id', 'year']
+        exclude = [
+            'id',
+            'year'
+        ]
 
 
 class RentabilityRatioSerializer(ModelSerializer):
@@ -115,7 +249,10 @@ class RentabilityRatioSerializer(ModelSerializer):
 
     class Meta:
         model = RentabilityRatio
-        exclude = ['id', 'year']
+        exclude = [
+            'id',
+            'year'
+        ]
 
 
 class LiquidityRatioSerializer(ModelSerializer):
@@ -123,7 +260,10 @@ class LiquidityRatioSerializer(ModelSerializer):
 
     class Meta:
         model = LiquidityRatio
-        exclude = ['id', 'year']
+        exclude = [
+            'id',
+            'year'
+        ]
 
 
 class MarginRatioSerializer(ModelSerializer):
@@ -131,7 +271,10 @@ class MarginRatioSerializer(ModelSerializer):
 
     class Meta:
         model = MarginRatio
-        exclude = ['id', 'year']
+        exclude = [
+            'id',
+            'year'
+        ]
 
 
 class FreeCashFlowRatioSerializer(ModelSerializer):
@@ -139,7 +282,10 @@ class FreeCashFlowRatioSerializer(ModelSerializer):
 
     class Meta:
         model = FreeCashFlowRatio
-        exclude = ['id', 'year']
+        exclude = [
+            'id',
+            'year'
+        ]
 
 
 class PerShareValueSerializer(ModelSerializer):
@@ -147,7 +293,10 @@ class PerShareValueSerializer(ModelSerializer):
 
     class Meta:
         model = PerShareValue
-        exclude = ['id', 'year']
+        exclude = [
+            'id',
+            'year'
+        ]
 
 
 class NonGaapSerializer(ModelSerializer):
@@ -155,7 +304,10 @@ class NonGaapSerializer(ModelSerializer):
 
     class Meta:
         model = NonGaap
-        exclude = ['id', 'year']
+        exclude = [
+            'id',
+            'year'
+        ]
 
 
 class OperationRiskRatioSerializer(ModelSerializer):
@@ -163,7 +315,10 @@ class OperationRiskRatioSerializer(ModelSerializer):
 
     class Meta:
         model = OperationRiskRatio
-        exclude = ['id', 'year']
+        exclude = [
+            'id',
+            'year'
+        ]
 
 
 class EnterpriseValueRatioSerializer(ModelSerializer):
@@ -171,7 +326,10 @@ class EnterpriseValueRatioSerializer(ModelSerializer):
 
     class Meta:
         model = EnterpriseValueRatio
-        exclude = ['id', 'year']
+        exclude = [
+            'id',
+            'year'
+        ]
 
 
 class CompanyGrowthSerializer(ModelSerializer):
@@ -179,7 +337,10 @@ class CompanyGrowthSerializer(ModelSerializer):
 
     class Meta:
         model = CompanyGrowth
-        exclude = ['id', 'year']
+        exclude = [
+            'id',
+            'year'
+        ]
 
 
 class EficiencyRatioSerializer(ModelSerializer):
@@ -187,7 +348,10 @@ class EficiencyRatioSerializer(ModelSerializer):
 
     class Meta:
         model = EficiencyRatio
-        exclude = ['id', 'year']
+        exclude = [
+            'id',
+            'year'
+        ]
 
 
 class PriceToRatioSerializer(ModelSerializer):
@@ -195,7 +359,10 @@ class PriceToRatioSerializer(ModelSerializer):
 
     class Meta:
         model = PriceToRatio
-        exclude = ['id', 'year']
+        exclude = [
+            'id',
+            'year'
+        ]
 
 
 class CompanySerializer(BasicCompanySerializer):
@@ -234,7 +401,7 @@ class CompanySerializer(BasicCompanySerializer):
             'remote_image_imagekit',
             'remote_image_cloudinary',
         ]
-    
+
     def slicing(self) -> int:
         return 10
 

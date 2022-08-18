@@ -1,5 +1,5 @@
 import random
-from typing import Dict
+from typing import Dict, List
 
 from django.db.models import Manager
 
@@ -15,11 +15,10 @@ class TitlesManager(Manager):
 
 
 class EmojisManager(Manager):
-    def random_emojis(self, num):
-        return random.choices(list(self.all()), k=num)  
-        
+    def random_emojis(self, num) -> List:
+        return random.choices(list(self.all()), k=num)
+
 
 class HashtagsManager(Manager):
-    def random_hashtags(self, platform):
-        hashtags = [hashtag for hashtag in self.filter(platform = platform)]
-        return hashtags  
+    def random_hashtags(self, platform) -> List:
+        return list(self.filter(platform = platform))

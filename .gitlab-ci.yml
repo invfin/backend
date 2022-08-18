@@ -30,5 +30,5 @@ pytest:
     - docker-compose -f local.yml run --rm django python manage.py migrate
     - docker-compose -f local.yml up -d
   script:
-    - docker-compose -f local.yml run django manage.py test
+    - docker-compose -f local.yml run django manage.py test --settings=config.settings.test
 

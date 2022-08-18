@@ -1,31 +1,106 @@
-from django.conf import settings
-from django.contrib.auth.models import AnonymousUser
-from django.test import RequestFactory, TestCase
-from django.urls import reverse
+import vcr
+from model_bakery import baker
+
+from django.test import TestCase
+
+from apps.screener.views import (
+AllYahooScreenersView,
+BuyCompanyInfo,
+CompanyDetailsView,
+CompanyLookUpView,
+CompanyScreenerInicioView,
+EtfDetailsView,
+EtfScreenerInicioView,
+ScreenerInicioView,
+YahooScreenerView,
+)
+
+screener_vcr = vcr.VCR(
+    cassette_library_dir='cassettes/screener/views/',
+    path_transformer=vcr.VCR.ensure_suffix('.yaml'),
+)
 
 
-class ScreenerViewsTest(TestCase):
+class TestAllYahooScreenersView(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        pass
+    
 
-    def setUp(self):
-        # Every test needs access to the request factory.
-        self.factory = RequestFactory()
-        self.user = User.objects.create_user(
-            username='jacob', email='jacob@…', password='top_secret')
+class TestBuyCompanyInfo(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        pass
+    
+    def test_get(self):
+        pass
+    
 
-    def test_details(self):
-        # Create an instance of a GET request.
-        request = self.factory.get('/customer/details')
+class TestCompanyDetailsView(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        pass
+    
+    def test_get(self):
+        pass
+    
+    def test_get_context_data(self):
+        pass
+    
+    def test_get_object(self):
+        pass
+    
+    def test_save_company_in_session(self):
+        pass
+    
 
-        # Recall that middleware are not supported. You can simulate a
-        # logged-in user by setting request.user manually.
-        request.user = self.user
+class TestCompanyLookUpView(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        pass
+    
+    def test_get(self):
+        pass
+    
 
-        # Or you can simulate an anonymous user by setting request.user to
-        # an AnonymousUser instance.
-        request.user = AnonymousUser()
+class TestCompanyScreenerInicioView(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        pass
+    
+    def test_get_context_data(self):
+        pass
+    
+    def test_get_queryset(self):
+        pass
+    
 
-        # Test my_view() as if it were deployed at /customer/details
-        response = my_view(request)
-        # Use this syntax for class-based views.
-        response = MyView.as_view()(request)
-        self.assertEqual(response.status_code, 200)
+class TestEtfDetailsView(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        pass
+    
+    def test_get_object(self):
+        pass
+    
+
+class TestEtfScreenerInicioView(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        pass
+    
+
+class TestScreenerInicioView(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        pass
+    
+    def test_get_context_data(self):
+        pass
+    
+
+class TestYahooScreenerView(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        pass
+    

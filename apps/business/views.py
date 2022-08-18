@@ -9,14 +9,14 @@ from django.views.generic import RedirectView
 
 from apps.general.models import Currency
 from apps.seo.views import SEODetailView, SEOListView, SEOTemplateView
+from apps.business.models import Customer, Product, ProductComplementary, TransactionHistorial
 
-from .models import Customer, Product, ProductComplementary, TransactionHistorial
 
 User = get_user_model()
 stripe.api_key = settings.STRIPE_PRIVATE
 STRIPE_PUBLIC_KEY = settings.STRIPE_PUBLIC
 FULL_DOMAIN = settings.FULL_DOMAIN
-IS_TESTING = settings.DEBUG is True and settings.CURRENT_DOMAIN != settings.MAIN_DOMAIN
+IS_TESTING = settings.DEBUG and settings.CURRENT_DOMAIN != settings.MAIN_DOMAIN
 
 
 class ProductsListView(SEOListView):
@@ -38,7 +38,7 @@ class ProductDetailView(SEODetailView):
     def get_object(self):
         return self.model._default_manager.get(
             slug=self.kwargs['slug'],
-            is_active=True, 
+            is_active=True,
             for_testing=IS_TESTING
             )
 
@@ -57,18 +57,18 @@ class CreateCheckoutView(SEODetailView):
     def get(self, request, *args, **kwargs) -> HttpResponse:
         product = self.get_object()
         try:
-            checkout_session = stripe.checkout.Session.create(  
+            checkout_session = stripe.checkout.Session.create(
                 line_items=[{
                     'price': product.stripe_id,
                     'quantity': 1,
                 }],
                 payment_method_types=['card'],
                 mode=product.payment_type,
-                success_url= f'{FULL_DOMAIN}/pago-correcto/?prod={product.id}'+'&session_id={CHECKOUT_SESSION_ID}',
-                cancel_url= f'{FULL_DOMAIN}/la-mejor-herramienta-para-invertir-es/{product.product.slug}',
+                success_url=f'{FULL_DOMAIN}/pago-correcto/?prod={product.id}'+'&session_id={CHECKOUT_SESSION_ID}',
+                cancel_url=f'{FULL_DOMAIN}/la-mejor-herramienta-para-invertir-es/{product.product.slug}',
             )
-            
-        except Exception as e:         
+
+        except Exception as e:
             return str(e)
         return redirect(checkout_session.url, code=303)
 
@@ -93,8 +93,7 @@ class CheckoutRedirectView(RedirectView):
         customer, created = Customer.objects.get_or_create(user=user,defaults={'stripe_id': session.customer})
         self.save_transaction(session, customer, product_complementary)
         messages.success(request, 'Gracias por tu confianza.')
-        url = reverse('business:all_products')
-        return HttpResponseRedirect(url)
+        return HttpResponseRedirect(reverse('business:all_products'))
 
 
 class CreateUserFromCustomerRecentPurchase(SEOTemplateView):

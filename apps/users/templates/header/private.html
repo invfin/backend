@@ -8,7 +8,7 @@
           </div>
           <div class="col-lg-6 col-5 text-right">
             {% if request.user.is_superuser %}
-            <a href="{% url 'web:email_web' %}" class="btn btn-sm btn-neutral">Web</a>
+            <a href="{% url 'web:manage_engagement_web' %}" class="btn btn-sm btn-neutral">Web</a>
             {% endif %}
             {% if request.user.is_writter %}
             <a href="{% url 'public_blog:manage_blogs' request.user.username %}" class="btn btn-sm btn-neutral">Escritos</a>

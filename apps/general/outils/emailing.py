@@ -19,6 +19,7 @@ class EmailingSystem():
     email_lucas = settings.MAIN_EMAIL
     email_cuentas = settings.EMAIL_ACCOUNTS
     email_sugerencias = settings.EMAIL_SUGGESTIONS
+    email_no_responder = settings.EMAIL_DEFAULT
 
     def __init__(self, is_for:str=None, web_objective:str=None) -> None:
         """

@@ -2,14 +2,11 @@ import json
 
 from django.db.models import Q
 from django.http.response import HttpResponse
-from rest_framework import status
-from rest_framework.response import Response
-from rest_framework.views import APIView
 
 from .api.serializers import (
-    BalanceSheetSerializer,
-    CashflowStatementSerializer,
-    IncomeStatementSerializer,
+    ExcelBalanceSheetSerializer,
+    ExcelCashflowStatementSerializer,
+    ExcelIncomeStatementSerializer,
 )
 from .api.views import BaseAPIView
 from .models import BalanceSheet, CashflowStatement, Company, IncomeStatement
@@ -24,9 +21,9 @@ def companies_searcher(request):
     no_bs = False,
     no_cfs = False,
         )[:10]
-    
+
     results = [f'{company.name} [{company.ticker}]' for company in companies_availables]
-    
+
     data = json.dumps(results)
     mimetype = "application/json"
     return HttpResponse(data, mimetype)
@@ -34,21 +31,26 @@ def companies_searcher(request):
 
 class ExcelAPIIncome(BaseAPIView):
     custom_queryset = IncomeStatement
-    serializer_class = IncomeStatementSerializer
+    serializer_class = ExcelIncomeStatementSerializer
     query_name = ['ticker']
     fk_lookup_model = 'company__ticker'
+    limited = True
+
+    def get(self, request):
+        return super().get(request)
 
 
 class ExcelAPIBalance(BaseAPIView):
     custom_queryset = BalanceSheet
-    serializer_class = BalanceSheetSerializer
+    serializer_class = ExcelBalanceSheetSerializer
     query_name = ['ticker']
     fk_lookup_model = 'company__ticker'
+    limited = True
 
 
 class ExcelAPICashflow(BaseAPIView):
     custom_queryset = CashflowStatement
-    serializer_class = CashflowStatementSerializer
+    serializer_class = ExcelCashflowStatementSerializer
     query_name = ['ticker']
     fk_lookup_model = 'company__ticker'
-    
+    limited = True

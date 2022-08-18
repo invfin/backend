@@ -19,11 +19,11 @@ AAPL = {"id":7,
 "remote_image_imagekit":"https://ik.imagekit.io/invfin/companies/Technology/AAPL.webp?tr=h-300%2Cw-300&ik-sdk-version=python-2.2.8"
 }
 
-IG_HASHTAGS = ["valueinvestor", "valueinvesting", "invertirenvenezuela", "invertirencolombia", "invertirenespaña", "invertirmejor®", 
+IG_HASHTAGS = ["valueinvestor", "valueinvesting", "invertirenvenezuela", "invertirencolombia", "invertirenespaña", "invertirmejor®",
  "ingresospasivos", "inversionista", "inversionesinteligente", "bolsas", "inversión"]
 
-FB_HASHTAGS = ["valueinvesting", "InvertirMejorQueAhorrar", "invertientufuturo", "inversionchallenge", "inversionista", "inversionesinteligentes", 
- "bolsa", "invertirenbolsa", "invertirmejor", 
+FB_HASHTAGS = ["valueinvesting", "InvertirMejorQueAhorrar", "invertientufuturo", "inversionchallenge", "inversionista", "inversionesinteligentes",
+ "bolsa", "invertirenbolsa", "invertirmejor",
  "inversiones", "invertir", "bolsadevalores", "invertirbien", "inversion", "invertironline"]
 
 ICONS = ['😀',
@@ -113,25 +113,6 @@ ICONS = ['😀',
 TWITTER_HASHTAGS = ['invertir', 'inversiones', 'valueinvesting', 'invertirenvalor', 'inversionesinteligente',
     'bolsa', 'invertirenbolsa', 'inversorinteligente']
 
-QUESTION = {
-   "id":31,
-   "title":"¿Todas estas nuevas empresas de carros sobrevivirán? ",
-   "slug":"todas-estas-nuevas-empresas-de-carros-sobreviviran",
-   "created_at":"2021-11-03 02:57:41",
-   "updated_at":"2022-06-16 01:28:55",
-   "total_votes":0,
-   "total_views":251,
-   "times_shared":0,
-   "category_id":1,
-   "tags_id":[1],
-   "author_id":1,
-   "content":"<p>Ya hay muchas empresas de carros &quot;normales&quot;, otras muchas fabrican piezas para estos coches, ya sean GPS, frenos, transmisiones, etc... y ahora estamos viendo una gran ola de carros aut&oacute;nomos o pseudo aut&oacute;nomos. &iquest;Consideran que van a sobrevivir o que ser&aacute; como con la burbuja de las puntocom y todas acabar&aacute;n en la quiebra? Quiz&aacute;s las grandes empresas como GM, Ford y dem&aacute;s se convertir&aacute;n en las TSMC de los carros. Las nuevas empresas dise&ntilde;ar&aacute;n los carros y las m&aacute;s viejas empresas los fabricar&aacute;n. &iquest;Qu&eacute; suceder&aacute; con este sector?</p>\r\n",
-   "is_answered":"0",
-   "has_accepted_answer":"0",
-   # "upvotes":"",
-   # "downvotes":""
-}
-
 PUBLICBLOG = [
    {
       "id":2,
@@ -214,3 +195,19 @@ EMOJIS = [
       "emoji":"🪜"
    }
 ]
+
+LONG_TEXT = ('Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin '
+'literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney '
+'College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and '
+'going through the cites of the word in classical literature, discovered the undoubtable source. Lorem Ipsum comes '
+'from sections 1.10.32 and 1.10.33 of "de Finibus Bonorum et Malorum" (The Extremes of Good and Evil) by Cicero, '
+'written in 45 BC. This book is a treatise on the theory of ethics, very popular during the Renaissance. The first '
+'line of Lorem Ipsum, "Lorem ipsum dolor sit amet..", comes from a line in section 1.10.32.'
+'The standard chunk of Lorem Ipsum used since the 1500s is reproduced below for those interested.'
+'Sections 1.10.32 and 1.10.33 from "de Finibus Bonorum et Malorum" by Cicero are also reproduced in their '
+'exact original form, accompanied by English versions from the 1914 translation by H. Rackham.'
+'Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the '
+"industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled "
+"it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, "
+"remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum "
+"passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.")
