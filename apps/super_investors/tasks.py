@@ -10,9 +10,12 @@ from .scrapper import get_activity, get_historial, get_investors_accronym
 @celery_app.task()
 def scrap_superinvestors():
     total_inv = get_investors_accronym()
-    total = len(total_inv)
-    list_of_all = ', '.join(total_inv)
-    return send_mail('All investors scrapped', f'All {total} investors scrapped: {list_of_all}', settings.EMAIL_DEFAULT, [settings.EMAIL_DEFAULT])
+    return send_mail(
+        'All investors scrapped',
+        f'All investors scrapped',
+        settings.EMAIL_DEFAULT,
+        [settings.EMAIL_DEFAULT]
+    )
 
 
 @celery_app.task()
@@ -35,7 +38,7 @@ def scrap_superinvestors_history(superinvestor_activity_id):
         superinvestor_activity.superinvestor_related.has_error = True
         superinvestor_activity.superinvestor_related.error = e
         superinvestor_activity.superinvestor_related.save(update_fields=['has_error', 'error'])
-    
+
 
 @celery_app.task()
 def prepare_scrap_superinvestors_activity():

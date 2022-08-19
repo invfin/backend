@@ -6,8 +6,8 @@ from bs4 import BeautifulSoup as bs
 from django.utils import timezone
 
 from apps.empresas.models import Company
-
-from .models import Period, Superinvestor, SuperinvestorActivity, SuperinvestorHistory
+from apps.general.models import Period
+from .models import Superinvestor, SuperinvestorActivity, SuperinvestorHistory
 
 HEADERS = {
     'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/102.0.5005.61 Safari/537.36',
@@ -33,10 +33,12 @@ def get_investors_accronym():
         name=t.text,
         fund_name='',
         info_accronym=t.find('a', href=True)['href'].split('=')[1],
-        last_update=timezone.now()
+        defaults={
+            "last_update": timezone.now()
+            }
       )
       all_investors.append(superinvestor)
-        
+
     return all_investors
 
 
@@ -98,7 +100,7 @@ def get_activity(superinvestor):
     except AttributeError:
       pages = range(0, 1)
       skip_followings = True
-    
+
     for page in pages:
       if skip_followings is True and page > 0:
         continue
@@ -120,7 +122,7 @@ def get_activity(superinvestor):
             period=quarter
           )
           continue # Quarter and year
-        
+
         if clase:
           if clase[0] == 'stock':
             ticker = info.split('-')[0].strip() # Ticker
@@ -147,7 +149,7 @@ def get_activity(superinvestor):
             superinvestor_activity, created = SuperinvestorActivity.objects.get_or_create(
               superinvestor_related=superinvestor,
               period_related=period,
-              company=company,            
+              company=company,
               company_name=info,
               not_registered_company=not_registered_company,
               need_verify_company=need_verify_company

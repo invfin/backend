@@ -35,13 +35,13 @@ class ChartSerializer:
                     'data': field['values'],
                     'backgroundColor': '',
                         'borderColor': '',
-                    
+
                     'yAxisID':"right",
                     'order': 0,
                     'type': chart_type
             }
             chartData['fields'].append(comparaison_dict)
-        
+
         return chartData
 
     def generate_portfolio_charts(self):
@@ -85,11 +85,11 @@ class UniqueCreator:
                 value = UniqueCreator.generate_slug(original_value, extra)
             return UniqueCreator.create_unique_field(value, field)
         return value
-    
+
     @classmethod
     def generate_key(cls):
         return binascii.hexlify(os.urandom(20)).decode()
-    
+
     @classmethod
     def generate_slug(cls, value=None, extra:int = 0):
         extra += 1
@@ -112,7 +112,7 @@ class HostChecker:
 
     def check_writter(self):
         return WritterProfile.objects.filter(host_name = self.host).exists()
-    
+
     def return_writter(self):
         if self.check_writter():
             return WritterProfile.objects.get(host_name = self.host).user

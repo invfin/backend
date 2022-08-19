@@ -1,5 +1,5 @@
 import vcr
-from model_bakery import baker
+from apps.bfet import ExampleModel
 
 from django.test import TestCase
 
@@ -21,7 +21,7 @@ class TestCreateAnswerForm(TestCase):
     @classmethod
     def setUpTestData(cls):
         pass
-    
+
     def test_form(self):
         data = {"content": ANSWER["content"]}
         form = CreateAnswerForm(data=data)
@@ -32,34 +32,34 @@ class TestCreateQuestionForm(TestCase):
     @classmethod
     def setUpTestData(cls):
         pass
-    
+
     def test_clean_content(self):
         form = CreateQuestionForm(data={"title": "No quesiton mark"})
         self.assertFalse(form.is_valid())
         self.assertEqual(
-            form.errors["title"], 
+            form.errors["title"],
             "Añade puntuación a tu pregunta ¿ ?"
         )
 
         form = CreateQuestionForm(data={"title": "¿Cuál es tu pregunta?"})
         self.assertFalse(form.is_valid())
         self.assertEqual(
-            form.errors["title"], 
+            form.errors["title"],
             "Formula tu pregunta para que la comunidad pueda ayudarte"
         )
 
         form = CreateQuestionForm(data={"title": "¿hey?"})
         self.assertFalse(form.is_valid())
         self.assertEqual(
-            form.errors["title"], 
+            form.errors["title"],
             "Formula tu pregunta para que la comunidad pueda ayudarte"
         )
-    
+
     def test_clean_title(self):
         form = CreateQuestionForm(data={"content": "Mini"})
         self.assertTrue(form.is_valid())
         self.assertEqual(
-            form.errors["content"], 
+            form.errors["content"],
             "Detalla precisamente tu pregunta para que la comunidad pueda ayudarte."
         )
-    
+
