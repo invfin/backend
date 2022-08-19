@@ -127,7 +127,7 @@ class Answer(CommonMixin):
         Question,
         on_delete=CASCADE,
         blank=False,
-        related_name = "question_answers")
+        related_name="question_answers")
     is_accepted = BooleanField(default=False)
     total_votes = IntegerField(default=0)
     upvotes = ManyToManyField(User, blank=True, related_name="user_upvote_answer")

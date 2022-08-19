@@ -1,4 +1,3 @@
-from ckeditor.fields import RichTextField
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
@@ -19,8 +18,6 @@ from django.db.models import (
 from django.template.defaultfilters import slugify
 from django.utils import timezone
 
-User = get_user_model()
-
 from ckeditor.fields import RichTextField
 
 from apps.general.constants import BASE_ESCRITO_STATUS
@@ -29,6 +26,8 @@ from apps.general.mixins import (
     CommonMixin,
     BaseToAll
 )
+
+User = get_user_model()
 
 
 class BaseWrittenContent(CommonMixin):
@@ -99,6 +98,9 @@ class BaseComment(BaseToAll):
     class Meta:
         abstract = True
 
+    def get_absolute_url(self):
+        return self.content_related.get_absolute_url()
+
     @property
     def title(self):
         return self.content_related.title
@@ -145,6 +147,9 @@ class BaseGenericModels(BaseToAll):
 
     def __str__(self):
         return str(self.id)
+
+    def get_absolute_url(self):
+        return self.object.get_absolute_url()
 
 
 class BaseFavoritesHistorial(Model):

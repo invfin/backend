@@ -119,8 +119,8 @@ class ExampleModel(DataCreator):
             # "NOT_PROVIDED": ExampleModel.create(),
 
             # "FilePathField": ExampleModel.create(),
-            # "FileField": ExampleModel.alg(),
-            # "ImageField": ExampleModel.alg(),
+            "FileField": self.return_none_by_now,
+            "ImageField": self.return_none_by_now,
             "JSONField": ExampleModel.create_random_json,
 
             # "GenericIPAddressField": ExampleModel.create(),
@@ -131,7 +131,7 @@ class ExampleModel(DataCreator):
 
             "ForeignKey": self.return_none_by_now,
             "OneToOneField": self.return_none_by_now,
-            # "ManyToManyField": ExampleModel.alg(),
+            "ManyToManyField": self.return_none_by_now,
         }
         return data_generator[field_type](**kwargs)
 

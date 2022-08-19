@@ -15,14 +15,15 @@ class DataCreator:
         use_punctuation: bool = False,
         use_digits: bool = True
     ):
-
+        min_value = 10
         characters = string.ascii_letters
         if use_digits:
             characters += string.digits
         if use_punctuation:
             characters += string.punctuation
-
-        number = random.randint(10, max_value)
+        if max_value < min_value:
+            min_value += max_value - min_value
+        number = random.randint(min_value, max_value)
         return "".join(random.choice(characters) for _ in range(number))
 
     @staticmethod
@@ -87,7 +88,7 @@ class DataCreator:
         month = month if month else random.randint(1, 12)
         if month == 2:
             max_day = 28
-        elif month in [1, 3, 5, 6, 8, 10, 12]:
+        elif month in [1, 3, 5, 7, 8, 10, 12]:
             max_day = 31
         else:
             max_day = 30
@@ -117,6 +118,8 @@ class DataCreator:
 
     @staticmethod
     def create_random_integer(min_value: int = 0, max_value: int = 10000000):
+        if max_value < min_value:
+            min_value += max_value - min_value
         fnct = random.choice(
             [DataCreator.create_random_negative_integer, DataCreator.create_random_positive_integer]
         )
@@ -132,6 +135,8 @@ class DataCreator:
 
     @staticmethod
     def create_random_float(min_value: float = 0, max_value: float = 10000000, after_coma: int = 2):
+        if max_value < min_value:
+            min_value += max_value - min_value
         fnct = random.choice(
             [DataCreator.create_random_negative_float, DataCreator.create_random_positive_float]
         )

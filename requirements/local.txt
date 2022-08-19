@@ -46,3 +46,4 @@ django-coverage-plugin
 pytest-django
 
 uvicorn[standard]==0.18.2  # https://github.com/encode/uvicorn
+channels

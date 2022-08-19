@@ -8,12 +8,10 @@ from django.db.models import (
     CharField,
     DateTimeField,
     ForeignKey,
-    IntegerField,
     ManyToManyField,
     Model,
     OneToOneField,
     PositiveIntegerField,
-    TextField,
 )
 from django.template.defaultfilters import slugify
 from django.urls import reverse
@@ -37,20 +35,20 @@ class Term(BaseEscrito):
         verbose_name = "Término del glosario"
         db_table = "term"
         ordering = ['id']
-    
+
     def get_absolute_url(self):
         return reverse("escritos:single_term", kwargs={"slug": self.slug})
-    
+
     @property
     def term_parts(self):
         return TermContent.objects.filter(term_related= self)
-    
+
     def link(self):
         return f'{DOMAIN}{self.get_absolute_url()}'
 
 
 class TermContent(Model):
-    term_related = ForeignKey(Term, on_delete=SET_NULL, null=True, related_name="term_content_parts") 
+    term_related = ForeignKey(Term, on_delete=SET_NULL, null=True, related_name="term_content_parts")
     title = CharField(max_length=3000)
     order = PositiveIntegerField(default=0)
     content = RichTextField()
@@ -62,12 +60,12 @@ class TermContent(Model):
 
     def __str__(self):
         return f'{self.title}'
-    
+
     def get_absolute_url(self):
         slug = slugify(self.title)
         path = self.term_related.get_absolute_url()
         return f'{path}#{slug}'
-    
+
     def link(self):
         return f'{DOMAIN}{self.get_absolute_url()}'
 
@@ -100,14 +98,14 @@ class TermCorrection(Model):
 
     def __str__(self):
         return f'{self.term_content_related.title} corregido por {self.reviwed_by.username}'
-    
+
     def save(self, *args, **kwargs): # new
         if self.is_approved is True:
             # Perfil.ADD_CREDITS(self.user, 5)
             #enviar email de agradecimiento
             pass
         return super().save(*args, **kwargs)
-    
+
     def get_absolute_url(self):
         return self.term_content_related.get_absolute_url()
 
@@ -121,7 +119,7 @@ class TermsComment(BaseComment):
     class Meta:
         verbose_name = "Term's comment"
         db_table = "term_comments"
-    
+
     def get_absolute_url(self):
         return self.content_related.get_absolute_url()
 
@@ -131,12 +129,12 @@ class TermsRelatedToResume(Model):
         on_delete=CASCADE,
         null=True,
         related_name = "term_to_keep")
-        
+
     term_to_delete = ForeignKey(Term,
         on_delete=CASCADE,
         null=True,
-        related_name = "term_to_delete")    
-    
+        related_name = "term_to_delete")
+
     class Meta:
         verbose_name = "Terms to resume"
         db_table = "terms_to_resume"

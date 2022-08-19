@@ -32,7 +32,7 @@ class NotificationSystem:
         )
         return {
             **email_data,
-            'url_to_join': object_related.shareable_link,
+            "url_to_join": object_related.shareable_link,
             'app_label': notification.app_label,
             'object_name': notification.object_name,
             'id': notification.pk
@@ -194,7 +194,7 @@ class NotificationSystem:
                 notif_type,
                 {
                     "subject": subject,
-                    "content": answer.content,
+                    "content": f"Tu respuesta a {question.title} ha sido acceptda. Felicidades.",
                 }
             )
             notif_info.append(

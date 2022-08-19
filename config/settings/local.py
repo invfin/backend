@@ -3,6 +3,8 @@ from .base import env
 
 # GENERAL
 # ------------------------------------------------------------------------------
+ASGI_APPLICATION = "config.asgi.application"
+
 # https://docs.djangoproject.com/en/dev/ref/settings/#secret-key
 SECRET_KEY = env(
     "DJANGO_SECRET_KEY",
@@ -55,6 +57,7 @@ INSTALLED_APPS = ["whitenoise.runserver_nostatic"] + INSTALLED_APPS  # noqa F405
 # ------------------------------------------------------------------------------
 # https://django-debug-toolbar.readthedocs.io/en/latest/installation.html#prerequisites
 INSTALLED_APPS += [
+    # "channel",
     "debug_toolbar",
     "drf_spectacular",
     ]  # noqa F405
