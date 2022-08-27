@@ -7,7 +7,7 @@
         </div>
         <div class="card-body">
             <div class="row">
-           
+
                     <div class="col-xl-4 col-sm-12">
                         <div class="form-floating">
                             <input value="0" type="text" class="form-control" id="opt_growth" placeholder="% crecimiento optimista" aria-required="true">
@@ -26,10 +26,10 @@
                             <label for="pes_growth" class="form-floating">% crecimiento pesimista</label>
                         </div>
                     </div>
-                    <div class="col-12 mt-4" style="text-align: center;">                       
-                        <button onclick="Showresults()" id="evaluar" class="btn btn-warning" >Calcular</button>                     
+                    <div class="col-12 mt-4" style="text-align: center;">
+                        <button onclick="Showresults()" id="evaluar" class="btn btn-warning" >Calcular</button>
                     </div>
-            
+
                 <div class="col-xl-4 col-sm-12 mt-4" id="val_opt" style="display: none;">
                     <div id="opt_valuation"></div>
                 </div>
@@ -49,8 +49,10 @@
 </div>
 
   <script>
-     
-  
+
+  {% comment %} Use a filter year grater than current year - limit to retrieve all statments in a queryset
+  so the aggregate funtion can be applied
+  {% endcomment %}
   function Showresults() {
 
     var opt_grow = document.querySelector("#opt_growth").value
@@ -66,7 +68,7 @@
         comp : comp,
         buyback : buyback,
         })
-    
+
     event.preventDefault();
     $.ajax({
         url: "{% url 'screener:simple_valuation_view' %}",
@@ -76,26 +78,26 @@
         headers: {
         "X-Requested-With": "XMLHttpRequest",
         'X-CSRFToken': csrftoken,
-        
+
         },
         success: (data) => {
-        
+
         var valone = document.getElementById("val_opt");
         var valtwo = document.getElementById("val_neu");
         var valthree = document.getElementById("val_pes");
-  
+
         valone.style.display = "block";
         valtwo.style.display = "block";
         valthree.style.display = "block";
-        
+
         $('#opt_valuation').append('<div class="form-floating mt-1"><input type="text" class="form-control" value="'+data.opt_valuation+'" readonly><label for="opt_growth" class="form-floating">Valoración optimista</label></div>');
         $('#neu_valuation').append('<div class="form-floating mt-1"><input type="text" class="form-control" value="'+data.neu_valuation+'" readonly><label for="opt_growth" class="form-floating">Valoración neutral</label></div>');
         $('#pes_valuation').append('<div class="form-floating mt-1"><input type="text" class="form-control" value="'+data.pes_valuation+'" readonly><label for="opt_growth" class="form-floating">Valoración pesimista</label></div>');
-  
-        
+
+
         },
-      
+
     });
   }
-  
+
   </script>
