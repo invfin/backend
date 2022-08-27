@@ -13,7 +13,6 @@ User = get_user_model()
 
 @admin.register(User)
 class UserAdmin(ImportExportActionModelAdmin, auth_admin.UserAdmin):
-
     form = UserAdminChangeForm
     add_form = UserAdminCreationForm
     fieldsets = (
@@ -59,7 +58,7 @@ class ProfileAdmin(admin.ModelAdmin):
     ]
 
     search_fields = ['user__username']
-    
+
 
 @admin.register(MetaProfile)
 class MetaProfileAdmin(admin.ModelAdmin):
@@ -77,7 +76,7 @@ class MetaProfileAdmin(admin.ModelAdmin):
         'time_zone',
         'postal_code',
         'continent_code',
-        'continent_name',        
+        'continent_name',
     ]
 
 

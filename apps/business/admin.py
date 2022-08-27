@@ -1,4 +1,7 @@
 from django.contrib import admin
+from django.db import models
+
+from django_json_widget.widgets import JSONEditorWidget
 
 from .models import (
     Customer,
@@ -12,7 +15,13 @@ from .models import (
 )
 
 
-class BaseStripeAdmin(admin.ModelAdmin):
+class JSONAdminWidget(admin.ModelAdmin):
+    formfield_overrides = {
+        models.JSONField: {'widget': JSONEditorWidget},
+    }
+
+
+class BaseStripeAdmin(JSONAdminWidget):
     list_display = [
         'id',
         'title',
@@ -28,7 +37,7 @@ class BaseStripeAdmin(admin.ModelAdmin):
 
 
 @admin.register(StripeWebhookResponse)
-class StripeWebhookResponseAdmin(admin.ModelAdmin):
+class StripeWebhookResponseAdmin(JSONAdminWidget):
     list_display = [
         'id',
         'product',
@@ -39,7 +48,7 @@ class StripeWebhookResponseAdmin(admin.ModelAdmin):
 
 
 @admin.register(Customer)
-class CustomerAdmin(admin.ModelAdmin):
+class CustomerAdmin(JSONAdminWidget):
     list_display = [
         'id',
         'user',
@@ -68,14 +77,14 @@ class ProductAdmin(BaseStripeAdmin):
 
 
 @admin.register(ProductComment)
-class ProductCommentAdmin(admin.ModelAdmin):
+class ProductCommentAdmin(JSONAdminWidget):
     list_display = [
         'id',
         'author',
         'rating',
         'content_related',
         'created_at'
-        
+
     ]
     list_editable = []
     list_filter = []
@@ -83,7 +92,7 @@ class ProductCommentAdmin(admin.ModelAdmin):
 
 
 @admin.register(TransactionHistorial)
-class TransactionHistorialAdmin(admin.ModelAdmin):
+class TransactionHistorialAdmin(JSONAdminWidget):
     list_display = [
         'id',
         'product',
@@ -152,7 +161,7 @@ class ProductComplementaryAdmin(BaseStripeAdmin):
 
 
 @admin.register(ProductDiscount)
-class ProductDiscountAdmin(admin.ModelAdmin):
+class ProductDiscountAdmin(JSONAdminWidget):
     list_display =[
         'id',
         'product',
@@ -160,7 +169,7 @@ class ProductDiscountAdmin(admin.ModelAdmin):
         'start_date',
         'end_date',
         'discount',
-    ] 
+    ]
     list_editable = []
     list_filter = []
     search_fields= []

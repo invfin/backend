@@ -34,9 +34,11 @@ django-cors-headers<4
 django-environ
 gunicorn
 django-allauth
-django-crispy-forms
-crispy-bootstrap5
 django-redis
+
+# Django Admin
+# ------------------------------------------------------------------------------
+django-jazzmin
 
 # Django REST Framework
 # ------------------------------------------------------------------------------
@@ -44,8 +46,6 @@ djangorestframework
 
 # Django extras
 # ------------------------------------------------------------------------------
-django-widget-tweaks
-django-ckeditor
 django-cleanup
 django-countries
 # django-admin-honeypot
@@ -55,6 +55,14 @@ geoip2
 psycopg2-binary # https://github.com/psycopg/psycopg2
 pandas
 html5lib
+
+# Custom forms
+# ------------------------------------------------------------------------------
+django-json-widget<2
+django-ckeditor
+django-widget-tweaks
+django-crispy-forms
+crispy-bootstrap5
 
 # Payment
 # ------------------------------------------------------------------------------
