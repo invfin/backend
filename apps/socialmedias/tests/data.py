@@ -211,3 +211,24 @@ LONG_TEXT = ('Contrary to popular belief, Lorem Ipsum is not simply random text.
 "it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, "
 "remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum "
 "passages, and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.")
+
+MULTIPOSTS = [
+{
+"description": 'CRDL.TO ha tenido un crecimiento en sus ingresos del 0% anualizado durante los últimos 10 años. Actualmente la empresa genera 0.0 CAD con gastos elevándose a 0.0 CAD. La empresa cotiza a 1.46 CAD por acción, con 29857136.0 acciones en circulación la empresa obtiene una capitalización bursátil de 43591418.56 CAD Cardiol Therapeutics Inc. se centra en la producción de productos farmacéuticos de cannabidiol (CBD). La compañía también está desarrollando varias terapias para enfermedades cardíacas, incluida ...',
+"platform_shared": 'facebook',
+"post_type": 3,
+"social_id": '105836681984738_169070538994685',
+"title": '💵 Cardiol Therapeutics Inc.',
+"user": "<User: Lucas Montes>"
+},
+{
+"multiple_posts": True,
+"posts": [
+{"description":"'Cardiol Therapeutics Inc. #invertir #Inversion #valueinvesting [0/6]'","platform_shared":"'twitter'","post_type":"8","social_id":"1560371630525890560"},
+{"description":"'CRDL.TO ha tenido un crecimiento en sus ingresos del 0% anualizado durante los últimos 10 años. Actualmente la empresa genera 0.0 CAD con gastos elevándose a 0.0 CAD. La [1/6]'","platform_shared":"'twitter'","post_type":"8","social_id":"1560371631339589635"},
+{"description":"'empresa cotiza a 1.46 CAD por acción, con 29857136.0 acciones en circulación la empresa obtiene una capitalización bursátil de 43591418.56 CAD Cardiol Therapeutics Inc. se [2/6]'","platform_shared":"'twitter'","post_type":"8","social_id":"1560371632232882181"},
+{"description":"'centra en la producción de productos farmacéuticos de cannabidiol (CBD). La compañía también está desarrollando varias terapias para enfermedades cardíacas, incluida la [3/6]'","platform_shared":"'twitter'","post_type":"8","social_id":"1560371633239506945"},
+{"description":"'miocarditis aguda y otras causas de insuficiencia cardíaca. Su producto principal es Cardiolrx, una formulación CBD producida farmacéuticamente. Además, está desarrollando [4/6]'","platform_shared":"'twitter'","post_type":"8","social_id":"1560371634124591104"},
+]
+}
+]

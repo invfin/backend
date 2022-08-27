@@ -121,7 +121,7 @@ class ExampleModel(DataCreator):
             # "FilePathField": ExampleModel.create(),
             # "FileField": ExampleModel.alg(),
             # "ImageField": ExampleModel.alg(),
-            # "JSONField": ExampleModel.alg(),
+            "JSONField": ExampleModel.create_random_json,
 
             # "GenericIPAddressField": ExampleModel.create(),
             # "IPAddressField": ExampleModel.create(),

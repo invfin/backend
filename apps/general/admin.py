@@ -15,7 +15,7 @@ from .models import (
 )
 
 
-@admin.register(EmailNotification)    
+@admin.register(EmailNotification)
 class EmailNotificationAdmin(admin.ModelAdmin):
     list_display = [
         'id',
@@ -84,6 +84,5 @@ class CountryAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
 class PeriodAdmin(admin.ModelAdmin):
     list_display = [
         'id',
-        'year',
         'period',
     ]

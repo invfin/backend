@@ -32,14 +32,16 @@ class CompanyFODAListView(ListView):
 
 
 def get_company_price(request, ticker):
-    prices = RetrieveCompanyData(ticker).get_current_price()
+    prices = Company.objects.get(ticker=ticker).get_most_recent_price()
     return render(request, 'headers/company_price.html', {
         'prices': prices,
     })
 
 
 def get_company_news(request, ticker):
-    news = RetrieveCompanyData(ticker).get_news()
+    # company = Company.objects.get(ticker=ticker)
+    # news = RetrieveCompanyData(company).get_news()
+    news = []
     return render(request, 'empresas/company_parts/resume/news.html', {
         'show_news': news,
     })
@@ -104,8 +106,8 @@ def retreive_top_lists(request):
 
 def return_similar_companies_screener(request, sector_id, industry_id):
     return render(
-        request, 
-        'empresas/company_parts/relationships/relations.html', 
+        request,
+        'empresas/company_parts/relationships/relations.html',
         {
             'similar_companies': Company.objects.get_similar_companies(sector_id, industry_id),
             "previous_ticker": request.GET.get('extra')
@@ -121,7 +123,7 @@ class CompanyObservationFormView(FormView):
         context = super().get_context_data(**kwargs)
         context['company_ticker'] = self.request.GET['company_ticker']
         return context
-    
+
     def form_valid(self, form):
         company_ticker = self.request.POST['company_ticker']
         user = User.objects.get_or_create_quick_user(self.request)
@@ -141,7 +143,7 @@ def suggest_list_search_companies(request):
 		no_bs = False,
 		no_cfs = False,
 			)[:10]
-		
+
 		results = []
 		for company in companies_availables:
 			result = f'{company.name} ({company.ticker})'
@@ -163,28 +165,28 @@ def medium_valuation_view(request):
     if is_ajax:
         if request.method == 'POST':
             data = json.load(request)
-            
-            opt_growth = float(data.get('complex_opt_growth').replace(',', '.'))
-            neu_growth = float(data.get('complex_neu_growth').replace(',', '.'))
-            pes_growth = float(data.get('complex_pes_growth').replace(',', '.'))
+
+            opt_growth = float(data.get('complex_opt_growth', 0).replace(',', '.'))
+            neu_growth = float(data.get('complex_neu_growth', 0).replace(',', '.'))
+            pes_growth = float(data.get('complex_pes_growth', 0).replace(',', '.'))
             company_id = data.get('company_id')
-            current_per = float(data.get('current_per').replace(',', '.'))
-            opt_margin = float(data.get('complex_opt_margin').replace(',', '.'))
-            neu_margin = float(data.get('complex_neu_margin').replace(',', '.'))
-            pes_margin = float(data.get('complex_pes_margin').replace(',', '.'))
-            opt_buyback = float(data.get('complex_opt_buyback').replace(',', '.'))
-            neu_buyback = float(data.get('complex_neu_buyback').replace(',', '.'))
-            pes_buyback = float(data.get('complex_pes_buyback').replace(',', '.'))
-            opt_fcf_margin = float(data.get('complex_opt_fcf_margin').replace(',', '.'))
-            neu_fcf_margin = float(data.get('complex_neu_fcf_margin').replace(',', '.'))
-            pes_fcf_margin = float(data.get('complex_pes_fcf_margin').replace(',', '.'))
+            current_per = float(data.get('current_per', 0).replace(',', '.'))
+            opt_margin = float(data.get('complex_opt_margin', 0).replace(',', '.'))
+            neu_margin = float(data.get('complex_neu_margin', 0).replace(',', '.'))
+            pes_margin = float(data.get('complex_pes_margin', 0).replace(',', '.'))
+            opt_buyback = float(data.get('complex_opt_buyback', 0).replace(',', '.'))
+            neu_buyback = float(data.get('complex_neu_buyback', 0).replace(',', '.'))
+            pes_buyback = float(data.get('complex_pes_buyback', 0).replace(',', '.'))
+            opt_fcf_margin = float(data.get('complex_opt_fcf_margin', 0).replace(',', '.'))
+            neu_fcf_margin = float(data.get('complex_neu_fcf_margin', 0).replace(',', '.'))
+            pes_fcf_margin = float(data.get('complex_pes_fcf_margin', 0).replace(',', '.'))
 
             the_company = Company.objects.get(id = company_id)
             last_revenue = the_company.most_recent_inc_statement.revenue
             average_shares_out = the_company.most_recent_inc_statement.weighted_average_shares_outstanding
 
             UserScreenerMediumPrediction.objects.create(
-                user = user, 
+                user = user,
                 company = the_company,
                 optimistic_growth = opt_growth,
                 neutral_growth = neu_growth,
@@ -225,7 +227,7 @@ def medium_valuation_view(request):
                 average_shares_out = average_shares_out
                 )
 
-            return JsonResponse ({'complex_opt_valuation':opt_valuation, 
+            return JsonResponse ({'complex_opt_valuation':opt_valuation,
             'complex_neu_valuation':neu_valuation, 'complex_pes_valuation':pes_valuation
             })
 
@@ -242,14 +244,14 @@ def simple_valuation_view(request):
     if is_ajax:
         if request.method == 'POST':
             data = json.load(request)
-            
 
-            opt_growth = float(data.get('opt_grow').replace(',', '.'))
-            neu_growth = float(data.get('neu_grow').replace(',', '.'))
-            pes_growth = float(data.get('pes_grow').replace(',', '.'))
+
+            opt_growth = float(data.get('opt_grow', 0).replace(',', '.'))
+            neu_growth = float(data.get('neu_grow', 0).replace(',', '.'))
+            pes_growth = float(data.get('pes_grow', 0).replace(',', '.'))
             company_id = data.get('comp')
-            buyback = float(data.get('buyback').replace(',', '.'))
-            
+            buyback = float(data.get('buyback', 0).replace(',', '.'))
+
             the_company = Company.objects.get(id = company_id)
             last_revenue = the_company.most_recent_inc_statement.revenue
             average_shares_out = the_company.most_recent_inc_statement.weighted_average_shares_outstanding
@@ -263,7 +265,7 @@ def simple_valuation_view(request):
                 optimistic_growth = opt_growth,
                 neutral_growth = neu_growth,
                 pesimistic_growth = pes_growth
-                
+
                 )
 
             opt_valuation = discounted_cashflow(
@@ -291,6 +293,6 @@ def simple_valuation_view(request):
                 average_shares_out = average_shares_out
                 )
 
-            return JsonResponse ({'opt_valuation':opt_valuation, 
+            return JsonResponse ({'opt_valuation':opt_valuation,
             'neu_valuation':neu_valuation, 'pes_valuation':pes_valuation
             })

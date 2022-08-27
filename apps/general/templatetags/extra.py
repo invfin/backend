@@ -4,6 +4,7 @@ from datetime import datetime
 from django import template
 from django.urls import reverse
 from django.contrib.auth.models import Group
+from django.utils.safestring import mark_safe
 
 register = template.Library()
 
@@ -22,7 +23,7 @@ def readable_date(date):
 @register.filter(name='per_cent')
 def percentagement(value):
     return (value * 100)
-    
+
 
 @register.simple_tag(name='utm')
 def add_utms(content='', term='', medium='webapp', source='invfin', campaign='website-links'):

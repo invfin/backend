@@ -46,10 +46,10 @@ class Key(BaseToAll):
     limit = PositiveIntegerField(default=0)
     objects = KeyManager()
     subscription = ForeignKey(
-        ProductSubscriber, 
-        on_delete=CASCADE, 
+        ProductSubscriber,
+        on_delete=CASCADE,
         related_name="subscription_related",
-        null=True, 
+        null=True,
         blank=True
     )
 
@@ -64,14 +64,14 @@ class Key(BaseToAll):
             key = UniqueCreator.create_unique_field(
                 self,
                 UniqueCreator.generate_key(),
-                'key'    
+                'key'
             )
             self.key = key
         return super().save(*args, **kwargs)
 
     def __str__(self):
         return self.key
-    
+
     @property
     def has_subscription(self):
         return bool(self.subscription)
@@ -86,7 +86,7 @@ class ReasonKeyRequested(BaseToAll):
         verbose_name = "Reason for requesting Key"
         verbose_name_plural = "Reason for requesting Key"
         db_table = "api_reason_key"
-    
+
     def __str__(self) -> str:
         return f'{self.user}'
 
@@ -97,13 +97,13 @@ class BaseRequestAPI(BaseToAll):
     user = ForeignKey(User, on_delete=CASCADE)
     date = DateTimeField(auto_now_add=True)
     path = CharField(max_length=500)
-    
+
     class Meta:
         abstract = True
-    
+
     def __str__(self):
         return f'{self.user} - {self.search}'
-    
+
     @property
     def count_use_today(self):
         today = datetime.now().date()
@@ -151,7 +151,7 @@ class EndpointsCategory(Model):
         verbose_name_plural = "Endpoints categories"
         db_table = "api_endpoints_categories"
         ordering = ['order']
-    
+
     def __str__(self) -> str:
         return self.title
 
@@ -179,33 +179,33 @@ class Endpoint(Model):
         verbose_name_plural = "Endpoints"
         db_table = "api_endpoints"
         ordering = ['order']
-    
+
     def __str__(self) -> str:
         return self.title
 
     def save(self, *args, **kwargs): # new
         if not self.slug:
             slug = UniqueCreator.create_unique_field(
-                self, 
+                self,
                 slugify(self.title),
                 'slug',
                 self.title
             )
             self.slug = slug
         return super().save(*args, **kwargs)
-    
+
     @property
     def final_url(self):
         return f'{FULL_DOMAIN}/api/{self.version}/{self.url}/'
-    
+
     @property
     def continuation_url(self):
         return f'&{self.url_example}' if self.url_example else ''
-    
+
     @property
     def is_new(self):
         return (self.date_created.date() - date.today()).days < 3
-    
+
     @property
     def example(self):
         return json.dumps(self.response_example_json ,indent=4, sort_keys=True, ensure_ascii=False)

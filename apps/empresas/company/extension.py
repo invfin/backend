@@ -1,24 +1,19 @@
 import math
 import operator
-from statistics import mean
+
+import yfinance as yf
+import yahooquery as yq
 
 from django.db.models import Avg
 
 from apps.empresas.valuations import discounted_cashflow
 from apps.general.utils import ChartSerializer
 from apps.general.mixins import BaseToAll
-from apps.general.models import Currency
-
-from .retrieve_data import RetrieveCompanyData
 
 
 class CompanyExtended(BaseToAll, ChartSerializer):
     class Meta:
         abstract = True
-    
-    @property
-    def show_news(self):
-        return RetrieveCompanyData(self.ticker).get_news()
 
     def all_income_statements(self, limit) ->list:
         inc = self.inc_statements.all()
@@ -136,17 +131,17 @@ class CompanyExtended(BaseToAll, ChartSerializer):
                 'url':"#!",
                 'percent': 'false',
                 'short': 'false',
-                'values' : [data.weighted_average_diluated_shares_outstanding for data in inc]},]    
+                'values' : [data.weighted_average_diluated_shares_outstanding for data in inc]},]
             }
         return inc_json, inc
-    
 
-    
+
+
     def comparing_income_json(self, limit):
         comparing_json, inc = self.income_json(limit)
         chartData = self.generate_json(comparing_json)
         revenue_vs_net_income = self.generate_json(comparing_json, [0,18], 'bar')
-        
+
         data = {
             'table':comparing_json,
             'chart':chartData
@@ -160,7 +155,7 @@ class CompanyExtended(BaseToAll, ChartSerializer):
         return bls
 
     def balance_json(self, limit):
-        bls = self.all_balance_sheets(limit)        
+        bls = self.all_balance_sheets(limit)
         bls_json = {
             'currency': self.currency.currency,
             'labels': [data.date for data in bls],
@@ -179,7 +174,7 @@ class CompanyExtended(BaseToAll, ChartSerializer):
                 'url':"#!",
                 'percent': 'false',
                 'short': 'false',
-                'values':[data.cash_and_short_term_investements for data in bls]},
+                'values':[data.cash_and_short_term_investments for data in bls]},
                 {'title':'Cuentas por cobrar',
                 'url':"#!",
                 'percent': 'false',
@@ -204,7 +199,7 @@ class CompanyExtended(BaseToAll, ChartSerializer):
                 'url':"#!",
                 'percent': 'false',
                 'short': 'false',
-                'values':[data.property_plant_equipement for data in bls]},
+                'values':[data.property_plant_equipment for data in bls]},
                 {'title':'Goodwill',
                 'url':"#!",
                 'percent': 'false',
@@ -259,17 +254,17 @@ class CompanyExtended(BaseToAll, ChartSerializer):
                 'url':"#!",
                 'percent': 'false',
                 'short': 'false',
-                'values':[data.shortTermDebt for data in bls]},
+                'values':[data.short_term_debt for data in bls]},
                 {'title':'Impuestos por pagar',
                 'url':"#!",
                 'percent': 'false',
                 'short': 'false',
-                'values':[data.taxPayables for data in bls]},
+                'values':[data.tax_payables for data in bls]},
                 {'title':'Ingreso diferido',
                 'url':"#!",
                 'percent': 'false',
                 'short': 'false',
-                'values':[data.deferredRevenue for data in bls]},
+                'values':[data.deferred_revenue for data in bls]},
                 {'title':'Otros pasivos corrientes',
                 'url':"#!",
                 'percent': 'false',
@@ -344,7 +339,7 @@ class CompanyExtended(BaseToAll, ChartSerializer):
                 'url':"#!",
                 'percent': 'false',
                 'short': 'false',
-                'values':[data.total_liabilities_and_stockholders_equity for data in bls]},
+                'values':[data.total_liabilities_and_total_equity for data in bls]},
                 {'title':'Inversiones totales',
                 'url':"#!",
                 'percent': 'false',
@@ -363,9 +358,9 @@ class CompanyExtended(BaseToAll, ChartSerializer):
             ]
         }
         return bls_json, bls
-    
 
-    
+
+
     def comparing_balance_json(self, limit):
         comparing_json, bls = self.balance_json(limit)
         chartData = self.generate_json(comparing_json)
@@ -374,13 +369,13 @@ class CompanyExtended(BaseToAll, ChartSerializer):
             'chart':chartData
         }
         return data, bls
-	
+
     def all_cashflow_statements(self, limit) -> list:
         cf = self.cf_statements.all()
         if limit != 0:
             cf = cf[:limit]
         return cf
-    
+
     def cashflow_json(self, limit):
         cf = self.all_cashflow_statements(limit)
         cf_json = {
@@ -539,9 +534,9 @@ class CompanyExtended(BaseToAll, ChartSerializer):
                 'values':[data.fcf for data in cf]},]
                         }
         return cf_json, cf
-    
 
-    
+
+
     def comparing_cashflows(self, limit):
         comparing_json, cf = self.cashflow_json(limit)
         chartData = self.generate_json(comparing_json)
@@ -558,7 +553,7 @@ class CompanyExtended(BaseToAll, ChartSerializer):
         return rr
 
     def rentability_ratios_json(self, limit):
-        rr = self.all_rentablity_ratios(limit)        
+        rr = self.all_rentablity_ratios(limit)
         rr_json = {
             'labels': [data.date for data in rr],
             'fields': [
@@ -599,11 +594,11 @@ class CompanyExtended(BaseToAll, ChartSerializer):
                 'short': 'true',
                 'values': [data.roic for data in rr]},
             {
-                'title': 'NOPATROIC',
+                'title': 'NOPAT ROIC',
                 'url':"#!",
                 'percent': 'true',
                 'short': 'true',
-                'values': [data.nopatroic for data in rr]},
+                'values': [data.nopat_roic for data in rr]},
             {
                 'title': 'ROGIC',
                 'url':"#!",
@@ -614,7 +609,7 @@ class CompanyExtended(BaseToAll, ChartSerializer):
         return rr_json, rr
 
 
-    
+
     def comparing_rentability_ratios_json(self, limit):
         comparing_json, rr = self.rentability_ratios_json(limit)
         chartData = self.generate_json(comparing_json)
@@ -623,7 +618,7 @@ class CompanyExtended(BaseToAll, ChartSerializer):
             'chart':chartData
         }
         return data, rr
-    
+
     def all_liquidity_ratios(self, limit) -> list:
         lr = self.liquidity_ratios.all()
         if limit != 0:
@@ -631,7 +626,7 @@ class CompanyExtended(BaseToAll, ChartSerializer):
         return lr
 
     def liquidity_ratios_json(self, limit):
-        lr = self.all_liquidity_ratios(limit)        
+        lr = self.all_liquidity_ratios(limit)
         lr_json = {
             'labels': [data.date for data in lr],
             'fields': [
@@ -667,9 +662,9 @@ class CompanyExtended(BaseToAll, ChartSerializer):
                 'values': [data.debt_to_equity for data in lr]},
             ]}
         return lr_json, lr
-    
 
-    
+
+
     def comparing_liquidity_ratios_json(self, limit):
         comparing_json, lr = self.liquidity_ratios_json(limit)
         chartData = self.generate_json(comparing_json)
@@ -678,7 +673,7 @@ class CompanyExtended(BaseToAll, ChartSerializer):
             'chart':chartData
         }
         return data, lr
-    
+
     def all_margins(self, limit) -> list:
         margins = self.margins.all()
         if limit != 0:
@@ -731,7 +726,7 @@ class CompanyExtended(BaseToAll, ChartSerializer):
                 'url':"#!",
                 'percent': 'true',
                 'short': 'true',
-                'values': [data.owners_earnings_to_net_income for data in cf]},                
+                'values': [data.owners_earnings_to_net_income for data in cf]},
                 {
                 'title': 'Margen flujo de efectivo',
                 'url':"#!",
@@ -740,8 +735,8 @@ class CompanyExtended(BaseToAll, ChartSerializer):
                 'values': [data.fcf_margin for data in cf]},
             ]}
         return cf_json, cf
-    
-    
+
+
     def comparing_margins_json(self, limit):
         comparing_json, cf = self.margins_json(limit)
         chartData = self.generate_json(comparing_json)
@@ -758,7 +753,7 @@ class CompanyExtended(BaseToAll, ChartSerializer):
         return fcf_ratios
 
     def fcf_ratios_json(self, limit):
-        cf = self.all_fcf_ratios(limit)        
+        cf = self.all_fcf_ratios(limit)
         cf_json = {
             'labels': [data.date for data in cf],
             'fields': [{
@@ -787,7 +782,7 @@ class CompanyExtended(BaseToAll, ChartSerializer):
                 'values': [data.owners_earnings for data in cf]},
             ]}
         return cf_json, cf
-    
+
     def comparing_fcf_ratios_json(self, limit):
         comparing_json, cf = self.fcf_ratios_json(limit)
         chartData = self.generate_json(comparing_json)
@@ -796,7 +791,7 @@ class CompanyExtended(BaseToAll, ChartSerializer):
             'chart':chartData
         }
         return data, cf
-    
+
     def all_per_share_values(self, limit) -> list:
         per_share_values = self.per_share_values.all()
         if limit != 0:
@@ -804,7 +799,7 @@ class CompanyExtended(BaseToAll, ChartSerializer):
         return per_share_values
 
     def per_share_values_json(self, limit):
-        cf = self.all_per_share_values(limit)        
+        cf = self.all_per_share_values(limit)
         cf_json = {
             'labels': [data.date for data in cf],
             'fields': [
@@ -865,7 +860,7 @@ class CompanyExtended(BaseToAll, ChartSerializer):
             ]}
         return cf_json, cf
 
-    
+
     def comparing_per_share_values_json(self, limit):
         comparing_json, cf = self.per_share_values_json(limit)
         chartData = self.generate_json(comparing_json)
@@ -880,9 +875,9 @@ class CompanyExtended(BaseToAll, ChartSerializer):
         if limit != 0:
             nongaap = nongaap[:limit]
         return nongaap
-    
+
     def non_gaap_json(self, limit):
-        nongaap = self.all_non_gaap(limit)        
+        nongaap = self.all_non_gaap(limit)
         nongaap_json = {
             'labels': [data.date for data in nongaap],
             'fields': [
@@ -984,9 +979,9 @@ class CompanyExtended(BaseToAll, ChartSerializer):
                 'values': [data.retention_ratio for data in nongaap]},
             ]}
         return nongaap_json, nongaap
-    
 
-    
+
+
     def comparing_non_gaap_json(self, limit):
         comparing_json, nongaap = self.non_gaap_json(limit)
         chartData = self.generate_json(comparing_json)
@@ -995,7 +990,7 @@ class CompanyExtended(BaseToAll, ChartSerializer):
             'chart':chartData
         }
         return data, nongaap
-    
+
     def all_operation_risks_ratios(self, limit) -> list:
         operation_risks_ratios = self.operation_risks_ratios.all()
         if limit != 0:
@@ -1003,7 +998,7 @@ class CompanyExtended(BaseToAll, ChartSerializer):
         return operation_risks_ratios
 
     def operation_risks_ratios_json(self, limit):
-        cf = self.all_operation_risks_ratios(limit)        
+        cf = self.all_operation_risks_ratios(limit)
         or_json = {
             'labels': [data.date for data in cf],
             'fields': [
@@ -1018,7 +1013,7 @@ class CompanyExtended(BaseToAll, ChartSerializer):
                 'url':"#!",
                 'percent': 'false',
                 'short': 'true',
-                'values': [data.cashFlowCoverageRatios for data in cf]},
+                'values': [data.cash_flow_coverage_ratios for data in cf]},
                 {
                 'title': 'Cobertuda de efectivo',
                 'url':"#!",
@@ -1036,7 +1031,7 @@ class CompanyExtended(BaseToAll, ChartSerializer):
                 'url':"#!",
                 'percent': 'true',
                 'short': 'true',
-                'values': [data.interestCoverage for data in cf]},
+                'values': [data.interest_coverage for data in cf]},
                 {
                 'title': 'Ratio cashflow operativo',
                 'url':"#!",
@@ -1048,23 +1043,23 @@ class CompanyExtended(BaseToAll, ChartSerializer):
                 'url':"#!",
                 'percent': 'false',
                 'short': 'true',
-                'values': [data.debtRatio for data in cf]},
+                'values': [data.debt_ratio for data in cf]},
                 {
                 'title': 'Deuda largo plazo a capitalización',
                 'url':"#!",
                 'percent': 'false',
                 'short': 'true',
-                'values': [data.longTermDebtToCapitalization for data in cf]},
+                'values': [data.long_term_debt_to_capitalization for data in cf]},
                 {
                 'title': 'Deuda total a capitalización',
                 'url':"#!",
                 'percent': 'false',
                 'short': 'true',
-                'values': [data.totalDebtToCapitalization for data in cf]},
+                'values': [data.total_debt_to_capitalization for data in cf]},
             ]}
         return or_json, cf
-    
-    
+
+
     def comparing_operation_risks_ratios_json(self, limit):
         comparing_json, cf = self.operation_risks_ratios_json(limit)
         chartData = self.generate_json(comparing_json)
@@ -1073,7 +1068,7 @@ class CompanyExtended(BaseToAll, ChartSerializer):
             'chart':chartData
         }
         return data, cf
-    
+
     def all_ev_ratios(self, limit) -> list:
         ev_ratios = self.ev_ratios.all()
         if limit != 0:
@@ -1129,8 +1124,8 @@ class CompanyExtended(BaseToAll, ChartSerializer):
                 'values': [data.ev_multiple for data in cf]},
             ]}
         return cf_json, cf
-    
-    
+
+
     def comparing_ev_ratios_json(self, limit):
         comparing_json, ev_ratios = self.ev_ratios_json(limit)
         chartData = self.generate_json(comparing_json)
@@ -1139,7 +1134,7 @@ class CompanyExtended(BaseToAll, ChartSerializer):
             'chart':chartData
         }
         return data, ev_ratios
-    
+
     def all_growth_rates(self, limit) -> list:
         growth_rates = self.growth_rates.all()
         if limit != 0:
@@ -1213,8 +1208,8 @@ class CompanyExtended(BaseToAll, ChartSerializer):
                 'values': [data.rd_expenses_growth for data in cf]},
             ]}
         return cf_json, cf
-    
-    
+
+
     def comparing_growth_rates_json(self, limit):
         comparing_json, cf = self.growth_rates_json(limit)
         chartData = self.generate_json(comparing_json)
@@ -1223,7 +1218,7 @@ class CompanyExtended(BaseToAll, ChartSerializer):
             'chart':chartData
         }
         return data, cf
-    
+
     def all_efficiency_ratios(self, limit) -> list:
         efficiency_ratios = self.efficiency_ratios.all()
         if limit != 0:
@@ -1231,7 +1226,7 @@ class CompanyExtended(BaseToAll, ChartSerializer):
         return efficiency_ratios
 
     def efficiency_ratios_json(self, limit):
-        cf = self.all_efficiency_ratios(limit)        
+        cf = self.all_efficiency_ratios(limit)
         er_json = {
             'labels': [data.date for data in cf],
             'fields': [
@@ -1297,7 +1292,7 @@ class CompanyExtended(BaseToAll, ChartSerializer):
                 'values': [data.operating_cycle for data in cf]},
             ]}
         return er_json, cf
-    
+
     def comparing_efficiency_ratios_json(self, limit):
         comparing_json, cf = self.efficiency_ratios_json(limit)
         chartData = self.generate_json(comparing_json)
@@ -1314,7 +1309,7 @@ class CompanyExtended(BaseToAll, ChartSerializer):
         return price_to_ratios
 
     def price_to_ratios_json(self, limit):
-        cf = self.all_price_to_ratios(limit)        
+        cf = self.all_price_to_ratios(limit)
         cf_json = {
             'labels': [data.date for data in cf],
             'fields': [
@@ -1374,7 +1369,7 @@ class CompanyExtended(BaseToAll, ChartSerializer):
                     'values': [data.price_tangible_assets for data in cf]},
             ]}
         return cf_json, cf
-      
+
     def comparing_price_to_ratios_json(self, limit):
         comparing_json, cf = self.price_to_ratios_json(limit)
         chartData = self.generate_json(comparing_json)
@@ -1415,7 +1410,7 @@ class CompanyExtended(BaseToAll, ChartSerializer):
             'margins': margins,
         }
         return ratios, query_ratios
-    
+
     def secondary_ratios(self, limit):
         comparing_efficiency_ratios_json, efficiency_ratios = self.comparing_efficiency_ratios_json(limit)
         comparing_operation_risks_ratios_json, op_risk_ratios = self.comparing_operation_risks_ratios_json(limit)
@@ -1463,7 +1458,7 @@ class CompanyExtended(BaseToAll, ChartSerializer):
             'fcf_ratios': fcf_ratios,
         }
         return ratios, query_ratios
-    
+
     def calculate_averages(
         self,
         all_margins: list = None,
@@ -1478,14 +1473,14 @@ class CompanyExtended(BaseToAll, ChartSerializer):
     ) -> dict:
         # Operation risk
         average_asset_coverage_ratio = all_operation_risks_ratios.aggregate(average_asset_coverage_ratio=Avg('asset_coverage_ratio'))
-        average_cashFlowCoverageRatios = all_operation_risks_ratios.aggregate(average_cashFlowCoverageRatios=Avg('cashFlowCoverageRatios'))
+        average_cash_flow_coverage_ratios = all_operation_risks_ratios.aggregate(average_cash_flow_coverage_ratios=Avg('cash_flow_coverage_ratios'))
         average_cash_coverage = all_operation_risks_ratios.aggregate(average_cash_coverage=Avg('cash_coverage'))
         average_debt_service_coverage = all_operation_risks_ratios.aggregate(average_debt_service_coverage=Avg('debt_service_coverage'))
-        average_interestCoverage = all_operation_risks_ratios.aggregate(average_interestCoverage=Avg('interestCoverage'))
+        average_interest_coverage = all_operation_risks_ratios.aggregate(average_interest_coverage=Avg('interest_coverage'))
         average_operating_cashflow_ratio = all_operation_risks_ratios.aggregate(average_operating_cashflow_ratio=Avg('operating_cashflow_ratio'))
-        average_debtRatio = all_operation_risks_ratios.aggregate(average_debtRatio=Avg('debtRatio'))
-        average_longTermDebtToCapitalization = all_operation_risks_ratios.aggregate(average_longTermDebtToCapitalization=Avg('longTermDebtToCapitalization'))
-        average_totalDebtToCapitalization = all_operation_risks_ratios.aggregate(average_totalDebtToCapitalization=Avg('totalDebtToCapitalization'))
+        average_debt_ratio = all_operation_risks_ratios.aggregate(average_debt_ratio=Avg('debt_ratio'))
+        average_long_term_debt_to_capitalization = all_operation_risks_ratios.aggregate(average_long_term_debt_to_capitalization=Avg('long_term_debt_to_capitalization'))
+        average_total_debt_to_capitalization = all_operation_risks_ratios.aggregate(average_total_debt_to_capitalization=Avg('total_debt_to_capitalization'))
 
         # Per share
         average_sales_ps = all_per_share_values.aggregate(average_sales_ps=Avg('sales_ps'))
@@ -1545,7 +1540,7 @@ class CompanyExtended(BaseToAll, ChartSerializer):
         average_roce = all_rentablity_ratios.aggregate(average_roce=Avg('roce'))
         average_rota = all_rentablity_ratios.aggregate(average_rota=Avg('rota'))
         average_roic = all_rentablity_ratios.aggregate(average_roic=Avg('roic'))
-        average_nopatroic = all_rentablity_ratios.aggregate(average_nopatroic=Avg('nopatroic'))
+        average_nopat_roic = all_rentablity_ratios.aggregate(average_nopat_roic=Avg('nopat_roic'))
         average_rogic = all_rentablity_ratios.aggregate(average_rogic=Avg('rogic'))
         # Liquidity
         average_cash_ratio = all_liquidity_ratios.aggregate(average_cash_ratio=Avg('cash_ratio'))
@@ -1559,7 +1554,7 @@ class CompanyExtended(BaseToAll, ChartSerializer):
         average_ev_sales = all_ev_ratios.aggregate(average_ev_sales=Avg('ev_sales'))
         average_company_equity_multiplier = all_ev_ratios.aggregate(average_company_equity_multiplier=Avg('company_equity_multiplier'))
         average_ev_multiple = all_ev_ratios.aggregate(average_ev_multiple=Avg('ev_multiple'))
-              
+
         return {
             **average_sales_ps,
             **average_book_ps,
@@ -1613,7 +1608,7 @@ class CompanyExtended(BaseToAll, ChartSerializer):
             **average_roce,
             **average_rota,
             **average_roic,
-            **average_nopatroic,
+            **average_nopat_roic,
             **average_rogic,
             **average_cash_ratio,
             **average_current_ratio,
@@ -1621,27 +1616,27 @@ class CompanyExtended(BaseToAll, ChartSerializer):
             **average_operating_cashflow_ratio,
             **average_debt_to_equity,
             **average_asset_coverage_ratio,
-            **average_cashFlowCoverageRatios,
+            **average_cash_flow_coverage_ratios,
             **average_cash_coverage,
             **average_debt_service_coverage,
-            **average_interestCoverage,
+            **average_interest_coverage,
             **average_operating_cashflow_ratio,
-            **average_debtRatio,
-            **average_longTermDebtToCapitalization,
-            **average_totalDebtToCapitalization,
+            **average_debt_ratio,
+            **average_long_term_debt_to_capitalization,
+            **average_total_debt_to_capitalization,
             **average_ev_fcf,
             **average_ev_operating_cf,
             **average_ev_sales,
             **average_company_equity_multiplier,
             **average_ev_multiple,
         }
-    
+
     def to_size_ratios(
-        self, 
-        name: str, 
-        current: float, 
-        average: float, 
-        min_low: int, 
+        self,
+        name: str,
+        current: float,
+        average: float,
+        min_low: int,
         max_low: int,
         max_high: int,
         min_high_operator: operator = operator.le,
@@ -1654,14 +1649,14 @@ class CompanyExtended(BaseToAll, ChartSerializer):
         if current > max_high or min_high_operator(current, 0):
             valuation_result['current_veredict'] = 'Sobrevalorado'
             valuation_result['current_color'] = 'danger'
-        elif current < max_low and current > min_low: 
+        elif current < max_low and current > min_low:
             valuation_result['current_veredict'] = 'Neutral'
             valuation_result['current_color'] = 'warning'
-        else: 
+        else:
             valuation_result['current_veredict'] = 'Infravalorado'
             valuation_result['current_color'] = 'success'
-        
-        if current > average + 3: 
+
+        if current > average + 3:
             valuation_result['average_veredict'] = 'Sobrevalorado'
             valuation_result['average_color'] = 'danger'
         elif current < average + 3:
@@ -1671,6 +1666,18 @@ class CompanyExtended(BaseToAll, ChartSerializer):
             valuation_result['average_veredict'] = 'Neutral'
             valuation_result['average_color'] = 'warning'
         return valuation_result
+
+    def get_most_recent_price(self):
+        yfinance_info = yf.Ticker(self.ticker).info
+        if 'currentPrice' in yfinance_info:
+            current_price = yfinance_info['currentPrice']
+            current_currency = yfinance_info['currency']
+        else:
+            yahooquery_info = yq.Ticker(self.ticker).price
+            for key in yahooquery_info.keys():
+                current_price = yahooquery_info[key]['regularMarketPrice']
+                current_currency = yahooquery_info[key]['currency']
+        return {'current_price': current_price, 'current_currency': current_currency}
 
     def calculate_current_ratios(
             self,
@@ -1687,11 +1694,11 @@ class CompanyExtended(BaseToAll, ChartSerializer):
             all_operation_risks_ratios: list = None,
             all_ev_ratios: list = None,
     ) -> dict:
-        current_price = RetrieveCompanyData(self.ticker).get_current_price()['current_price']
+        current_price = self.get_most_recent_price()['current_price']
 
-        all_balance_sheets = all_balance_sheets if all_balance_sheets else self.all_balance_sheets(10) 
-        all_per_share = all_per_share if all_per_share else self.all_per_share_values(10) 
-        all_margins = all_margins if all_margins else self.all_margins(10) 
+        all_balance_sheets = all_balance_sheets if all_balance_sheets else self.all_balance_sheets(10)
+        all_per_share = all_per_share if all_per_share else self.all_per_share_values(10)
+        all_margins = all_margins if all_margins else self.all_margins(10)
         all_inc_statements = all_inc_statements if all_inc_statements else self.all_income_statements(10)
         all_efficiency_ratios = all_efficiency_ratios if all_efficiency_ratios else self.all_efficiency_ratios(10)
         all_growth_rates = all_growth_rates if all_growth_rates else self.all_growth_rates(10)
@@ -1731,7 +1738,7 @@ class CompanyExtended(BaseToAll, ChartSerializer):
             cagr = (((last_revenue/all_inc_statements[number].revenue)**((1/num_ics)))-1)*100
         except ZeroDivisionError:
             cagr = 0
-        current_eps = last_per_share.eps    
+        current_eps = last_per_share.eps
         marketcap = average_shares_out * current_price
 
         try:
@@ -1779,7 +1786,7 @@ class CompanyExtended(BaseToAll, ChartSerializer):
         except ZeroDivisionError:
             ps = 0
 
-        ev = marketcap + last_balance_sheet.total_debt - last_balance_sheet.cash_and_short_term_investements
+        ev = marketcap + last_balance_sheet.total_debt - last_balance_sheet.cash_and_short_term_investments
 
         try:
             evebitda = (ev / last_income_statement.ebitda)
@@ -1796,7 +1803,7 @@ class CompanyExtended(BaseToAll, ChartSerializer):
         except ValueError:
             gramvalu = 0
         safety_margin_pes = ((gramvalu / current_price)-1)*100 if current_price !=0 else 0
-        
+
         fair_value = discounted_cashflow(
             last_revenue = last_revenue,
             revenue_growth = cagr,
@@ -1918,10 +1925,10 @@ class CompanyExtended(BaseToAll, ChartSerializer):
             'pta':pta,
             'pcps':pcps,
             'pocf':pocf,
-            'per':per, 
+            'per':per,
             'pb':pb,
             'peg':peg,
-            'ps':ps, 
+            'ps':ps,
             'fair_value':fair_value,
             'ev':ev,
             'marketcap':marketcap,
@@ -1930,7 +1937,7 @@ class CompanyExtended(BaseToAll, ChartSerializer):
             'evsales':evsales,
             'gramvalu':gramvalu,
             'sharesbuyback':sharesbuyback,
-            'safety_margin_pes':safety_margin_pes, 
+            'safety_margin_pes':safety_margin_pes,
             'safety_margin_opt':safety_margin_opt,
             'current_price':current_price,
             'last_revenue':last_revenue,
@@ -1939,16 +1946,16 @@ class CompanyExtended(BaseToAll, ChartSerializer):
             'last_per_share':last_per_share,
             'last_margins':last_margins,
             'last_income_statement':last_income_statement,
-            **averages            
+            **averages
         }
-  
-    def complete_info(self, limit=10):        
+
+    def complete_info(self, limit=10):
         comparing_income_json, all_inc_statements = self.comparing_income_json(limit)
         comparing_balance_json, all_balance_sheets = self.comparing_balance_json(limit)
         comparing_cashflows, all_cashflow_statements = self.comparing_cashflows(limit)
         important_ratios, all_important_ratios = self.important_ratios(limit)
         secondary_ratios, all_secondary_ratios = self.secondary_ratios(limit)
-        
+
         all_rentability_ratios = all_important_ratios['rentability_ratios']
         all_liquidity_ratios = all_important_ratios['liquidity_ratios']
         all_margins = all_important_ratios['margins']

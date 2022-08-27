@@ -14,8 +14,8 @@ from django.db.models import (
 User = get_user_model()
 
 from apps.general.bases import BaseEmail, BaseGenericModels, BaseToAll
-
-from .constants import NOTIFICATIONS_TYPE
+from apps.general.managers import PeriodManager, CurrencyManager
+from apps.general import constants
 
 
 class EscritosClassification(BaseToAll):
@@ -24,7 +24,7 @@ class EscritosClassification(BaseToAll):
 
     class Meta:
         abstract = True
-    
+
     def __str__(self):
         return self.name
 
@@ -96,6 +96,7 @@ class Currency(Model):
         null=True,
         related_name = "currency"
     )
+    objects = CurrencyManager()
 
     class Meta:
         verbose_name = "Currency"
@@ -108,13 +109,13 @@ class Currency(Model):
 
 class Notification(BaseGenericModels):
     user = ForeignKey(User, on_delete=CASCADE)
-    notification_type = CharField(max_length=500, choices=NOTIFICATIONS_TYPE)
+    notification_type = CharField(max_length=500, choices=constants.NOTIFICATIONS_TYPE)
     is_seen = BooleanField(default=False)
 
     class Meta:
         verbose_name = "Notification"
         db_table = "notifications"
-        
+
 
 class EmailNotification(BaseEmail):
     email_related = ForeignKey(Notification, null=True, blank=True, on_delete=SET_NULL, related_name = "email_related")
@@ -125,9 +126,9 @@ class EmailNotification(BaseEmail):
 
 
 class Period(Model):
-    PERIODS = ((1, '1 Quarter'), (2, '2 Quarter'), (3, '3 Quarter'), (4, '4 Quarter'))
-    year = DateField(null=True, blank=True)
-    period = IntegerField(choices=PERIODS, null=True, blank=True)
+    year = IntegerField(null=True, blank=True)
+    period = IntegerField(choices=constants.PERIODS, null=True, blank=True)
+    objects = PeriodManager()
 
     class Meta:
         verbose_name = "Period"
@@ -135,6 +136,16 @@ class Period(Model):
         db_table = "assets_periods"
         ordering = ['-year', '-period']
         get_latest_by = ['-year', '-period']
-    
+
     def __str__(self):
-        return f'Q{self.period} {str(self.year.year)}'
+        if self.is_full_year:
+            return f'FY {str(self.period_year)}'
+        return f'Q{self.period} {str(self.period_year)}'
+
+    @property
+    def is_full_year(self):
+        return self.period == constants.PERIOD_FOR_YEAR
+
+    @property
+    def period_year(self):
+        return self.year

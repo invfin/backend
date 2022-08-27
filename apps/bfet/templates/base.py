@@ -1,5 +1,5 @@
 import vcr
-from model_bakery import baker
+from apps.bfet import ExampleModel
 
 from django.test import TestCase
 

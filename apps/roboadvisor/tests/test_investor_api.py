@@ -1,10 +1,10 @@
+from django.contrib.auth import get_user_model
 from django.test import RequestFactory
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from apps.empresas.tests.factories import CompanyFactory
-from apps.users.tests.factories import UserFactory
-
+from apps.bfet import ExampleModel
+from apps.empresas.models import Company
 from apps.roboadvisor.api.views import (
     RoboAdvisorQuestionCompanyAnalysisAPIView,
     RoboAdvisorQuestionFinancialSituationAPIView,
@@ -15,13 +15,15 @@ from apps.roboadvisor.api.views import (
     RoboAdvisorQuestionStocksPortfolioAPIView,
 )
 from apps.roboadvisor.views import RoboAdvisorResultView
-from apps.roboadvisor.tests.factories import RoboAdvisorServiceFactory, RoboAdvisorServiceStepFactory
+
+
+User = get_user_model()
 
 
 class TestInvoicesAllAPI(APITestCase):
     def setUp(self):
-        self.user = UserFactory()
-        self.company = CompanyFactory()
+        self.user = ExampleModel.create()
+        self.company = ExampleModel.create(Company)
 
     def test_roboadvisor_question_company_analysis_API_view(self, rf: RequestFactory):
         data = {}
