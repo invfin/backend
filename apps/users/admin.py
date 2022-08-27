@@ -11,19 +11,48 @@ from .models import CreditUsageHistorial, MetaProfile, MetaProfileHistorial, Pro
 User = get_user_model()
 
 
+class CreditUsageHistorialInline(admin.StackedInline):
+    model = CreditUsageHistorial
+    verbose_name = "Credit Usage"
+    verbose_name_plural = "Credit Usages"
+    extra = 1
+    fields = [
+        'amount',
+        'initial',
+        'final',
+        'movement',
+        'move_source',
+        'has_enought_credits',
+    ]
+
+    readonly_fields = [
+        "date",
+    ]
+
+    jazzmin_tab_id = "credits"
+
+
 @admin.register(User)
-class UserAdmin(ImportExportActionModelAdmin, auth_admin.UserAdmin):
+class UserAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
+    inlines = [CreditUsageHistorialInline]
     form = UserAdminChangeForm
     add_form = UserAdminCreationForm
     fieldsets = (
         (
-            None, {"fields": ("username", "password")}
+            "User information",
+            {
+                "classes": ("jazzmin-tab-general",),
+                "fields": (
+                    "first_name",
+                    "last_name",
+                    "email",
+                    "username",
+                    "password"
+                )
+            }
         ),
         (
             _("Type"), {"fields": ("is_writter", "just_newsletter")}
-        ),
-        (
-            _("Personal info"), {"fields": ("first_name", "last_name", "email")}
         ),
         (
             _("Permissions"),
@@ -39,10 +68,40 @@ class UserAdmin(ImportExportActionModelAdmin, auth_admin.UserAdmin):
         ),
         (_("Important dates"), {"fields": ("last_login", "date_joined")}),
     )
-    list_display = ["username", "is_writter", "just_newsletter", "just_correction", "last_login", "date_joined"]
-    search_fields = ["first_name", "last_name", "username", "email"]
-    list_editable = ['is_writter', 'just_newsletter', "just_correction"]
-    list_filter = ['is_writter', 'just_newsletter', "just_correction"]
+
+    list_display = [
+        "username",
+        "is_writter",
+        "just_newsletter",
+        "just_correction",
+        "last_login",
+        "date_joined"
+    ]
+
+    search_fields = [
+        "first_name",
+        "last_name",
+        "username",
+        "email"
+    ]
+
+    list_editable = [
+        'is_writter',
+        'just_newsletter',
+        "just_correction"
+    ]
+
+    list_filter = [
+        'is_writter',
+        'just_newsletter',
+        "just_correction"
+    ]
+
+    jazzmin_form_tabs = [
+        ("general", "Personal Details"),
+        ("meta", "Meta Details"),
+        ("credits", "Credit Usage"),
+    ]
 
 
 @admin.register(Profile)
@@ -90,16 +149,16 @@ class MetaProfileHistorialAdmin(admin.ModelAdmin):
     ]
 
 
-@admin.register(CreditUsageHistorial)
-class CreditUsageHistorialAdmin(admin.ModelAdmin):
-    list_display = [
-        'id',
-        'user',
-        'date',
-        'amount',
-        'initial',
-        'final',
-        'movement',
-        'move_source',
-        'has_enought_credits',
-    ]
+# @admin.register(CreditUsageHistorial)
+# class CreditUsageHistorialAdmin(admin.ModelAdmin):
+#     list_display = [
+#         'id',
+#         'user',
+#         'date',
+#         'amount',
+#         'initial',
+#         'final',
+#         'movement',
+#         'move_source',
+#         'has_enought_credits',
+#     ]

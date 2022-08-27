@@ -1,0 +1,14 @@
+{% extends 'admin/base_simple.html' %}
+
+{% load i18n %}
+
+{% block title %}403 - {% trans 'Forbidden' %}{% endblock %}
+{% block content_title %}403 - {% trans 'Forbidden' %}{% endblock %}
+
+{% block content %}
+    {% if exception %}
+        {% trans exception %}
+    {% else %}
+        {% trans "We're sorry, but the requested action is forbidden." %}
+    {% endif %}
+{% endblock content %}

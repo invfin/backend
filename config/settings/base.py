@@ -81,6 +81,12 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 # APPS
 # ------------------------------------------------------------------------------
+
+APPS_BEFORE_DJANGO_APPS = [
+    'apps.admin_custom',
+    'jazzmin',
+]
+
 DJANGO_APPS = [
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -133,7 +139,7 @@ LOCAL_APPS = [
 ]
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
-INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
+INSTALLED_APPS = APPS_BEFORE_DJANGO_APPS + DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 # MIGRATIONS
 # ------------------------------------------------------------------------------
@@ -505,3 +511,5 @@ IMAGE_KIT = ImageKit(
 STRIPE_PRIVATE = env.str('STRIPE_PRIVATE')
 STRIPE_PUBLIC = env.str('STRIPE_PUBLIC')
 WEBHOOK_SECRET = env.str('WEBHOOK_SECRET')
+
+from .custom_admin import *
