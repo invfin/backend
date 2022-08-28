@@ -2,17 +2,10 @@ from apps.empresas import constants
 
 from django.db.models import (
     SET_NULL,
-    BooleanField,
     CharField,
-    DateField,
-    DateTimeField,
-    FloatField,
     ForeignKey,
-    IntegerField,
-    JSONField,
     Model,
     PositiveIntegerField,
-    TextField,
 )
 
 

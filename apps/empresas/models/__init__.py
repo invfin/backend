@@ -2,6 +2,10 @@ from .company import (
     Company,
     CompanyStockPrice,
     CompanyUpdateLog,
+    CompanyYahooQueryProxy,
+    CompanyYFinanceProxy,
+    CompanyFinprepProxy,
+    CompanyFinnhubProxy
 )
 from .exchanges import (
     Exchange,
@@ -49,6 +53,11 @@ from .finnhub import (
 )
 
 __all__ = [
+    "CompanyYahooQueryProxy",
+    "CompanyYFinanceProxy",
+    "CompanyFinprepProxy",
+    "CompanyFinnhubProxy",
+
     "Company",
     "CompanyStockPrice",
     "CompanyUpdateLog",

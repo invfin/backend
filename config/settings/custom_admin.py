@@ -16,7 +16,7 @@ TOP_MENU_LEFT = [
     ]
 
 TOP_MENU_RIGHT = [
-        {"name": "Support", "url": "https://github.com/farridav/django-jazzmin/issues", "new_window": True},
+        {"name": "Web", "url": "http://example.com:8000", "new_window": True},
         {"model": "users.user"}
     ]
 
@@ -56,10 +56,27 @@ SIDE_MENU = [
     },
     {
         'label': 'Empresas',
-        'icon': 'fas fa-shop',
+        'icon': 'fas fa-building',
         'models': (
             {
-                'model': 'empresas.company',
+                'model': 'empresas.Company',
+                'label': "Company",
+            },
+            {
+                'model': 'empresas.CompanyFinprepProxy',
+                'label': "Finprep",
+            },
+            {
+                'model': 'empresas.CompanyYahooQueryProxy',
+                'label': "YahooQuery",
+            },
+            {
+                'model': 'empresas.CompanyYFinanceProxy',
+                'label': "YFinance",
+            },
+            {
+                'model': 'empresas.CompanyFinnhubProxy',
+                'label': "Finnhub",
             },
         ),
     },

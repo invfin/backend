@@ -147,6 +147,26 @@ class Company(CompanyExtended):
         self.save(update_fields=['checkings'])
 
 
+class CompanyYahooQueryProxy(Company):
+    class Meta:
+        proxy = True
+
+
+class CompanyYFinanceProxy(Company):
+    class Meta:
+        proxy = True
+
+
+class CompanyFinprepProxy(Company):
+    class Meta:
+        proxy = True
+
+
+class CompanyFinnhubProxy(Company):
+    class Meta:
+        proxy = True
+
+
 class CompanyStockPrice(Model):
     company_related = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="stock_prices")
     date = IntegerField(default=0)

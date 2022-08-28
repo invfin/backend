@@ -6,20 +6,19 @@ from apps.empresas.models import (
 )
 
 
-@admin.register(Exchange)
-class ExchangeAdmin(admin.ModelAdmin):
-    list_display = [
-        'id',
-        'exchange_ticker',
-        'exchange',
-        'country',
-        'main_org'
+class ExchangeInline(admin.StackedInline):
+    model = Exchange
+    fields = [
+        "exchange_ticker",
+        "exchange",
+        "country",
+        "data_source",
     ]
-    search_fields = ['main_org_name']
 
 
 @admin.register(ExchangeOrganisation)
 class ExchangeOrganisationAdmin(admin.ModelAdmin):
+    inlines = [ExchangeInline]
     list_display = [
         'id',
         'name',
