@@ -1,16 +1,16 @@
 from collections import defaultdict
-# import copy
-# import json
-from typing import List
+import copy
+import json
+from typing import Dict, List
 
 from django.contrib.admin.helpers import AdminForm, InlineAdminFormSet
-# from django.contrib.admin.models import LogEntry
-# from django.template import Context
-# from django.urls import reverse
+from django.contrib.admin.models import LogEntry
+from django.template import Context
+from django.urls import reverse
 from django.utils.text import capfirst
 # from django.utils.translation import gettext
 
-# from jazzmin.settings import get_settings
+from jazzmin.settings import get_settings
 from jazzmin.templatetags.jazzmin import (
     # action_message_to_list as jazzmin_action_message_to_list,
     register,
@@ -18,102 +18,80 @@ from jazzmin.templatetags.jazzmin import (
 
 
 
-# @register.simple_tag(name='get_side_menu', takes_context=True)
-# def get_side_menu(context: Context, using: str = "available_apps") -> List[Dict]:
-#     """
-#     Overrides Django Jazzmin get_side_menu templatetag.
+@register.simple_tag(name='get_side_menu', takes_context=True)
+def get_side_menu(context: Context, using: str = "available_apps") -> List[Dict]:
+    """
+    Overrides Django Jazzmin get_side_menu templatetag.
 
-#     Permissions are not checked here, as context["available_apps"] has already been filtered by
-#     django
-#     """
+    Permissions are not checked here, as context["available_apps"] has already been filtered by
+    django
+    """
 
-#     menu = []
-#     options = get_settings()
-#     menu_config = get_menu_config(context, options)
-#     available_apps = copy.deepcopy(context.get(using, []))
+    menu = []
+    options = get_settings()
+    side_menu_config = get_menu_config(context, options)
+    available_apps = copy.deepcopy(context.get(using, []))
 
-#     for elem in menu_config:
-#         sub_menu = []
+    for element in side_menu_config:
+        menu_label = element['label']
+        menu_icon = element.get('icon', options["default_icon_parents"])
+        sub_menu = []
 
-#         # Models
-#         for model in elem.get('models', []):
-#             if isinstance(model, dict):
-#                 model_id = model.get('model')
-#                 model_label = model.get('label')
-#             else:
-#                 model_id = model
-#                 model_label = None
+        for model in element.get('models', []):
+            object_app, settings_model_name = model['model'].split(".")
+            model_icon = model.get('icon', menu_icon)
+            model_label = model.get('label')
 
-#             model_name, model_url = get_model_data(model_id, available_apps)
-#             if model_name and model_url:
-#                 sub_menu.append({
-#                     'name': model_label or model_name,
-#                     'url': model_url,
-#                     'icon': options["default_icon_children"],
-#                 })
+            model_name, model_url = get_model_data(object_app, settings_model_name, available_apps)
 
-#         # Custom links
-#         for link in elem.get('custom_links', []):
-#             url = link.get('url')  # Direct URL
+            if model_name and model_url:
+                sub_menu.append({
+                    'name': model_label or model_name,
+                    'url': model_url,
+                    'icon': model_icon or options["default_icon_children"],
+                })
 
-#             url_name = link.get('url_name')
-#             if url_name:
-#                 # URL by django view name
-#                 url = reverse(url_name)
-
-#             if url:
-#                 sub_menu.append({
-#                     'name': link.get('label'),
-#                     'url': url,
-#                     'icon': options["default_icon_children"],
-#                 })
-
-#         if sub_menu:
-#             menu.append({
-#                 'name': elem.get('label'),
-#                 'icon': elem.get('icon', options["default_icon_parents"]),
-#                 'models': sub_menu,
-#             })
-
-#     return menu
+        if sub_menu:
+            menu.append({
+                'name': menu_label,
+                'icon': menu_icon,
+                'models': sub_menu,
+            })
+    return menu
 
 
-# def get_menu_config(context: Context, options) -> list:
-#     if not context:
-#         return []
-
-#     user = context.get("user")
-
-#     if not user or user.is_anonymous:
-#         return []
-
-
-#     return options.get('side_menu_models', [])
+def get_menu_config(context: Context, options) -> list:
+    if not context:
+        return []
+    user = context.get("user")
+    if not user or user.is_anonymous:
+        return []
+    return options.get('side_menu_models', [])
 
 
-# def get_model_data(model_id, available_apps):
-#     """
-#     model_id is a string with this format <app_name>.<model_name>
-#     available_apps is an array of available models for the current user.
+def get_model_data(object_app, object_name, available_apps):
+    """
+    model_id is a string with this format <app_name>.<model_name>
+    available_apps is an array of available models for the current user.
 
-#     Iterates over all available_apps and returns the model name and its admin url if the user has
-#     view permissions.
-#     """
+    Iterates over all available_apps and returns the model name and its admin url if the user has
+    view permissions.
+    """
 
-#     app_label, model_label = model_id.split('.')
+    for app in available_apps:
+        if app.get('app_label') == object_app:
+            for model in app.get('models', []):
+                model_name = model.get('object_name')
+                if (model_name and
+                    (
+                        model_name.lower() == object_name or
+                        model_name == object_name
+                    )
+                ):
+                    model_url = model.get('admin_url')
+                    return model.get('name'), model_url
 
-#     for app in available_apps:
-#         if app.get('app_label') == app_label:
-#             for model in app.get('models', []):
-#                 model_url = model.get('admin_url')
-
-#                 # Get model label from the admin url
-#                 label = '.'.join(model_url.rstrip('/').lstrip('/').split('/'))
-
-#                 if label == model_id:
-#                     return model.get('name'), model_url
-
-#     return None, None
+    return None, None
 
 
 class CustomTab:

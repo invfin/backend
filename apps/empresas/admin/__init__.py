@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import (
+from apps.empresas.models import (
     BalanceSheet,
     CashflowStatement,
     Company,
@@ -60,15 +60,15 @@ class TopInstitutionalOwnershipAdmin(admin.ModelAdmin):
 
 
 
-class CashflowStatementAdmin(admin.StackedInline):
+class CashflowStatementAdmin(admin.TabularInline):
     model = CashflowStatement
     jazzmin_tab_id = "cf"
 
-class IncomeStatementAdmin(admin.StackedInline):
+class IncomeStatementAdmin(admin.TabularInline):
     model = IncomeStatement
     jazzmin_tab_id = "in"
 
-class BalanceSheetAdmin(admin.StackedInline):
+class BalanceSheetAdmin(admin.TabularInline):
     model = BalanceSheet
     jazzmin_tab_id = "bs"
 

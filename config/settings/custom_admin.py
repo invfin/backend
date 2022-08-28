@@ -6,13 +6,13 @@ TOP_MENU_LEFT = [
         {"name": "Home",  "url": "admin:index", "permissions": ["auth.view_user"]},
 
         # external url that opens in a new window (Permissions can be added)
-        {"name": "Support", "url": "https://github.com/farridav/django-jazzmin/issues", "new_window": True},
+        # {"name": "Support", "url": "https://github.com/farridav/django-jazzmin/issues", "new_window": True},
 
         # model admin to link to (Permissions checked against model)
-        {"model": "users.User"},
+        # {"model": "users.User"},
 
         # App with dropdown menu to all its models pages (Permissions checked against models)
-        {"app": "books"},
+        # {"app": "users"},
     ]
 
 TOP_MENU_RIGHT = [
@@ -25,15 +25,42 @@ SIDE_MENU = [
         'label': 'Auth & Security',
         'icon': 'fas fa-shield-alt',
         'models': (
-            'auth.group',
-            'auth.permission',
+            {
+                'model': 'auth.group',
+                'label': "Groups",
+                'icon': 'fas fa-shield-alt',
+            },
+            {
+                'model': 'admin_honeypot.LoginAttempt',
+                'label': "Honeypot",
+            },
+        ),
+    },
+    {
+        'label': 'Tasks',
+        'icon': 'fas fa-tasks',
+        'models': (
+            {
+                'model': 'django_celery_beat.PeriodicTask',
+            },
         ),
     },
     {
         'label': 'Users',
-        'icon': 'fas fa-shield-alt',
+        'icon': 'fas fa-user',
         'models': (
-            'users.user',
+            {
+                'model': 'users.user',
+            },
+        ),
+    },
+    {
+        'label': 'Empresas',
+        'icon': 'fas fa-shop',
+        'models': (
+            {
+                'model': 'empresas.company',
+            },
         ),
     },
 ]
@@ -144,7 +171,7 @@ JAZZMIN_SETTINGS = {
     "custom_css": None,
     "custom_js": None,
     # Whether to show the UI customizer on the sidebar
-    "show_ui_builder": False,
+    "show_ui_builder": True,
 
     ###############
     # Change view #
@@ -174,6 +201,9 @@ JAZZMIN_UI_TWEAKS = {
     "sidebar": "sidebar-dark-primary",
     "sidebar_nav_child_indent": True,
     "sidebar_nav_flat_style": True,
+    "navigation_expanded": False,
+    "navbar_fixed": True,
+    "sidebar_fixed": True,
     "button_classes": {
         COLOR_PRIMARY: f"btn-{COLOR_PRIMARY}",
         COLOR_SECONDARY: f"btn-{COLOR_SECONDARY}",

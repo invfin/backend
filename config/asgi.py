@@ -18,8 +18,8 @@ from django.core.asgi import get_asgi_application
 ROOT_DIR = Path(__file__).resolve(strict=True).parent.parent
 sys.path.append(str(ROOT_DIR / "apps"))
 
-# If DJANGO_SETTINGS_MODULE is unset, default to the local settings
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.local")
+# If DJANGO_SETTINGS_MODULE is unset, default to the final settings
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "config.settings.final")
 
 # This application object is used by any ASGI server configured to use this file.
 django_application = get_asgi_application()

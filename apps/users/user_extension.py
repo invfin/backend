@@ -139,9 +139,10 @@ class BaseUser(AbstractUser):
     def create_meta_profile(self, request):
         from apps.seo.utils import SeoInformation
 
-        from .models import MetaProfile
+        from .models import MetaProfileInfo
         seo = SeoInformation().meta_information(request)
-        meta_profile = MetaProfile.objects.create(
+        meta_profile = MetaProfileInfo.objects.create(
+            user = self,
             ip = seo['ip'],
             country_code = seo['location']['country_code'],
             country_name = seo['location']['country_name'],
