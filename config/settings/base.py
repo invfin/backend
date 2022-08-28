@@ -4,8 +4,6 @@ import environ
 from django.contrib.messages import constants as messages
 from imagekitio import ImageKit
 
-from .ckeditor import *
-
 ROOT_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 # invfin/
 APPS_DIR = ROOT_DIR / "apps"
@@ -21,10 +19,6 @@ if READ_DOT_ENV_FILE:
 CURRENT_DOMAIN = env("CURRENT_DOMAIN")
 MAIN_DOMAIN = env("MAIN_DOMAIN")
 FULL_DOMAIN = env("FULL_DOMAIN")
-
-PROD_ENV = CURRENT_DOMAIN != MAIN_DOMAIN
-
-PROTOCOL = "https://" if PROD_ENV else "http://"
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#debug
 DEBUG = env.bool("DJANGO_DEBUG", True)
