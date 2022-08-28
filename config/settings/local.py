@@ -8,13 +8,20 @@ SECRET_KEY = env(
     "DJANGO_SECRET_KEY",
     default="BifHoqHjJrgBr1ZDzCf3sCeE9fa1BZSIBvoIClZcYuBUgEPWVVCkvAsz2vWlJ10B",
 )
+
+USE_DOCKER = env("USE_DOCKER") == "yes"
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = ["localhost", "0.0.0.0", "127.0.0.1", ".example.com"]
 
 # DATABASES
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
-DATABASES = {"default": env.db("DATABASE_URL")}
+
+DATABASE_URL = env.db("LOCAL_DATABASE_URL")
+if USE_DOCKER:
+    DATABASE_URL = env.db("DATABASE_URL")
+
+DATABASES = {"default": DATABASE_URL}
 DATABASES["default"]["ATOMIC_REQUESTS"] = True
 
 # CACHES
@@ -67,7 +74,7 @@ DEBUG_TOOLBAR_CONFIG = {
 }
 # https://django-debug-toolbar.readthedocs.io/en/latest/installation.html#internal-ips
 INTERNAL_IPS = ["127.0.0.1", "10.0.2.2"]
-if env("USE_DOCKER") == "yes":
+if USE_DOCKER:
     import socket
 
     hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
