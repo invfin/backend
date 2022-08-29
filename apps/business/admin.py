@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.db import models
 
+from import_export.admin import ImportExportActionModelAdmin
 from django_json_widget.widgets import JSONEditorWidget
 
 from .models import (
@@ -119,7 +120,7 @@ class ProductComplementaryPaymentLinkInline(admin.StackedInline):
 
 
 @admin.register(ProductComplementary)
-class ProductComplementaryAdmin(BaseStripeAdmin):
+class ProductComplementaryAdmin(ImportExportActionModelAdmin, BaseStripeAdmin):
     actions =  [create_copy_testing, create_payment_link]
     inlines = [ProductComplementaryPaymentLinkInline]
     list_display = BaseStripeAdmin.list_display + [
@@ -131,6 +132,10 @@ class ProductComplementaryAdmin(BaseStripeAdmin):
     list_editable = []
     list_filter = []
     search_fields= []
+    jazzmin_form_tabs = [
+        ("general", "Customer"),
+        ("payment-link", "Payment Link"),
+    ]
 
 
 @admin.register(Customer)
@@ -161,7 +166,7 @@ class CustomerAdmin(BaseStripeAdmin):
 
 
 @admin.register(Product)
-class ProductAdmin(BaseStripeAdmin):
+class ProductAdmin(ImportExportActionModelAdmin, BaseStripeAdmin):
     inlines = [
         StripeWebhookResponseInline,
         ProductComplementaryInline,

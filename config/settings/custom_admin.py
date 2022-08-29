@@ -42,6 +42,10 @@ SIDE_MENU = [
                 'model': 'business.Product',
                 'label': "Products",
             },
+            {
+                'model': 'business.ProductComplementary',
+                'label': "Products Complementary",
+            },
         ),
     },
     {
