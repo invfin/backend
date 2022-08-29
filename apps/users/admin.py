@@ -1,12 +1,20 @@
 from django.contrib import admin
-from django.contrib.auth import admin as auth_admin
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 from import_export.admin import ImportExportActionModelAdmin
 
 from apps.users.forms import UserAdminChangeForm, UserAdminCreationForm
 
-from .models import CreditUsageHistorial, MetaProfileInfo, MetaProfileHistorial, Profile
+from apps.business.admin import (
+    ProductCommentInline,
+)
+
+from .models import (
+    CreditUsageHistorial,
+    MetaProfileInfo,
+    MetaProfileHistorial,
+    Profile
+)
 
 User = get_user_model()
 
@@ -78,7 +86,12 @@ class ProfileInline(admin.StackedInline):
 
 @admin.register(User)
 class UserAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
-    inlines = [CreditUsageHistorialInline, ProfileInline, MetaProfileInfoInline]
+    inlines = [
+        CreditUsageHistorialInline,
+        ProfileInline,
+        MetaProfileInfoInline,
+        ProductCommentInline,
+    ]
     form = UserAdminChangeForm
     add_form = UserAdminCreationForm
     fieldsets = (
@@ -157,5 +170,7 @@ class UserAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
         ("meta", "Meta"),
         ("credits", "Credits"),
         ("purchases", "Purchases"),
+        ("product-complementary", "Complementary"),
+        ("comments", "Reviews"),
         ("permissions", "Permissions")
     ]

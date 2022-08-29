@@ -5,7 +5,8 @@ from .company import (
     CompanyYahooQueryProxy,
     CompanyYFinanceProxy,
     CompanyFinprepProxy,
-    CompanyFinnhubProxy
+    CompanyFinnhubProxy,
+    CompanyStatementsProxy
 )
 from .exchanges import (
     Exchange,
@@ -57,6 +58,7 @@ __all__ = [
     "CompanyYFinanceProxy",
     "CompanyFinprepProxy",
     "CompanyFinnhubProxy",
+    "CompanyStatementsProxy",
 
     "Company",
     "CompanyStockPrice",

@@ -4,6 +4,7 @@ from django.db import models
 from django_json_widget.widgets import JSONEditorWidget
 
 from apps.empresas.models import (
+    CompanyStatementsProxy,
     IncomeStatement,
     BalanceSheet,
     CashflowStatement,
@@ -146,3 +147,68 @@ class PriceToRatioInline(admin.StackedInline):
     model = PriceToRatio
     jazzmin_tab_id = "PriceToRatio"
 
+
+@admin.register(CompanyStatementsProxy)
+class CompanyStatementsProxyAdmin(admin.ModelAdmin):
+    inlines = [
+        IncomeStatementInline,
+        BalanceSheetInline,
+        CashflowStatementInline,
+        RentabilityRatioInline,
+        LiquidityRatioInline,
+        MarginRatioInline,
+        FreeCashFlowRatioInline,
+        PerShareValueInline,
+        NonGaapInline,
+        OperationRiskRatioInline,
+        EnterpriseValueRatioInline,
+        CompanyGrowthInline,
+        EficiencyRatioInline,
+        PriceToRatioInline,
+    ]
+
+    fieldsets = (
+        (
+            "Company",
+            {
+                "classes": ("jazzmin-tab-general",),
+                "fields": [
+                    "ticker",
+                    "name",
+                ],
+            },
+        ),
+    )
+
+    list_display = [
+        "id",
+        "ticker",
+        "name",
+    ]
+
+    search_fields = [
+        "id",
+        "ticker",
+        "name",
+    ]
+
+    jazzmin_form_tabs = [
+        ("general", "Company"),
+        ("IncomeStatement", "Income Statement"),
+        ("BalanceSheet", "Balance Sheet"),
+        ("CashflowStatement", "Cashflow Statement"),
+        ("RentabilityRatio", "Rentability Ratio"),
+        ("LiquidityRatio", "Liquidity Ratio"),
+        ("MarginRatio", "Margin Ratio"),
+        ("FreeCashFlowRatio", "FreeCashFlow Ratio"),
+        ("PerShareValue", "PerShare Value"),
+        ("NonGaap", "Non Gaap"),
+        ("OperationRiskRatio", "Operation Risk Ratio"),
+        ("EnterpriseValueRatio", "Enterprise Value Ratio"),
+        ("CompanyGrowth", "Company Growth"),
+        ("EficiencyRatio", "Eficiency Ratio"),
+        ("PriceToRatio", "Price To Ratio"),
+    ]
+
+    def get_object(self, request, object_id: str, from_field):
+        return Company.objects.prefetch_historical_data().get(id=object_id)

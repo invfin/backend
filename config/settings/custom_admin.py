@@ -22,21 +22,6 @@ TOP_MENU_RIGHT = [
 
 SIDE_MENU = [
     {
-        'label': 'Auth & Security',
-        'icon': 'fas fa-shield-alt',
-        'models': (
-            {
-                'model': 'auth.group',
-                'label': "Groups",
-                'icon': 'fas fa-shield-alt',
-            },
-            {
-                'model': 'admin_honeypot.LoginAttempt',
-                'label': "Honeypot",
-            },
-        ),
-    },
-    {
         'label': 'Tasks',
         'icon': 'fas fa-tasks',
         'models': (
@@ -46,11 +31,44 @@ SIDE_MENU = [
         ),
     },
     {
+        'label': 'Business',
+        'icon': 'fas fa-user',
+        'models': (
+            {
+                'model': 'business.Customer',
+                'label': "Customers",
+            },
+            {
+                'model': 'business.Product',
+                'label': "Products",
+            },
+        ),
+    },
+    {
         'label': 'Users',
         'icon': 'fas fa-user',
         'models': (
             {
                 'model': 'users.user',
+                'label': "Users",
+            },
+            {
+                'model': 'seo.Visiteur',
+                'label': "Visiteurs",
+            },
+        ),
+    },
+    {
+        'label': 'Visits',
+        'icon': 'fas fa-user',
+        'models': (
+            {
+                'model': 'seo.UserJourney',
+                'label': "Users journey",
+            },
+            {
+                'model': 'seo.VisiteurJourney',
+                'label': "Visiteurs journey",
             },
         ),
     },
@@ -61,6 +79,10 @@ SIDE_MENU = [
             {
                 'model': 'empresas.Company',
                 'label': "Company",
+            },
+            {
+                'model': 'empresas.CompanyStatementsProxy',
+                'label': "Average & Ratios",
             },
             {
                 'model': 'empresas.CompanyFinprepProxy',
@@ -77,6 +99,39 @@ SIDE_MENU = [
             {
                 'model': 'empresas.CompanyFinnhubProxy',
                 'label': "Finnhub",
+            },
+        ),
+    },
+    {
+        'label': 'Company Relateds',
+        'icon': 'fas fa-user',
+        'models': (
+            {
+                'model': 'empresas.ExchangeOrganisation',
+                'label': "Exchanges",
+            },
+            {
+                'model': 'empresas.InstitutionalOrganization',
+                'label': "Institutions",
+            },
+            {
+                'model': 'super_investors.Superinvestor',
+                'label': "SuperInvestors",
+            },
+        ),
+    },
+    {
+        'label': 'Auth & Security',
+        'icon': 'fas fa-shield-alt',
+        'models': (
+            {
+                'model': 'auth.group',
+                'label': "Groups",
+                'icon': 'fas fa-shield-alt',
+            },
+            {
+                'model': 'admin_honeypot.LoginAttempt',
+                'label': "Honeypot",
             },
         ),
     },

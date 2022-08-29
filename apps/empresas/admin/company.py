@@ -1,44 +1,41 @@
 from django.contrib import admin
+from django.db import models
 
-from .statements import (
-    IncomeStatementInline,
-    BalanceSheetInline,
-    CashflowStatementInline,
-    RentabilityRatioInline,
-    LiquidityRatioInline,
-    MarginRatioInline,
-    FreeCashFlowRatioInline,
-    PerShareValueInline,
-    NonGaapInline,
-    OperationRiskRatioInline,
-    EnterpriseValueRatioInline,
-    CompanyGrowthInline,
-    EficiencyRatioInline,
-    PriceToRatioInline,
-)
+from django_json_widget.widgets import JSONEditorWidget
 
 from apps.empresas.models import (
-    Company
+    Company,
+    TopInstitutionalOwnership,
+    CompanyUpdateLog
 )
+
+
+class TopInstitutionalOwnershipInline(admin.StackedInline):
+    formfield_overrides = {
+        models.JSONField: {'widget': JSONEditorWidget},
+    }
+    model = TopInstitutionalOwnership
+    extra = 0
+    jazzmin_tab_id = "top-institutionals"
+
+
+class CompanyUpdateLogInline(admin.StackedInline):
+    formfield_overrides = {
+        models.JSONField: {'widget': JSONEditorWidget},
+    }
+    model = CompanyUpdateLog
+    extra = 0
+    jazzmin_tab_id = "logs"
 
 
 @admin.register(Company)
 class CompanyAdmin(admin.ModelAdmin):
+    formfield_overrides = {
+        models.JSONField: {'widget': JSONEditorWidget},
+    }
     inlines = [
-        IncomeStatementInline,
-        BalanceSheetInline,
-        CashflowStatementInline,
-        RentabilityRatioInline,
-        LiquidityRatioInline,
-        MarginRatioInline,
-        FreeCashFlowRatioInline,
-        PerShareValueInline,
-        NonGaapInline,
-        OperationRiskRatioInline,
-        EnterpriseValueRatioInline,
-        CompanyGrowthInline,
-        EficiencyRatioInline,
-        PriceToRatioInline,
+        TopInstitutionalOwnershipInline,
+        CompanyUpdateLogInline,
     ]
 
     list_display = [
@@ -75,21 +72,6 @@ class CompanyAdmin(admin.ModelAdmin):
 
     jazzmin_form_tabs = [
         ("general", "Company"),
-        ("IncomeStatement", "Income Statement"),
-        ("BalanceSheet", "Balance Sheet"),
-        ("CashflowStatement", "Cashflow Statement"),
-        ("RentabilityRatio", "Rentability Ratio"),
-        ("LiquidityRatio", "Liquidity Ratio"),
-        ("MarginRatio", "Margin Ratio"),
-        ("FreeCashFlowRatio", "FreeCashFlow Ratio"),
-        ("PerShareValue", "PerShare Value"),
-        ("NonGaap", "Non Gaap"),
-        ("OperationRiskRatio", "Operation Risk Ratio"),
-        ("EnterpriseValueRatio", "Enterprise Value Ratio"),
-        ("CompanyGrowth", "Company Growth"),
-        ("EficiencyRatio", "Eficiency Ratio"),
-        ("PriceToRatio", "Price To Ratio"),
+        ("top-institutionals", "Top Institutions"),
+        ("logs", "Logs"),
     ]
-
-    def get_object(self, request, object_id: str, from_field):
-        return Company.objects.prefetch_historical_data().get(id=object_id)

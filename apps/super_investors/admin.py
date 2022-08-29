@@ -2,25 +2,21 @@ from django.contrib import admin
 
 from .models import Superinvestor, SuperinvestorActivity, SuperinvestorHistory
 
+class SuperinvestorHistoryInline(admin.StackedInline):
+    model = SuperinvestorHistory
+    extra = 0
+    jazzmin_tab_id = "history"
 
-@admin.register(SuperinvestorHistory)
-class SuperinvestorHistoryAdmin(admin.ModelAdmin):
-    list_display = [
-        'id',
-        'superinvestor_related',
-        'period_related',
-        'company',
-        'company_name',
-        'portfolio_change',
-        'movement',
-        'shares',
-        'reported_price',
-        'portfolio_weight',
-    ]
+
+class SuperinvestorActivityInline(admin.StackedInline):
+    model = SuperinvestorActivity
+    extra = 0
+    jazzmin_tab_id = "activity"
 
 
 @admin.register(Superinvestor)
 class SuperinvestorAdmin(admin.ModelAdmin):
+    inlines = [SuperinvestorHistoryInline, SuperinvestorActivityInline]
     list_display = [
         'id',
         'name',
@@ -33,22 +29,8 @@ class SuperinvestorAdmin(admin.ModelAdmin):
     list_editable = [
         'image'
     ]
-
-
-@admin.register(SuperinvestorActivity)
-class SuperinvestorActivityAdmin(admin.ModelAdmin):
-    list_display = [
-        'id',
-        'superinvestor_related',
-        'period_related',
-        'company',
-        'percentage_share_change',
-        'share_change',
-        'portfolio_change',
-        'is_new',
-        'movement',
-        'company_name',
-        'not_registered_company',
-        'need_verify_company',
-
-    ] 
+    jazzmin_form_tabs = [
+        ("general", "SuperInvestor"),
+        ("activity", "Activity"),
+        ("history", "History"),
+    ]

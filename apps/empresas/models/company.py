@@ -11,7 +11,6 @@ from django.db.models import (
     IntegerField,
     JSONField,
     Model,
-    PositiveIntegerField,
     TextField,
 )
 from django.urls import reverse
@@ -163,6 +162,11 @@ class CompanyFinprepProxy(Company):
 
 
 class CompanyFinnhubProxy(Company):
+    class Meta:
+        proxy = True
+
+
+class CompanyStatementsProxy(Company):
     class Meta:
         proxy = True
 
