@@ -11,7 +11,6 @@ from django.db.models import (
     IntegerField,
     JSONField,
     Model,
-    PositiveIntegerField,
     TextField,
 )
 from django.urls import reverse
@@ -145,6 +144,31 @@ class Company(CompanyExtended):
             }
         )
         self.save(update_fields=['checkings'])
+
+
+class CompanyYahooQueryProxy(Company):
+    class Meta:
+        proxy = True
+
+
+class CompanyYFinanceProxy(Company):
+    class Meta:
+        proxy = True
+
+
+class CompanyFinprepProxy(Company):
+    class Meta:
+        proxy = True
+
+
+class CompanyFinnhubProxy(Company):
+    class Meta:
+        proxy = True
+
+
+class CompanyStatementsProxy(Company):
+    class Meta:
+        proxy = True
 
 
 class CompanyStockPrice(Model):

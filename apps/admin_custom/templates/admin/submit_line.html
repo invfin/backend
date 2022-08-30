@@ -1,0 +1,50 @@
+{% load i18n static admin_urls jazzmin crispy_forms_tags %}
+{% get_jazzmin_ui_tweaks as jazzmin_ui %}
+
+{% comment %}
+    Overwritten tempalte to make the submit row a sticky bar at the bottom.
+{% endcomment %}
+
+{% block submit-row %}
+<div id="submit-row" class="card card-primary card-outline">
+    <div class="card-body text-right">
+        {% if show_save %}
+            <input type="submit" value="{% trans 'Save' %}" class="btn {{ jazzmin_ui.button_classes.success }}" name="_save">
+        {% endif %}
+        {% if show_delete_link and original %}
+            {% url opts|admin_urlname:'delete' original.pk|admin_urlquote as delete_url %}
+            <a href="{% add_preserved_filters delete_url %}" class="btn {{ jazzmin_ui.button_classes.danger }}">{% trans "Delete" %}</a>
+        {% endif %}
+        {% if show_save_as_new %}
+            <input type="submit" class="btn {{ jazzmin_ui.button_classes.info }}" value="{% trans 'Save as new' %}" name="_saveasnew">
+        {% endif %}
+        {% if show_save_and_add_another %}
+            <input type="submit" class="btn {{ jazzmin_ui.button_classes.info }}" value="{% trans 'Save and add another' %}" name="_addanother">
+        {% endif %}
+        {% if show_save_and_continue %}
+            <input type="submit" class="btn {{ jazzmin_ui.button_classes.info }}" value="{% if can_change %}{% trans 'Save and continue editing' %}{% else %}{% trans 'Save and view' %}{% endif %}" name="_continue">
+        {% endif %}
+        {% if show_close %}
+            <a href="{% url opts|admin_urlname:'changelist' %}" class="btn {{ jazzmin_ui.button_classes.danger }}">{% trans 'Close' %}</a>
+        {% endif %}
+
+        {% block extra-actions %}{% endblock %}
+    </div>
+</div>
+    {% comment %}
+        A transparent greyish screen shows up when start submit fuction to prevent multiple clicks on the inputs.
+        We decided to use this approach because disabling the input prevented the form to be submitted
+        and submiting the form with js didn't redirected correctly.
+        Jquery is imported here otherwise $ is not recognized.
+    {% endcomment %}
+    <div class="wait-background" id="wait-background" ></div>
+
+    <script src="{% static "admin/js/vendor/jquery/jquery.js" %}"></script>
+    <script type="text/javascript">
+         $('form').each(function(){
+             $(this).submit(function(){
+               $('#wait-background').addClass('active');
+             })
+        })
+    </script>
+{% endblock %}

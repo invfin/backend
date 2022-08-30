@@ -67,6 +67,7 @@ manage:
 
 collectstatic:
 	docker-compose -f local.yml run --rm invfin ./manage.py collectstatic --noinput --settings=config.settings.local
+	make build ar="invfin"
 
 col-share-static:
 	docker-compose -f local.yml run --rm invfin ./manage.py collectstatic --noinput --settings=config.settings.local

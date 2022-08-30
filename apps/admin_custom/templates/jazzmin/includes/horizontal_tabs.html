@@ -1,0 +1,43 @@
+{# We need to override this template in order to add custom tabs with multiple elements in them #}
+
+{% load jazzmin crispy_forms_tags %}
+
+{% get_tabs adminform inline_admin_formsets as tabs %}
+
+{% if tabs|length > 1 %}
+    <ul class="nav nav-tabs" role="tablist" id="jazzy-tabs">
+        {% for tab in tabs %}
+            <li class="nav-item">
+                <a class="nav-link{% if forloop.first %} active{% endif %}" data-toggle="pill" role="tab" aria-controls="{{ tab.name }}-tab" aria-selected="{% if forloop.first %}true{% else %}false{% endif %}" href="#{{ tab.id }}-tab">
+                    {{ tab.name }}
+                </a>
+            </li>
+        {% endfor %}
+    </ul>
+{% endif %}
+
+<div class="tab-content">
+    {% for tab in tabs %}
+        <div id="{{ tab.id }}-tab" class="tab-pane fade{% if forloop.first %} active show{% endif %}" role="tabpanel" aria-labelledby="{{ tab.id }}-tab">
+            {% for item in tab.items %}
+                {% if item.is_inline %}
+                    {# Inlines #}
+                    <div class="card">
+                        <div class="card-header">
+                            <div class="card-title">
+                                <strong>{{ item.opts.verbose_name }}</strong>
+                            </div>
+                        </div>
+                        {% include item.opts.template with inline_admin_formset=item %}
+                    </div>
+                {% elif item.custom_tab %}
+                    {# Custom template #}
+                    {% include item.template %}
+                {% else %}
+                    {# Fielsdet #}
+                    {% include "admin/includes/fieldset.html" with fieldset=item card=True card_header=True %}
+                {% endif %}
+            {% endfor %}
+        </div>
+    {% endfor %}
+</div>

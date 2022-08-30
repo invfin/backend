@@ -4,8 +4,6 @@ import environ
 from django.contrib.messages import constants as messages
 from imagekitio import ImageKit
 
-from .ckeditor import *
-
 ROOT_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 # invfin/
 APPS_DIR = ROOT_DIR / "apps"
@@ -21,10 +19,6 @@ if READ_DOT_ENV_FILE:
 CURRENT_DOMAIN = env("CURRENT_DOMAIN")
 MAIN_DOMAIN = env("MAIN_DOMAIN")
 FULL_DOMAIN = env("FULL_DOMAIN")
-
-PROD_ENV = CURRENT_DOMAIN != MAIN_DOMAIN
-
-PROTOCOL = "https://" if PROD_ENV else "http://"
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#debug
 DEBUG = env.bool("DJANGO_DEBUG", True)
@@ -81,6 +75,12 @@ WSGI_APPLICATION = "config.wsgi.application"
 
 # APPS
 # ------------------------------------------------------------------------------
+
+APPS_BEFORE_DJANGO_APPS = [
+    'apps.admin_custom',
+    'jazzmin',
+]
+
 DJANGO_APPS = [
     "django.contrib.auth",
     "django.contrib.contenttypes",
@@ -109,6 +109,7 @@ THIRD_PARTY_APPS = [
     "import_export",
     "admin_honeypot",
     'widget_tweaks',
+    'django_json_widget',
 ]
 
 LOCAL_APPS = [
@@ -132,7 +133,7 @@ LOCAL_APPS = [
 ]
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
-INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
+INSTALLED_APPS = APPS_BEFORE_DJANGO_APPS + DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
 
 # MIGRATIONS
 # ------------------------------------------------------------------------------
@@ -504,3 +505,5 @@ IMAGE_KIT = ImageKit(
 STRIPE_PRIVATE = env.str('STRIPE_PRIVATE')
 STRIPE_PUBLIC = env.str('STRIPE_PUBLIC')
 WEBHOOK_SECRET = env.str('WEBHOOK_SECRET')
+
+from .custom_admin import *

@@ -48,6 +48,29 @@ class User(BaseUser):
         return reverse("users:user_public_profile", kwargs={"username": self.username})
 
 
+class MetaProfileInfo(BaseToAll):
+    user = ForeignKey(User, on_delete=SET_NULL, null=True, related_name='meta_info')
+    date = DateTimeField(auto_now_add=True)
+    ip = CharField(max_length=50, null=True, blank=True)
+    country_code = CharField(max_length=10000, null=True, blank=True)
+    country_name = CharField(max_length=10000, null=True, blank=True)
+    dma_code = CharField(max_length=10000, null=True, blank=True)
+    is_in_european_union = BooleanField(default=False)
+    latitude = CharField(max_length=10000, null=True, blank=True)
+    longitude = CharField(max_length=10000, null=True, blank=True)
+    city = CharField(max_length=10000, null=True, blank=True)
+    region = CharField(max_length=10000, null=True, blank=True)
+    time_zone = CharField(max_length=10000, null=True, blank=True)
+    postal_code = CharField(max_length=10000, null=True, blank=True)
+    continent_code = CharField(max_length=10000, null=True, blank=True)
+    continent_name = CharField(max_length=10000, null=True, blank=True)
+    user_agent = CharField(max_length=10000, null=True, blank=True)
+
+    class Meta:
+        verbose_name = "Meta profile info"
+        db_table = "user_meta_profile_information"
+
+
 class MetaProfile(BaseToAll):
     ip = CharField(max_length=50, null=True, blank=True)
     country_code = CharField(max_length=10000, null=True, blank=True)

@@ -1,0 +1,227 @@
+/*----------General----------*/
+#jazzy-logo img {
+    width: 60%;
+    margin: 0 auto;
+    display: block;
+}
+
+/*-----------Login pages-----------*/
+.jazzmin-login-page .login-logo h1 img {
+    filter: invert(100%); /* Makes logo svg black */
+}
+
+/*---------------ckeditor --------- */
+.django-ckeditor-widget {
+    width: 100% !important;
+}
+
+.cke_chrome {
+    width: 91.5% !important;
+}
+
+/*------------Change list----------*/
+.select2-container {
+    text-transform: capitalize;
+}
+
+/*------------Change form---------------*/
+/* ------------ Select2 ----------------*/
+.select2-container--admin-autocomplete .select2-selection--single,
+.select2-container--admin-autocomplete .select2-selection--multiple {  /* Adds missing border to FK autocomplete select */
+    border: 1px solid #ced4da !important;
+}
+
+.select2-container--admin-autocomplete .select2-selection--multiple .select2-selection__choice {
+    background-color: #e4e4e4 !important;
+}
+
+.select2-selection__choice {
+    background-color: #e4e4e4 !important;
+    color: black !important;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__rendered li {
+    padding-left: 20px !important;
+    margin-left: 0 !important;
+}
+
+.select2-container--default .select2-selection--multiple .select2-selection__choice__display {
+    padding-left: 7px !important;
+}
+
+.select2-container .select2-search--inline {
+    float: none !important;
+}
+
+.select2-container .select2-search--inline .select2-search__field {
+    border: none !important;
+}
+/* ------------ End Select2 ----------------*/
+
+.vTimeField, .vDateField {  /* Makes inputs smaller */
+    min-width: auto;
+}
+
+.datetimeshortcuts {  /* Datetime links in a new line */
+    display: block;
+}
+
+.select2-container {
+    min-width: 160px;
+    margin-right: 10px !important;
+}
+
+.form-inline .form-group {  /* Change list filters, with bottom margin on small screens */
+    margin-bottom: 1rem;
+}
+
+#submit-row {
+    position: fixed;
+    bottom: 0;
+    right: 14px;
+    z-index: 6; /* 1 more than json widget */
+    margin-left: 14px;
+}
+
+/*----Google Maps Widget ----------*/
+.mw-btn {
+    color: #ffffff !important;
+}
+
+/*----Import from Google Maps--------*/
+#map {
+    min-height: 700px;
+}
+
+#infowindow-content {
+    display: none;
+}
+
+#map #infowindow-content {
+    display: inline;
+}
+
+#pac-input {
+    top: 10px !important;
+    height: 40px;
+    min-width: 400px;
+}
+
+/*----Colors--------*/
+.errorlist {
+    color: var(--red);
+}
+
+/*----Badge----------*/
+/*
+ Above we write the size of the .badge class,
+ the original 70% remains small and with the value of 90% the display improves.
+*/
+.badge {
+    font-size: 90%;
+}
+
+/*----Prevent form double click--------*/
+.wait-background{
+    display: none;
+}
+
+.wait-background.active {
+    display: block;
+    background: rgba(148, 148, 148, 0.508);
+    position: fixed;
+    z-index: 99;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+}
+
+/*---- Member Admin --------*/
+/* Circular badge definition for Admin list and change view */
+.member-badge{
+      height: 50px;
+      width: 50px;
+      display: table-cell;
+      text-align: center;
+      vertical-align: middle;
+      border-radius: 50%;
+      color: #ffffff;
+      font-weight: bold;
+}
+
+/*---- Member Admin List View --------*/
+/* Convert the avatar to a circular avatar with the size you want it to be. */
+.member-badge img.member-avatar{
+      height: 50px;
+      width: 50px;
+      display: table-cell;
+      text-align: center;
+      vertical-align: middle;
+      border-radius: 50%;
+}
+
+/*---- Member Admin Budget Colors--------*/
+/* Assign budget color */
+.member_with_initials.teal{
+  background-color: var(--teal);
+}
+.member_with_initials.green{
+  background-color: var(--green);
+}
+.member_with_initials.red{
+  background-color: var(--red);
+}
+.member_with_initials.orange{
+  background-color: var(--orange);
+}
+.member_with_initials.yellow{
+  background-color: var(--yellow);
+}
+.member_with_initials.cyan{
+  background-color: var(--cyan);
+}
+.member_with_initials.pink{
+  background-color: var(--pink);
+}
+
+/*----Member Admin Change View --------*/
+
+/*-- Member Profile Card --*/
+/* Alignment of the avatar image in the middle */
+.image_profile_center{
+    text-align: -webkit-center;
+}
+/* If badged without avatar, size and font size assignment */
+.image_profile_center .member-badge{
+      height: 100px;
+      width: 100px;
+      font-size: 30px;
+}
+/* If badged is avatar, avatar image size assignment */
+.image_profile_center img.member-avatar{
+      height: 100px;
+      width: 100px;
+      display: table-cell;
+      text-align: center;
+      vertical-align: middle;
+      border-radius: 50%;
+}
+/* Definition of profile card title box */
+.about-title{
+    padding: 1rem;
+    text-align: center;
+}
+/* Definition of profile card content boxes */
+.about-block{
+    padding: 1rem;
+}
+
+.about-text{
+    line-height: 1;
+}
+
+.about-test-red{
+    color: var(--red);
+}
+
