@@ -51,6 +51,9 @@ class CompanyFinprepProxyAdmin(admin.ModelAdmin):
         "id",
         "ticker",
         "name",
+        "has_inc",
+        "has_bs",
+        "has_cf",
     ]
 
     search_fields = [

@@ -72,6 +72,10 @@ class CompanyYahooQueryProxyAdmin(admin.ModelAdmin):
         "id",
         "ticker",
         "name",
+        "has_inc",
+        "has_bs",
+        "has_cf",
+        "has_key_stats",
     ]
 
     search_fields = [

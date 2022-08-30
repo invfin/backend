@@ -150,20 +150,64 @@ class CompanyYahooQueryProxy(Company):
     class Meta:
         proxy = True
 
+    @property
+    def has_inc(self):
+        return self.incomestatementyahooquery_set.all().exists()
+
+    @property
+    def has_bs(self):
+        return self.balancesheetyahooquery_set.all().exists()
+
+    @property
+    def has_cf(self):
+        return self.cashflowstatementyahooquery_set.all().exists()
+
+    @property
+    def has_key_stats(self):
+        return self.keystatsyahooquery_set.all().exists()
+
 
 class CompanyYFinanceProxy(Company):
     class Meta:
         proxy = True
+
+    @property
+    def has_inc(self):
+        return self.incomestatementyfinance_set.all().exists()
+
+    @property
+    def has_bs(self):
+        return self.balancesheetyfinance_set.all().exists()
+
+    @property
+    def has_cf(self):
+        return self.cashflowstatementyfinance_set.all().exists()
 
 
 class CompanyFinprepProxy(Company):
     class Meta:
         proxy = True
 
+    @property
+    def has_inc(self):
+        return self.incomestatementfinprep_set.all().exists()
+
+    @property
+    def has_bs(self):
+        return self.balancesheetfinprep_set.all().exists()
+
+    @property
+    def has_cf(self):
+        return self.cashflowstatementfinprep_set.all().exists()
+
 
 class CompanyFinnhubProxy(Company):
     class Meta:
         proxy = True
+
+    @property
+    def has_statements(self):
+        return self.statementsfinnhub_set.all().exists()
 
 
 class CompanyStatementsProxy(Company):

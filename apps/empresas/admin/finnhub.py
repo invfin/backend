@@ -39,6 +39,7 @@ class CompanyFinnhubProxyAdmin(admin.ModelAdmin):
         "id",
         "ticker",
         "name",
+        "has_statements",
     ]
 
     search_fields = [
