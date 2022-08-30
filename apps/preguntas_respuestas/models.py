@@ -25,11 +25,28 @@ from .managers import QuestionManager
 
 
 class Question(BaseWrittenContent):
-    content = RichTextField(config_name='writter')
-    is_answered = BooleanField(default=False)
-    has_accepted_answer = BooleanField(default=False)
-    upvotes = ManyToManyField(User, blank=True, related_name="user_upvote_question")
-    downvotes = ManyToManyField(User, blank=True, related_name="user_downvote_question")
+    content = RichTextField(
+        config_name='writter',
+    )
+    is_answered = BooleanField(
+        default=False,
+    )
+    hide_question = BooleanField(
+        default=False,
+    )
+    has_accepted_answer = BooleanField(
+        default=False,
+    )
+    upvotes = ManyToManyField(
+        User,
+        blank=True,
+        related_name="user_upvote_question",
+    )
+    downvotes = ManyToManyField(
+        User,
+        blank=True,
+        related_name="user_downvote_question",
+    )
     objects = QuestionManager()
 
     class Meta:
@@ -38,7 +55,7 @@ class Question(BaseWrittenContent):
         db_table = "questions"
 
     def __str__(self):
-        return self.title
+        return f"{self.title}"
 
     def get_absolute_url(self):
         return reverse("preguntas_respuestas:question", kwargs={"slug": self.slug})
@@ -120,19 +137,43 @@ class Question(BaseWrittenContent):
 
 
 class Answer(CommonMixin):
-    author = ForeignKey(User, on_delete=SET_NULL, null=True, related_name='answers_apported')
-    created_at = DateTimeField(auto_now_add=True)
-    content = RichTextField(config_name='writter')
+    author = ForeignKey(
+        User,
+        on_delete=SET_NULL,
+        null=True,
+        related_name='answers_apported',
+    )
+    created_at = DateTimeField(
+        auto_now_add=True,
+    )
+    content = RichTextField(
+        config_name='writter',
+    )
     question_related = ForeignKey(
         Question,
         on_delete=CASCADE,
         blank=False,
-        related_name="question_answers")
-    is_accepted = BooleanField(default=False)
-    total_votes = IntegerField(default=0)
-    upvotes = ManyToManyField(User, blank=True, related_name="user_upvote_answer")
-    downvotes = ManyToManyField(User, blank=True, related_name="user_downvote_answer")
-    updated_at = DateTimeField(auto_now=True)
+        related_name="question_answers",
+    )
+    is_accepted = BooleanField(
+        default=False,
+    )
+    total_votes = IntegerField(
+        default=0,
+    )
+    upvotes = ManyToManyField(
+        User,
+        blank=True,
+        related_name="user_upvote_answer",
+    )
+    downvotes = ManyToManyField(
+        User,
+        blank=True,
+        related_name="user_downvote_answer",
+    )
+    updated_at = DateTimeField(
+        auto_now=True,
+    )
 
     class Meta:
         ordering = ['-id']
@@ -141,7 +182,7 @@ class Answer(CommonMixin):
         # order_with_respect_to = 'question_related'
 
     def __str__(self):
-        return str(self.id)
+        return f"Answer-{self.id} to {self.question_related}"
 
     def get_absolute_url(self):
         return self.question_related.get_absolute_url()
@@ -160,7 +201,8 @@ class QuesitonComment(BaseComment):
     content_related = ForeignKey(Question,
         on_delete=CASCADE,
         null=True,
-        related_name = "comments_related")
+        related_name = "comments_related",
+    )
 
     class Meta:
         verbose_name = "Question's comment"
@@ -174,7 +216,8 @@ class AnswerComment(BaseComment):
     content_related = ForeignKey(Answer,
         on_delete=CASCADE,
         null=True,
-        related_name = "comments_related")
+        related_name = "comments_related",
+    )
 
     class Meta:
         verbose_name = "Answer's comment"

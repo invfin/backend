@@ -34,12 +34,6 @@ class TestCreateQuestionForm(TestCase):
         pass
 
     def test_clean_content(self):
-        form = CreateQuestionForm(data={"title": "No quesiton mark"})
-        self.assertFalse(form.is_valid())
-        self.assertEqual(
-            form.errors["title"],
-            "Añade puntuación a tu pregunta ¿ ?"
-        )
 
         form = CreateQuestionForm(data={"title": "¿Cuál es tu pregunta?"})
         self.assertFalse(form.is_valid())

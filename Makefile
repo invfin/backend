@@ -44,33 +44,33 @@ up-d:
 	docker-compose -f local.yml up invfin
 
 dbshell:
-	docker-compose -f local.yml run --rm invfin python -u manage.py dbshell --settings=config.settings.local
+	docker-compose -f local.yml run --rm invfin python -u manage.py dbshell --settings=config.settings.final
 
 log:
 	docker-compose -f local.yml logs -f invfin
 
 migrations:
-	docker-compose -f local.yml run --rm invfin python -u manage.py makemigrations $(ar) --settings=config.settings.local
+	docker-compose -f local.yml run --rm invfin python -u manage.py makemigrations $(ar) --settings=config.settings.final
 
 migrate:
-	docker-compose -f local.yml run --rm invfin python -u manage.py migrate $(ar) --settings=config.settings.local
+	docker-compose -f local.yml run --rm invfin python -u manage.py migrate $(ar) --settings=config.settings.final
 
 allmig:
-	docker-compose -f local.yml run --rm invfin python -u manage.py makemigrations $(ar) --settings=config.settings.local
-	docker-compose -f local.yml run --rm invfin python -u manage.py migrate $(ar) --settings=config.settings.local
+	docker-compose -f local.yml run --rm invfin python -u manage.py makemigrations $(ar) --settings=config.settings.final
+	docker-compose -f local.yml run --rm invfin python -u manage.py migrate $(ar) --settings=config.settings.final
 
 shell_plus:
-	docker-compose -f local.yml run --rm invfin ./manage.py shell_plus --settings=config.settings.local
+	docker-compose -f local.yml run --rm invfin ./manage.py shell_plus --settings=config.settings.final
 
 manage:
-	docker-compose -f local.yml run --rm invfin ./manage.py $(ar) --settings=config.settings.local
+	docker-compose -f local.yml run --rm invfin ./manage.py $(ar) --settings=config.settings.final
 
 collectstatic:
-	docker-compose -f local.yml run --rm invfin ./manage.py collectstatic --noinput --settings=config.settings.local
+	docker-compose -f local.yml run --rm invfin ./manage.py collectstatic --noinput --settings=config.settings.final
 	make build ar="invfin"
 
 col-share-static:
-	docker-compose -f local.yml run --rm invfin ./manage.py collectstatic --noinput --settings=config.settings.local
+	docker-compose -f local.yml run --rm invfin ./manage.py collectstatic --noinput --settings=config.settings.final
 	docker-compose -f local.yml build
 
 run:
@@ -85,7 +85,7 @@ pdb:
 
 pdb_manage:
 	docker-compose -f local.yml stop invfin
-	docker-compose -f local.yml run --rm --service-ports invfin  ./manage.py $(ar) --settings=config.settings.local
+	docker-compose -f local.yml run --rm --service-ports invfin  ./manage.py $(ar) --settings=config.settings.final
 
 requirements:
 	docker-compose -f local.yml run invfin /requirements.sh "temp_venv/bin/pip"
@@ -120,14 +120,14 @@ auto_restore:
 
 # Documentation
 docs_check:
-	docker-compose -f local.yml run --rm invfin ./manage.py generate_swagger --settings=config.settings.local
+	docker-compose -f local.yml run --rm invfin ./manage.py generate_swagger --settings=config.settings.final
 
 # Testing
 new-test:
-	docker-compose -f local.yml run --rm invfin python -u manage.py test $(ar) --noinput --settings=config.settings.local
+	docker-compose -f local.yml run --rm invfin python -u manage.py test $(ar) --noinput --settings=config.settings.final
 
 test:
-	docker-compose -f local.yml run --rm invfin python -u manage.py test $(ar) --noinput --keepdb --settings=config.settings.local
+	docker-compose -f local.yml run --rm invfin python -u manage.py test $(ar) --noinput --keepdb --settings=config.settings.final
 
 pytest:
 	docker-compose -f local.yml run --rm invfin pytest

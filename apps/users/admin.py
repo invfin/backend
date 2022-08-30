@@ -9,6 +9,11 @@ from apps.business.admin import (
     ProductCommentInline,
 )
 
+from apps.preguntas_respuestas.admin import (
+    QuestionInline,
+    AnswerInline
+)
+
 from .models import (
     CreditUsageHistorial,
     MetaProfileInfo,
@@ -91,6 +96,8 @@ class UserAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
         ProfileInline,
         MetaProfileInfoInline,
         ProductCommentInline,
+        QuestionInline,
+        AnswerInline
     ]
     form = UserAdminChangeForm
     add_form = UserAdminCreationForm
@@ -172,5 +179,7 @@ class UserAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
         ("purchases", "Purchases"),
         ("product-complementary", "Complementary"),
         ("comments", "Reviews"),
+        ("questions", "Questions"),
+        ("answers", "Answers"),
         ("permissions", "Permissions")
     ]

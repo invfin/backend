@@ -5,6 +5,49 @@ from import_export.admin import ImportExportActionModelAdmin
 from .models import Answer, AnswerComment, QuesitonComment, Question
 
 
+
+class QuestionInline(admin.StackedInline):
+    model = Question
+    extra = 0
+    verbose_name = "Question"
+    verbose_name_plural = "Questions"
+    fields = [
+        "title",
+        "content",
+        "is_answered",
+        "hide_question",
+        "has_accepted_answer",
+        "upvotes",
+        "downvotes",
+        "total_votes",
+        "total_views",
+        "times_shared",
+        "category",
+        "tags",
+    ]
+    jazzmin_tab_id = "questions"
+
+
+class AnswerInline(admin.StackedInline):
+    model = Answer
+    extra = 0
+    verbose_name = "Answer"
+    verbose_name_plural = "Answers"
+    fields = [
+        "author",
+        "content",
+        "is_accepted",
+        "total_votes",
+        "upvotes",
+        "downvotes",
+    ]
+    readonly_fields = [
+        "created_at",
+        "updated_at",
+    ]
+    jazzmin_tab_id = "answers"
+
+
 @admin.register(Question)
 class QuestionAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
     list_display = [
@@ -12,7 +55,7 @@ class QuestionAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
         'title',
         'author'
         ]
-    
+
     list_editable = [
         'author'
     ]
@@ -26,7 +69,7 @@ class QuesitonCommentAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
         'id',
         'author',
         'created_at']
-    
+
     search_fields = ['author_username']
 
 
@@ -36,7 +79,7 @@ class AnswerAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
         'id',
         'author'
         ]
-    
+
     list_editable = [
         'author'
     ]
@@ -49,5 +92,5 @@ class AnswerCommentAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
         'id',
         'author',
         'created_at']
-    
+
     search_fields = ['author_username']

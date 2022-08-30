@@ -80,14 +80,14 @@ class NotificationSystem:
         return[{
             "email": self.save_notif(
                 obj,
-                obj.author,
+                obj.content_related.author,
                 notif_type,
                 {
                     "subject": constants.NEW_COMMENT,
-                    "content": f"{obj.title} ha recibido un nuevo comentario",
+                    "content": f"{obj.content_related.title} ha recibido un nuevo comentario",
                 }
             ),
-            "receiver_id": obj.author.id,
+            "receiver_id": obj.content_related.author.id,
             "is_for": constants.EMAIL_FOR_NOTIFICATION
         }]
 

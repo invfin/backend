@@ -19,14 +19,24 @@ from apps.general import constants
 
 
 class EscritosClassification(BaseToAll):
-    name = CharField(max_length=500,null = True, blank=True, unique = True)
-    slug = CharField(max_length=500,null = True, blank=True, unique = True)
+    name = CharField(
+        max_length=500,
+        null = True,
+        blank=True,
+        unique = True,
+    )
+    slug = CharField(
+        max_length=500,
+        null = True,
+        blank=True,
+        unique = True,
+    )
 
     class Meta:
         abstract = True
 
     def __str__(self):
-        return self.name
+        return self.name or f"{self.id}"
 
     def save(self, *args, **kwargs): # new
         if not self.slug:
@@ -47,8 +57,16 @@ class Tag(EscritosClassification):
 
 
 class Industry(Model):
-    industry = CharField(max_length=500, null=True, blank=True)
-    industry_spanish = CharField(max_length=500, null=True, blank=True)
+    industry = CharField(
+        max_length=500,
+        null=True,
+        blank=True,
+    )
+    industry_spanish = CharField(
+        max_length=500,
+        null=True,
+        blank=True,
+    )
 
     class Meta:
         verbose_name = "Industry"
@@ -60,8 +78,16 @@ class Industry(Model):
 
 
 class Sector(Model):
-    sector = CharField(max_length=500 , null=True, blank=True)
-    sector_spanish = CharField(max_length=500 , null=True, blank=True)
+    sector = CharField(
+        max_length=500,
+        null=True,
+        blank=True,
+    )
+    sector_spanish = CharField(
+        max_length=500,
+        null=True,
+        blank=True,
+    )
 
     class Meta:
         verbose_name = "Sector"
@@ -73,8 +99,16 @@ class Sector(Model):
 
 
 class Country(Model):
-    country = CharField(max_length=500 , null=True, blank=True)
-    iso = CharField(max_length=500 , null=True, blank=True)
+    country = CharField(
+        max_length=500,
+        null=True,
+        blank=True,
+    )
+    iso = CharField(
+        max_length=500,
+        null=True,
+        blank=True,
+    )
 
     class Meta:
         verbose_name = "Country"
@@ -86,15 +120,34 @@ class Country(Model):
 
 
 class Currency(Model):
-    currency = CharField(max_length=500 , null=True, blank=True)
-    symbol = CharField(max_length=5, null=True, blank=True)
-    name = CharField(max_length=500 , null=True, blank=True)
-    iso = CharField(max_length=500 , null=True, blank=True)
-    decimals = IntegerField(default=2, blank=True)
+    currency = CharField(
+        max_length=500,
+        null=True,
+        blank=True,
+    )
+    symbol = CharField(
+        max_length=5,
+        null=True,
+        blank=True,
+    )
+    name = CharField(
+        max_length=500,
+        null=True,
+        blank=True,
+    )
+    iso = CharField(
+        max_length=500,
+        null=True,
+        blank=True,
+    )
+    decimals = IntegerField(
+        default=2,
+        blank=True,
+    )
     country = ForeignKey(Country,
         on_delete=CASCADE,
         null=True,
-        related_name = "currency"
+        related_name = "currency",
     )
     objects = CurrencyManager()
 
