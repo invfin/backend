@@ -20,7 +20,7 @@ def update_basic_info_company_task():
 
 @celery_app.task()
 def update_company_key_stats_task():
-    companies_without_info = Company.objects.filter_checkings("key_stats", False)
+    companies_without_info = Company.objects.filter_checkings_not_seen("key_stats")
     if companies_without_info.exists():
         company = companies_without_info.first()
         return UpdateCompany(company).create_key_stats_yahooquery()
@@ -35,7 +35,7 @@ def update_company_key_stats_task():
 
 @celery_app.task()
 def update_company_institutionals_task():
-    companies_without_info = Company.objects.filter_checkings("institutionals", False)
+    companies_without_info = Company.objects.filter_checkings_not_seen("institutionals")
     if companies_without_info.exists():
         company = companies_without_info.first()
         return UpdateCompany(company).create_institutionals_yahooquery()
@@ -50,7 +50,7 @@ def update_company_institutionals_task():
 
 @celery_app.task()
 def update_company_financials_finprep_task():
-    companies_without_info = Company.objects.filter_checkings("latest_financials_finprep_info", False)
+    companies_without_info = Company.objects.filter_checkings_not_seen("latest_financials_finprep_info")
     if companies_without_info.exists():
         company = companies_without_info.first()
         return UpdateCompany(company).create_financials_finprep()
@@ -65,7 +65,7 @@ def update_company_financials_finprep_task():
 
 @celery_app.task()
 def update_company_financials_finnhub_task():
-    companies_without_info = Company.objects.filter_checkings("first_financials_finnhub_info", False)
+    companies_without_info = Company.objects.filter_checkings_not_seen("first_financials_finnhub_info")
     if companies_without_info.exists():
         company = companies_without_info.first()
         return UpdateCompany(company).create_financials_finnhub()
@@ -80,7 +80,7 @@ def update_company_financials_finnhub_task():
 
 @celery_app.task()
 def update_company_financials_yfinance_task():
-    companies_without_info = Company.objects.filter_checkings("first_financials_yfinance_info", False)
+    companies_without_info = Company.objects.filter_checkings_not_seen("first_financials_yfinance_info")
     if companies_without_info.exists():
         company = companies_without_info.first()
         UpdateCompany(company).create_financials_yfinance("a")
@@ -96,7 +96,7 @@ def update_company_financials_yfinance_task():
 
 @celery_app.task()
 def update_company_financials_yahooquery_task():
-    companies_without_info = Company.objects.filter_checkings("first_financials_yahooquery_info", False)
+    companies_without_info = Company.objects.filter_checkings_not_seen("first_financials_yahooquery_info")
     if companies_without_info.exists():
         company = companies_without_info.first()
         UpdateCompany(company).create_financials_yahooquery("a")

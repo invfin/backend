@@ -12,12 +12,19 @@ def journey(request):
     comes_from = str(request.META.get('HTTP_REFERER'))
     try:
         if request.user.is_authenticated and request.user.username != 'Lucas':
-            UserJourney.objects.create(user = request.user, current_path = current_path, comes_from = comes_from)
+            UserJourney.objects.create(user=request.user, current_path=current_path, comes_from=comes_from)
 
         if request.user.is_anonymous:
+            visiteur = None
             try:
-                visiteur = SeoInformation().find_visiteur(request)
-                VisiteurJourney.objects.create(user = visiteur, current_path = current_path, comes_from = comes_from)
+                try:
+                    if request.is_visiteur:
+                        visiteur = request.visiteur
+                except Exception as e:
+                    print(e, 'try to find visiteur')
+                if not visiteur:
+                    visiteur = SeoInformation().find_visiteur(request)
+                VisiteurJourney.objects.create(user=visiteur, current_path=current_path, comes_from=comes_from)
             except Exception as e:
                 print(e, 'context seo')
     except:
@@ -25,5 +32,4 @@ def journey(request):
     return {}
 
 def debug(request):
-    debug = settings.DEBUG
-    return {'debug':debug}
+    return {'debug':settings.DEBUG}

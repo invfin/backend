@@ -1,4 +1,5 @@
 from datetime import datetime
+import json
 
 from django.db.models import (
     SET_NULL,
@@ -21,12 +22,8 @@ from apps.empresas.managers import CompanyManager, CompanyUpdateLogManager
 
 
 def default_dict():
-    {
-        'has_institutionals': {
-            'state': 'no',
-            'time': ''
-        }
-    }
+    with open(constants.DEFAULT_JSON_CHECKS_FILE, 'r') as checks_json:
+        return json.load(checks_json)
 
 
 class Company(CompanyExtended):
@@ -79,7 +76,7 @@ class Company(CompanyExtended):
         ordering = ['ticker']
 
     def __str__(self):
-        return str(self.ticker)
+        return self.full_name
 
     def get_absolute_url(self):
         return reverse("screener:company", kwargs={"ticker": self.ticker})
@@ -144,6 +141,10 @@ class Company(CompanyExtended):
             }
         )
         self.save(update_fields=['checkings'])
+
+    @property
+    def has_institutions(self):
+        return self.topinstitutionalownership_set.all().exists()
 
 
 class CompanyYahooQueryProxy(Company):

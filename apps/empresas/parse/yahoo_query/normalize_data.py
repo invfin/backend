@@ -214,9 +214,8 @@ class NormalizeYahooQuery:
             total_revenue=yahooquery_serie["TotalRevenue"]
         )
 
-    def normalize_institutional_yahooquery(self):
-        df = self.yq_company.institution_ownership
-        df = df.reset_index()
+    def normalize_institutional_yahooquery(self, df_institution_ownership):
+        df = df_institution_ownership.reset_index()
         df = df.drop(columns=['symbol','row','maxAge'])
         return df
 
@@ -246,6 +245,7 @@ class NormalizeYahooQuery:
                 '%Y-%m-%d %H:%M:%S'
                 ).date().strftime("%Y-%m-%d")
         return dict(
+            financials=key_stats,
             date=datetime.datetime.now().year,
             year=datetime.datetime.now().date(),
             company=self.company,

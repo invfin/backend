@@ -3,7 +3,7 @@ from django.db.models import (
     DateTimeField,
     CharField,
     JSONField,
-    DateField
+    DateTimeField
 )
 
 from apps.empresas.models import BaseStatement
@@ -225,8 +225,8 @@ class KeyStatsYahooQuery(BaseUnknownField):
     shares_outstanding = FloatField(default=0, blank=True, null=True)
     shares_short = FloatField(default=0, blank=True, null=True)
     shares_short_prior_month = FloatField(default=0, blank=True, null=True)
-    shares_short_previous_month_date = DateField(blank=True, null=True)
-    date_short_interest = DateField(blank=True, null=True)
+    shares_short_previous_month_date = DateTimeField(blank=True, null=True)
+    date_short_interest = DateTimeField(blank=True, null=True)
     shares_percent_shares_out = FloatField(default=0, blank=True, null=True)
     held_percent_insiders = FloatField(default=0, blank=True, null=True)
     held_percent_institutions = FloatField(default=0, blank=True, null=True)
@@ -238,16 +238,16 @@ class KeyStatsYahooQuery(BaseUnknownField):
     price_to_book = FloatField(default=0, blank=True, null=True)
     fund_family = FloatField(default=0, blank=True, null=True)
     legal_type = FloatField(default=0, blank=True, null=True)
-    last_fiscal_year_end = DateField(blank=True, null=True)
-    next_fiscal_year_end = DateField(blank=True, null=True)
-    most_recent_quarter = DateField(blank=True, null=True)
+    last_fiscal_year_end = DateTimeField(blank=True, null=True)
+    next_fiscal_year_end = DateTimeField(blank=True, null=True)
+    most_recent_quarter = DateTimeField(blank=True, null=True)
     earnings_quarterly_growth = FloatField(default=0, blank=True, null=True)
     net_income_to_common = FloatField(default=0, blank=True, null=True)
     trailing_eps = FloatField(default=0, blank=True, null=True)
     forward_eps = FloatField(default=0, blank=True, null=True)
     peg_ratio = FloatField(default=0, blank=True, null=True)
     last_split_factor = CharField(max_length=10, blank=True, null=True)
-    last_split_date = DateField(blank=True, null=True)
+    last_split_date = DateTimeField(blank=True, null=True)
     enterprise_to_revenue = FloatField(default=0, blank=True, null=True)
     enterprise_to_ebitda = FloatField(default=0, blank=True, null=True)
     week_change_52 = FloatField(default=0, blank=True, null=True)

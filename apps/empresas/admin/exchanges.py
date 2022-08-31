@@ -14,6 +14,8 @@ class ExchangeInline(admin.StackedInline):
         "country",
         "data_source",
     ]
+    extra = 0
+    jazzmin_tab_id = "exchanges"
 
 
 @admin.register(ExchangeOrganisation)
@@ -27,5 +29,13 @@ class ExchangeOrganisationAdmin(admin.ModelAdmin):
         'sub_exchange2',
         'order',
     ]
-    list_editable = ['order']
-    search_fields = ['name']
+    list_editable = [
+        'order'
+    ]
+    search_fields = [
+        'name'
+    ]
+    jazzmin_form_tabs = [
+        ("general", "Main Organisation Exchanges"),
+        ("exchanges", "Exchanges"),
+    ]

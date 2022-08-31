@@ -69,14 +69,14 @@ class CompanyManager(Manager):
         return random.choice(list(query))
 
     def companies_by_main_exchange(self, name=None):
-        return self.filter(exchange__main_org__name=name)
+        return self.filter(exchange__main_org__name=name).exclude(name__contains="Need-parsing")
 
     def clean_companies(self):
         return self.filter(
             no_incs=False,
             no_bs=False,
             no_cfs=False
-        )
+        ).exclude(name__contains="Need-parsing")
 
     def clean_companies_by_main_exchange(self, name=None):
         return self.filter(
@@ -84,7 +84,7 @@ class CompanyManager(Manager):
             no_bs=False,
             no_cfs=False,
             exchange__main_org__name=name
-            )
+            ).exclude(name__contains="Need-parsing")
 
     def complete_companies_by_main_exchange(self, name=None):
         return self.filter(
@@ -93,7 +93,7 @@ class CompanyManager(Manager):
             no_cfs=False,
             description_translated=True,
             exchange__main_org__name=name
-            )
+            ).exclude(name__contains="Need-parsing")
 
     def get_similar_companies(self, sector_id, industry_id):
         return self.filter(
@@ -103,7 +103,7 @@ class CompanyManager(Manager):
             description_translated=True,
             sector_id=sector_id,
             industry_id=industry_id
-            )
+            ).exclude(name__contains="Need-parsing")
 
     def random_clean_company(self):
         return self.get_random(self.clean_companies())
@@ -131,7 +131,7 @@ class CompanyManager(Manager):
             no_cfs=False,
             has_error=False,
             description_translated=True
-        ).annotate(
+        ).exclude(name__contains="Need-parsing").annotate(
             visited_by_user=Count('usercompanyvisited'),
             visited_by_visiteur=Count('visiteurcompanyvisited'),
             total_visits=F('visited_by_user') + F('visited_by_visiteur')
@@ -145,7 +145,7 @@ class CompanyManager(Manager):
             no_incs=False,
             no_bs=False,
             no_cfs=False
-        ).annotate(
+        ).exclude(name__contains="Need-parsing").annotate(
             visited_by_user=Count('usercompanyvisited'),
             visited_by_visiteur=Count('visiteurcompanyvisited'),
             total_visits=F('visited_by_user') + F('visited_by_visiteur')
@@ -166,7 +166,7 @@ class CompanyManager(Manager):
             no_incs=False,
             no_bs=False,
             no_cfs=False
-        ).annotate(
+        ).exclude(name__contains="Need-parsing").annotate(
             visited_by_user=Count('usercompanyvisited'),
             visited_by_visiteur=Count('visiteurcompanyvisited'),
             total_visits=F('visited_by_user') + F('visited_by_visiteur')
@@ -175,7 +175,17 @@ class CompanyManager(Manager):
     def filter_checkings(self, check: str, has_it: bool):
         checking = f"has_{check}"
         state = "yes" if has_it else "no"
-        return self.filter(**{f"checkings__{checking}__state": state})
+        return self.filter(
+            **{f"checkings__{checking}__state": state}
+        ).exclude(name__contains="Need-parsing").order_by("exchange__main_org__order")
+
+    def filter_checkings_not_seen(self, check: str):
+        return self.filter(
+            **{
+                f"checkings__has_{check}__state": "no",
+                f"checkings__has_{check}__time": ""
+            }
+        ).exclude(name__contains="Need-parsing").order_by("exchange__main_org__order")
 
 
 class CompanyUpdateLogManager(Manager):

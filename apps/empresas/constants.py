@@ -16,3 +16,5 @@ DATA_SOURCES = (
     (DATA_SOURCE_YAHOOQUERY, "Yahooquery"),
     (DATA_SOURCE_YAHOO_FINANCE, "Yahoo Finance"),
 )
+
+DEFAULT_JSON_CHECKS_FILE = "apps/empresas/company-checks.json"

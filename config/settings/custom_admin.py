@@ -32,7 +32,7 @@ SIDE_MENU = [
     },
     {
         'label': 'Business',
-        'icon': 'fas fa-user',
+        'icon': 'fas fa-briefcase',
         'models': (
             {
                 'model': 'business.Customer',
@@ -56,23 +56,24 @@ SIDE_MENU = [
                 'model': 'users.user',
                 'label': "Users",
             },
+             {
+                'model': 'seo.UserJourney',
+                'label': "Journey",
+            },
+
+        ),
+    },
+    {
+        'label': 'Visiteurs',
+        'icon': 'fas fa-user-secret',
+        'models': (
             {
                 'model': 'seo.Visiteur',
                 'label': "Visiteurs",
             },
-        ),
-    },
-    {
-        'label': 'Visits',
-        'icon': 'fas fa-user',
-        'models': (
-            {
-                'model': 'seo.UserJourney',
-                'label': "Users journey",
-            },
             {
                 'model': 'seo.VisiteurJourney',
-                'label': "Visiteurs journey",
+                'label': "Journey",
             },
         ),
     },
@@ -108,7 +109,7 @@ SIDE_MENU = [
     },
     {
         'label': 'Company Relateds',
-        'icon': 'fas fa-user',
+        'icon': 'fas fa-copy',
         'models': (
             {
                 'model': 'empresas.ExchangeOrganisation',
@@ -121,6 +122,20 @@ SIDE_MENU = [
             {
                 'model': 'super_investors.Superinvestor',
                 'label': "SuperInvestors",
+            },
+        ),
+    },
+    {
+        'label': 'Q&A',
+        'icon': 'fas fa-question',
+        'models': (
+            {
+                'model': 'preguntas_respuestas.Question',
+                'label': "Questions",
+            },
+            {
+                'model': 'preguntas_respuestas.Answer',
+                'label': "Answers",
             },
         ),
     },

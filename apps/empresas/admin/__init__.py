@@ -5,3 +5,4 @@ from .yahooquery import *
 from .yfinance import *
 from .institutions import *
 from .statements import *
+from .finnhub import *

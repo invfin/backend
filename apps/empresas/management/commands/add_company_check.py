@@ -1,6 +1,7 @@
 from django.core.management import BaseCommand
 
 from apps.empresas.models import Company
+from apps.empresas.utils import add_new_default_check
 
 
 class Command(BaseCommand):
@@ -9,6 +10,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         checking = options['checking']
+        add_new_default_check(checking)
         for company in Company.objects.all():
             company.checkings.update(
                 {

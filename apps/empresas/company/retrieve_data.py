@@ -46,4 +46,8 @@ class RetrieveCompanyData(FinnhubInfo, FinprepInfo, YahooQueryInfo, YFinanceInfo
 
     @log_company("institutionals")
     def create_institutionals_yahooquery(self):
-        return self.create_institutionals_yahooquery()
+        return super().create_institutionals_yahooquery()
+
+    @log_company("key_stats")
+    def create_key_stats_yahooquery(self):
+        return super().create_key_stats_yahooquery()

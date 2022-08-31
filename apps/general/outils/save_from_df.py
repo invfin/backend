@@ -24,7 +24,7 @@ class DFInfoCreator:
         function: Callable,
         model: Type
     ):
-        pass
+        return
 
     def create_statement(
         self,
@@ -55,6 +55,7 @@ class DFInfoCreator:
             self.normalize_balance_sheet,
             self.balance_sheet_model
         )
+        print(incomes_df)
         self.create_statement(
             cashflows_df,
             period,

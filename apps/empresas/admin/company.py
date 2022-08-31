@@ -3,6 +3,7 @@ from django.db import models
 
 from django_json_widget.widgets import JSONEditorWidget
 
+
 from apps.empresas.models import (
     Company,
     TopInstitutionalOwnership,
