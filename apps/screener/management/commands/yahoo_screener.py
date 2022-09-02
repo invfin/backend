@@ -31,8 +31,8 @@ class Command(BaseCommand):
                     continue
                 screener_lookup_info = screener_lookup[screener]
 
-                name = screener_lookup_info['title'] 
-                description = screener_lookup_info['description'] 
+                name = screener_lookup_info['title']
+                description = screener_lookup_info['description']
 
                 name = google_translator().translate(name, lang_src='en', lang_tgt='es')
                 description = google_translator().translate(description, lang_src='en', lang_tgt='es')

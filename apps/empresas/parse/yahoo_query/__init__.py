@@ -36,17 +36,13 @@ class YahooQueryInfo(DFInfoCreator, NormalizeYahooQuery, ParseYahooQuery):
         param: function is the normalizer to regularise the data to be saved
         param: model is the model where the data is saved
         """
-
         for index, data in df.iterrows():
             financials_data = data.to_dict()
-
             financials_data["asOfDate"] = financials_data["asOfDate"].to_pydatetime().date().strftime("%m/%d/%Y")
-            s = model.objects.create(
+            model.objects.create(
                 financials=financials_data,
                 **function(data, period)
             )
-            print(s)
-        return
 
     def create_quarterly_financials_yahooquery(self):
         self.create_financials(

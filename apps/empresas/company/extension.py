@@ -15,6 +15,22 @@ class CompanyExtended(BaseToAll, ChartSerializer):
     class Meta:
         abstract = True
 
+    currency_to_use = None
+
+    def find_currency(self, statement):
+        if not self.currency:
+            try:
+                currency = statement[0].reported_currency
+            except:
+                currency = None
+            else:
+                self.currency = currency
+                self.save(update_fields=["currency"])
+        else:
+            currency = self.currency
+        self.currency_to_use = currency
+        return currency
+
     def all_income_statements(self, limit) ->list:
         inc = self.inc_statements.all()
         if limit != 0:
@@ -23,13 +39,12 @@ class CompanyExtended(BaseToAll, ChartSerializer):
 
     def income_json(self, limit):
         inc = self.all_income_statements(limit)
-        if not self.currency:
-            try:
-                self.currency = inc[0].reported_currency
-            except IndexError:
-                pass
+        if not self.currency_to_use:
+            currency = self.find_currency(inc)
+        else:
+            currency = self.currency_to_use
         inc_json = {
-            'currency': self.currency.currency,
+            'currency': currency,
             'labels': [data.date for data in inc],
             'fields': [
                 {'title':'Ingresos',
@@ -156,8 +171,12 @@ class CompanyExtended(BaseToAll, ChartSerializer):
 
     def balance_json(self, limit):
         bls = self.all_balance_sheets(limit)
+        if not self.currency_to_use:
+            currency = self.find_currency(bls)
+        else:
+            currency = self.currency_to_use
         bls_json = {
-            'currency': self.currency.currency,
+            'currency': currency,
             'labels': [data.date for data in bls],
             'fields': [
                 {'title':'Efectivo y equivalentes',
@@ -359,8 +378,6 @@ class CompanyExtended(BaseToAll, ChartSerializer):
         }
         return bls_json, bls
 
-
-
     def comparing_balance_json(self, limit):
         comparing_json, bls = self.balance_json(limit)
         chartData = self.generate_json(comparing_json)
@@ -378,8 +395,12 @@ class CompanyExtended(BaseToAll, ChartSerializer):
 
     def cashflow_json(self, limit):
         cf = self.all_cashflow_statements(limit)
+        if not self.currency_to_use:
+            currency = self.find_currency(cf)
+        else:
+            currency = self.currency_to_use
         cf_json = {
-            'currency': self.currency.currency,
+            'currency': currency,
             'labels': [data.date for data in cf],
             'fields': [
                 {'title': 'Beneficio neto',
@@ -535,8 +556,6 @@ class CompanyExtended(BaseToAll, ChartSerializer):
                         }
         return cf_json, cf
 
-
-
     def comparing_cashflows(self, limit):
         comparing_json, cf = self.cashflow_json(limit)
         chartData = self.generate_json(comparing_json)
@@ -608,8 +627,6 @@ class CompanyExtended(BaseToAll, ChartSerializer):
                             ]}
         return rr_json, rr
 
-
-
     def comparing_rentability_ratios_json(self, limit):
         comparing_json, rr = self.rentability_ratios_json(limit)
         chartData = self.generate_json(comparing_json)
@@ -662,8 +679,6 @@ class CompanyExtended(BaseToAll, ChartSerializer):
                 'values': [data.debt_to_equity for data in lr]},
             ]}
         return lr_json, lr
-
-
 
     def comparing_liquidity_ratios_json(self, limit):
         comparing_json, lr = self.liquidity_ratios_json(limit)
@@ -735,7 +750,6 @@ class CompanyExtended(BaseToAll, ChartSerializer):
                 'values': [data.fcf_margin for data in cf]},
             ]}
         return cf_json, cf
-
 
     def comparing_margins_json(self, limit):
         comparing_json, cf = self.margins_json(limit)
@@ -859,7 +873,6 @@ class CompanyExtended(BaseToAll, ChartSerializer):
                 'values': [data.total_assets_ps for data in cf]},
             ]}
         return cf_json, cf
-
 
     def comparing_per_share_values_json(self, limit):
         comparing_json, cf = self.per_share_values_json(limit)

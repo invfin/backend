@@ -4,12 +4,10 @@ from datetime import datetime
 from apps.translate.google_trans_new import google_translator
 from apps.empresas.utils import log_company
 from apps.empresas.company.ratios import CalculateCompanyFinancialRatios
-from apps.empresas.company.retrieve_data import RetrieveCompanyData
 
 
-class UpdateCompany(CalculateCompanyFinancialRatios, RetrieveCompanyData):
+class UpdateCompany(CalculateCompanyFinancialRatios):
     def __init__(self, company: Type["Company"]) -> None:
-        super().__init__(company)
         self.company: Type["Company"] = company
 
     @log_company

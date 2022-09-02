@@ -66,3 +66,4 @@ class CompanyYFinanceProxyAdmin(admin.ModelAdmin):
         ("balance-sheet", "Balance Sheet"),
         ("cashflow-statement", "Cashflow Statement"),
     ]
+

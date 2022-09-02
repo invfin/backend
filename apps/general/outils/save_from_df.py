@@ -11,11 +11,9 @@ class DFInfoCreator:
     income_statement_model = None
     balance_sheet_model = None
     cashflow_statement_model = None
-
-    def __init__(self) -> None:
-        self.normalize_income_statement = None
-        self.normalize_balance_sheet = None
-        self.normalize_cashflow_statement = None
+    normalize_income_statement = None
+    normalize_balance_sheet = None
+    normalize_cashflow_statement = None
 
     def create_statements_from_df(
         self,
@@ -55,7 +53,6 @@ class DFInfoCreator:
             self.normalize_balance_sheet,
             self.balance_sheet_model
         )
-        print(incomes_df)
         self.create_statement(
             cashflows_df,
             period,

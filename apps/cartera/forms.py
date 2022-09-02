@@ -37,7 +37,7 @@ class BaseForm(Form):
 class BaseAssetMoveForm(BaseForm):
     price = DecimalField(label='Precio unitario')
     date = DateField(
-        label='Fecha', 
+        label='Fecha',
         initial=datetime.date.today,
         input_formats=settings.DATE_INPUT_FORMATS,
         widget = DateInput(attrs={'class':'datetimepicker1'})
@@ -48,12 +48,11 @@ class BaseAssetMoveForm(BaseForm):
 
     def clean_date(self):
         date = self.cleaned_data['date']
-        print(date)
         return date
 
 
 class AddNewAssetForm(ModelForm, BaseAssetMoveForm):
-    
+
     class Meta:
         model = PositionMovement
         exclude = [
@@ -92,7 +91,7 @@ class PositionMovementForm(ModelForm, BaseAssetMoveForm):
     class Meta:
         model = PositionMovement
         exclude = ['user']
-    
+
     def save(self, request):
         model = super().save()
         model.user = request.user
@@ -113,7 +112,7 @@ class FinancialObjectifForm(ModelForm):
             'percentage',
             'amount',
         ]
-    
+
     def save(self, request):
         model = super().save()
         model.user = request.user
@@ -129,7 +128,7 @@ class AddCategoriesForm(ModelForm):
     class Meta:
         model = CashflowMovementCategory
         fields = ['name']
-    
+
     def save(self, request):
         model = super().save()
         model.user = request.user

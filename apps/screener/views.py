@@ -17,7 +17,6 @@ from apps.screener.models import CompanyInformationBought, YahooScreener
 
 class CompanyLookUpView(RedirectView):
     def get(self, request, *args, **kwargs):
-
         company = self.request.GET['stock']
         path = company_searched(company, self.request)
         return HttpResponseRedirect(path)

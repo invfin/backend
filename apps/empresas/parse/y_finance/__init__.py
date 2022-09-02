@@ -13,7 +13,6 @@ class YFinanceInfo(DFInfoCreator, NormalizeYFinance, ParseYFinance):
     cashflow_statement_model = CashflowStatementYFinance
 
     def __init__(self, company) -> None:
-        super().__init__(company)
         self.company = company
         self.normalize_income_statement = self.normalize_income_statements_yfinance
         self.normalize_balance_sheet = self.normalize_balance_sheets_yfinance
@@ -26,10 +25,10 @@ class YFinanceInfo(DFInfoCreator, NormalizeYFinance, ParseYFinance):
         function: Callable,
         model: Type
     ):
+
         for column in df:
             model.objects.create(
                 financials=df[column].to_dict(),
-                # **function(df[column], column, period)
                 **self.initial_data(column, period)
             )
         return

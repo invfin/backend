@@ -109,6 +109,21 @@ class Country(Model):
         null=True,
         blank=True,
     )
+    name = CharField(
+        max_length=500,
+        null=True,
+        blank=True,
+    )
+    alpha_2_code = CharField(
+        max_length=2,
+        null=True,
+        blank=True,
+    )
+    alpha_3_code = CharField(
+        max_length=3,
+        null=True,
+        blank=True,
+    )
 
     class Meta:
         verbose_name = "Country"

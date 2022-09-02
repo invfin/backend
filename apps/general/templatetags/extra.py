@@ -37,9 +37,7 @@ def add_utms(content='', term='', medium='webapp', source='invfin', campaign='we
 
 @register.simple_tag(name='clean_json')
 def api_json_example(example):
-    print(type(example))
     parsed = json.loads(example)
-    print(parsed)
     return json.dumps(example, indent=4, sort_keys=True)
 
 

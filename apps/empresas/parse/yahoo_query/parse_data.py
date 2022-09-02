@@ -24,22 +24,3 @@ class ParseYahooQuery:
 
     def request_cashflow_statements_yahooquery(self, frequency: str = "a", trailing=False):
         return self.yqcompany.cash_flow(frequency=frequency, trailing=trailing)
-
-    # def get_current_price(self):
-    #     current_price = 0
-    #     current_currency = 'None'
-
-    #     try:
-    #         else:
-    #             company_info = yq.Ticker(self.ticker).financial_data
-    #             if 'currentPrice' in company_info:
-    #                 current_price = company_info['currentPrice']
-    #                 current_currency = company_info['financialCurrency']
-
-    #     except Exception as e:
-    #         current_price, current_currency = self.scrap_price_yahoo()
-
-    #     return {
-    #         'current_price': current_price,
-    #         'current_currency': current_currency,
-    #     }

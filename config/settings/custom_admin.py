@@ -1,3 +1,5 @@
+from .base import FULL_DOMAIN
+
 WEB_ICON = "general/assets/img/favicon/favicon.ico"
 
 TOP_MENU_LEFT = [
@@ -16,7 +18,7 @@ TOP_MENU_LEFT = [
     ]
 
 TOP_MENU_RIGHT = [
-        {"name": "Web", "url": "http://example.com:8000", "new_window": True},
+        {"name": "Web", "url": FULL_DOMAIN, "new_window": True},
         {"model": "users.user"}
     ]
 
@@ -122,6 +124,33 @@ SIDE_MENU = [
             {
                 'model': 'super_investors.Superinvestor',
                 'label': "SuperInvestors",
+            },
+            {
+                'model': 'general.Industry',
+            },
+            {
+                'model': 'general.Sector',
+            },
+            {
+                'model': 'general.Period',
+            },
+        ),
+    },
+    {
+        'label': 'General',
+        'icon': 'fas fa-globe',
+        'models': (
+            {
+                'model': 'general.Category',
+            },
+            {
+                'model': 'general.Tag',
+            },
+            {
+                'model': 'general.Currency',
+            },
+            {
+                'model': 'general.Country',
             },
         ),
     },
@@ -292,7 +321,6 @@ JAZZMIN_UI_TWEAKS = {
     "sidebar": "sidebar-dark-primary",
     "sidebar_nav_child_indent": True,
     "sidebar_nav_flat_style": True,
-    "navigation_expanded": False,
     "navbar_fixed": True,
     "sidebar_fixed": True,
     "button_classes": {

@@ -1,4 +1,4 @@
-from datetime import datetime
+from django.utils import timezone
 import json
 
 from apps.seo.models import UserCompanyVisited, VisiteurCompanyVisited
@@ -25,7 +25,7 @@ def log_company(checking: str = None):
             finally:
                 CompanyUpdateLog.objects.create(
                     company=company,
-                    date=datetime.now(),
+                    date=timezone.now(),
                     where=func.__name__,
                     had_error=had_error,
                     error_message=error_message,
@@ -52,7 +52,7 @@ def save_search(request, model_visited):
     save_model.objects.create(
         user=user,
         model_visited=model_visited,
-        date=datetime.now()
+        date=timezone.now()
     )
 
 

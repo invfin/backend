@@ -46,7 +46,7 @@ class KeyStatsYahooQueryInline(admin.StackedInline):
     extra = 0
     jazzmin_tab_id = "key-stats"
 
-from apps.empresas.company.update import UpdateCompany
+
 @admin.register(CompanyYahooQueryProxy)
 class CompanyYahooQueryProxyAdmin(admin.ModelAdmin):
     inlines = [
@@ -92,10 +92,4 @@ class CompanyYahooQueryProxyAdmin(admin.ModelAdmin):
         ("cashflow-statement", "Cashflow Statement"),
         ("key-stats", "Key Stats"),
     ]
-    def get_object(self, request, object_id: str, from_field):
-        obj =super().get_object(request, object_id, from_field)
-        print('*'*100)
-        UpdateCompany(obj).create_financials_yahooquery("a")
-        UpdateCompany(obj).create_financials_yahooquery("q")
-        print('*'*100)
-        return obj
+

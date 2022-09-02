@@ -6,7 +6,6 @@ from apps.empresas.parse.finprep.parse_data import ParseFinprep
 
 class FinprepInfo(NormalizeFinprep, ParseFinprep):
     def __init__(self, company: Type["Company"]) -> None:
-        super().__init__(company)
         self.company: Type["Company"] = company
 
     def create_income_statements_finprep(self, list_income_statements_finprep=None):

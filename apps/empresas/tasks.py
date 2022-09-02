@@ -5,6 +5,7 @@ from django.db.models import Q
 from config import celery_app
 
 from apps.empresas.company.update import UpdateCompany
+from apps.empresas.company.retrieve_data import RetrieveCompanyData
 from apps.empresas.models import Company
 
 
@@ -23,7 +24,7 @@ def update_company_key_stats_task():
     companies_without_info = Company.objects.filter_checkings_not_seen("key_stats")
     if companies_without_info.exists():
         company = companies_without_info.first()
-        return UpdateCompany(company).create_key_stats_yahooquery()
+        return RetrieveCompanyData(company).create_key_stats_yahooquery()
     else:
         return send_mail(
             'No companies left to update key_stats',
@@ -38,7 +39,7 @@ def update_company_institutionals_task():
     companies_without_info = Company.objects.filter_checkings_not_seen("institutionals")
     if companies_without_info.exists():
         company = companies_without_info.first()
-        return UpdateCompany(company).create_institutionals_yahooquery()
+        return RetrieveCompanyData(company).create_institutionals_yahooquery()
     else:
         return send_mail(
             'No companies left to update institutionals',
@@ -53,7 +54,7 @@ def update_company_financials_finprep_task():
     companies_without_info = Company.objects.filter_checkings_not_seen("latest_financials_finprep_info")
     if companies_without_info.exists():
         company = companies_without_info.first()
-        return UpdateCompany(company).create_financials_finprep()
+        return RetrieveCompanyData(company).create_financials_finprep()
     else:
         return send_mail(
             'No companies left to update financials for latest_financials_finprep_info',
@@ -68,7 +69,7 @@ def update_company_financials_finnhub_task():
     companies_without_info = Company.objects.filter_checkings_not_seen("first_financials_finnhub_info")
     if companies_without_info.exists():
         company = companies_without_info.first()
-        return UpdateCompany(company).create_financials_finnhub()
+        return RetrieveCompanyData(company).create_financials_finnhub()
     else:
         return send_mail(
             'No companies left to update financials first_financials_finnhub_info',
@@ -83,8 +84,8 @@ def update_company_financials_yfinance_task():
     companies_without_info = Company.objects.filter_checkings_not_seen("first_financials_yfinance_info")
     if companies_without_info.exists():
         company = companies_without_info.first()
-        UpdateCompany(company).create_financials_yfinance("a")
-        UpdateCompany(company).create_financials_yfinance("q")
+        RetrieveCompanyData(company).create_financials_yfinance("a")
+        RetrieveCompanyData(company).create_financials_yfinance("q")
     else:
         return send_mail(
             'No companies left to update financials for first_financials_yfinance_info',
@@ -99,8 +100,8 @@ def update_company_financials_yahooquery_task():
     companies_without_info = Company.objects.filter_checkings_not_seen("first_financials_yahooquery_info")
     if companies_without_info.exists():
         company = companies_without_info.first()
-        UpdateCompany(company).create_financials_yahooquery("a")
-        UpdateCompany(company).create_financials_yahooquery("q")
+        RetrieveCompanyData(company).create_financials_yahooquery("a")
+        RetrieveCompanyData(company).create_financials_yahooquery("q")
     else:
         return send_mail(
             'No companies left to update financials ofr first_financials_yahooquery_info',
