@@ -8,7 +8,7 @@ from django.db.models import (
     ForeignKey,
     IntegerField,
     Model,
-    DateField
+    ManyToManyField
 )
 
 User = get_user_model()
@@ -104,16 +104,22 @@ class Country(Model):
         null=True,
         blank=True,
     )
-    iso = CharField(
-        max_length=500,
-        null=True,
-        blank=True,
-    )
     name = CharField(
         max_length=500,
         null=True,
         blank=True,
     )
+    spanish_name = CharField(
+        max_length=500,
+        null=True,
+        blank=True,
+    )
+    iso = CharField(
+        max_length=500,
+        null=True,
+        blank=True,
+    )
+
     alpha_2_code = CharField(
         max_length=2,
         null=True,
@@ -150,6 +156,16 @@ class Currency(Model):
         null=True,
         blank=True,
     )
+    spanish_name = CharField(
+        max_length=500,
+        null=True,
+        blank=True,
+    )
+    accronym = CharField(
+        max_length=10,
+        null=True,
+        blank=True,
+    )
     iso = CharField(
         max_length=500,
         null=True,
@@ -159,9 +175,9 @@ class Currency(Model):
         default=2,
         blank=True,
     )
-    country = ForeignKey(Country,
-        on_delete=CASCADE,
-        null=True,
+    countries = ManyToManyField(
+        Country,
+        blank=True,
         related_name = "currency",
     )
     objects = CurrencyManager()

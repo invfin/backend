@@ -2,19 +2,6 @@
 
 from django.db import migrations, models
 
-from apps.general.countries_data import COUNTRIES, ALT_CODES
-
-
-# def populate_countries(apps, schema):
-#     Country = apps.get_model('general', 'country')
-#     for country_alpha_2, country_name in COUNTRIES.items():
-#         obj = Country.objects.get_or_create(country=country_alpha_2)
-#         alt_code = ALT_CODES[country_alpha_2]
-#         obj.alpha_2_code = country_alpha_2
-#         obj.alpha_3_code = alt_code[0]
-#         obj.name = country_name
-#         obj.iso = alt_code[1]
-
 
 class Migration(migrations.Migration):
 
@@ -38,5 +25,4 @@ class Migration(migrations.Migration):
             name='name',
             field=models.CharField(blank=True, max_length=500, null=True),
         ),
-        # migrations.RunPython(populate_countries),
     ]

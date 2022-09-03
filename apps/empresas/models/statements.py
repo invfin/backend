@@ -112,7 +112,7 @@ class CashflowStatement(BaseStatement):
     net_income = FloatField(default=0, blank=True, null=True)
     depreciation_amortization = FloatField(default=0, blank=True, null=True)
     deferred_income_tax = FloatField(default=0, blank=True, null=True)
-    stock_based_compesation = FloatField(default=0, blank=True, null=True)
+    stock_based_compesation = FloatField(default=0, blank=True, null=True)#stock_based_compensation
     change_in_working_capital = FloatField(default=0, blank=True, null=True)
     accounts_receivables = FloatField(default=0, blank=True, null=True)
     inventory = FloatField(default=0, blank=True, null=True)

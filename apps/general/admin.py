@@ -68,7 +68,21 @@ class SectorAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
 class CurrencyAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
     list_display = [
         'id',
-        'currency'
+        "currency",
+        "symbol",
+        "name",
+        "spanish_name",
+        "accronym",
+        "iso",
+        "decimals",
+    ]
+    list_editable = [
+        "symbol",
+        "name",
+        "spanish_name",
+        "accronym",
+        "iso",
+        "decimals",
     ]
 
 
@@ -76,7 +90,19 @@ class CurrencyAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
 class CountryAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
     list_display = [
         'id',
-        'country'
+        "country",
+        "name",
+        "spanish_name",
+        "iso",
+        "alpha_2_code",
+        "alpha_3_code",
+    ]
+    list_editable = [
+        "name",
+        "spanish_name",
+        "iso",
+        "alpha_2_code",
+        "alpha_3_code",
     ]
 
 

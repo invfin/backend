@@ -29,6 +29,8 @@ class TermsRelatedToResumeAdmin(admin.ModelAdmin):
 
 class TermContentInline(admin.StackedInline):
     model = TermContent
+    extra = 0
+    jazzmin_tab_id = "content"
 
 
 @admin.register(TermContent)
@@ -42,9 +44,9 @@ class TermContentAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
 @admin.register(Term)
 class TermAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
     inlines = [TermContentInline]
-    
+
     actions = [find_images]
-    
+
 
     list_display = [
         'title',
@@ -52,7 +54,7 @@ class TermAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
         'status',
         'total_votes',
         'total_views',
-        'times_shared',        
+        'times_shared',
         'published_at',
         'created_at',
         'updated_at',
@@ -62,7 +64,13 @@ class TermAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
         'category',
         'status',
     ]
-    search_fields = ['title']
+    search_fields = [
+        'title'
+    ]
+    jazzmin_form_tabs = [
+        ("general", "Company"),
+        ("content", "Term parts"),
+    ]
 
 
 @admin.register(TermCorrection)

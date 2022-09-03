@@ -155,6 +155,20 @@ SIDE_MENU = [
         ),
     },
     {
+        'label': 'Terms',
+        'icon': 'fas fa-pen',
+        'models': (
+            {
+                'model': 'escritos.Term',
+                'label': "Terms",
+            },
+            {
+                'model': 'escritos.TermCorrection',
+                'label': "Corrections",
+            },
+        ),
+    },
+    {
         'label': 'Q&A',
         'icon': 'fas fa-question',
         'models': (
