@@ -2,7 +2,7 @@ from django.utils import timezone
 import json
 
 from apps.seo.models import UserCompanyVisited, VisiteurCompanyVisited
-from apps.seo.utils import SeoInformation
+from apps.seo.outils.visiteur_meta import SeoInformation
 from apps.empresas.constants import DEFAULT_JSON_CHECKS_FILE
 from apps.empresas.models import Company, CompanyUpdateLog
 

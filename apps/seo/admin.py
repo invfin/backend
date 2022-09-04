@@ -121,7 +121,7 @@ class VisiteurJourneyAdmin(ImportExportActionModelAdmin):
 
 
 @admin.register(UserJourney)
-class UserJourneyAdmin(admin.ModelAdmin):
+class UserJourneyAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
     list_display = [
         'id',
         'user_link',
@@ -129,7 +129,7 @@ class UserJourneyAdmin(admin.ModelAdmin):
         'current_path',
         'comes_from'
         ]
-    
+
     def user_link(self, obj):
         field = getattr(obj, 'user')
         object_name = field.object_name.lower()

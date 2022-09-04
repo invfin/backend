@@ -11,7 +11,7 @@ from rest_framework.schemas import ManualSchema
 from rest_framework.schemas import coreapi as coreapi_schema
 from rest_framework.views import APIView
 
-from apps.seo.utils import SeoInformation
+from apps.seo.outils.visiteur_meta import SeoInformation
 
 from .models import EndpointsCategory, Key, ReasonKeyRequested
 from .serializers import AuthKeySerializer
@@ -66,7 +66,7 @@ class ObtainAuthKey(APIView):
         user = serializer.validated_data['user']
         key, created = Key.objects.get_or_create(user=user)
         return Response({'token': key.key})
-    
+
     def get(self, request, *args, **kwargs):
         response = {
             'Respuesta': f'Autentifícate o crea un perfil para tener tu llave'
@@ -133,7 +133,7 @@ class BaseAPIView(APIView):
             pass
         if not self.model and not self.custom_queryset and not self.custom_query:
             return self.serializer_class.Meta.model, False
-        
+
 
     def final_responses(self, serializer, api_key, queryset, path, ip):
         if status.is_success:
@@ -143,7 +143,7 @@ class BaseAPIView(APIView):
             return Response(
                 {'Búsqueda incorrecta': 'Lo siento ha habido un problema'},
                 status=status.HTTP_503_SERVICE_UNAVAILABLE)
-        
+
     def find_query_value(self, query_dict):
         query_value = None
         query_param = None
@@ -151,12 +151,12 @@ class BaseAPIView(APIView):
             if query_param in self.query_name and query_value:
                 break
         return query_param, query_value
-    
+
     def check_limitation(self, key, queryset):
         if key.has_subscription is False:
             queryset = queryset[:10]
         return queryset
-    
+
     def get(self, request):
         model, many = self.get_object()
         query_dict = request.GET.dict()
@@ -165,7 +165,7 @@ class BaseAPIView(APIView):
         query_param, query_value = self.find_query_value(query_dict)
         if query_param == 'ticker':
             query_value = query_value.upper()
-        if many is False:            
+        if many is False:
             if query_value:
                 if self.custom_query:
                     queryset = model.get(**{query_param: query_value})
@@ -175,12 +175,12 @@ class BaseAPIView(APIView):
                     except model.DoesNotExist:
                         return Response({
                                 'Búsqueda incorrecta': 'Tu búsqueda no ha devuelto ningún resultado'
-                            }, 
+                            },
                             status=status.HTTP_404_NOT_FOUND)
             else:
                 return Response({
                             'Búsqueda incorrecta': 'No has introducido ninguna búsqueda',
-                            'parametros': self.query_name}, 
+                            'parametros': self.query_name},
                         status=status.HTTP_404_NOT_FOUND)
         else:
             if self.fk_lookup_model:
@@ -194,10 +194,10 @@ class BaseAPIView(APIView):
             queryset = self.check_limitation(key, queryset)
         serializer = self.serializer_class(queryset, many=many)
         return self.final_responses(
-            serializer, 
-            key, 
-            queryset, 
-            request.build_absolute_uri(), 
+            serializer,
+            key,
+            queryset,
+            request.build_absolute_uri(),
             SeoInformation.get_client_ip(request)
         )
 

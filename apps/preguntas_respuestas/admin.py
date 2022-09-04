@@ -53,11 +53,12 @@ class QuestionAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
     list_display = [
         'id',
         'title',
-        'author'
+        'author',
+        "hide_question"
         ]
 
     list_editable = [
-        'author'
+        "hide_question"
     ]
 
     search_fields = ['author_username']

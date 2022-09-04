@@ -58,11 +58,26 @@ SIDE_MENU = [
                 'model': 'users.user',
                 'label': "Users",
             },
-             {
+            {
                 'model': 'seo.UserJourney',
                 'label': "Journey",
             },
-
+            {
+                "model": "seo.UserCompanyVisited",
+                "label": "Company visited"
+            },
+            {
+                "model": "seo.UserPublicBlogVisited",
+                "label": "Blog visited"
+            },
+            {
+                "model": "seo.UserQuestionVisited",
+                "label": "Question visited"
+            },
+            {
+                "model": "seo.UserTermVisited",
+                "label": "Term visited"
+            },
         ),
     },
     {
@@ -76,6 +91,22 @@ SIDE_MENU = [
             {
                 'model': 'seo.VisiteurJourney',
                 'label': "Journey",
+            },
+            {
+                "model": "seo.VisiteurCompanyVisited",
+                "label": "Company visited"
+            },
+            {
+                "model": "seo.VisiteurPublicBlogVisited",
+                "label": "Blog visited"
+            },
+            {
+                "model": "seo.VisiteurQuestionVisited",
+                "label": "Question visited"
+            },
+            {
+                "model": "seo.VisiteurTermVisited",
+                "label": "Term visited"
             },
         ),
     },

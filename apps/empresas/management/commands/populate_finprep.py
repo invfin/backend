@@ -18,7 +18,7 @@ class Command(BaseCommand):
                 period, created = Period.objects.get_or_create(year=date, period=PERIOD_FOR_YEAR)
                 company_data.pop("id")
                 company_data["period_id"] = period.id
-                IncomeStatementFinprep.objects.create(
+                IncomeStatementFinprep.objects.get_or_create(
                     cost_and_expenses=company_data.pop("cost_and_expenses"),
                     cost_of_revenue=company_data.pop("cost_of_revenue"),
                     depreciation_and_amortization=company_data.pop("depreciation_amortization"),
@@ -46,7 +46,7 @@ class Command(BaseCommand):
                 period, created = Period.objects.get_or_create(year=date, period=PERIOD_FOR_YEAR)
                 company_data.pop("id")
                 company_data["period_id"] = period.id
-                BalanceSheetFinprep.objects.create(
+                BalanceSheetFinprep.objects.get_or_create(
                     property_plant_equipment_net=company_data.pop("property_plant_equipment"),
                     common_stock=company_data.pop("common_stocks"),
                     **company_data
@@ -56,7 +56,7 @@ class Command(BaseCommand):
                 period, created = Period.objects.get_or_create(year=date, period=PERIOD_FOR_YEAR)
                 company_data.pop("id")
                 company_data["period_id"] = period.id
-                CashflowStatementFinprep.objects.create(
+                CashflowStatementFinprep.objects.get_or_create(
                     depreciation_and_amortization=company_data.pop("depreciation_amortization"),
                     stock_based_compensation=company_data.pop("stock_based_compesation"),
                     accounts_payables=company_data.pop("accounts_payable"),

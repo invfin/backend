@@ -4,7 +4,7 @@ import operator
 from django.utils.deprecation import MiddlewareMixin
 from django.utils.functional import SimpleLazyObject
 
-from .utils import SeoInformation
+from .outils.visiteur_meta import SeoInformation
 
 from django.contrib import auth
 
@@ -13,7 +13,7 @@ lower = operator.methodcaller('lower')
 
 def get_visiteur(request):
     """
-    Creates a new attribute, _cached_visiteur to the request object, 
+    Creates a new attribute, _cached_visiteur to the request object,
     same as the user but for visitor
     """
     if not hasattr(request, "_cached_visiteur"):

@@ -15,7 +15,10 @@ class BaseUser(AbstractUser):
         url = self.get_absolute_url()
         if self.is_writter:
             host_name = self.writter_profile.host_name
-            url = f'{PROTOCOL}{host_name}.{CURRENT_DOMAIN}'
+            current_domain = CURRENT_DOMAIN
+            if not settings.IS_PROD:
+                current_domain = f"{CURRENT_DOMAIN}:8000"
+            url = f'{PROTOCOL}{host_name}.{current_domain}'
         return url
 
     @property
@@ -137,7 +140,7 @@ class BaseUser(AbstractUser):
         self.user_profile.save(update_fields=['reputation_score'])
 
     def create_meta_profile(self, request):
-        from apps.seo.utils import SeoInformation
+        from apps.seo.outils.visiteur_meta import SeoInformation
 
         from .models import MetaProfileInfo
         seo = SeoInformation().meta_information(request)

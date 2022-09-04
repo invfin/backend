@@ -1982,7 +1982,10 @@ class CompanyExtended(BaseToAll, ChartSerializer):
         comparing_ev_ratios_json, all_ev_ratios = self.comparing_ev_ratios_json(limit)
         comparing_growth_rates_json, all_growth_rates = self.comparing_growth_rates_json(limit)
 
-        marketcap = all_ev_ratios[0].market_cap
+        try:
+            marketcap = all_ev_ratios[0].market_cap
+        except IndexError:
+            marketcap = 0
         return {
             'comparing_income_json': comparing_income_json,
             'comparing_balance_json': comparing_balance_json,
