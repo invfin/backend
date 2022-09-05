@@ -170,7 +170,6 @@ def medium_valuation_view(request):
             neu_growth = float(data.get('complex_neu_growth', 0).replace(',', '.'))
             pes_growth = float(data.get('complex_pes_growth', 0).replace(',', '.'))
             company_id = data.get('company_id')
-            current_per = float(data.get('current_per', 0).replace(',', '.'))
             opt_margin = float(data.get('complex_opt_margin', 0).replace(',', '.'))
             neu_margin = float(data.get('complex_neu_margin', 0).replace(',', '.'))
             pes_margin = float(data.get('complex_pes_margin', 0).replace(',', '.'))
@@ -182,8 +181,10 @@ def medium_valuation_view(request):
             pes_fcf_margin = float(data.get('complex_pes_fcf_margin', 0).replace(',', '.'))
 
             the_company = Company.objects.get(id = company_id)
-            last_revenue = the_company.most_recent_inc_statement.revenue
-            average_shares_out = the_company.most_recent_inc_statement.weighted_average_shares_outstanding
+            latest_inc = the_company.inc_statements.latest()
+
+            last_revenue = latest_inc.revenue
+            average_shares_out = latest_inc.weighted_average_shares_outstanding
 
             UserScreenerMediumPrediction.objects.create(
                 user = user,
@@ -227,6 +228,10 @@ def medium_valuation_view(request):
                 average_shares_out = average_shares_out
                 )
 
+            print(opt_valuation)
+            print(neu_valuation)
+            print(pes_valuation)
+
             return JsonResponse ({'complex_opt_valuation':opt_valuation,
             'complex_neu_valuation':neu_valuation, 'complex_pes_valuation':pes_valuation
             })
@@ -250,14 +255,16 @@ def simple_valuation_view(request):
             neu_growth = float(data.get('neu_grow', 0).replace(',', '.'))
             pes_growth = float(data.get('pes_grow', 0).replace(',', '.'))
             company_id = data.get('comp')
-            buyback = float(data.get('buyback', 0).replace(',', '.'))
+            # buyback = float(data.get('buyback', 0).replace(',', '.'))
 
             the_company = Company.objects.get(id = company_id)
-            last_revenue = the_company.most_recent_inc_statement.revenue
-            average_shares_out = the_company.most_recent_inc_statement.weighted_average_shares_outstanding
-            net_income_margin = the_company.most_recent_margins.net_income_margin
-            fcf_margin = the_company.most_recent_margins.fcf_margin
-            buyback = buyback
+            latest_inc = the_company.inc_statements.latest()
+            latest_margin = the_company.margins.latest()
+            last_revenue = latest_inc.revenue
+            average_shares_out = latest_inc.weighted_average_shares_outstanding
+            net_income_margin = latest_margin.net_income_margin
+            fcf_margin = latest_margin.fcf_margin
+            buyback = the_company.growth_rates.latest().shares_buyback
 
             UserScreenerSimplePrediction.objects.create(
                 user = user,
