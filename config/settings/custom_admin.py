@@ -19,6 +19,7 @@ TOP_MENU_LEFT = [
 
 TOP_MENU_RIGHT = [
         {"name": "Web", "url": FULL_DOMAIN, "new_window": True},
+        {"name": "API", "url": f"{FULL_DOMAIN}/api/api-documentacion", "new_window": True},
         {"model": "users.user"}
     ]
 
@@ -57,6 +58,9 @@ SIDE_MENU = [
             {
                 'model': 'users.user',
                 'label': "Users",
+            },
+            {
+                'model': 'api.Key',
             },
             {
                 'model': 'seo.UserJourney',
@@ -182,6 +186,18 @@ SIDE_MENU = [
             },
             {
                 'model': 'general.Country',
+            },
+        ),
+    },
+    {
+        'label': 'API Endpoints',
+        'icon': 'fas fa-key',
+        'models': (
+            {
+                'model': 'api.EndpointsCategory',
+            },
+            {
+                'model': 'api.Endpoint',
             },
         ),
     },

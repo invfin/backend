@@ -1,8 +1,10 @@
 from django.contrib import admin
+from django.db import models
 from django.urls import reverse
 from django.utils.html import format_html
-from import_export import resources
+
 from import_export.admin import ImportExportModelAdmin
+from django_json_widget.widgets import JSONEditorWidget
 
 from .models import (
     CompanyRequestAPI,
@@ -59,14 +61,34 @@ class SuperinvestorRequestAPIAdmin(BaseRequestAPIAdmin):
     pass
 
 
+class EndpointInline(admin.StackedInline):
+    formfield_overrides = {
+        models.JSONField: {'widget': JSONEditorWidget},
+    }
+    model = Endpoint
+    extra = 0
+    jazzmin_tab_id = "endpoints"
+
+
 @admin.register(EndpointsCategory)
 class EndpointsCategoryAdmin(admin.ModelAdmin):
+    inlines = [EndpointInline]
+    formfield_overrides = {
+        models.JSONField: {'widget': JSONEditorWidget},
+    }
     list_display = ['id', 'title', 'order', 'icon']
     list_editable = list_display[1:]
+    jazzmin_form_tabs = [
+        ("general", "Main category"),
+        ("endpoints", "Endpoints"),
+    ]
 
 
 @admin.register(Endpoint)
 class EndpointAdmin(ImportExportModelAdmin, admin.ModelAdmin):
+    formfield_overrides = {
+        models.JSONField: {'widget': JSONEditorWidget},
+    }
     list_display = [
         'title',
         'title_related',
