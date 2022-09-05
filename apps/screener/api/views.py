@@ -227,13 +227,10 @@ def medium_valuation_view(request):
                 buyback = pes_buyback,
                 average_shares_out = average_shares_out
                 )
-
-            print(opt_valuation)
-            print(neu_valuation)
-            print(pes_valuation)
-
-            return JsonResponse ({'complex_opt_valuation':opt_valuation,
-            'complex_neu_valuation':neu_valuation, 'complex_pes_valuation':pes_valuation
+            return JsonResponse ({
+                'complex_opt_valuation':opt_valuation,
+                'complex_neu_valuation':neu_valuation,
+                'complex_pes_valuation':pes_valuation
             })
 
 
@@ -300,6 +297,8 @@ def simple_valuation_view(request):
                 average_shares_out = average_shares_out
                 )
 
-            return JsonResponse ({'opt_valuation':opt_valuation,
-            'neu_valuation':neu_valuation, 'pes_valuation':pes_valuation
+            return JsonResponse ({
+                'opt_valuation':opt_valuation,
+                'neu_valuation':neu_valuation,
+                'pes_valuation':pes_valuation
             })
