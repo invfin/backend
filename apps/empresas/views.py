@@ -25,8 +25,7 @@ def companies_searcher(request):
     results = [f'{company.name} [{company.ticker}]' for company in companies_availables]
 
     data = json.dumps(results)
-    mimetype = "application/json"
-    return HttpResponse(data, mimetype)
+    return HttpResponse(data, "application/json")
 
 
 class ExcelAPIIncome(BaseAPIView):

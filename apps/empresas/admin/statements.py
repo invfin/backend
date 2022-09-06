@@ -1,7 +1,8 @@
 from django.contrib import admin
 from django.db import models
 
-from django_json_widget.widgets import JSONEditorWidget
+from apps.empresas.admin.base import BaseCompanyAdmin, BaseJSONWidgetInline
+from apps.empresas.admin.filters.base import HasQuarterFilter
 
 from apps.empresas.models import (
     CompanyStatementsProxy,
@@ -21,135 +22,179 @@ from apps.empresas.models import (
     PriceToRatio,
 )
 
+class BaseStatementAdmin(admin.ModelAdmin):
+    list_display = [
+        "id",
+        "date",
+        "year",
+        "period",
+        "company",
+    ]
 
-class IncomeStatementInline(admin.StackedInline):
-    formfield_overrides = {
-        models.JSONField: {'widget': JSONEditorWidget},
-    }
-    extra = 0
+    search_fields = [
+        "company__ticker",
+        "company__name",
+    ]
+
+    list_filter = [
+        "is_ttm",
+        "date",
+        "period",
+    ]
+
+
+@admin.register(IncomeStatement)
+class IncomeStatementAdmin(BaseStatementAdmin):
+    pass
+
+
+@admin.register(BalanceSheet)
+class BalanceSheetAdmin(BaseStatementAdmin):
+    pass
+
+
+@admin.register(CashflowStatement)
+class CashflowStatementAdmin(BaseStatementAdmin):
+    pass
+
+
+@admin.register(RentabilityRatio)
+class RentabilityRatioAdmin(BaseStatementAdmin):
+    pass
+
+
+@admin.register(LiquidityRatio)
+class LiquidityRatioAdmin(BaseStatementAdmin):
+    pass
+
+
+@admin.register(MarginRatio)
+class MarginRatioAdmin(BaseStatementAdmin):
+    pass
+
+
+@admin.register(FreeCashFlowRatio)
+class FreeCashFlowRatioAdmin(BaseStatementAdmin):
+    pass
+
+
+@admin.register(PerShareValue)
+class PerShareValueAdmin(BaseStatementAdmin):
+    pass
+
+
+@admin.register(NonGaap)
+class NonGaapAdmin(BaseStatementAdmin):
+    pass
+
+
+@admin.register(OperationRiskRatio)
+class OperationRiskRatioAdmin(BaseStatementAdmin):
+    pass
+
+
+@admin.register(EnterpriseValueRatio)
+class EnterpriseValueRatioAdmin(BaseStatementAdmin):
+    pass
+
+
+@admin.register(CompanyGrowth)
+class CompanyGrowthAdmin(BaseStatementAdmin):
+    pass
+
+
+@admin.register(EficiencyRatio)
+class EficiencyRatioAdmin(BaseStatementAdmin):
+    pass
+
+
+@admin.register(PriceToRatio)
+class PriceToRatioAdmin(BaseStatementAdmin):
+    pass
+
+
+
+
+class HasAverageQuarterFilter(HasQuarterFilter):
+    statements = [
+        IncomeStatement,
+        BalanceSheet,
+        CashflowStatement,
+    ]
+
+
+class IncomeStatementInline(BaseJSONWidgetInline):
     model = IncomeStatement
     jazzmin_tab_id = "IncomeStatement"
 
 
-class BalanceSheetInline(admin.StackedInline):
-    formfield_overrides = {
-        models.JSONField: {'widget': JSONEditorWidget},
-    }
-    extra = 0
+class BalanceSheetInline(BaseJSONWidgetInline):
     model = BalanceSheet
     jazzmin_tab_id = "BalanceSheet"
 
 
-class CashflowStatementInline(admin.StackedInline):
-    formfield_overrides = {
-        models.JSONField: {'widget': JSONEditorWidget},
-    }
-    extra = 0
+class CashflowStatementInline(BaseJSONWidgetInline):
     model = CashflowStatement
     jazzmin_tab_id = "CashflowStatement"
 
 
-class RentabilityRatioInline(admin.StackedInline):
-    formfield_overrides = {
-        models.JSONField: {'widget': JSONEditorWidget},
-    }
-    extra = 0
+class RentabilityRatioInline(BaseJSONWidgetInline):
     model = RentabilityRatio
     jazzmin_tab_id = "RentabilityRatio"
 
 
-class LiquidityRatioInline(admin.StackedInline):
-    formfield_overrides = {
-        models.JSONField: {'widget': JSONEditorWidget},
-    }
-    extra = 0
+class LiquidityRatioInline(BaseJSONWidgetInline):
     model = LiquidityRatio
     jazzmin_tab_id = "LiquidityRatio"
 
 
-class MarginRatioInline(admin.StackedInline):
-    formfield_overrides = {
-        models.JSONField: {'widget': JSONEditorWidget},
-    }
-    extra = 0
+class MarginRatioInline(BaseJSONWidgetInline):
     model = MarginRatio
     jazzmin_tab_id = "MarginRatio"
 
 
-class FreeCashFlowRatioInline(admin.StackedInline):
-    formfield_overrides = {
-        models.JSONField: {'widget': JSONEditorWidget},
-    }
-    extra = 0
+class FreeCashFlowRatioInline(BaseJSONWidgetInline):
     model = FreeCashFlowRatio
     jazzmin_tab_id = "FreeCashFlowRatio"
 
 
-class PerShareValueInline(admin.StackedInline):
-    formfield_overrides = {
-        models.JSONField: {'widget': JSONEditorWidget},
-    }
-    extra = 0
+class PerShareValueInline(BaseJSONWidgetInline):
     model = PerShareValue
     jazzmin_tab_id = "PerShareValue"
 
 
-class NonGaapInline(admin.StackedInline):
-    formfield_overrides = {
-        models.JSONField: {'widget': JSONEditorWidget},
-    }
-    extra = 0
+class NonGaapInline(BaseJSONWidgetInline):
     model = NonGaap
     jazzmin_tab_id = "NonGaap"
 
 
-class OperationRiskRatioInline(admin.StackedInline):
-    formfield_overrides = {
-        models.JSONField: {'widget': JSONEditorWidget},
-    }
-    extra = 0
+class OperationRiskRatioInline(BaseJSONWidgetInline):
     model = OperationRiskRatio
     jazzmin_tab_id = "OperationRiskRatio"
 
 
-class EnterpriseValueRatioInline(admin.StackedInline):
-    formfield_overrides = {
-        models.JSONField: {'widget': JSONEditorWidget},
-    }
-    extra = 0
+class EnterpriseValueRatioInline(BaseJSONWidgetInline):
     model = EnterpriseValueRatio
     jazzmin_tab_id = "EnterpriseValueRatio"
 
 
-class CompanyGrowthInline(admin.StackedInline):
-    formfield_overrides = {
-        models.JSONField: {'widget': JSONEditorWidget},
-    }
-    extra = 0
+class CompanyGrowthInline(BaseJSONWidgetInline):
     model = CompanyGrowth
     jazzmin_tab_id = "CompanyGrowth"
 
 
-class EficiencyRatioInline(admin.StackedInline):
-    formfield_overrides = {
-        models.JSONField: {'widget': JSONEditorWidget},
-    }
-    extra = 0
+class EficiencyRatioInline(BaseJSONWidgetInline):
     model = EficiencyRatio
     jazzmin_tab_id = "EficiencyRatio"
 
 
-class PriceToRatioInline(admin.StackedInline):
-    formfield_overrides = {
-        models.JSONField: {'widget': JSONEditorWidget},
-    }
-    extra = 0
+class PriceToRatioInline(BaseJSONWidgetInline):
     model = PriceToRatio
     jazzmin_tab_id = "PriceToRatio"
 
 
 @admin.register(CompanyStatementsProxy)
-class CompanyStatementsProxyAdmin(admin.ModelAdmin):
+class CompanyStatementsProxyAdmin(BaseCompanyAdmin):
     inlines = [
         IncomeStatementInline,
         BalanceSheetInline,
@@ -192,6 +237,8 @@ class CompanyStatementsProxyAdmin(admin.ModelAdmin):
         "name",
     ]
 
+    list_filter = []
+
     jazzmin_form_tabs = [
         ("general", "Company"),
         ("IncomeStatement", "Income Statement"),
@@ -211,4 +258,4 @@ class CompanyStatementsProxyAdmin(admin.ModelAdmin):
     ]
 
     def get_object(self, request, object_id: str, from_field):
-        return Company.objects.prefetch_historical_data().get(id=object_id)
+        return CompanyStatementsProxy.objects.prefetch_historical_data().get(id=object_id)

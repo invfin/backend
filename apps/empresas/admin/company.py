@@ -3,7 +3,7 @@ from django.db import models
 
 from django_json_widget.widgets import JSONEditorWidget
 
-
+from apps.empresas.admin.base import BaseJSONWidgetInline
 from apps.empresas.models import (
     Company,
     TopInstitutionalOwnership,
@@ -11,21 +11,13 @@ from apps.empresas.models import (
 )
 
 
-class TopInstitutionalOwnershipInline(admin.StackedInline):
-    formfield_overrides = {
-        models.JSONField: {'widget': JSONEditorWidget},
-    }
+class TopInstitutionalOwnershipInline(BaseJSONWidgetInline):
     model = TopInstitutionalOwnership
-    extra = 0
     jazzmin_tab_id = "top-institutionals"
 
 
-class CompanyUpdateLogInline(admin.StackedInline):
-    formfield_overrides = {
-        models.JSONField: {'widget': JSONEditorWidget},
-    }
+class CompanyUpdateLogInline(BaseJSONWidgetInline):
     model = CompanyUpdateLog
-    extra = 0
     jazzmin_tab_id = "logs"
 
 
@@ -34,6 +26,7 @@ class CompanyAdmin(admin.ModelAdmin):
     formfield_overrides = {
         models.JSONField: {'widget': JSONEditorWidget},
     }
+
     inlines = [
         TopInstitutionalOwnershipInline,
         CompanyUpdateLogInline,

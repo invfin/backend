@@ -1,7 +1,8 @@
 from django.contrib import admin
-from django.db import models
 
-from django_json_widget.widgets import JSONEditorWidget
+
+from apps.empresas.admin.base import BaseCompanyAdmin, BaseJSONWidgetInline
+from apps.empresas.admin.filters.base import HasQuarterFilter
 
 from apps.empresas.models import (
     BalanceSheetYFinance,
@@ -11,59 +12,36 @@ from apps.empresas.models import (
 )
 
 
-class IncomeStatementYFinanceInline(admin.StackedInline):
-    formfield_overrides = {
-        models.JSONField: {'widget': JSONEditorWidget},
-    }
+class HasYFinanceQuarterFilter(HasQuarterFilter):
+    statements = [
+        IncomeStatementYFinance,
+        BalanceSheetYFinance,
+        CashflowStatementYFinance,
+    ]
+
+
+class IncomeStatementYFinanceInline(BaseJSONWidgetInline):
     model = IncomeStatementYFinance
-    extra = 0
     jazzmin_tab_id = "income-statement"
 
 
-class BalanceSheetYFinanceInline(admin.StackedInline):
-    formfield_overrides = {
-        models.JSONField: {'widget': JSONEditorWidget},
-    }
+class BalanceSheetYFinanceInline(BaseJSONWidgetInline):
     model = BalanceSheetYFinance
-    extra = 0
     jazzmin_tab_id = "balance-sheet"
 
 
-class CashflowStatementYFinanceInline(admin.StackedInline):
-    formfield_overrides = {
-        models.JSONField: {'widget': JSONEditorWidget},
-    }
+class CashflowStatementYFinanceInline(BaseJSONWidgetInline):
     model = CashflowStatementYFinance
-    extra = 0
     jazzmin_tab_id = "cashflow-statement"
 
 
 @admin.register(CompanyYFinanceProxy)
-class CompanyYFinanceProxyAdmin(admin.ModelAdmin):
+class CompanyYFinanceProxyAdmin(BaseCompanyAdmin):
     inlines = [
         IncomeStatementYFinanceInline,
         BalanceSheetYFinanceInline,
         CashflowStatementYFinanceInline
     ]
-    list_display = [
-        "id",
-        "ticker",
-        "name",
-        "has_inc",
-        "has_bs",
-        "has_cf",
+    list_filter = BaseCompanyAdmin.list_filter + [
+        HasYFinanceQuarterFilter
     ]
-
-    search_fields = [
-        "id",
-        "ticker",
-        "name",
-    ]
-
-    jazzmin_form_tabs = [
-        ("general", "Company"),
-        ("income-statement", "Income Statement"),
-        ("balance-sheet", "Balance Sheet"),
-        ("cashflow-statement", "Cashflow Statement"),
-    ]
-

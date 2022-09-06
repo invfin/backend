@@ -5,4 +5,4 @@ from apps.empresas.models import CompanyUpdateLog
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        CompanyUpdateLog.objects.all().delete()
+        CompanyUpdateLog.objects.filter(error_message="Works great").delete()

@@ -230,6 +230,26 @@ SIDE_MENU = [
         ),
     },
     {
+        'label': 'Raw company data',
+        'icon': 'fas fa-file-excel',
+        'models': (
+            {"model": "empresas.IncomeStatement",},
+            {"model": "empresas.BalanceSheet",},
+            {"model": "empresas.CashflowStatement",},
+            {"model": "empresas.RentabilityRatio",},
+            {"model": "empresas.LiquidityRatio",},
+            {"model": "empresas.MarginRatio",},
+            {"model": "empresas.FreeCashFlowRatio",},
+            {"model": "empresas.PerShareValue",},
+            {"model": "empresas.NonGaap",},
+            {"model": "empresas.OperationRiskRatio",},
+            {"model": "empresas.EnterpriseValueRatio",},
+            {"model": "empresas.CompanyGrowth",},
+            {"model": "empresas.EficiencyRatio",},
+            {"model": "empresas.PriceToRatio",},
+        ),
+    },
+    {
         'label': 'Auth & Security',
         'icon': 'fas fa-shield-alt',
         'models': (
