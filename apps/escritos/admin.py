@@ -45,9 +45,9 @@ class TermContentAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
 
 @admin.register(Term)
 class TermAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
+    inlines = [TermContentInline]
 
     actions = [find_images]
-
 
     list_display = [
         "id",

@@ -25,9 +25,11 @@ from .managers import TermManager
 DOMAIN = settings.FULL_DOMAIN
 User = get_user_model()
 
+
 class Term(BaseEscrito):
     upvotes = ManyToManyField(User, blank=True, related_name="user_upvote_term")
     downvotes = ManyToManyField(User, blank=True, related_name="user_downvote_term")
+    meta_information = None
     # contributors = ManyToManyField(User, blank=True, related_name="contributors")
     objects = TermManager()
 
