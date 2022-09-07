@@ -36,13 +36,13 @@ class RetrieveCompanyData:
         return self.finnhub.create_financials_finnhub()
 
     @log_company("first_financials_yfinance_info")
-    def create_financials_yfinance(self, period: str):
+    def create_financials_yfinance(self, period: str = "a"):
         if period == "q":
             return self.yfinance.create_quarterly_financials_yfinance()
         return self.yfinance.create_yearly_financials_yfinance()
 
     @log_company("first_financials_yahooquery_info")
-    def create_financials_yahooquery(self, period: str):
+    def create_financials_yahooquery(self, period: str = "a"):
         if period == "q":
             return self.yahooquery.create_quarterly_financials_yahooquery()
         return self.yahooquery.create_yearly_financials_yahooquery()

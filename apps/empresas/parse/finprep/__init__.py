@@ -12,7 +12,7 @@ class FinprepInfo(NormalizeFinprep, ParseFinprep):
         if not list_income_statements_finprep:
             list_income_statements_finprep = self.request_income_statements_finprep(self.company.ticker)
         for income_statements_finprep in list_income_statements_finprep:
-            IncomeStatementFinprep.objects.create(
+            IncomeStatementFinprep.objects.get_or_create(
                 **self.normalize_income_statements_finprep(income_statements_finprep)
             )
 
@@ -20,7 +20,7 @@ class FinprepInfo(NormalizeFinprep, ParseFinprep):
         if not list_balance_sheets_finprep:
             list_balance_sheets_finprep = self.request_balance_sheets_finprep(self.company.ticker)
         for balance_sheets_finprep in list_balance_sheets_finprep:
-            BalanceSheetFinprep.objects.create(
+            BalanceSheetFinprep.objects.get_or_create(
                 **self.normalize_balance_sheets_finprep(balance_sheets_finprep)
             )
 
@@ -28,7 +28,7 @@ class FinprepInfo(NormalizeFinprep, ParseFinprep):
         if not list_cashflow_statements_finprep:
             list_cashflow_statements_finprep = self.request_cashflow_statements_finprep(self.company.ticker)
         for cashflow_statements_finprep in list_cashflow_statements_finprep:
-            CashflowStatementFinprep.objects.create(
+            CashflowStatementFinprep.objects.get_or_create(
                 **self.normalize_cashflow_statements_finprep(cashflow_statements_finprep)
             )
 

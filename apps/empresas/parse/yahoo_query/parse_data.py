@@ -13,6 +13,10 @@ class ParseYahooQuery:
         return self.yqcompany.price
 
     @property
+    def request_earning_history_yahooquery(self):
+        return self.yqcompany.earning_history
+
+    @property
     def request_key_stats_yahooquery(self):
         return self.yqcompany.key_stats
 

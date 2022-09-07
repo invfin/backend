@@ -1,6 +1,11 @@
 from typing import Type, Callable
+from datetime import datetime
+
 import pandas as pd
 
+from apps.general import constants
+from apps.general.outils.save_from_df import DFInfoCreator
+from apps.general.models import Period
 from apps.empresas.models import (
     BalanceSheetYahooQuery,
     IncomeStatementYahooQuery,
@@ -11,7 +16,7 @@ from apps.empresas.models import (
 )
 from apps.empresas.parse.yahoo_query.normalize_data import NormalizeYahooQuery
 from apps.empresas.parse.yahoo_query.parse_data import ParseYahooQuery
-from apps.general.outils.save_from_df import DFInfoCreator
+
 
 
 class YahooQueryInfo(DFInfoCreator, NormalizeYahooQuery, ParseYahooQuery):
@@ -24,6 +29,43 @@ class YahooQueryInfo(DFInfoCreator, NormalizeYahooQuery, ParseYahooQuery):
         self.normalize_income_statement = self.normalize_income_statements_yahooquery
         self.normalize_balance_sheet = self.normalize_balance_sheets_yahooquery
         self.normalize_cashflow_statement = self.normalize_cashflow_statements_yahooquery
+
+    def match_quarters_with_earning_history_yahooquery(self):
+        df = self.request_earning_history_yahooquery
+        quarter_matching = {
+            "-1q": constants.PERIOD_3_QUARTER,
+            "-2q": constants.PERIOD_2_QUARTER,
+            "-3q": constants.PERIOD_1_QUARTER,
+            "-4q": constants.PERIOD_4_QUARTER,
+        }
+        prev_period = None
+        for index, data in df.iterrows():
+            quarter = data.get("period")
+            year = data.get("quarter")
+            year_date_obj = datetime.strptime(year, '%Y-%m-%d').date()
+            actual_quarter = quarter_matching[quarter]
+            actual_year = year_date_obj.year
+            if prev_period:
+                if prev_period.period == constants.PERIOD_4_QUARTER:
+                    actual_year = year_date_obj.year + 1
+
+            actual_period, created = Period.objects.get_or_create(year=actual_year, period=actual_quarter)
+            prev_period = actual_period
+            self.company.incomestatementyahooquery_set.filter(
+                year=year_date_obj
+            ).exclude(
+                period__period=constants.PERIOD_FOR_YEAR
+            ).update(period=actual_period)
+            self.company.balancesheetyahooquery_set.filter(
+                year=year_date_obj
+            ).exclude(
+                period__period=constants.PERIOD_FOR_YEAR
+            ).update(period=actual_period)
+            self.company.cashflowstatementyahooquery_set.filter(
+                year=year_date_obj
+            ).exclude(
+                period__period=constants.PERIOD_FOR_YEAR
+            ).update(period=actual_period)
 
     def create_statements_from_df(
         self,
@@ -39,9 +81,9 @@ class YahooQueryInfo(DFInfoCreator, NormalizeYahooQuery, ParseYahooQuery):
         for index, data in df.iterrows():
             financials_data = data.to_dict()
             financials_data["asOfDate"] = financials_data["asOfDate"].to_pydatetime().date().strftime("%m/%d/%Y")
-            model.objects.create(
+            model.objects.get_or_create(
                 financials=financials_data,
-                **function(data, period)
+                default={**function(data, period)}
             )
 
     def create_quarterly_financials_yahooquery(self):
@@ -86,6 +128,6 @@ class YahooQueryInfo(DFInfoCreator, NormalizeYahooQuery, ParseYahooQuery):
     def create_key_stats_yahooquery(self):
         key_stats = self.request_key_stats_yahooquery
         for key in key_stats.keys():
-            KeyStatsYahooQuery.objects.create(
+            KeyStatsYahooQuery.objects.get_or_create(
                 **self.normalize_key_stats_yahooquery(key_stats[key])
             )

@@ -22,8 +22,8 @@ class BaseStatement(BaseToAll):
 
     class Meta:
         abstract = True
-        get_latest_by = 'date'
-        ordering = ['-date']
+        get_latest_by = 'year'
+        ordering = ['-year']
 
 
 class IncomeStatement(BaseStatement):

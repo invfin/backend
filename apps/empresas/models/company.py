@@ -17,6 +17,7 @@ from django.db.models import (
 from django.urls import reverse
 
 from apps.general.mixins import BaseToAll
+from apps.general.constants import PERIOD_FOR_YEAR
 
 from apps.empresas import constants
 from apps.empresas.extensions.company import CompanyExtended
@@ -164,6 +165,18 @@ class CompanyYahooQueryProxy(Company):
     @property
     def has_cf(self):
         return self.cashflowstatementyahooquery_set.all().exists()
+
+    @property
+    def has_inc_quarter(self):
+        return self.incomestatementyahooquery_set.all().exclude(period__period=PERIOD_FOR_YEAR).exists()
+
+    @property
+    def has_bs_quarter(self):
+        return self.balancesheetyahooquery_set.all().exclude(period__period=PERIOD_FOR_YEAR).exists()
+
+    @property
+    def has_cf_quarter(self):
+        return self.cashflowstatementyahooquery_set.all().exclude(period__period=PERIOD_FOR_YEAR).exists()
 
     @property
     def has_key_stats(self):

@@ -20,6 +20,9 @@ CURRENT_DOMAIN = env("CURRENT_DOMAIN")
 MAIN_DOMAIN = env("MAIN_DOMAIN")
 FULL_DOMAIN = env("FULL_DOMAIN")
 
+
+DATA_UPLOAD_MAX_NUMBER_FIELDS = None
+
 # https://docs.djangoproject.com/en/dev/ref/settings/#debug
 DEBUG = env.bool("DJANGO_DEBUG", True)
 

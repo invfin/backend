@@ -1,6 +1,7 @@
 from django.utils import timezone
 import json
 
+from apps.general import constants
 from apps.seo.models import UserCompanyVisited, VisiteurCompanyVisited
 from apps.seo.outils.visiteur_meta import SeoInformation
 from apps.empresas.constants import DEFAULT_JSON_CHECKS_FILE
@@ -37,23 +38,11 @@ def log_company(checking: str = None):
     return decorator
 
 
-def save_search(request, model_visited):
-    """
-    TODO
-    When visiteur will be implemented in the request, retreive the visiteur from there
-    """
-    if request.user.is_authenticated:
-        user = request.user
-        save_model = UserCompanyVisited
-    else:
-        user = SeoInformation().find_visiteur(request)
-        save_model = VisiteurCompanyVisited
-
-    save_model.objects.create(
-        user=user,
-        model_visited=model_visited,
-        date=timezone.now()
-    )
+def arrange_quarters(company):
+    constants.PERIOD_3_QUARTER
+    constants.PERIOD_2_QUARTER
+    constants.PERIOD_1_QUARTER
+    constants.PERIOD_4_QUARTER
 
 
 def company_searched(search, request):
@@ -62,7 +51,6 @@ def company_searched(search, request):
     try:
         empresa_busqueda = Company.objects.get(ticker = ticker)
         redirect_path = empresa_busqueda.get_absolute_url()
-        save_search(request, empresa_busqueda)
     except Exception as e:
         redirect_path = request.META.get('HTTP_REFERER')
 
