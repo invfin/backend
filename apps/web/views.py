@@ -9,6 +9,8 @@ from django.views.generic import (
     CreateView,
     DetailView,
     ListView,
+    UpdateView,
+    TemplateView,
     RedirectView
 )
 from django.contrib.auth.mixins import UserPassesTestMixin
@@ -16,9 +18,50 @@ from django.contrib.auth.mixins import UserPassesTestMixin
 from apps.general.utils import HostChecker
 from apps.public_blog.models import WritterProfile
 from apps.seo.views import SEOTemplateView
-from apps.web.models import WebsiteLegalPage, WebsiteEmail
+from apps.escritos.models import Term
 
+from apps.web.models import WebsiteLegalPage, WebsiteEmail
 from apps.web.forms import ContactForm, WebEmailForm
+
+
+class BasePrivateWebView(UserPassesTestMixin):
+    def test_func(self):
+        return self.request.user.is_superuser
+
+
+class ManagementWebView(BasePrivateWebView, TemplateView):
+    template_name = "management/inicio.html"
+
+    # def get_context_data(self, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+    #     context["models"] =
+    #     return context
+
+
+class ManagementTermListView(BasePrivateWebView, ListView):
+    model = Term
+    template_name = "management/inicio_term.html"
+
+
+class ManagementTermDetailView(BasePrivateWebView, UpdateView):
+    model = Term
+    template_name = "management/details_term.html"
+    slug_field = 'slug'
+    fields = "__all__"
+
+
+class WebEngagementView(BasePrivateWebView, ListView):
+    template_name = 'engagement/email_management.html'
+    model = WebsiteEmail
+    context_object_name = "web_emails"
+
+
+class CreateWebEmailView(BasePrivateWebView, CreateView):
+    form_class = WebEmailForm
+    template_name = 'engagement/mandar_emails.html'
+
+    def get_success_url(self) -> str:
+        return reverse("web:manage_engagement_web")
 
 
 class HomePage(SEOTemplateView):
@@ -109,34 +152,3 @@ class ExcelRedirectView(RedirectView):
 
     def get_redirect_url(self, *args, **kwargs):
         return reverse("business:product", kwargs={"slug": "excel-inteligente"})
-
-
-class BaseWebView(UserPassesTestMixin):
-    def test_func(self):
-        return self.request.user.is_superuser
-
-
-class WebEngagementView(BaseWebView, ListView):
-    template_name = 'engagement/email_management.html'
-    model = WebsiteEmail
-    context_object_name = "web_emails"
-
-
-class CreateWebEmailView(BaseWebView, CreateView):
-    form_class = WebEmailForm
-    template_name = 'engagement/mandar_emails.html'
-
-    def get_success_url(self) -> str:
-        return reverse("web:manage_engagement_web")
-
-
-def handler403(request, exception):
-    return render(request, 'errors/403.html')
-
-
-def handler404(request, exception):
-    return render(request, 'errors/404.html')
-
-
-def handler500(request):
-    return render(request, 'errors/500.html')

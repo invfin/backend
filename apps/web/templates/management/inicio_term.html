@@ -1,0 +1,55 @@
+{% extends "bases/base_content.html" %}
+{% load static i18n extra %}
+{% block header %}{% include "management/headers/inicio.html" %}{% endblock header%}
+
+{% block FirstContent %}
+<div class="card">
+  <div class="card-header clearfix">
+    <div class="float-start">
+      {{now}}
+    </div>
+    <div class="float-end">
+      <!-- <a>Ver más</a> -->
+    </div>
+  </div>
+  <div class="table-responsive">
+      <table class="table table-hover">
+        <tbody>
+          {% for obj in objects %}
+            <tr>
+              <th scope="row" style="width: 10px">
+                  <a href="{% url 'screener:company' information.symbol %}"
+                    class="name mb-0 text-sm">
+                    {{information.symbol}}
+                  </a>
+                  <br>
+                  <span class="name mb-0 text-xsm" style="font-size: 8px;">
+                    {{information.shortName}}
+                  </span>
+              </th>
+              <th>
+                  Precio actual
+                  <br>
+              <span class="name mb-0 text-xsm">
+                  {{information.regularMarketPrice|floatformat}} {{information.currency}}
+              </span>
+              </th>
+              <th>
+                  Cambio de precio
+                  <br>
+              <span class="name mb-0 text-xsm
+              {% if information.regularMarketChangePercent > 0 %}
+              {{stock_information.extra.positive}}
+              {% else %}
+              {{stock_information.extra.negative}}
+              {% endif %}">
+                  {{information.regularMarketChangePercent|floatformat}} %
+              </span>
+              </th>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+  </div>
+</div>
+{% endblock FirstContent%}

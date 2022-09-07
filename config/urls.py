@@ -16,7 +16,7 @@ from apps.seo.sitemaps import (
 )
 
 sitemaps = {
-    'blogs':PublicBlogSitemap,    
+    'blogs':PublicBlogSitemap,
     'preguntas':QuestionSitemap,
     'empresas':CompanySitemap,
     'glosario':TermSitemap,
@@ -30,12 +30,12 @@ urlpatterns = [
     path("", include("apps.general.urls", namespace="general")),
     path("", include("apps.web.urls", namespace="web")),
     path("", include("apps.users.urls", namespace="users")),
-    path("accounts/", include("allauth.urls")),    
+    path("accounts/", include("allauth.urls")),
     path("", include("apps.preguntas_respuestas.urls", namespace="preguntas_respuestas")),
     path("", include("apps.escritos.urls", namespace="escritos")),
     path("", include("apps.public_blog.urls", namespace="public_blog")),
     path("screener/", include("apps.screener.urls", namespace="screener")),
-    path("", include("apps.super_investors.urls", namespace="super_investors")),    
+    path("", include("apps.super_investors.urls", namespace="super_investors")),
     path("", include("apps.empresas.urls", namespace="empresas")),
     # path("", include("apps.etfs.urls", namespace="etfs")),
     path("", include("apps.cartera.urls", namespace="cartera")),
@@ -55,12 +55,12 @@ urlpatterns += [
     path("api/obtener-clave/", obtain_auth_key),
 ]
 
-handler403 = "apps.web.views.handler403"
-handler404 = "apps.web.views.handler404"
-handler500 = "apps.web.views.handler500"
+handler403 = "apps.general.views.handler403"
+handler404 = "apps.general.views.handler404"
+handler500 = "apps.general.views.handler500"
 
 if settings.DEBUG:
-    
+
     if "drf_spectacular" in settings.INSTALLED_APPS:
         from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
         urlpatterns += [
@@ -71,7 +71,7 @@ if settings.DEBUG:
             name="api-docs",
         )
     ]
-    
+
     urlpatterns += [
         path(
             "400/",
@@ -90,7 +90,7 @@ if settings.DEBUG:
         ),
         path("500/", default_views.server_error),
     ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-    
+
     if "debug_toolbar" in settings.INSTALLED_APPS:
         import debug_toolbar
 

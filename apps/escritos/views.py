@@ -2,6 +2,7 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.shortcuts import redirect
+from django.urls import reverse
 from django.views.generic import CreateView, DetailView, ListView
 
 User = get_user_model()
@@ -32,19 +33,33 @@ class GlosarioView(SEOListView):
 
 
 class TermDetailsView(SEODetailView):
-	model = Term
-	template_name = 'term_details.html'
-	context_object_name = "object"
-	slug_field = 'slug'
-	is_article = True
-	open_graph_type = 'article'
-	path_name = "recommend_side_companies"
-	recsys_title = "Te pueden interesar"
+    model = Term
+    template_name = 'term_details.html'
+    context_object_name = "object"
+    slug_field = 'slug'
+    is_article = True
+    open_graph_type = 'article'
+    path_name = "recommend_side_companies"
+    recsys_title = "Te pueden interesar"
 
-	def get_context_data(self, **kwargs):
-		context = super().get_context_data(**kwargs)
-		self.update_views(self.object)
-		return context
+    def get(self, request, *args, **kwargs):
+        self.object = self.get_object()
+        if not self.object:
+            messages.error(self.request, 'Perdón no hemos encontrado este término')
+            return redirect(reverse('escritos:glosario'))
+        context = self.get_context_data(object=self.object)
+        return self.render_to_response(context)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        self.update_views(self.object)
+        return context
+
+    def get_object(self):
+        try:
+            return self.model.objects.get(**self.kwargs)
+        except:
+            return
 
 
 class TermCorrectionView(CreateView):
@@ -70,7 +85,7 @@ class TermCorrectionView(CreateView):
 
 	def post(self, request, *args, **kwargs):
 		form = CreateCorrectionForm(request.POST)
-        
+
 		if self.request.user.is_anonymous:
 			recaptcha_response = self.request.POST.get('g-recaptcha-response')
 			url = 'https://www.google.com/recaptcha/api/siteverify'
@@ -90,11 +105,11 @@ class TermCorrectionView(CreateView):
 				return self.form_invalid(form)
 		else:
 			user = self.request.user
-		
+
 		if form.is_valid():
 			return self.form_valid(form, user)
 		return self.form_invalid(form)
-	
+
 	def form_valid(self, form, user):
 		form.instance.reviwed_by = user
 		model = form.save()

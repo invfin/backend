@@ -1,4 +1,6 @@
 from django.contrib import admin
+from django.urls import reverse
+from django.utils.html import format_html
 
 from import_export.admin import ImportExportActionModelAdmin
 
@@ -43,13 +45,15 @@ class TermContentAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
 
 @admin.register(Term)
 class TermAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
-    inlines = [TermContentInline]
 
     actions = [find_images]
 
 
     list_display = [
-        'title',
+        "id",
+        'term_link',
+        "title",
+        "slug",
         'category',
         'status',
         'total_votes',
@@ -61,6 +65,8 @@ class TermAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
     ]
 
     list_editable = [
+        "title",
+        "slug",
         'category',
         'status',
     ]
@@ -71,6 +77,11 @@ class TermAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
         ("general", "Company"),
         ("content", "Term parts"),
     ]
+
+    def term_link(self, obj):
+        link = reverse(f'web:manage_single_term', args=(obj.slug,))
+        return format_html(f'<a target="_blank" href="{link}">{obj.title}</a>')
+    term_link.short_description = 'term'
 
 
 @admin.register(TermCorrection)
