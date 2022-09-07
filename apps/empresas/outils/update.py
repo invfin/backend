@@ -3,7 +3,7 @@ from datetime import datetime
 
 from apps.translate.google_trans_new import google_translator
 from apps.empresas.utils import log_company
-from apps.empresas.company.ratios import CalculateCompanyFinancialRatios
+from apps.empresas.outils.ratios import CalculateCompanyFinancialRatios
 
 
 class UpdateCompany(CalculateCompanyFinancialRatios):

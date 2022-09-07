@@ -4,7 +4,7 @@ from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.views.generic import DetailView, ListView, RedirectView
 
-from apps.empresas.company.update import UpdateCompany
+from apps.empresas.outils.update import UpdateCompany
 from apps.empresas.models import Company, ExchangeOrganisation
 from apps.empresas.utils import company_searched
 from apps.etfs.models import Etf

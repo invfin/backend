@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from apps.empresas.valuations import discounted_cashflow
+from apps.empresas.outils.valuations import discounted_cashflow
 
 
 class TestValuation(TestCase):

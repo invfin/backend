@@ -5,6 +5,7 @@ import yfinance as yf
 
 class ParseYFinance:
     company = None
+
     @property
     def yfcompany(self):
         return yf.Ticker(self.company.ticker)

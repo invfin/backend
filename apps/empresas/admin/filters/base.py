@@ -18,7 +18,7 @@ class PeriodFilter(SimpleListFilter):
 
 
 class HasQuarterFilter(SimpleListFilter):
-    #Not efficient at all
+    #Not efficient
     title = 'Has quarters'
 
     parameter_name = 'has_quarters'

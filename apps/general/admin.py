@@ -109,6 +109,7 @@ class CountryAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
 @admin.register(Period)
 class PeriodAdmin(admin.ModelAdmin):
     list_display = [
-        'id',
-        'period',
+        "id",
+        "year",
+        "period",
     ]

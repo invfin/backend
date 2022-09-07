@@ -7,6 +7,11 @@ from django.db.models import (
 )
 
 from apps.empresas.models import BaseStatement
+from apps.empresas.extensions.yahoo_query import (
+    IncomeStatementYahooQueryExtended,
+    BalanceSheetYahooQueryExtended,
+    CashflowStatementYahooQueryExtended
+)
 
 
 class BaseUnknownField(BaseStatement):
@@ -16,7 +21,7 @@ class BaseUnknownField(BaseStatement):
         abstract = True
 
 
-class IncomeStatementYahooQuery(BaseUnknownField):
+class IncomeStatementYahooQuery(BaseUnknownField, IncomeStatementYahooQueryExtended):
     as_of_date = DateTimeField(blank=True, null=True)
     period_type = CharField(max_length=10, blank=True, null=True)
     currency_code = CharField(max_length=10, blank=True, null=True)

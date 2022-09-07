@@ -32,6 +32,7 @@ class BaseStatementAdmin(admin.ModelAdmin):
     ]
 
     search_fields = [
+        "company__id",
         "company__ticker",
         "company__name",
     ]

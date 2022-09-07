@@ -15,9 +15,11 @@ from django.db.models import (
     TextField,
 )
 from django.urls import reverse
-from apps.empresas import constants
 
-from apps.empresas.company.extension import CompanyExtended
+from apps.general.mixins import BaseToAll
+
+from apps.empresas import constants
+from apps.empresas.extensions.company import CompanyExtended
 from apps.empresas.managers import CompanyManager, CompanyUpdateLogManager
 
 
@@ -26,7 +28,7 @@ def default_dict():
         return json.load(checks_json)
 
 
-class Company(CompanyExtended):
+class Company(BaseToAll, CompanyExtended):
     ticker = CharField(max_length=30, unique=True, db_index=True)
     name = CharField(max_length=700, null=True, blank=True)
     currency = ForeignKey("general.Currency", on_delete=SET_NULL, null=True, blank=True)

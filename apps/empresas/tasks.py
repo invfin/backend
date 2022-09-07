@@ -4,8 +4,8 @@ from django.db.models import OuterRef, Subquery, Q
 
 from config import celery_app
 
-from apps.empresas.company.update import UpdateCompany
-from apps.empresas.company.retrieve_data import RetrieveCompanyData
+from apps.empresas.outils.update import UpdateCompany
+from apps.empresas.outils.retrieve_data import RetrieveCompanyData
 from apps.general.constants import PERIOD_FOR_YEAR
 from apps.general.models import Period
 from apps.empresas.models import (
@@ -18,74 +18,74 @@ from apps.empresas.models import (
 @celery_app.task()
 def update_periods_current_average_statements(company_id):
     company = Company.objects.get(id=company_id)
-    company.inc_statements.all().update(
-        period=Subquery(
-            Period.objects.get_or_create(year=OuterRef("date"), period=PERIOD_FOR_YEAR)
-        )
-    )
+    for statement in company.inc_statements.all():
+        period, created = Period.objects.get_or_create(year=statement.date, period=PERIOD_FOR_YEAR)
+        statement.period = period
+        statement.save(update_fields=["period"])
+
     company.balance_sheets.all().update(
-        period=Subquery(
-            Period.objects.get_or_create(year=OuterRef("date"), period=PERIOD_FOR_YEAR)
+        period_id=Subquery(
+            Period.objects.filter(year=OuterRef("date"), period=PERIOD_FOR_YEAR).only("id")
         )
     )
     company.cf_statements.all().update(
-        period=Subquery(
-            Period.objects.get_or_create(year=OuterRef("date"), period=PERIOD_FOR_YEAR)
+        period_id=Subquery(
+            Period.objects.filter(year=OuterRef("date"), period=PERIOD_FOR_YEAR).only("id")
         )
     )
     company.rentability_ratios.all().update(
-        period=Subquery(
-            Period.objects.get_or_create(year=OuterRef("date"), period=PERIOD_FOR_YEAR)
+        period_id=Subquery(
+            Period.objects.filter(year=OuterRef("date"), period=PERIOD_FOR_YEAR).only("id")
         )
     )
     company.liquidity_ratios.all().update(
-        period=Subquery(
-            Period.objects.get_or_create(year=OuterRef("date"), period=PERIOD_FOR_YEAR)
+        period_id=Subquery(
+            Period.objects.filter(year=OuterRef("date"), period=PERIOD_FOR_YEAR).only("id")
         )
     )
     company.margins.all().update(
-        period=Subquery(
-            Period.objects.get_or_create(year=OuterRef("date"), period=PERIOD_FOR_YEAR)
+        period_id=Subquery(
+            Period.objects.filter(year=OuterRef("date"), period=PERIOD_FOR_YEAR).only("id")
         )
     )
     company.fcf_ratios.all().update(
-        period=Subquery(
-            Period.objects.get_or_create(year=OuterRef("date"), period=PERIOD_FOR_YEAR)
+        period_id=Subquery(
+            Period.objects.filter(year=OuterRef("date"), period=PERIOD_FOR_YEAR).only("id")
         )
     )
     company.per_share_values.all().update(
-        period=Subquery(
-            Period.objects.get_or_create(year=OuterRef("date"), period=PERIOD_FOR_YEAR)
+        period_id=Subquery(
+            Period.objects.filter(year=OuterRef("date"), period=PERIOD_FOR_YEAR).only("id")
         )
     )
     company.non_gaap_figures.all().update(
-        period=Subquery(
-            Period.objects.get_or_create(year=OuterRef("date"), period=PERIOD_FOR_YEAR)
+        period_id=Subquery(
+            Period.objects.filter(year=OuterRef("date"), period=PERIOD_FOR_YEAR).only("id")
         )
     )
     company.operation_risks_ratios.all().update(
-        period=Subquery(
-            Period.objects.get_or_create(year=OuterRef("date"), period=PERIOD_FOR_YEAR)
+        period_id=Subquery(
+            Period.objects.filter(year=OuterRef("date"), period=PERIOD_FOR_YEAR).only("id")
         )
     )
     company.ev_ratios.all().update(
-        period=Subquery(
-            Period.objects.get_or_create(year=OuterRef("date"), period=PERIOD_FOR_YEAR)
+        period_id=Subquery(
+            Period.objects.filter(year=OuterRef("date"), period=PERIOD_FOR_YEAR).only("id")
         )
     )
     company.growth_rates.all().update(
-        period=Subquery(
-            Period.objects.get_or_create(year=OuterRef("date"), period=PERIOD_FOR_YEAR)
+        period_id=Subquery(
+            Period.objects.filter(year=OuterRef("date"), period=PERIOD_FOR_YEAR).only("id")
         )
     )
     company.efficiency_ratios.all().update(
-        period=Subquery(
-            Period.objects.get_or_create(year=OuterRef("date"), period=PERIOD_FOR_YEAR)
+        period_id=Subquery(
+            Period.objects.filter(year=OuterRef("date"), period=PERIOD_FOR_YEAR).only("id")
         )
     )
     company.price_to_ratios.all().update(
-        period=Subquery(
-            Period.objects.get_or_create(year=OuterRef("date"), period=PERIOD_FOR_YEAR)
+        period_id=Subquery(
+            Period.objects.filter(year=OuterRef("date"), period=PERIOD_FOR_YEAR).only("id")
         )
     )
 

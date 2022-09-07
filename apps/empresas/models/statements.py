@@ -10,9 +10,10 @@ from django.db.models import (
 
 from apps.empresas.models import Company
 from apps.general.models import Period
+from apps.general.mixins import BaseToAll
 
 
-class BaseStatement(Model):
+class BaseStatement(BaseToAll):
     date = IntegerField(default=0)
     year = DateField(null=True, blank=True)
     company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True)

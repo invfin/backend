@@ -6,15 +6,11 @@ import yahooquery as yq
 
 from django.db.models import Avg
 
-from apps.empresas.valuations import discounted_cashflow
+from apps.empresas.outils.valuations import discounted_cashflow
 from apps.general.utils import ChartSerializer
-from apps.general.mixins import BaseToAll
 
 
-class CompanyExtended(BaseToAll, ChartSerializer):
-    class Meta:
-        abstract = True
-
+class CompanyExtended(ChartSerializer):
     currency_to_use = None
 
     def find_currency(self, statement):
