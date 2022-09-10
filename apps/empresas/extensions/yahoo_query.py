@@ -1,13 +1,103 @@
-from apps.empresas.outils.average_statements import AverageStatements
-
-class IncomeStatementYahooQueryExtended(AverageStatements):
-    algo = None
-
-
-class BalanceSheetYahooQueryExtended(AverageStatements):
-    pass
+from .base_averages import (
+    AverageIncomeStatement,
+    AverageBalanceSheet,
+    AverageCashflowStatement,
+)
 
 
-class CashflowStatementYahooQueryExtended(AverageStatements):
-    pass
+class IncomeStatementYahooQueryExtended(AverageIncomeStatement):
+    revenue_field = "total_revenue"
+    cost_of_revenue_field = "cost_of_revenue"
+    gross_profit_field = "gross_profit"
+    rd_expenses_field = "research_and_development"
+    general_administrative_expenses_field = ""
+    selling_marketing_expenses_field = ""
+    sga_expenses_field = "selling_general_and_administration"
+    other_expenses_field = "other_income_expense"
+    operating_expenses_field = "operating_expense"
+    cost_and_expenses_field = ""
+    interest_expense_field = "interest_expense"
+    depreciation_amortization_field = ""
+    ebitda_field = "ebitda"
+    operating_income_field = "operating_income"
+    net_total_other_income_expenses_field = "other_income_expense"
+    income_before_tax_field = "pretax_income"
+    income_tax_expenses_field = ""
+    net_income_field = "net_income"
+    weighted_average_shares_outstanding_field = "basic_average_shares"
+    weighted_average_diluated_shares_outstanding_field = "diluted_average_shares"
 
+
+class BalanceSheetYahooQueryExtended(AverageBalanceSheet):
+    cash_and_cash_equivalents_field = "cash_and_cash_equivalents"
+    short_term_investments_field = ""
+    cash_and_short_term_investments_field = "cash_cash_equivalents_and_short_term_investments"
+    net_receivables_field = "receivables"
+    inventory_field = "inventory"
+    other_current_assets_field = "other_current_assets"
+    total_current_assets_field = "current_assets"
+    property_plant_equipment_field = "net_ppe"
+    goodwill_field = ""
+    intangible_assets_field = ""
+    goodwill_and_intangible_assets_field = ""
+    long_term_investments_field = ""
+    tax_assets_field = ""
+    other_non_current_assets_field = ""
+    total_non_current_assets_field = "total_non_current_assets"
+    other_assets_field = ""
+    total_assets_field = "total_assets"
+    account_payables_field = "accounts_payable"
+    short_term_debt_field = ""
+    tax_payables_field = ""
+    deferred_revenue_field = ""
+    other_current_liabilities_field = "other_current_liabilities"
+    total_current_liabilities_field = "current_liabilities"
+    long_term_debt_field = "long_term_debt"
+    deferred_revenue_non_current_field = ""
+    deferred_tax_liabilities_non_current_field = ""
+    other_non_current_liabilities_field = "other_non_current_liabilities"
+    total_non_current_liabilities_field = ""
+    other_liabilities_field = ""
+    total_liabilities_field = ""
+    common_stocks_field = "common_stock"
+    retained_earnings_field = "retained_earnings"
+    accumulated_other_comprehensive_income_loss_field = ""
+    othertotal_stockholders_equity_field = ""
+    total_stockholders_equity_field = "stockholders_equity"
+    total_liabilities_and_total_equity_field = ""
+    total_investments_field = ""
+    total_debt_field = "total_debt"
+    net_debt_field = "net_debt"
+
+
+class CashflowStatementYahooQueryExtended(AverageCashflowStatement):
+    net_income_field = "net_income"
+    depreciation_amortization_field = "depreciation_and_amortization"
+    deferred_income_tax_field = "deferred_income_tax"
+    stock_based_compesation_field = "stock_based_compensation"
+    change_in_working_capital_field = "change_in_working_capital"
+    accounts_receivables_field = ""
+    inventory_field = ""
+    accounts_payable_field = ""
+    other_working_capital_field = ""
+    other_non_cash_items_field = ""
+    operating_activities_cf_field = "cash_flow_from_continuing_operating_activities"
+    investments_property_plant_equipment_field = ""
+    acquisitions_net_field = ""
+    purchases_investments_field = "purchase_of_investment"
+    sales_maturities_investments_field = ""
+    other_investing_activites_field = ""
+    investing_activities_cf_field = "cash_flow_from_continuing_investing_activities"
+    debt_repayment_field = "repayment_of_debt"
+    common_stock_issued_field = "net_common_stock_issuance"
+    common_stock_repurchased_field = "repurchase_of_capital_stock"
+    dividends_paid_field = "cash_dividends_paid"
+    other_financing_activities_field = ""
+    financing_activities_cf_field = "cash_flow_from_continuing_financing_activities"
+    effect_forex_exchange_field = ""
+    net_change_cash_field = ""
+    cash_end_period_field = "end_cash_position"
+    cash_beginning_period_field = "beginning_cash_position"
+    operating_cf_field = "operating_cash_flow"
+    capex_field = "capital_expenditure"
+    fcf_field = "free_cash_flow"

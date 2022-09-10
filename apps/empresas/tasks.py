@@ -4,16 +4,32 @@ from django.db.models import OuterRef, Subquery, Q
 
 from config import celery_app
 
-from apps.empresas.outils.update import UpdateCompany
-from apps.empresas.outils.retrieve_data import RetrieveCompanyData
 from apps.general.constants import PERIOD_FOR_YEAR
 from apps.general.models import Period
+from apps.empresas.outils.update import UpdateCompany
+from apps.empresas.outils.retrieve_data import RetrieveCompanyData
+from apps.empresas.utils import arrange_quarters
+from apps.empresas.parse.yahoo_query import YahooQueryInfo
 from apps.empresas.models import (
     Company,
     BalanceSheetFinprep,
     IncomeStatementFinprep,
     CashflowStatementFinprep
 )
+
+
+@celery_app.task()
+def arrange_quarters_task(company_id):
+    company = Company.objects.get(id=company_id)
+    YahooQueryInfo(company).match_quarters_with_earning_history_yahooquery()
+    arrange_quarters(company)
+
+
+@celery_app.task()
+def start_arrange_quarters_task():
+    for company in Company.objects.all():
+        arrange_quarters_task.delay(company.id)
+
 
 @celery_app.task()
 def update_periods_current_average_statements(company_id):

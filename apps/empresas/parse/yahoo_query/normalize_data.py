@@ -11,15 +11,19 @@ class NormalizeYahooQuery:
     def initial_data(
         self,
         date: Type[pd.Timestamp],
+        period_type,
         period: Callable,
         currency
     )-> Dict[str, Union[int, datetime.datetime, Type["Company"]]]:
         return dict(
-            date=date.year,
+            date=date.date().year,
             year=date.to_pydatetime().date(),
             company=self.company,
             period=period(date.year),
-            reported_currency=Currency.objects.financial_currency(currency)
+            reported_currency=Currency.objects.financial_currency(currency),
+            as_of_date=date,
+            period_type=period_type,
+            currency_code=currency,
         )
 
     def normalize_balance_sheets_yahooquery(
@@ -28,10 +32,12 @@ class NormalizeYahooQuery:
         period: Callable
     )-> Dict[str, Union[float, int, str, Any]]:
         return dict(
-            **self.initial_data(yahooquery_serie["asOfDate"], period, yahooquery_serie["currencyCode"]),
-            as_of_date=yahooquery_serie.get("asOfDate"),
-            period_type=yahooquery_serie.get("periodType"),
-            currency_code=yahooquery_serie.get("currencyCode"),
+            **self.initial_data(
+                yahooquery_serie.get("asOfDate"),
+                yahooquery_serie.get("periodType"),
+                period,
+                yahooquery_serie.get("currencyCode")
+            ),
             accounts_payable=yahooquery_serie.get("AccountsPayable"),
             accounts_receivable=yahooquery_serie.get("AccountsReceivable"),
             accumulated_depreciation=yahooquery_serie.get("AccumulatedDepreciation"),
@@ -100,10 +106,12 @@ class NormalizeYahooQuery:
         period: Callable
     )-> Dict[str, Union[float, int, str, Any]]:
         return dict(
-            **self.initial_data(yahooquery_serie["asOfDate"], period, yahooquery_serie["currencyCode"]),
-            as_of_date=yahooquery_serie.get("asOfDate"),
-            period_type=yahooquery_serie.get("periodType"),
-            currency_code=yahooquery_serie.get("currencyCode"),
+            **self.initial_data(
+                yahooquery_serie.get("asOfDate"),
+                yahooquery_serie.get("periodType"),
+                period,
+                yahooquery_serie.get("currencyCode")
+            ),
             beginning_cash_position=yahooquery_serie.get("BeginningCashPosition"),
             capital_expenditure=yahooquery_serie.get("CapitalExpenditure"),
             cash_dividends_paid=yahooquery_serie.get("CashDividendsPaid"),
@@ -169,10 +177,12 @@ class NormalizeYahooQuery:
         period: Callable
     )-> Dict[str, Union[float, int, str, Any]]:
         return dict(
-            **self.initial_data(yahooquery_serie["asOfDate"], period, yahooquery_serie["currencyCode"]),
-            as_of_date=yahooquery_serie.get("asOfDate"),
-            period_type=yahooquery_serie.get("periodType"),
-            currency_code=yahooquery_serie.get("currencyCode"),
+            **self.initial_data(
+                yahooquery_serie.get("asOfDate"),
+                yahooquery_serie.get("periodType"),
+                period,
+                yahooquery_serie.get("currencyCode")
+            ),
             basic_average_shares=yahooquery_serie.get("BasicAverageShares"),
             basic_eps=yahooquery_serie.get("BasicEPS"),
             cost_of_revenue=yahooquery_serie.get("CostOfRevenue"),

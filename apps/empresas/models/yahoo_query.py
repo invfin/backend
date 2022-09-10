@@ -74,7 +74,7 @@ class IncomeStatementYahooQuery(BaseUnknownField, IncomeStatementYahooQueryExten
         return self.company.ticker + str(self.date)
 
 
-class BalanceSheetYahooQuery(BaseUnknownField):
+class BalanceSheetYahooQuery(BaseUnknownField, BalanceSheetYahooQueryExtended):
     as_of_date = DateTimeField(blank=True, null=True)
     period_type = CharField(max_length=10, blank=True, null=True)
     currency_code = CharField(max_length=10, blank=True, null=True)
@@ -148,7 +148,7 @@ class BalanceSheetYahooQuery(BaseUnknownField):
         return self.company.ticker + str(self.date)
 
 
-class CashflowStatementYahooQuery(BaseUnknownField):
+class CashflowStatementYahooQuery(BaseUnknownField, CashflowStatementYahooQueryExtended):
     as_of_date = DateTimeField(blank=True, null=True)
     period_type = CharField(max_length=10, blank=True, null=True)
     currency_code = CharField(max_length=10, blank=True, null=True)

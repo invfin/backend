@@ -1,96 +1,12 @@
+from statistics import mean
+
+
 class AverageStatements:
-    class IncomeStatement:
-        revenue: float = None
-        cost_of_revenue: float = None
-        gross_profit: float = None
-        rd_expenses: float = None
-        general_administrative_expenses: float = None
-        selling_marketing_expenses: float = None
-        sga_expenses: float = None
-        other_expenses: float = None
-        operating_expenses: float = None
-        cost_and_expenses: float = None
-        interest_expense: float = None
-        depreciation_amortization: float = None
-        ebitda: float = None
-        operating_income: float = None
-        net_total_other_income_expenses: float = None
-        income_before_tax: float = None
-        income_tax_expenses: float = None
-        net_income: float = None
-        weighted_average_shares_outstanding: float = None
-        weighted_average_diluated_shares_outstanding: float = None
+    def calculate_income_statement(self):
+        pass
 
-    class BalanceSheet:
-        cash_and_cash_equivalents: float = None
-        short_term_investments: float = None
-        cash_and_short_term_investments: float = None
-        net_receivables: float = None
-        inventory: float = None
-        other_current_assets: float = None
-        total_current_assets: float = None
-        property_plant_equipment: float = None
-        goodwill: float = None
-        intangible_assets: float = None
-        goodwill_and_intangible_assets: float = None
-        long_term_investments: float = None
-        tax_assets: float = None
-        other_non_current_assets: float = None
-        total_non_current_assets: float = None
-        other_assets: float = None
-        total_assets: float = None
-        account_payables: float = None
-        short_term_debt: float = None
-        tax_payables: float = None
-        deferred_revenue: float = None
-        other_current_liabilities: float = None
-        total_current_liabilities: float = None
-        long_term_debt: float = None
-        deferred_revenue_non_current: float = None
-        deferred_tax_liabilities_non_current: float = None
-        other_non_current_liabilities: float = None
-        total_non_current_liabilities: float = None
-        other_liabilities: float = None
-        total_liabilities: float = None
-        common_stocks: float = None
-        retained_earnings: float = None
-        accumulated_other_comprehensive_income_loss: float = None
-        othertotal_stockholders_equity: float = None
-        total_stockholders_equity: float = None
-        total_liabilities_and_total_equity: float = None
-        total_investments: float = None
-        total_debt: float = None
-        net_debt: float = None
+    def calculate_balance_sheet(self):
+        pass
 
-    class CashflowStatement:
-        net_income: float = None
-        depreciation_amortization: float = None
-        deferred_income_tax: float = None
-        stock_based_compesation: float = None
-        change_in_working_capital: float = None
-        accounts_receivables: float = None
-        inventory: float = None
-        accounts_payable: float = None
-        other_working_capital: float = None
-        other_non_cash_items: float = None
-        operating_activities_cf: float = None
-        investments_property_plant_equipment: float = None
-        acquisitions_net: float = None
-        purchases_investments: float = None
-        sales_maturities_investments: float = None
-        other_investing_activites: float = None
-        investing_activities_cf: float = None
-        debt_repayment: float = None
-        common_stock_issued: float = None
-        common_stock_repurchased: float = None
-        dividends_paid: float = None
-        other_financing_activities: float = None
-        financing_activities_cf: float = None
-        effect_forex_exchange: float = None
-        net_change_cash: float = None
-        cash_end_period: float = None
-        cash_beginning_period: float = None
-        operating_cf: float = None
-        capex: float = None
-        fcf: float = None
-
+    def calculate_cashflow_statement(self):
+        pass

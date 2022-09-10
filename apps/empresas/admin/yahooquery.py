@@ -3,7 +3,6 @@ from django.contrib import admin
 from apps.empresas.admin.base import BaseCompanyAdmin, BaseJSONWidgetInline
 from apps.empresas.admin.filters.base import HasQuarterFilter
 from apps.empresas.outils.retrieve_data import RetrieveCompanyData
-from apps.empresas.parse.yahoo_query import YahooQueryInfo
 from apps.empresas.models import (
     BalanceSheetYahooQuery,
     CashflowStatementYahooQuery,
@@ -44,7 +43,7 @@ class KeyStatsYahooQueryInline(BaseJSONWidgetInline):
 @admin.action(description='Update financials')
 def update_financials(modeladmin, request, queryset):
     for query in queryset:
-        RetrieveCompanyData(query).create_financials_yahooquery()
+        RetrieveCompanyData(query).create_financials_yahooquery("a")
         RetrieveCompanyData(query).create_financials_yahooquery("q")
 
 
@@ -54,18 +53,11 @@ def update_stats(modeladmin, request, queryset):
         RetrieveCompanyData(query).create_key_stats_yahooquery()
 
 
-@admin.action(description='Match quarters')
-def match_quarters(modeladmin, request, queryset):
-    for query in queryset:
-        YahooQueryInfo(query).match_quarters_with_earning_history_yahooquery()
-
-
 @admin.register(CompanyYahooQueryProxy)
 class CompanyYahooQueryProxyAdmin(BaseCompanyAdmin):
     actions = [
         update_financials,
         update_stats,
-        match_quarters,
     ]
     inlines = [
         IncomeStatementYahooQueryInline,

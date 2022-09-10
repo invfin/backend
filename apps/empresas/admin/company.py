@@ -3,6 +3,8 @@ from django.db import models
 
 from django_json_widget.widgets import JSONEditorWidget
 
+from apps.empresas.parse.yahoo_query import YahooQueryInfo
+from apps.empresas.utils import arrange_quarters
 from apps.empresas.admin.base import BaseJSONWidgetInline
 from apps.empresas.models import (
     Company,
@@ -21,11 +23,22 @@ class CompanyUpdateLogInline(BaseJSONWidgetInline):
     jazzmin_tab_id = "logs"
 
 
+@admin.action(description='Match quarters')
+def match_quarters(modeladmin, request, queryset):
+    for query in queryset:
+        YahooQueryInfo(query).match_quarters_with_earning_history_yahooquery()
+        arrange_quarters(query)
+
+
 @admin.register(Company)
 class CompanyAdmin(admin.ModelAdmin):
     formfield_overrides = {
         models.JSONField: {'widget': JSONEditorWidget},
     }
+
+    actions = [
+        match_quarters,
+    ]
 
     inlines = [
         TopInstitutionalOwnershipInline,

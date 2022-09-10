@@ -9,6 +9,11 @@ from django.db.models import (
 )
 
 from apps.empresas.models.statements import BaseStatement
+from apps.empresas.extensions.finprep import (
+    BalanceSheetFinprepExtended,
+    CashflowStatementFinprepExtended,
+    IncomeStatementFinprepExtended
+)
 
 
 class BaseFinprep(BaseStatement):
@@ -25,7 +30,7 @@ class BaseFinprep(BaseStatement):
         abstract = True
 
 
-class IncomeStatementFinprep(BaseFinprep):
+class IncomeStatementFinprep(BaseFinprep, IncomeStatementFinprepExtended):
     cost_and_expenses = FloatField(default=0, blank=True, null=True)
     cost_of_revenue = FloatField(default=0, blank=True, null=True)
     depreciation_and_amortization = FloatField(default=0, blank=True, null=True)
@@ -64,7 +69,7 @@ class IncomeStatementFinprep(BaseFinprep):
         return self.company.ticker + str(self.date)
 
 
-class BalanceSheetFinprep(BaseFinprep):
+class BalanceSheetFinprep(BaseFinprep, BalanceSheetFinprepExtended):
     account_payables = FloatField(default=0, blank=True, null=True)
     accumulated_other_comprehensive_income_loss = FloatField(default=0, blank=True, null=True)
     capital_lease_obligations = FloatField(default=0, blank=True, null=True)
@@ -119,7 +124,7 @@ class BalanceSheetFinprep(BaseFinprep):
         return self.company.ticker + str(self.date)
 
 
-class CashflowStatementFinprep(BaseFinprep):
+class CashflowStatementFinprep(BaseFinprep, CashflowStatementFinprepExtended):
     accounts_payables = FloatField(default=0, blank=True, null=True)
     accounts_receivables = FloatField(default=0, blank=True, null=True)
     acquisitions_net = FloatField(default=0, blank=True, null=True)

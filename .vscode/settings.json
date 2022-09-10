@@ -1,0 +1,5 @@
+{
+    "makefile.extensionOutputFolder": "./.vscode",
+    "explorer.autoReveal": false,
+    "workbench.editor.enablePreview": false
+}
