@@ -27,11 +27,10 @@ class YFinanceInfo(DFInfoCreator, NormalizeYFinance, ParseYFinance):
     ):
 
         for column in df:
-            model.objects.get_or_create(
+            model.objects.create(
                 financials=df[column].to_dict(),
-                **function(column, period)
+                **function(df[column], column, period)
             )
-        return
 
     def create_quarterly_financials_yfinance(self):
         self.create_financials(

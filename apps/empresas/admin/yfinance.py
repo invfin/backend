@@ -1,7 +1,6 @@
 from django.contrib import admin
 
-
-from apps.empresas.admin.base import BaseCompanyAdmin, BaseJSONWidgetInline
+from apps.empresas.admin.base import BaseCompanyAdmin, BaseJSONWidgetInline, BaseStatementAdmin
 from apps.empresas.admin.filters.base import HasQuarterFilter
 
 from apps.empresas.models import (
@@ -10,6 +9,21 @@ from apps.empresas.models import (
     IncomeStatementYFinance,
     CompanyYFinanceProxy
 )
+
+
+@admin.register(BalanceSheetYFinance)
+class BalanceSheetYFinanceAdmin(BaseStatementAdmin):
+    pass
+
+
+@admin.register(CashflowStatementYFinance)
+class CashflowStatementYFinanceAdmin(BaseStatementAdmin):
+    pass
+
+
+@admin.register(IncomeStatementYFinance)
+class IncomeStatementYFinanceAdmin(BaseStatementAdmin):
+    pass
 
 
 class HasYFinanceQuarterFilter(HasQuarterFilter):

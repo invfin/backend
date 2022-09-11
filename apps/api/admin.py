@@ -17,22 +17,6 @@ from .models import (
 )
 
 
-@admin.register(Key)
-class KeyAdmin(admin.ModelAdmin):
-    list_display = ['key', 'user_link', 'created']
-    ordering = ['-created']
-    search_fields = ['user_username']
-
-    def user_link(self, obj):
-        field = getattr(obj, 'user')
-        object_name = field.object_name.lower()
-        app_name = field.app_label
-        args = field.id
-        link = reverse(f'admin:{app_name}_{object_name}_change', args=(args,))
-        return format_html(f'<a target="_blank" href="{link}">{field}</a>')
-    user_link.short_description = 'user'
-
-
 @admin.register(ReasonKeyRequested)
 class ReasonKeyRequestedAdmin(admin.ModelAdmin):
     list_display = ['user', 'created']
@@ -61,13 +45,66 @@ class SuperinvestorRequestAPIAdmin(BaseRequestAPIAdmin):
     pass
 
 
-class EndpointInline(admin.StackedInline):
+class BaseInline(admin.StackedInline):
     formfield_overrides = {
         models.JSONField: {'widget': JSONEditorWidget},
     }
-    model = Endpoint
     extra = 0
+
+
+class CompanyRequestAPIInline(BaseInline):
+    jazzmin_tab_id = "companies"
+    model = CompanyRequestAPI
+
+
+class TermRequestAPIInline(BaseInline):
+    jazzmin_tab_id = "terms"
+    model = TermRequestAPI
+
+
+class SuperinvestorRequestAPIInline(BaseInline):
+    jazzmin_tab_id = "superinvesotrs"
+    model = SuperinvestorRequestAPI
+
+
+class EndpointInline(BaseInline):
+    model = Endpoint
     jazzmin_tab_id = "endpoints"
+
+
+@admin.register(Key)
+class KeyAdmin(admin.ModelAdmin):
+    # inlines = [
+    #     CompanyRequestAPIInline,
+    #     TermRequestAPIInline,
+    #     SuperinvestorRequestAPIInline,
+    # ]
+    list_display = ['key', 'user_link', 'created']
+    ordering = ['-created']
+    search_fields = ['user_username']
+
+    jazzmin_form_tabs = [
+        ("general", "User"),
+        ("companies", "Companies"),
+        ("terms", "Terms"),
+        ("superinvesotrs", "Superinvestors"),
+    ]
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).prefetch_related(
+            "companyrequestapi_set",
+            "termrequestapi_set",
+            "superinvestorrequestapi_set",
+        )
+
+    def user_link(self, obj):
+        field = getattr(obj, 'user')
+        object_name = field.object_name.lower()
+        app_name = field.app_label
+        args = field.id
+        link = reverse(f'admin:{app_name}_{object_name}_change', args=(args,))
+        return format_html(f'<a target="_blank" href="{link}">{field}</a>')
+    user_link.short_description = 'user'
 
 
 @admin.register(EndpointsCategory)

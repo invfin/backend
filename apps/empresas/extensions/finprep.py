@@ -70,7 +70,7 @@ class BalanceSheetFinprepExtended(AverageBalanceSheet):
     net_debt_field = ""
 
 
-class CashflowStatementYFinanceExtended(AverageCashflowStatement):
+class CashflowStatementFinprepExtended(AverageCashflowStatement):
     net_income_field = ""
     depreciation_amortization_field = ""
     deferred_income_tax_field = ""

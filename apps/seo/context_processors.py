@@ -1,5 +1,3 @@
-from django.conf import settings
-
 from .outils.save_journey import JourneyClassifier
 
 def journey(request):
@@ -7,6 +5,3 @@ def journey(request):
     comes_from = str(request.META.get('HTTP_REFERER'))
     JourneyClassifier().save_journey(request, current_path, comes_from)
     return {}
-
-def debug(request):
-    return {'debug':settings.DEBUG}

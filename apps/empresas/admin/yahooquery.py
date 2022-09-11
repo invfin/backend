@@ -1,8 +1,7 @@
 from django.contrib import admin
 
-from apps.empresas.admin.base import BaseCompanyAdmin, BaseJSONWidgetInline
+from apps.empresas.admin.base import BaseCompanyAdmin, BaseJSONWidgetInline, BaseStatementAdmin
 from apps.empresas.admin.filters.base import HasQuarterFilter
-from apps.empresas.outils.retrieve_data import RetrieveCompanyData
 from apps.empresas.models import (
     BalanceSheetYahooQuery,
     CashflowStatementYahooQuery,
@@ -10,6 +9,21 @@ from apps.empresas.models import (
     KeyStatsYahooQuery,
     CompanyYahooQueryProxy
 )
+
+
+@admin.register(BalanceSheetYahooQuery)
+class BalanceSheetYahooQueryAdmin(BaseStatementAdmin):
+    pass
+
+
+@admin.register(CashflowStatementYahooQuery)
+class CashflowStatementYahooQueryAdmin(BaseStatementAdmin):
+    pass
+
+
+@admin.register(IncomeStatementYahooQuery)
+class IncomeStatementYahooQueryAdmin(BaseStatementAdmin):
+    pass
 
 
 class HasYahooQueryQuarterFilter(HasQuarterFilter):
@@ -40,13 +54,6 @@ class KeyStatsYahooQueryInline(BaseJSONWidgetInline):
     jazzmin_tab_id = "key-stats"
 
 
-@admin.action(description='Update financials')
-def update_financials(modeladmin, request, queryset):
-    for query in queryset:
-        RetrieveCompanyData(query).create_financials_yahooquery("a")
-        RetrieveCompanyData(query).create_financials_yahooquery("q")
-
-
 @admin.action(description='Update stats')
 def update_stats(modeladmin, request, queryset):
     for query in queryset:
@@ -55,8 +62,7 @@ def update_stats(modeladmin, request, queryset):
 
 @admin.register(CompanyYahooQueryProxy)
 class CompanyYahooQueryProxyAdmin(BaseCompanyAdmin):
-    actions = [
-        update_financials,
+    actions = BaseCompanyAdmin.actions + [
         update_stats,
     ]
     inlines = [

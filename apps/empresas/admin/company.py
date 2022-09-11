@@ -5,7 +5,7 @@ from django_json_widget.widgets import JSONEditorWidget
 
 from apps.empresas.parse.yahoo_query import YahooQueryInfo
 from apps.empresas.utils import arrange_quarters
-from apps.empresas.admin.base import BaseJSONWidgetInline
+from apps.empresas.admin.base import BaseJSONWidgetInline, update_financials
 from apps.empresas.models import (
     Company,
     TopInstitutionalOwnership,
@@ -38,6 +38,7 @@ class CompanyAdmin(admin.ModelAdmin):
 
     actions = [
         match_quarters,
+        update_financials,
     ]
 
     inlines = [

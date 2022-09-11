@@ -3,6 +3,7 @@ from django.db import models
 
 from django_json_widget.widgets import JSONEditorWidget
 
+from apps.empresas.outils.retrieve_data import RetrieveCompanyData
 from apps.empresas.admin.filters.base import (
     NewCompanyToParseFilter,
     HasQuarterFilter,
@@ -16,7 +17,49 @@ class BaseJSONWidgetInline(admin.StackedInline):
     extra = 0
 
 
+class BaseStatementAdmin(admin.ModelAdmin):
+    formfield_overrides = {
+        models.JSONField: {'widget': JSONEditorWidget},
+    }
+    
+    list_display = [
+        "id",
+        "date",
+        "year",
+        "period",
+        "company",
+    ]
+
+    search_fields = [
+        "company__id",
+        "company__ticker",
+        "company__name",
+    ]
+
+    list_filter = [
+        "date",
+        "period",
+    ]
+
+
+@admin.action(description='Update financials')
+def update_financials(modeladmin, request, queryset):
+    for query in queryset:
+        RetrieveCompanyData(query).create_financials_yahooquery("a")
+        RetrieveCompanyData(query).create_financials_yahooquery("q")
+        RetrieveCompanyData(query).create_financials_yfinance("a")
+        RetrieveCompanyData(query).create_financials_yfinance("q")
+
+
 class BaseCompanyAdmin(admin.ModelAdmin):
+    formfield_overrides = {
+        models.JSONField: {'widget': JSONEditorWidget},
+    }
+
+    actions = [
+        update_financials,
+    ]
+
     fieldsets = (
         (
             "Company",

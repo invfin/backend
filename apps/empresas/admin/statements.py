@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.db import models
 
-from apps.empresas.admin.base import BaseCompanyAdmin, BaseJSONWidgetInline
+from apps.empresas.admin.base import BaseCompanyAdmin, BaseJSONWidgetInline, BaseStatementAdmin
 from apps.empresas.admin.filters.base import HasQuarterFilter
 
 from apps.empresas.models import (
@@ -22,98 +22,75 @@ from apps.empresas.models import (
     PriceToRatio,
 )
 
-class BaseStatementAdmin(admin.ModelAdmin):
-    list_display = [
-        "id",
-        "date",
-        "year",
-        "period",
-        "company",
-    ]
-
-    search_fields = [
-        "company__id",
-        "company__ticker",
-        "company__name",
-    ]
-
-    list_filter = [
-        "is_ttm",
-        "date",
-        "period",
-    ]
-
 
 @admin.register(IncomeStatement)
 class IncomeStatementAdmin(BaseStatementAdmin):
-    pass
+    list_filter = BaseStatementAdmin.list_filter + ["is_ttm",]
 
 
 @admin.register(BalanceSheet)
 class BalanceSheetAdmin(BaseStatementAdmin):
-    pass
+    list_filter = BaseStatementAdmin.list_filter + ["is_ttm",]
 
 
 @admin.register(CashflowStatement)
 class CashflowStatementAdmin(BaseStatementAdmin):
-    pass
+    list_filter = BaseStatementAdmin.list_filter + ["is_ttm",]
 
 
 @admin.register(RentabilityRatio)
 class RentabilityRatioAdmin(BaseStatementAdmin):
-    pass
+    list_filter = BaseStatementAdmin.list_filter + ["is_ttm",]
 
 
 @admin.register(LiquidityRatio)
 class LiquidityRatioAdmin(BaseStatementAdmin):
-    pass
+    list_filter = BaseStatementAdmin.list_filter + ["is_ttm",]
 
 
 @admin.register(MarginRatio)
 class MarginRatioAdmin(BaseStatementAdmin):
-    pass
+    list_filter = BaseStatementAdmin.list_filter + ["is_ttm",]
 
 
 @admin.register(FreeCashFlowRatio)
 class FreeCashFlowRatioAdmin(BaseStatementAdmin):
-    pass
+    list_filter = BaseStatementAdmin.list_filter + ["is_ttm",]
 
 
 @admin.register(PerShareValue)
 class PerShareValueAdmin(BaseStatementAdmin):
-    pass
+    list_filter = BaseStatementAdmin.list_filter + ["is_ttm",]
 
 
 @admin.register(NonGaap)
 class NonGaapAdmin(BaseStatementAdmin):
-    pass
+    list_filter = BaseStatementAdmin.list_filter + ["is_ttm",]
 
 
 @admin.register(OperationRiskRatio)
 class OperationRiskRatioAdmin(BaseStatementAdmin):
-    pass
+    list_filter = BaseStatementAdmin.list_filter + ["is_ttm",]
 
 
 @admin.register(EnterpriseValueRatio)
 class EnterpriseValueRatioAdmin(BaseStatementAdmin):
-    pass
+    list_filter = BaseStatementAdmin.list_filter + ["is_ttm",]
 
 
 @admin.register(CompanyGrowth)
 class CompanyGrowthAdmin(BaseStatementAdmin):
-    pass
+    list_filter = BaseStatementAdmin.list_filter + ["is_ttm",]
 
 
 @admin.register(EficiencyRatio)
 class EficiencyRatioAdmin(BaseStatementAdmin):
-    pass
+    list_filter = BaseStatementAdmin.list_filter + ["is_ttm",]
 
 
 @admin.register(PriceToRatio)
 class PriceToRatioAdmin(BaseStatementAdmin):
-    pass
-
-
+    list_filter = BaseStatementAdmin.list_filter + ["is_ttm",]
 
 
 class HasAverageQuarterFilter(HasQuarterFilter):

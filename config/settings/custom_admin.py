@@ -1,6 +1,7 @@
 from .base import FULL_DOMAIN
 
 WEB_ICON = "general/assets/img/favicon/favicon.ico"
+WEB_MANIFEST = "/webmanifest.json"
 
 TOP_MENU_LEFT = [
 
@@ -58,9 +59,6 @@ SIDE_MENU = [
             {
                 'model': 'users.user',
                 'label': "Users",
-            },
-            {
-                'model': 'api.Key',
             },
             {
                 'model': 'seo.UserJourney',
@@ -190,9 +188,21 @@ SIDE_MENU = [
         ),
     },
     {
-        'label': 'API Endpoints',
+        'label': 'API',
         'icon': 'fas fa-key',
         'models': (
+            {
+                'model': 'api.Key',
+            },
+            {
+                'model': 'api.CompanyRequestAPI',
+            },
+            {
+                'model': 'api.TermRequestAPI',
+            },
+            {
+                'model': 'api.SuperinvestorRequestAPI',
+            },
             {
                 'model': 'api.EndpointsCategory',
             },
@@ -247,6 +257,18 @@ SIDE_MENU = [
             {"model": "empresas.CompanyGrowth",},
             {"model": "empresas.EficiencyRatio",},
             {"model": "empresas.PriceToRatio",},
+
+            {"model": "empresas.IncomeStatementFinprep",},
+            {"model": "empresas.BalanceSheetFinprep",},
+            {"model": "empresas.CashflowStatementFinprep",},
+
+            {"model": "empresas.IncomeStatementYahooQuery",},
+            {"model": "empresas.BalanceSheetYahooQuery",},
+            {"model": "empresas.CashflowStatementYahooQuery",},
+
+            {"model": "empresas.IncomeStatementYFinance",},
+            {"model": "empresas.BalanceSheetYFinance",},
+            {"model": "empresas.CashflowStatementYFinance",},
         ),
     },
     {
@@ -325,7 +347,7 @@ JAZZMIN_SETTINGS = {
     "show_sidebar": True,
 
     # Whether to aut expand the menu
-    "navigation_expanded": True,
+    "navigation_expanded": False,
 
     # Hide these apps when generating side menu e.g (auth)
     "hide_apps": [],
