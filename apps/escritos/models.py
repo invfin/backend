@@ -1,6 +1,5 @@
 from ckeditor.fields import RichTextField
 from django.contrib.auth import get_user_model
-from django.contrib.sites.models import Site
 from django.db.models import (
     CASCADE,
     SET_NULL,
@@ -29,6 +28,7 @@ class Term(BaseEscrito):
     upvotes = ManyToManyField(User, blank=True, related_name="user_upvote_term")
     downvotes = ManyToManyField(User, blank=True, related_name="user_downvote_term")
     # contributors = ManyToManyField(User, blank=True, related_name="contributors")
+    meta_information = None
     objects = TermManager()
 
     class Meta:
@@ -101,8 +101,11 @@ class TermCorrection(Model):
 
     def save(self, *args, **kwargs): # new
         if self.is_approved is True:
-            # Perfil.ADD_CREDITS(self.user, 5)
-            #enviar email de agradecimiento
+            """
+            TODO
+            enviar email de agradecimiento
+            Perfil.ADD_CREDITS(self.user, 5)
+            """
             pass
         return super().save(*args, **kwargs)
 

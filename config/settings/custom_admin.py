@@ -244,6 +244,18 @@ SIDE_MENU = [
         ),
     },
     {
+        'label': 'Recsys',
+        'icon': 'fas fa-globe',
+        'models': (
+            {
+                'model': 'recsys.VisiteurCompanyRecommended',
+            },
+            {
+                'model': 'recsys.UserCompanyRecommended',
+            },
+        ),
+    },
+    {
         'label': 'Raw company data',
         'icon': 'fas fa-file-excel',
         'models': (
