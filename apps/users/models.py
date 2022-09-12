@@ -1,5 +1,6 @@
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.auth.models import AbstractUser
 from django.db.models import (
     CASCADE,
     SET_NULL,
@@ -21,12 +22,12 @@ from django_countries.fields import CountryField
 
 from apps.general.mixins import BaseToAll, ResizeImageMixin
 
-from apps.users.user_extension import BaseUser
+from apps.users.user_extension import UserExtended
 from apps.users.constants import MOVE_SOURCES, MOVEMENTS
 from apps.users.managers import CreditHistorialManager, ProfileManager, UserExtraManager
 
 
-class User(BaseUser):
+class User(AbstractUser, UserExtended):
     first_name = CharField(_("Nombre"), blank=True, max_length=255)
     last_name = CharField(_("Apellidos"), blank=True, max_length=255)
     is_writter = BooleanField(default=False)

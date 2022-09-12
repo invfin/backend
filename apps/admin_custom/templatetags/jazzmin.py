@@ -27,7 +27,7 @@ def get_side_menu(context: Context, using: str = "available_apps") -> List[Dict]
     django
     """
 
-    menu = []
+    first_menu = []
     options = get_settings()
     side_menu_config = get_menu_config(context, options)
     available_apps = copy.deepcopy(context.get(using, []))
@@ -35,7 +35,7 @@ def get_side_menu(context: Context, using: str = "available_apps") -> List[Dict]
     for element in side_menu_config:
         menu_label = element['label']
         menu_icon = element.get('icon', options["default_icon_parents"])
-        sub_menu = []
+        second_menu = []
 
         for model in element.get('models', []):
             object_app, settings_model_name = model['model'].split(".")
@@ -45,19 +45,19 @@ def get_side_menu(context: Context, using: str = "available_apps") -> List[Dict]
             model_name, model_url = get_model_data(object_app, settings_model_name, available_apps)
 
             if model_name and model_url:
-                sub_menu.append({
+                second_menu.append({
                     'name': model_label or model_name,
                     'url': model_url,
                     'icon': model_icon or options["default_icon_children"],
                 })
 
-        if sub_menu:
-            menu.append({
+        if second_menu:
+            first_menu.append({
                 'name': menu_label,
                 'icon': menu_icon,
-                'models': sub_menu,
+                'models': second_menu,
             })
-    return menu
+    return first_menu
 
 
 def get_menu_config(context: Context, options) -> list:

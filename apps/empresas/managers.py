@@ -1,6 +1,13 @@
 import random
 
-from django.db.models import Count, F, Manager, Q
+from django.db.models import (
+    Count,
+    F,
+    Manager,
+    Q,
+    Subquery,
+    OuterRef,
+)
 
 
 class CompanyManager(Manager):

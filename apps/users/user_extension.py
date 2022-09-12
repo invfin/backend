@@ -1,4 +1,4 @@
-from django.contrib.auth.models import AbstractUser
+
 from django.conf import settings
 
 PROTOCOL = settings.PROTOCOL
@@ -6,10 +6,7 @@ CURRENT_DOMAIN = settings.CURRENT_DOMAIN
 FULL_DOMAIN = settings.FULL_DOMAIN
 
 
-class BaseUser(AbstractUser):
-    class Meta:
-        abstract = True
-
+class UserExtended:
     @property
     def custom_url(self):
         url = self.get_absolute_url()

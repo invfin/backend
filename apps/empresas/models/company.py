@@ -15,9 +15,12 @@ from django.db.models import (
     TextField,
 )
 from django.urls import reverse
-from apps.empresas import constants
 
-from apps.empresas.company.extension import CompanyExtended
+from apps.general.mixins import BaseToAll
+from apps.general.constants import PERIOD_FOR_YEAR
+
+from apps.empresas import constants
+from apps.empresas.extensions.company import CompanyExtended
 from apps.empresas.managers import CompanyManager, CompanyUpdateLogManager
 
 
@@ -26,7 +29,7 @@ def default_dict():
         return json.load(checks_json)
 
 
-class Company(CompanyExtended):
+class Company(BaseToAll, CompanyExtended):
     ticker = CharField(max_length=30, unique=True, db_index=True)
     name = CharField(max_length=700, null=True, blank=True)
     currency = ForeignKey("general.Currency", on_delete=SET_NULL, null=True, blank=True)
@@ -162,6 +165,18 @@ class CompanyYahooQueryProxy(Company):
     @property
     def has_cf(self):
         return self.cashflowstatementyahooquery_set.all().exists()
+
+    @property
+    def has_inc_quarter(self):
+        return self.incomestatementyahooquery_set.all().exclude(period__period=PERIOD_FOR_YEAR).exists()
+
+    @property
+    def has_bs_quarter(self):
+        return self.balancesheetyahooquery_set.all().exclude(period__period=PERIOD_FOR_YEAR).exists()
+
+    @property
+    def has_cf_quarter(self):
+        return self.cashflowstatementyahooquery_set.all().exclude(period__period=PERIOD_FOR_YEAR).exists()
 
     @property
     def has_key_stats(self):

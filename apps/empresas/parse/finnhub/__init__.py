@@ -8,7 +8,7 @@ class FinnhubInfo(ParseFinnhub):
 
     def create_financials_finnhub(self):
         financials = self.financials_reported(symbol=self.company.ticker)
-        StatementsFinnhub.objects.create(
+        StatementsFinnhub.objects.get_or_create(
             company=self.company,
             financials=financials,
         )

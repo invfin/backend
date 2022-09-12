@@ -14,11 +14,16 @@ if READ_DOT_ENV_FILE:
     # OS environment variables take precedence over variables from .env
     env.read_env(str(ROOT_DIR / ".env"))
 
+IS_PROD = env.bool("IS_PROD", False)
+
 # GENERAL
 # ------------------------------------------------------------------------------
-CURRENT_DOMAIN = env("CURRENT_DOMAIN")
-MAIN_DOMAIN = env("MAIN_DOMAIN")
-FULL_DOMAIN = env("FULL_DOMAIN")
+CURRENT_DOMAIN = env("CURRENT_DOMAIN", default="example.com")
+MAIN_DOMAIN = env("MAIN_DOMAIN", default="inversionesyfinanzas.xyz")
+FULL_DOMAIN = env("FULL_DOMAIN", default="http://example.com:8000")
+
+
+DATA_UPLOAD_MAX_NUMBER_FIELDS = None
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#debug
 DEBUG = env.bool("DJANGO_DEBUG", True)
@@ -259,7 +264,7 @@ TEMPLATES = [
                 "apps.users.context_processors.user_companies_visited",
                 "apps.public_blog.context_processors.keep_email",
                 "apps.seo.context_processors.journey",
-                "apps.seo.context_processors.debug",
+                "apps.general.context_processors.general_settings",
             ],
         },
     }
@@ -500,8 +505,15 @@ IMAGE_KIT = ImageKit(
     url_endpoint=IMAGEKIT_URL_ENDPOINT
 )
 
+STRIPE_PRIVATE_KEY = "TEST_STRIPE_PRIVATE"
+STRIPE_PUBLIC_KEY = "TEST_STRIPE_PUBLIC"
+WEBHOOK_SECRET_KEY = "WEBHOOK_SECRET"
+if IS_PROD:
+    STRIPE_PRIVATE_KEY = "STRIPE_PRIVATE"
+    STRIPE_PUBLIC_KEY = "STRIPE_PUBLIC"
+    WEBHOOK_SECRET_KEY = "WEBHOOK_SECRET"
 # STRIPE
 # ------------------------------------------------------------------------------
-STRIPE_PRIVATE = env.str('STRIPE_PRIVATE')
-STRIPE_PUBLIC = env.str('STRIPE_PUBLIC')
-WEBHOOK_SECRET = env.str('WEBHOOK_SECRET')
+STRIPE_PRIVATE = env.str(STRIPE_PRIVATE_KEY)
+STRIPE_PUBLIC = env.str(STRIPE_PUBLIC_KEY)
+WEBHOOK_SECRET = env.str(WEBHOOK_SECRET_KEY)

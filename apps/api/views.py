@@ -3,6 +3,7 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
 from django.views.generic import ListView
+
 from rest_framework import parsers, status
 from rest_framework.authentication import BasicAuthentication, SessionAuthentication
 from rest_framework.compat import coreapi, coreschema
@@ -10,6 +11,7 @@ from rest_framework.response import Response
 from rest_framework.schemas import ManualSchema
 from rest_framework.schemas import coreapi as coreapi_schema
 from rest_framework.views import APIView
+from rest_framework.exceptions import AuthenticationFailed, ParseError
 
 from apps.seo.outils.visiteur_meta import SeoInformation
 
@@ -102,8 +104,10 @@ class BaseAPIView(APIView):
         search = queryset
         if type(queryset).__name__ == 'QuerySet':
             search = None
-            if 'ticker' in self.query_name and queryset[0]._meta.app_label == 'empresas':
+            if 'ticker' in self.query_name and queryset and queryset[0]._meta.app_label == 'empresas':
                 search = queryset[0].company
+            else:
+                raise ParseError("Ha habido un problema con tu búsqueda, asegúrate de haber introducido un valor")
         request_data = {
             'ip': ip,
             'key': key,
@@ -141,7 +145,7 @@ class BaseAPIView(APIView):
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
             return Response(
-                {'Búsqueda incorrecta': 'Lo siento ha habido un problema'},
+                {'Detail': 'Lo siento ha habido un problema'},
                 status=status.HTTP_503_SERVICE_UNAVAILABLE)
 
     def find_query_value(self, query_dict):
@@ -160,7 +164,11 @@ class BaseAPIView(APIView):
     def get(self, request):
         model, many = self.get_object()
         query_dict = request.GET.dict()
-        api_key = query_dict.pop('api_key')
+        api_key = query_dict.pop('api_key', None)
+        if not api_key:
+            raise AuthenticationFailed(
+                'Tu clave es incorrecta, asegúrate que está bien escrita depués de api_key=<clave> o pide tu clave desde tu perfil'
+            )
         key = Key.objects.get(key=api_key)
         query_param, query_value = self.find_query_value(query_dict)
         if query_param == 'ticker':
@@ -173,15 +181,9 @@ class BaseAPIView(APIView):
                     try:
                         queryset = model.objects.get(**{query_param: query_value})
                     except model.DoesNotExist:
-                        return Response({
-                                'Búsqueda incorrecta': 'Tu búsqueda no ha devuelto ningún resultado'
-                            },
-                            status=status.HTTP_404_NOT_FOUND)
+                        raise ParseError('Tu búsqueda no ha devuelto ningún resultado')
             else:
-                return Response({
-                            'Búsqueda incorrecta': 'No has introducido ninguna búsqueda',
-                            'parametros': self.query_name},
-                        status=status.HTTP_404_NOT_FOUND)
+                raise ParseError('No has introducido ninguna búsqueda')
         else:
             if self.fk_lookup_model:
                 queryset = model.objects.filter(**{f'{self.fk_lookup_model}': query_value})

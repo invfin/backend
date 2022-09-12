@@ -1,5 +1,3 @@
-from django.conf import settings
-
 from .outils.save_journey import JourneyClassifier
 
 def journey(request):
@@ -8,6 +6,3 @@ def journey(request):
     if request.user.is_authenticated and request.user.username != "Lucas":
         JourneyClassifier().save_journey(request, current_path, comes_from)
     return {}
-
-def debug(request):
-    return {'debug':settings.DEBUG}

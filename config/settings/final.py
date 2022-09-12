@@ -1,6 +1,4 @@
-from .base import env
-
-IS_PROD = env.bool("IS_PROD", False)
+from .base import IS_PROD
 
 from .ckeditor import *
 from .custom_admin import *

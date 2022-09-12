@@ -1,23 +1,41 @@
-from django.utils import timezone
 import json
 
+from django.utils import timezone
+
+import numpy as np
+from dateutil.relativedelta import relativedelta
+
+from apps.general import constants
+from apps.general.models import Period
 from apps.seo.models import UserCompanyVisited, VisiteurCompanyVisited
 from apps.seo.outils.visiteur_meta import SeoInformation
 from apps.empresas.constants import DEFAULT_JSON_CHECKS_FILE
 from apps.empresas.models import Company, CompanyUpdateLog
 
 
+def detect_outlier(list_data):
+    outliers=[]
+    threshold=3
+    mean_1 = np.mean(list_data)
+    std_1 =np.std(list_data)
+
+    for y in list_data:
+        z_score= (y - mean_1)/std_1
+        if np.abs(z_score) > threshold:
+            outliers.append(y)
+
+    if not outliers:
+        return "No outliers"
+    return outliers
+
+
 def log_company(checking: str = None):
-    """
-    TODO
-    Add checkings to all needed logs
-    """
     def decorator(func):
         def wrapper(*args, **kwargs):
             company = args[0].company
             try:
                 func(*args, **kwargs)
-                error_message = "Works greate"
+                error_message = "Works great"
                 had_error = False
             except Exception as e:
                 error_message = f"{e}"
@@ -37,23 +55,41 @@ def log_company(checking: str = None):
     return decorator
 
 
-def save_search(request, model_visited):
-    """
-    TODO
-    When visiteur will be implemented in the request, retreive the visiteur from there
-    """
-    if request.user.is_authenticated:
-        user = request.user
-        save_model = UserCompanyVisited
-    else:
-        user = SeoInformation().find_visiteur(request)
-        save_model = VisiteurCompanyVisited
-
-    save_model.objects.create(
-        user=user,
-        model_visited=model_visited,
-        date=timezone.now()
-    )
+def arrange_quarters(company):
+    statements_models = [
+        company.incomestatementyahooquery_set,
+        company.balancesheetyahooquery_set,
+        company.cashflowstatementyahooquery_set,
+        company.incomestatementyfinance_set,
+        company.balancesheetyfinance_set,
+        company.cashflowstatementyfinance_set,
+    ]
+    for statement_obj in statements_models:
+        company_statements = statement_obj.all()
+        if company_statements:
+            for statement in company_statements.order_by("year"):
+                if statement.period.period == constants.PERIOD_FOR_YEAR:
+                    date_quarter_4 = statement.year
+                    date_quarter_1 = date_quarter_4 + relativedelta(months=+3) + relativedelta(years=+1)
+                    date_quarter_2 = date_quarter_1 + relativedelta(months=+3) + relativedelta(years=-1)
+                    date_quarter_3 = date_quarter_2 + relativedelta(months=+3)
+                    period_dict = {
+                        date_quarter_4.month: Period.objects.get_or_create(
+                            year=date_quarter_4.year, period=constants.PERIOD_4_QUARTER
+                        )[0],
+                        date_quarter_1.month: Period.objects.get_or_create(
+                            year=date_quarter_1.year, period=constants.PERIOD_1_QUARTER
+                        )[0],
+                        date_quarter_2.month: Period.objects.get_or_create(
+                            year=date_quarter_2.year, period=constants.PERIOD_2_QUARTER
+                        )[0],
+                        date_quarter_3.month: Period.objects.get_or_create(
+                            year=date_quarter_3.year, period=constants.PERIOD_3_QUARTER
+                        )[0],
+                    }
+                else:
+                    statement.period = period_dict[statement.year.month]
+                    statement.save(update_fields=["period"])
 
 
 def company_searched(search, request):
@@ -62,17 +98,15 @@ def company_searched(search, request):
     try:
         empresa_busqueda = Company.objects.get(ticker = ticker)
         redirect_path = empresa_busqueda.get_absolute_url()
-        save_search(request, empresa_busqueda)
     except Exception as e:
         redirect_path = request.META.get('HTTP_REFERER')
-
-    return redirect_path
+    finally:
+        return redirect_path
 
 
 def add_new_default_check(checking):
     with open(DEFAULT_JSON_CHECKS_FILE, 'r') as read_checks_json:
         checks_json = json.load(read_checks_json)
-
     checks_json.update(
         {
             f'has_{checking}': {
@@ -81,6 +115,5 @@ def add_new_default_check(checking):
             }
         }
     )
-
     with open(DEFAULT_JSON_CHECKS_FILE, 'w') as writte_checks_json:
         json.dump(checks_json, writte_checks_json, indent=2, separators=(',',': '))

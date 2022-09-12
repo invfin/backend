@@ -2,7 +2,7 @@ from django.test import TestCase
 
 from apps.bfet import ExampleModel
 
-from apps.empresas.company.update import UpdateCompany
+from apps.empresas.outils.update import UpdateCompany
 from apps.general.models import Sector, Industry
 
 from apps.empresas.models import (

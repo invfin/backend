@@ -6,15 +6,11 @@ import yahooquery as yq
 
 from django.db.models import Avg
 
-from apps.empresas.valuations import discounted_cashflow
+from apps.empresas.outils.valuations import discounted_cashflow
 from apps.general.utils import ChartSerializer
-from apps.general.mixins import BaseToAll
 
 
-class CompanyExtended(BaseToAll, ChartSerializer):
-    class Meta:
-        abstract = True
-
+class CompanyExtended(ChartSerializer):
     currency_to_use = None
 
     def find_currency(self, statement):
@@ -28,8 +24,8 @@ class CompanyExtended(BaseToAll, ChartSerializer):
                 self.save(update_fields=["currency"])
         else:
             currency = self.currency
-        self.currency_to_use = currency
-        return currency
+        self.currency_to_use = currency.currency
+        return currency.currency
 
     def all_income_statements(self, limit) ->list:
         inc = self.inc_statements.all()

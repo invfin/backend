@@ -7,9 +7,9 @@ from django.http.response import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.views.generic import ListView, FormView
 
-from apps.empresas.company.retrieve_data import RetrieveCompanyData
+from apps.empresas.outils.retrieve_data import RetrieveCompanyData
 from apps.empresas.models import Company
-from apps.empresas.valuations import discounted_cashflow
+from apps.empresas.outils.valuations import discounted_cashflow
 
 from ..forms import UserCompanyObservationForm
 from ..models import (

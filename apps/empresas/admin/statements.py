@@ -1,7 +1,8 @@
 from django.contrib import admin
 from django.db import models
 
-from django_json_widget.widgets import JSONEditorWidget
+from apps.empresas.admin.base import BaseCompanyAdmin, BaseJSONWidgetInline, BaseStatementAdmin
+from apps.empresas.admin.filters.base import HasQuarterFilter
 
 from apps.empresas.models import (
     CompanyStatementsProxy,
@@ -22,134 +23,156 @@ from apps.empresas.models import (
 )
 
 
-class IncomeStatementInline(admin.StackedInline):
-    formfield_overrides = {
-        models.JSONField: {'widget': JSONEditorWidget},
-    }
-    extra = 0
+@admin.register(IncomeStatement)
+class IncomeStatementAdmin(BaseStatementAdmin):
+    list_filter = BaseStatementAdmin.list_filter + ["is_ttm",]
+
+
+@admin.register(BalanceSheet)
+class BalanceSheetAdmin(BaseStatementAdmin):
+    list_filter = BaseStatementAdmin.list_filter + ["is_ttm",]
+
+
+@admin.register(CashflowStatement)
+class CashflowStatementAdmin(BaseStatementAdmin):
+    list_filter = BaseStatementAdmin.list_filter + ["is_ttm",]
+
+
+@admin.register(RentabilityRatio)
+class RentabilityRatioAdmin(BaseStatementAdmin):
+    list_filter = BaseStatementAdmin.list_filter + ["is_ttm",]
+
+
+@admin.register(LiquidityRatio)
+class LiquidityRatioAdmin(BaseStatementAdmin):
+    list_filter = BaseStatementAdmin.list_filter + ["is_ttm",]
+
+
+@admin.register(MarginRatio)
+class MarginRatioAdmin(BaseStatementAdmin):
+    list_filter = BaseStatementAdmin.list_filter + ["is_ttm",]
+
+
+@admin.register(FreeCashFlowRatio)
+class FreeCashFlowRatioAdmin(BaseStatementAdmin):
+    list_filter = BaseStatementAdmin.list_filter + ["is_ttm",]
+
+
+@admin.register(PerShareValue)
+class PerShareValueAdmin(BaseStatementAdmin):
+    list_filter = BaseStatementAdmin.list_filter + ["is_ttm",]
+
+
+@admin.register(NonGaap)
+class NonGaapAdmin(BaseStatementAdmin):
+    list_filter = BaseStatementAdmin.list_filter + ["is_ttm",]
+
+
+@admin.register(OperationRiskRatio)
+class OperationRiskRatioAdmin(BaseStatementAdmin):
+    list_filter = BaseStatementAdmin.list_filter + ["is_ttm",]
+
+
+@admin.register(EnterpriseValueRatio)
+class EnterpriseValueRatioAdmin(BaseStatementAdmin):
+    list_filter = BaseStatementAdmin.list_filter + ["is_ttm",]
+
+
+@admin.register(CompanyGrowth)
+class CompanyGrowthAdmin(BaseStatementAdmin):
+    list_filter = BaseStatementAdmin.list_filter + ["is_ttm",]
+
+
+@admin.register(EficiencyRatio)
+class EficiencyRatioAdmin(BaseStatementAdmin):
+    list_filter = BaseStatementAdmin.list_filter + ["is_ttm",]
+
+
+@admin.register(PriceToRatio)
+class PriceToRatioAdmin(BaseStatementAdmin):
+    list_filter = BaseStatementAdmin.list_filter + ["is_ttm",]
+
+
+class HasAverageQuarterFilter(HasQuarterFilter):
+    statements = [
+        IncomeStatement,
+        BalanceSheet,
+        CashflowStatement,
+    ]
+
+
+class IncomeStatementInline(BaseJSONWidgetInline):
     model = IncomeStatement
     jazzmin_tab_id = "IncomeStatement"
 
 
-class BalanceSheetInline(admin.StackedInline):
-    formfield_overrides = {
-        models.JSONField: {'widget': JSONEditorWidget},
-    }
-    extra = 0
+class BalanceSheetInline(BaseJSONWidgetInline):
     model = BalanceSheet
     jazzmin_tab_id = "BalanceSheet"
 
 
-class CashflowStatementInline(admin.StackedInline):
-    formfield_overrides = {
-        models.JSONField: {'widget': JSONEditorWidget},
-    }
-    extra = 0
+class CashflowStatementInline(BaseJSONWidgetInline):
     model = CashflowStatement
     jazzmin_tab_id = "CashflowStatement"
 
 
-class RentabilityRatioInline(admin.StackedInline):
-    formfield_overrides = {
-        models.JSONField: {'widget': JSONEditorWidget},
-    }
-    extra = 0
+class RentabilityRatioInline(BaseJSONWidgetInline):
     model = RentabilityRatio
     jazzmin_tab_id = "RentabilityRatio"
 
 
-class LiquidityRatioInline(admin.StackedInline):
-    formfield_overrides = {
-        models.JSONField: {'widget': JSONEditorWidget},
-    }
-    extra = 0
+class LiquidityRatioInline(BaseJSONWidgetInline):
     model = LiquidityRatio
     jazzmin_tab_id = "LiquidityRatio"
 
 
-class MarginRatioInline(admin.StackedInline):
-    formfield_overrides = {
-        models.JSONField: {'widget': JSONEditorWidget},
-    }
-    extra = 0
+class MarginRatioInline(BaseJSONWidgetInline):
     model = MarginRatio
     jazzmin_tab_id = "MarginRatio"
 
 
-class FreeCashFlowRatioInline(admin.StackedInline):
-    formfield_overrides = {
-        models.JSONField: {'widget': JSONEditorWidget},
-    }
-    extra = 0
+class FreeCashFlowRatioInline(BaseJSONWidgetInline):
     model = FreeCashFlowRatio
     jazzmin_tab_id = "FreeCashFlowRatio"
 
 
-class PerShareValueInline(admin.StackedInline):
-    formfield_overrides = {
-        models.JSONField: {'widget': JSONEditorWidget},
-    }
-    extra = 0
+class PerShareValueInline(BaseJSONWidgetInline):
     model = PerShareValue
     jazzmin_tab_id = "PerShareValue"
 
 
-class NonGaapInline(admin.StackedInline):
-    formfield_overrides = {
-        models.JSONField: {'widget': JSONEditorWidget},
-    }
-    extra = 0
+class NonGaapInline(BaseJSONWidgetInline):
     model = NonGaap
     jazzmin_tab_id = "NonGaap"
 
 
-class OperationRiskRatioInline(admin.StackedInline):
-    formfield_overrides = {
-        models.JSONField: {'widget': JSONEditorWidget},
-    }
-    extra = 0
+class OperationRiskRatioInline(BaseJSONWidgetInline):
     model = OperationRiskRatio
     jazzmin_tab_id = "OperationRiskRatio"
 
 
-class EnterpriseValueRatioInline(admin.StackedInline):
-    formfield_overrides = {
-        models.JSONField: {'widget': JSONEditorWidget},
-    }
-    extra = 0
+class EnterpriseValueRatioInline(BaseJSONWidgetInline):
     model = EnterpriseValueRatio
     jazzmin_tab_id = "EnterpriseValueRatio"
 
 
-class CompanyGrowthInline(admin.StackedInline):
-    formfield_overrides = {
-        models.JSONField: {'widget': JSONEditorWidget},
-    }
-    extra = 0
+class CompanyGrowthInline(BaseJSONWidgetInline):
     model = CompanyGrowth
     jazzmin_tab_id = "CompanyGrowth"
 
 
-class EficiencyRatioInline(admin.StackedInline):
-    formfield_overrides = {
-        models.JSONField: {'widget': JSONEditorWidget},
-    }
-    extra = 0
+class EficiencyRatioInline(BaseJSONWidgetInline):
     model = EficiencyRatio
     jazzmin_tab_id = "EficiencyRatio"
 
 
-class PriceToRatioInline(admin.StackedInline):
-    formfield_overrides = {
-        models.JSONField: {'widget': JSONEditorWidget},
-    }
-    extra = 0
+class PriceToRatioInline(BaseJSONWidgetInline):
     model = PriceToRatio
     jazzmin_tab_id = "PriceToRatio"
 
 
 @admin.register(CompanyStatementsProxy)
-class CompanyStatementsProxyAdmin(admin.ModelAdmin):
+class CompanyStatementsProxyAdmin(BaseCompanyAdmin):
     inlines = [
         IncomeStatementInline,
         BalanceSheetInline,
@@ -192,6 +215,8 @@ class CompanyStatementsProxyAdmin(admin.ModelAdmin):
         "name",
     ]
 
+    list_filter = []
+
     jazzmin_form_tabs = [
         ("general", "Company"),
         ("IncomeStatement", "Income Statement"),
@@ -211,4 +236,4 @@ class CompanyStatementsProxyAdmin(admin.ModelAdmin):
     ]
 
     def get_object(self, request, object_id: str, from_field):
-        return Company.objects.prefetch_historical_data().get(id=object_id)
+        return CompanyStatementsProxy.objects.prefetch_historical_data().get(id=object_id)

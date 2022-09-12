@@ -1,8 +1,7 @@
 from django.contrib import admin
-from django.db import models
 
-from django_json_widget.widgets import JSONEditorWidget
-
+from apps.empresas.admin.base import BaseCompanyAdmin, BaseJSONWidgetInline, BaseStatementAdmin
+from apps.empresas.admin.filters.base import HasQuarterFilter
 from apps.empresas.models import (
     BalanceSheetYahooQuery,
     CashflowStatementYahooQuery,
@@ -11,44 +10,61 @@ from apps.empresas.models import (
     CompanyYahooQueryProxy
 )
 
-class IncomeStatementYahooQueryInline(admin.StackedInline):
-    formfield_overrides = {
-        models.JSONField: {'widget': JSONEditorWidget},
-    }
+
+@admin.register(BalanceSheetYahooQuery)
+class BalanceSheetYahooQueryAdmin(BaseStatementAdmin):
+    pass
+
+
+@admin.register(CashflowStatementYahooQuery)
+class CashflowStatementYahooQueryAdmin(BaseStatementAdmin):
+    pass
+
+
+@admin.register(IncomeStatementYahooQuery)
+class IncomeStatementYahooQueryAdmin(BaseStatementAdmin):
+    pass
+
+
+class HasYahooQueryQuarterFilter(HasQuarterFilter):
+    statements = [
+        IncomeStatementYahooQuery,
+        BalanceSheetYahooQuery,
+        CashflowStatementYahooQuery,
+    ]
+
+
+class IncomeStatementYahooQueryInline(BaseJSONWidgetInline):
     model = IncomeStatementYahooQuery
-    extra = 0
     jazzmin_tab_id = "income-statement"
 
 
-class BalanceSheetYahooQueryInline(admin.StackedInline):
-    formfield_overrides = {
-        models.JSONField: {'widget': JSONEditorWidget},
-    }
+class BalanceSheetYahooQueryInline(BaseJSONWidgetInline):
     model = BalanceSheetYahooQuery
-    extra = 0
     jazzmin_tab_id = "balance-sheet"
 
 
-class CashflowStatementYahooQueryInline(admin.StackedInline):
-    formfield_overrides = {
-        models.JSONField: {'widget': JSONEditorWidget},
-    }
+class CashflowStatementYahooQueryInline(BaseJSONWidgetInline):
     model = CashflowStatementYahooQuery
-    extra = 0
     jazzmin_tab_id = "cashflow-statement"
 
 
-class KeyStatsYahooQueryInline(admin.StackedInline):
-    formfield_overrides = {
-        models.JSONField: {'widget': JSONEditorWidget},
-    }
+class KeyStatsYahooQueryInline(BaseJSONWidgetInline):
     model = KeyStatsYahooQuery
-    extra = 0
     jazzmin_tab_id = "key-stats"
 
 
+@admin.action(description='Update stats')
+def update_stats(modeladmin, request, queryset):
+    for query in queryset:
+        RetrieveCompanyData(query).create_key_stats_yahooquery()
+
+
 @admin.register(CompanyYahooQueryProxy)
-class CompanyYahooQueryProxyAdmin(admin.ModelAdmin):
+class CompanyYahooQueryProxyAdmin(BaseCompanyAdmin):
+    actions = BaseCompanyAdmin.actions + [
+        update_stats,
+    ]
     inlines = [
         IncomeStatementYahooQueryInline,
         BalanceSheetYahooQueryInline,
@@ -56,40 +72,18 @@ class CompanyYahooQueryProxyAdmin(admin.ModelAdmin):
         KeyStatsYahooQueryInline
     ]
 
-    fieldsets = (
-        (
-            "Company",
-            {
-                "classes": ("jazzmin-tab-general",),
-                "fields": [
-                    "ticker",
-                    "name",
-                ],
-            },
-        ),
-    )
+    list_filter = BaseCompanyAdmin.list_filter + [
+        HasYahooQueryQuarterFilter
+    ]
 
-    list_display = [
-        "id",
-        "ticker",
-        "name",
-        "has_inc",
-        "has_bs",
-        "has_cf",
+    list_display = BaseCompanyAdmin.list_display + [
+        "has_inc_quarter",
+        "has_bs_quarter",
+        "has_cf_quarter",
         "has_key_stats",
     ]
 
-    search_fields = [
-        "id",
-        "ticker",
-        "name",
-    ]
-
-    jazzmin_form_tabs = [
-        ("general", "Company"),
-        ("income-statement", "Income Statement"),
-        ("balance-sheet", "Balance Sheet"),
-        ("cashflow-statement", "Cashflow Statement"),
+    jazzmin_form_tabs = BaseCompanyAdmin.jazzmin_form_tabs + [
         ("key-stats", "Key Stats"),
     ]
 

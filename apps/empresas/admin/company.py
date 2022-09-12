@@ -3,7 +3,9 @@ from django.db import models
 
 from django_json_widget.widgets import JSONEditorWidget
 
-
+from apps.empresas.parse.yahoo_query import YahooQueryInfo
+from apps.empresas.utils import arrange_quarters
+from apps.empresas.admin.base import BaseJSONWidgetInline, update_financials
 from apps.empresas.models import (
     Company,
     TopInstitutionalOwnership,
@@ -11,22 +13,40 @@ from apps.empresas.models import (
 )
 
 
-class TopInstitutionalOwnershipInline(admin.StackedInline):
+@admin.register(CompanyUpdateLog)
+class CompanyUpdateLogAdmin(admin.ModelAdmin):
     formfield_overrides = {
         models.JSONField: {'widget': JSONEditorWidget},
     }
+
+    list_display = [
+        "id",
+        "company",
+        "date",
+        "where",
+        "had_error",
+    ]
+
+    list_filter = [
+        "had_error",
+    ]
+
+
+class TopInstitutionalOwnershipInline(BaseJSONWidgetInline):
     model = TopInstitutionalOwnership
-    extra = 0
     jazzmin_tab_id = "top-institutionals"
 
 
-class CompanyUpdateLogInline(admin.StackedInline):
-    formfield_overrides = {
-        models.JSONField: {'widget': JSONEditorWidget},
-    }
+class CompanyUpdateLogInline(BaseJSONWidgetInline):
     model = CompanyUpdateLog
-    extra = 0
     jazzmin_tab_id = "logs"
+
+
+@admin.action(description='Match quarters')
+def match_quarters(modeladmin, request, queryset):
+    for query in queryset:
+        YahooQueryInfo(query).match_quarters_with_earning_history_yahooquery()
+        arrange_quarters(query)
 
 
 @admin.register(Company)
@@ -34,6 +54,12 @@ class CompanyAdmin(admin.ModelAdmin):
     formfield_overrides = {
         models.JSONField: {'widget': JSONEditorWidget},
     }
+
+    actions = [
+        match_quarters,
+        update_financials,
+    ]
+
     inlines = [
         TopInstitutionalOwnershipInline,
         CompanyUpdateLogInline,
