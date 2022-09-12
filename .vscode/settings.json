@@ -1,5 +1,14 @@
 {
     "makefile.extensionOutputFolder": "./.vscode",
     "explorer.autoReveal": false,
-    "workbench.editor.enablePreview": false
+    "workbench.editor.enablePreview": false,
+    "python.testing.unittestArgs": [
+        "-v",
+        "-s",
+        "./apps",
+        "-p",
+        "test_*.py"
+    ],
+    "python.testing.pytestEnabled": false,
+    "python.testing.unittestEnabled": true
 }

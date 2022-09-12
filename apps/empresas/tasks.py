@@ -19,6 +19,39 @@ from apps.empresas.models import (
 
 
 @celery_app.task()
+def fix_information_incorrect_filed_task(company_id):
+    company = Company.objects.get(id=company_id)
+    for statement in company.inc_statements.all():
+        operating_expenses = statement.operating_expenses
+        statement.operating_expenses = statement.operating_income
+        statement.operating_income = operating_expenses
+        statement.save(update_fields=[
+            "operating_expenses", 
+            "operating_income"
+        ])
+    for statement in company.cf_statements.all():
+        net_income = statement.net_income
+        operating_activities_cf = statement.operating_activities_cf
+        investments_property_plant_equipment = statement.investments_property_plant_equipment
+        financing_activities_cf = statement.financing_activities_cf
+        investing_activities_cf = statement.investing_activities_cf
+        statement.net_income = operating_activities_cf
+        statement.financing_activities_cf = net_income
+        statement.operating_activities_cf = investing_activities_cf
+        statement.investments_property_plant_equipment = financing_activities_cf
+        statement.investing_activities_cf = investments_property_plant_equipment
+        statement.net_change_cash = statement.cash_beginning_period - statement.cash_end_period
+        statement.save(update_fields=[
+            "net_income",
+            "financing_activities_cf",
+            "operating_activities_cf",
+            "investments_property_plant_equipment",
+            "investing_activities_cf",
+            "net_change_cash",
+        ])
+
+
+@celery_app.task()
 def arrange_quarters_task(company_id):
     company = Company.objects.get(id=company_id)
     YahooQueryInfo(company).match_quarters_with_earning_history_yahooquery()

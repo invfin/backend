@@ -167,6 +167,10 @@ SIDE_MENU = [
             {
                 'model': 'general.Period',
             },
+            {
+                'model': 'empresas.CompanyUpdateLog',
+                'label': "Company Logs",
+            },
         ),
     },
     {

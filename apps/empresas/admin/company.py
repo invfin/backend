@@ -13,6 +13,25 @@ from apps.empresas.models import (
 )
 
 
+@admin.register(CompanyUpdateLog)
+class CompanyUpdateLogAdmin(admin.ModelAdmin):
+    formfield_overrides = {
+        models.JSONField: {'widget': JSONEditorWidget},
+    }
+
+    list_display = [
+        "id",
+        "company",
+        "date",
+        "where",
+        "had_error",
+    ]
+
+    list_filter = [
+        "had_error",
+    ]
+
+
 class TopInstitutionalOwnershipInline(BaseJSONWidgetInline):
     model = TopInstitutionalOwnership
     jazzmin_tab_id = "top-institutionals"
