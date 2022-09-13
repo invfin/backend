@@ -80,6 +80,7 @@ class AverageIncomeStatement:
     def calculate_weighted_average_diluated_shares_outstanding(self):
         return getattr(self, self.weighted_average_diluated_shares_outstanding_field)
 
+    @property
     def return_standard(self):
         return dict(
             revenue=self.calculate_revenue(),
@@ -263,6 +264,7 @@ class AverageBalanceSheet:
     def calculate_net_debt(self):
         return getattr(self, self.net_debt_field)
 
+    @property
     def return_standard(self):
         return dict(
             cash_and_cash_equivalents=self.calculate_cash_and_cash_equivalents(),
@@ -429,6 +431,7 @@ class AverageCashflowStatement:
     def calculate_fcf(self):
         return getattr(self, self.fcf_field)
 
+    @property
     def return_standard(self):
         return dict(
             net_income=self.calculate_net_income(),

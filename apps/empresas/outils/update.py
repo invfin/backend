@@ -51,6 +51,18 @@ class UpdateCompany(CalculateCompanyFinancialRatios):
         self.create_enterprise_value_ratio(all_ratios["enterprise_value_ratio"])
         self.create_eficiency_ratio(all_ratios["eficiency_ratio"])
         self.create_company_growth(all_ratios["company_growth"])
+    
+    @log_company
+    def create_inc_statements(self, data:dict):
+        return self.company.inc_statements.create(**data)
+
+    @log_company    
+    def create_balance_sheets(self, data:dict):
+        return self.company.balance_sheets.create(**data)
+
+    @log_company    
+    def create_cf_statements(self, data:dict):
+        return self.company.cf_statements.create(**data)
 
     @log_company
     def create_current_stock_price(self, price):
