@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from apps.bfet import ExampleModel
+from bfet import DjangoTestingModel as DTM
 from apps.general.models import Period
 from apps.general import constants
 
@@ -10,7 +10,7 @@ class TestPeriodManager(TestCase):
     def setUpTestData(cls) -> None:
         for index in range(5):
             for period in constants.PERIODS:
-                ExampleModel.create(
+                DTM.create(
                     Period,
                     year=(2020+index),
                     period=period[0]

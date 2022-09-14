@@ -2,7 +2,7 @@ import vcr
 
 from django.test import TestCase
 
-from apps.bfet import ExampleModel
+from bfet import DjangoTestingModel as DTM
 from apps.general.models import Period
 from apps.empresas.models import Company
 from apps.empresas.parse.y_finance import YFinanceInfo, NormalizeYFinance
@@ -18,7 +18,7 @@ parse_vcr = vcr.VCR(
 class TestYFinanceInfo(TestCase):
     @classmethod
     def setUpTestData(cls) -> None:
-        cls.company = ExampleModel.create(Company, ticker="AAPL")
+        cls.company = DTM.create(Company, ticker="AAPL")
         cls.parser = YFinanceInfo(cls.company)
 
     @parse_vcr.use_cassette

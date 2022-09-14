@@ -1,4 +1,4 @@
-from apps.bfet import ExampleModel
+from bfet import DjangoTestingModel as DTM
 
 from django.test import TestCase
 
@@ -18,7 +18,7 @@ from apps.web.outils.engagement import EngagementMachine
 class TestEngagementMachine(TestCase):
     @classmethod
     def setUpTestData(cls) -> None:
-        ExampleModel.create
+        DTM.create
 
 
     def test_send_website_email_engagement(self):

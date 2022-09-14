@@ -1,4 +1,4 @@
-from apps.bfet import ExampleModel
+from bfet import DjangoTestingModel as DTM
 
 from django.conf import settings
 from django.test import TestCase
@@ -20,7 +20,7 @@ FULL_DOMAIN = settings.FULL_DOMAIN
 class TestTerm(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.term = ExampleModel.create(
+        cls.term = DTM.create(
             Term,
             title="test contenido",
             slug="test-contenido"
@@ -36,10 +36,10 @@ class TestTerm(TestCase):
 class TestTermContent(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.term_contet = ExampleModel.create(
+        cls.term_contet = DTM.create(
             TermContent,
             title="test contenido",
-            term_related=ExampleModel.create(
+            term_related=DTM.create(
                 Term,
                 slug="test-main-contenido"
             )

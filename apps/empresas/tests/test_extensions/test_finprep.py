@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from apps.bfet import ExampleModel
+from bfet import DjangoTestingModel as DTM
 
 from apps.empresas.models import (
     Company,
@@ -13,9 +13,9 @@ from apps.empresas.models import (
 class TestAverageStatementsFinprep(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.company = ExampleModel.create(
+        cls.company = DTM.create(
             Company,
         )
-        cls.inc_st_finprep = ExampleModel.create(IncomeStatementFinprep)
-        cls.bs_finprep = ExampleModel.create(BalanceSheetFinprep)
-        cls.cf_st_finprep = ExampleModel.create(CashflowStatementFinprep)
+        cls.inc_st_finprep = DTM.create(IncomeStatementFinprep)
+        cls.bs_finprep = DTM.create(BalanceSheetFinprep)
+        cls.cf_st_finprep = DTM.create(CashflowStatementFinprep)

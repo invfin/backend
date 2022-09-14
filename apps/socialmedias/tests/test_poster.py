@@ -5,7 +5,7 @@ from django.test import TestCase
 from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
 
-from apps.bfet import ExampleModel
+from bfet import DjangoTestingModel as DTM
 from apps.empresas.tests.factories import AppleExample
 from apps.general.tests.factories import GenerateGeneralExample
 from apps.escritos.tests.factories import GenerateEscritosExample
@@ -36,7 +36,7 @@ class TestPoster(TestCase):
     @classmethod
     def setUpTestData(cls):
         # cls.question = Question.objects.create(**QUESTION)
-        cls.user = ExampleModel.create(User)
+        cls.user = DTM.create(User)
         GenerateGeneralExample.generate_all()
         GenerateSocialmediasExample.generate_all()
         GenerateEscritosExample.generate_all()

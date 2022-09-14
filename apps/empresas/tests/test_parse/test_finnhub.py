@@ -4,7 +4,7 @@ from unittest import skip
 
 from django.test import TestCase
 
-from apps.bfet import ExampleModel
+from bfet import DjangoTestingModel as DTM
 from apps.empresas.parse.finnhub import ParseFinnhub
 
 

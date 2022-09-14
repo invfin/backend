@@ -4,7 +4,7 @@ from datetime import datetime
 
 from django.test import TestCase
 
-from apps.bfet import ExampleModel
+from bfet import DjangoTestingModel as DTM
 from apps.general.models import Period
 from apps.empresas.models import (
     Company,
@@ -26,7 +26,7 @@ parse_vcr = vcr.VCR(
 class TestYahooQueryInfo(TestCase):
     @classmethod
     def setUpTestData(cls) -> None:
-        cls.company = ExampleModel.create(Company, ticker="AAPL")
+        cls.company = DTM.create(Company, ticker="AAPL")
         cls.parser = YahooQueryInfo(cls.company)
         cls.current_year = datetime.now().year
 

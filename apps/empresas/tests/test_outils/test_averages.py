@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from apps.bfet import ExampleModel
+from bfet import DjangoTestingModel as DTM
 
 from apps.empresas.models import (
     Company,
@@ -19,18 +19,18 @@ from apps.empresas.models import (
 class TestAverageStatements(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.company = ExampleModel.create(
+        cls.company = DTM.create(
             Company,
         )
-        cls.inc_st_finprep = ExampleModel.create(IncomeStatementFinprep)
-        cls.inc_st_yahooquery = ExampleModel.create(IncomeStatementYahooQuery)
-        cls.inc_st_yfinance = ExampleModel.create(IncomeStatementYFinance)
-        cls.bs_finprep = ExampleModel.create(BalanceSheetFinprep)
-        cls.bs_yahooquery = ExampleModel.create(BalanceSheetYahooQuery)
-        cls.bs_yfinance = ExampleModel.create(BalanceSheetYFinance)
-        cls.cf_st_finprep = ExampleModel.create(CashflowStatementFinprep)
-        cls.cf_st_yahooquery = ExampleModel.create(CashflowStatementYahooQuery)
-        cls.cf_st_yfinance = ExampleModel.create(CashflowStatementYFinance)
+        cls.inc_st_finprep = DTM.create(IncomeStatementFinprep)
+        cls.inc_st_yahooquery = DTM.create(IncomeStatementYahooQuery)
+        cls.inc_st_yfinance = DTM.create(IncomeStatementYFinance)
+        cls.bs_finprep = DTM.create(BalanceSheetFinprep)
+        cls.bs_yahooquery = DTM.create(BalanceSheetYahooQuery)
+        cls.bs_yfinance = DTM.create(BalanceSheetYFinance)
+        cls.cf_st_finprep = DTM.create(CashflowStatementFinprep)
+        cls.cf_st_yahooquery = DTM.create(CashflowStatementYahooQuery)
+        cls.cf_st_yfinance = DTM.create(CashflowStatementYFinance)
     
     def test_return_standard_keys(self):
         inc_st_finprep_keys = self.inc_st_finprep.return_standard.keys()

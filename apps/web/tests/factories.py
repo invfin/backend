@@ -1,4 +1,4 @@
-from apps.bfet import ExampleModel
+from bfet import DjangoTestingModel as DTM
 from apps.web.constants import CONTENT_PURPOSES
 from apps.web.models import (
     WebsiteEmail,
@@ -11,4 +11,4 @@ from apps.web.models import (
 
 def generate_web_models():
     for purpose in CONTENT_PURPOSES:
-        ExampleModel.create()
+        DTM.create()

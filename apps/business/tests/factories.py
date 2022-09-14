@@ -1,4 +1,4 @@
-from apps.bfet import ExampleModel
+from bfet import DjangoTestingModel as DTM
 
 from apps.business.models import (
 Customer,
@@ -14,13 +14,13 @@ TransactionHistorial,
 )
 
 
-ExampleModel.create(Customer)
-ExampleModel.create(Product)
-ExampleModel.create(ProductComment)
-ExampleModel.create(ProductComplementary)
-ExampleModel.create(ProductComplementaryPaymentLink)
-ExampleModel.create(ProductDiscount)
-ExampleModel.create(ProductSubscriber)
-ExampleModel.create(StripeFields)
-ExampleModel.create(StripeWebhookResponse)
-ExampleModel.create(TransactionHistorial)
+DTM.create(Customer)
+DTM.create(Product)
+DTM.create(ProductComment)
+DTM.create(ProductComplementary)
+DTM.create(ProductComplementaryPaymentLink)
+DTM.create(ProductDiscount)
+DTM.create(ProductSubscriber)
+DTM.create(StripeFields)
+DTM.create(StripeWebhookResponse)
+DTM.create(TransactionHistorial)

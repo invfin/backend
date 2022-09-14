@@ -4,7 +4,7 @@ from unittest import skip
 
 from django.test import TestCase
 
-from apps.bfet import ExampleModel
+from bfet import DjangoTestingModel as DTM
 from apps.empresas.company.update import UpdateCompany
 from apps.empresas.models import Company
 
@@ -18,10 +18,10 @@ company_vcr = vcr.VCR(
 class TestScrapCompanyInfo(TestCase):
     @classmethod
     def setUpTestData(cls) -> None:
-        cls.company = ExampleModel.create(Company)
+        cls.company = DTM.create(Company)
         cls.company_update = UpdateCompany(cls.company)
         cls.company.inc_statements.create(date=2018)
-        cls.zinga = ExampleModel.create(Company, ticker='ZNGA')
+        cls.zinga = DTM.create(Company, ticker='ZNGA')
 
     @company_vcr.use_cassette
     def test_need_update(self):

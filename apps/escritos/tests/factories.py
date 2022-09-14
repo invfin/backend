@@ -1,4 +1,4 @@
-from apps.bfet import ExampleModel
+from bfet import DjangoTestingModel as DTM
 
 from apps.escritos.tests.data import TERM, TERM_CONTENT, EMPTY_TERM
 from apps.escritos.models import (
@@ -12,13 +12,13 @@ TermsRelatedToResume,
 )
 
 
-favs_terms_historial = ExampleModel.create(FavoritesTermsHistorial)
-favs_terms_list = ExampleModel.create(FavoritesTermsList)
+favs_terms_historial = DTM.create(FavoritesTermsHistorial)
+favs_terms_list = DTM.create(FavoritesTermsList)
 
 
-term_correction = ExampleModel.create(TermCorrection)
-term_comment = ExampleModel.create(TermsComment)
-term_to_resume = ExampleModel.create(TermsRelatedToResume)
+term_correction = DTM.create(TermCorrection)
+term_comment = DTM.create(TermsComment)
+term_to_resume = DTM.create(TermsRelatedToResume)
 
 
 class GenerateEscritosExample:

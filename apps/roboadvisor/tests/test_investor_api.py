@@ -3,7 +3,7 @@ from django.test import RequestFactory
 from rest_framework import status
 from rest_framework.test import APITestCase
 
-from apps.bfet import ExampleModel
+from bfet import DjangoTestingModel as DTM
 from apps.empresas.models import Company
 from apps.roboadvisor.api.views import (
     RoboAdvisorQuestionCompanyAnalysisAPIView,
@@ -22,8 +22,8 @@ User = get_user_model()
 
 class TestInvoicesAllAPI(APITestCase):
     def setUp(self):
-        self.user = ExampleModel.create()
-        self.company = ExampleModel.create(Company)
+        self.user = DTM.create()
+        self.company = DTM.create(Company)
 
     def test_roboadvisor_question_company_analysis_API_view(self, rf: RequestFactory):
         data = {}

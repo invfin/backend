@@ -1,5 +1,5 @@
 import vcr
-from apps.bfet import ExampleModel
+from bfet import DjangoTestingModel as DTM
 
 from django.test import TestCase
 

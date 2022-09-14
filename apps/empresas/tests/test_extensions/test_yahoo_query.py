@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from apps.bfet import ExampleModel
+from bfet import DjangoTestingModel as DTM
 
 from apps.empresas.models import (
     Company,
@@ -13,9 +13,9 @@ from apps.empresas.models import (
 class TestAverageStatementsYahooQuery(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.company = ExampleModel.create(
+        cls.company = DTM.create(
             Company,
         )
-        cls.inc_st_yahooquery = ExampleModel.create(IncomeStatementYahooQuery)
-        cls.bs_yahooquery = ExampleModel.create(BalanceSheetYahooQuery)
-        cls.cf_st_yahooquery = ExampleModel.create(CashflowStatementYahooQuery)
+        cls.inc_st_yahooquery = DTM.create(IncomeStatementYahooQuery)
+        cls.bs_yahooquery = DTM.create(BalanceSheetYahooQuery)
+        cls.cf_st_yahooquery = DTM.create(CashflowStatementYahooQuery)

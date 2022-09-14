@@ -1,4 +1,4 @@
-from apps.bfet import ExampleModel
+from bfet import DjangoTestingModel as DTM
 
 from django.test import TestCase
 from django.contrib.auth import get_user_model
@@ -16,34 +16,34 @@ User = get_user_model()
 class TestNotificationSystem(TestCase):
     @classmethod
     def setUpTestData(cls) -> None:
-        cls.writter = ExampleModel.create(User, is_writter=True)
-        cls.user_1 = ExampleModel.create(User)
-        cls.user_2 = ExampleModel.create(User)
-        ExampleModel.create(Profile, user=cls.writter)
-        ExampleModel.create(Profile, user=cls.user_1)
-        ExampleModel.create(Profile, user=cls.user_2)
-        cls.question = ExampleModel.create(Question, author=cls.user_1)
-        cls.question_comment = ExampleModel.create(
+        cls.writter = DTM.create(User, is_writter=True)
+        cls.user_1 = DTM.create(User)
+        cls.user_2 = DTM.create(User)
+        DTM.create(Profile, user=cls.writter)
+        DTM.create(Profile, user=cls.user_1)
+        DTM.create(Profile, user=cls.user_2)
+        cls.question = DTM.create(Question, author=cls.user_1)
+        cls.question_comment = DTM.create(
             QuesitonComment,
-            content_related=ExampleModel.create(Question),
-            author=ExampleModel.create(User)
+            content_related=DTM.create(Question),
+            author=DTM.create(User)
         )
-        cls.answer = ExampleModel.create(
+        cls.answer = DTM.create(
             Answer,
-            author=ExampleModel.create(User),
+            author=DTM.create(User),
             question_related=cls.question
         )
-        cls.answer_comment = ExampleModel.create(
+        cls.answer_comment = DTM.create(
             AnswerComment,
-            author=ExampleModel.create(User),
-            content_related=ExampleModel.create(
+            author=DTM.create(User),
+            content_related=DTM.create(
                 Answer,
-                author=ExampleModel.create(User),
-                question_related=ExampleModel.create(Question, author=ExampleModel.create(User))
+                author=DTM.create(User),
+                question_related=DTM.create(Question, author=DTM.create(User))
             ),
         )
-        cls.followers = ExampleModel.create(NewsletterFollowers, user=cls.writter)
-        cls.blog = ExampleModel.create(PublicBlog, author=cls.writter)
+        cls.followers = DTM.create(NewsletterFollowers, user=cls.writter)
+        cls.blog = DTM.create(PublicBlog, author=cls.writter)
         cls.followers.followers.add(cls.user_1)
 
     def test_save_notif(self):

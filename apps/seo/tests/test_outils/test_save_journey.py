@@ -1,7 +1,7 @@
 from django.test import TestCase
 from django.contrib.auth import get_user_model
 
-from apps.bfet import ExampleModel
+from bfet import DjangoTestingModel as DTM
 
 from apps.empresas.models import Company
 from apps.escritos.models import Term
@@ -31,18 +31,18 @@ class TestJourneyClassifier(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.request = MockRequest
-        cls.user = ExampleModel.create(User)
-        cls.visiteur = ExampleModel.create(Visiteur)
-        cls.company = ExampleModel.create(Company)
-        cls.term = ExampleModel.create(
+        cls.user = DTM.create(User)
+        cls.visiteur = DTM.create(Visiteur)
+        cls.company = DTM.create(Company)
+        cls.term = DTM.create(
             Term,
             author=cls.user
         )
-        cls.question = ExampleModel.create(
+        cls.question = DTM.create(
             Question,
             author=cls.user
         )
-        cls.blog = ExampleModel.create(
+        cls.blog = DTM.create(
             PublicBlog,
             author=cls.user
         )

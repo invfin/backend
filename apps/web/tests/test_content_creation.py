@@ -1,4 +1,4 @@
-from apps.bfet import ExampleModel
+from bfet import DjangoTestingModel as DTM
 
 from django.test import TestCase
 
@@ -19,16 +19,16 @@ class TestWebsiteContentCreation(TestCase):
             "for_content": social_constants.WEB,
             "purpose": web_constants.CONTENT_FOR_ENGAGEMENT
         }
-        cls.content = ExampleModel.create(DefaultContent, **cls.filters)
-        cls.title = ExampleModel.create(
+        cls.content = DTM.create(DefaultContent, **cls.filters)
+        cls.title = DTM.create(
             DefaultTilte,
-            title=ExampleModel.create_random_string(200),
+            title=DTM.create_random_string(200),
             **cls.filters
         )
-        cls.emojis = ExampleModel.create(
+        cls.emojis = DTM.create(
             Emoji,
             2,
-            emoji=ExampleModel.create_random_string(10),
+            emoji=DTM.create_random_string(10),
         )
 
     def test_create_title(self):

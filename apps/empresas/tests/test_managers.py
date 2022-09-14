@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from apps.bfet import ExampleModel
+from bfet import DjangoTestingModel as DTM
 
 from apps.empresas.outils.update import UpdateCompany
 from apps.general.models import Sector, Industry
@@ -16,33 +16,33 @@ from apps.empresas.models import (
 class TestCompanyManagers(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.sector = ExampleModel.create(
+        cls.sector = DTM.create(
             Sector,
             sector='sector'
         )
-        cls.industry = ExampleModel.create(
+        cls.industry = DTM.create(
             Industry,
             industry='industry'
         )
-        cls.fr_main = ExampleModel.create(
+        cls.fr_main = DTM.create(
             ExchangeOrganisation,
             name='France'
         )
-        cls.usa_main = ExampleModel.create(
+        cls.usa_main = DTM.create(
             ExchangeOrganisation,
             name='Estados Unidos'
         )
-        cls.nyse = ExampleModel.create(
+        cls.nyse = DTM.create(
             Exchange,
             exchange_ticker='NYSE',
             main_org=cls.usa_main
         )
-        cls.euro = ExampleModel.create(
+        cls.euro = DTM.create(
             Exchange,
             exchange_ticker='EURO',
             main_org=cls.fr_main
         )
-        cls.apple = ExampleModel.create(
+        cls.apple = DTM.create(
             Company,
             ticker='AAPL',
             no_incs=False,
@@ -61,7 +61,7 @@ class TestCompanyManagers(TestCase):
                 }
             }
         )
-        cls.google = ExampleModel.create(
+        cls.google = DTM.create(
             Company,
             ticker='GOOGL',
             no_incs=False,
@@ -80,7 +80,7 @@ class TestCompanyManagers(TestCase):
                 }
             }
         )
-        cls.zinga = ExampleModel.create(
+        cls.zinga = DTM.create(
             Company,
             ticker='ZNGA',
             no_incs=False,
@@ -99,7 +99,7 @@ class TestCompanyManagers(TestCase):
                 }
             }
         )
-        cls.intel = ExampleModel.create(
+        cls.intel = DTM.create(
             Company,
             ticker='INTC',
             no_incs=True,
