@@ -8,11 +8,15 @@
                     <span aria-hidden="true">×</span>
                 </button>
             </div>
-            {% if request.user.user_api_key != False %}
-            <div class="modal-body">
-                <input class="form-control" type="text" value="{{request.user.user_api_key}}" aria-label="{{request.user.user_api_key}}" readonly>
-            </div>
-            {% else %}
+              {% with api_key=request.user.user_api_key %}
+                {% if api_key != False %}
+                <div class="modal-body">
+                    <input class="form-control" type="text" value="{{api_key}}" aria-label="{{api_key}}" readonly>
+                </div>
+
+                {% else %}
+
+
             <form method="POST" action="{% url 'api:request_api_key' %}">
                 {% csrf_token %}
                 <div class="modal-body">
@@ -25,12 +29,15 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="submit" class="btn btn-white">Empezar</button>                
+                    <button type="submit" class="btn btn-white">Empezar</button>
                 </div>
             </form>
+
             {% endif %}
+
+            {% endwith %}
             <div class="modal-footer">
-                <a href="{% url 'api:api_documentation' %}{% utm 'navbar-pop-up' 'API' %}" class="btn btn-white">Documentación de la API</a>                
+                <a href="{% url 'api:api_documentation' %}{% utm 'navbar-pop-up' 'API' %}" class="btn btn-white">Documentación de la API</a>
             </div>
         </div>
     </div>

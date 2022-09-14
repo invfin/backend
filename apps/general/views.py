@@ -31,6 +31,18 @@ class MessagesTemplateview(TemplateView):
 	template_name = "complements/messages.html"
 
 
+def handler403(request, exception):
+    return render(request, 'errors/403.html')
+
+
+def handler404(request, exception):
+    return render(request, 'errors/404.html')
+
+
+def handler500(request):
+    return render(request, 'errors/500.html')
+
+
 @login_required
 def create_comment_view(request, url_encoded):
     if request.method == 'POST':

@@ -5,7 +5,7 @@
       Rellena todos los campos para calcular el valor intrínseco
     </div>
     <div class="card-body">
-        <div class="row">  
+        <div class="row">
                 <!-- Crecimiento revenue -->
             <div class="col-xl-4 col-sm-12 mt-2">
                 <div class="form-floating">
@@ -82,13 +82,13 @@
                     <label for="pes_per" class="form-floating">% de free cash flow pesimista</label>
                 </div>
             </div>
-            
 
-            <div class="col-12 mt-2" style="text-align: center;">          
 
-                <button onclick="Showcomplexresults()" id="complexevaluar" class="btn btn-warning" >Calcular</button>   
-                        
-            </div>            
+            <div class="col-12 mt-2" style="text-align: center;">
+
+                <button onclick="Showcomplexresults()" id="complexevaluar" class="btn btn-warning" >Calcular</button>
+
+            </div>
             <div class="col-xl-4 col-sm-12 mt-2" id="complex_val_opt" style="display: none;">
                 <div id="complex_opt_valuation"></div>
             </div>
@@ -105,74 +105,56 @@
 
 
 <script>
-   
+  function Showcomplexresults() {
+    var complex_opt_growth = document.querySelector("#complex_opt_growth").value
+    var complex_neu_growth = document.querySelector("#complex_neu_growth").value
+    var complex_pes_growth = document.querySelector("#complex_pes_growth").value
+    var complex_opt_margin = document.querySelector("#complex_opt_margin").value
+    var complex_neu_margin = document.querySelector("#complex_neu_margin").value
+    var complex_pes_margin = document.querySelector("#complex_pes_margin").value
+    var complex_opt_buyback = document.querySelector("#complex_opt_buyback").value
+    var complex_neu_buyback = document.querySelector("#complex_neu_buyback").value
+    var complex_pes_buyback = document.querySelector("#complex_pes_buyback").value
+    var complex_opt_fcf_margin = document.querySelector("#complex_opt_fcf_margin").value
+    var complex_neu_fcf_margin = document.querySelector("#complex_neu_fcf_margin").value
+    var complex_pes_fcf_margin = document.querySelector("#complex_pes_fcf_margin").value
+    var company_id = "{{the_company.id}}"
 
-    function Showcomplexresults() {
-
-        var complex_opt_growth = document.querySelector("#complex_opt_growth").value
-        var complex_neu_growth = document.querySelector("#complex_neu_growth").value
-        var complex_pes_growth = document.querySelector("#complex_pes_growth").value
-        var complex_opt_margin = document.querySelector("#complex_opt_margin").value
-        var complex_neu_margin = document.querySelector("#complex_neu_margin").value
-        var complex_pes_margin = document.querySelector("#complex_pes_margin").value
-        var complex_opt_buyback = document.querySelector("#complex_opt_buyback").value
-        var complex_neu_buyback = document.querySelector("#complex_neu_buyback").value
-        var complex_pes_buyback = document.querySelector("#complex_pes_buyback").value
-        var complex_opt_fcf_margin = document.querySelector("#complex_opt_fcf_margin").value
-        var complex_neu_fcf_margin = document.querySelector("#complex_neu_fcf_margin").value
-        var complex_pes_fcf_margin = document.querySelector("#complex_pes_fcf_margin").value
-        var company_id = "{{the_company.id}}"
-        var current_per = "{{the_company_financials.per}}"
-
-        formData = JSON.stringify({
-            complex_opt_growth :complex_opt_growth,
-            complex_neu_growth :complex_neu_growth,
-            complex_pes_growth :complex_pes_growth,
-            complex_opt_margin :complex_opt_margin,
-            complex_neu_margin :complex_neu_margin,
-            complex_pes_margin :complex_pes_margin,
-            complex_opt_buyback :complex_opt_buyback,
-            complex_neu_buyback :complex_neu_buyback,
-            complex_pes_buyback :complex_pes_buyback,
-            complex_opt_fcf_margin :complex_opt_fcf_margin,
-            complex_neu_fcf_margin :complex_neu_fcf_margin,
-            complex_pes_fcf_margin :complex_pes_fcf_margin,
-            company_id :company_id,
-            current_per :current_per
-    
+    formData = JSON.stringify({
+      complex_opt_growth :complex_opt_growth,
+      complex_neu_growth :complex_neu_growth,
+      complex_pes_growth :complex_pes_growth,
+      complex_opt_margin :complex_opt_margin,
+      complex_neu_margin :complex_neu_margin,
+      complex_pes_margin :complex_pes_margin,
+      complex_opt_buyback :complex_opt_buyback,
+      complex_neu_buyback :complex_neu_buyback,
+      complex_pes_buyback :complex_pes_buyback,
+      complex_opt_fcf_margin :complex_opt_fcf_margin,
+      complex_neu_fcf_margin :complex_neu_fcf_margin,
+      complex_pes_fcf_margin :complex_pes_fcf_margin,
+      company_id :company_id,
     })
-   
-  event.preventDefault(); // <---- Add this line
-  $.ajax({
-    url: "{% url 'screener:medium_valuation_view' %}",
+
+    event.preventDefault(); // <---- Add this line
+    $.ajax({
+      url: "{% url 'screener:medium_valuation_view' %}",
       type: "POST",
       dataType: "json",
       data: formData,
       headers: {
-      "X-Requested-With": "XMLHttpRequest",
-      'X-CSRFToken': csrftoken,
-      
+        "X-Requested-With": "XMLHttpRequest",
+        'X-CSRFToken': csrftoken,
       },
-      
+
       success: (data) => {
-      
-      var complex_valone = document.getElementById("complex_val_opt");
-      var complex_valtwo = document.getElementById("complex_val_neu");
-      var complex_valthree = document.getElementById("complex_val_pes");
-
-      complex_valone.style.display = "block";
-      complex_valtwo.style.display = "block";
-      complex_valthree.style.display = "block";
-      
-      $('#complex_opt_valuation').append('<div class="form-floating mt-1"><input type="text" value="0" class="form-control" value="'+data.complex_opt_valuation+'" readonly><label class="form-floating">Valoración optimista</label></div>');
-      $('#complex_neu_valuation').append('<div class="form-floating mt-1"><input type="text" value="0" class="form-control" value="'+data.complex_neu_valuation+'" readonly><label class="form-floating">Valoración neutral</label></div>');
-      $('#complex_pes_valuation').append('<div class="form-floating mt-1"><input type="text" value="0" class="form-control" value="'+data.complex_pes_valuation+'" readonly><label class="form-floating">Valoración pesimista</label></div>');
-
-      
+        document.getElementById("complex_val_opt").style.display = "block";
+        document.getElementById("complex_val_neu").style.display = "block";
+        document.getElementById("complex_val_pes").style.display = "block";
+        $('#complex_opt_valuation').append('<div class="form-floating mt-1"><input type="text" class="form-control" value="'+data.complex_opt_valuation+'" readonly><label class="form-floating">Valoración optimista</label></div>');
+        $('#complex_neu_valuation').append('<div class="form-floating mt-1"><input type="text" class="form-control" value="'+data.complex_neu_valuation+'" readonly><label class="form-floating">Valoración neutral</label></div>');
+        $('#complex_pes_valuation').append('<div class="form-floating mt-1"><input type="text" class="form-control" value="'+data.complex_pes_valuation+'" readonly><label class="form-floating">Valoración pesimista</label></div>');
       },
-    
-  });
-}
-
-
+    });
+  }
 </script>

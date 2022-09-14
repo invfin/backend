@@ -9,7 +9,7 @@ TOP_MENU_LEFT = [
         {"name": "Home",  "url": "admin:index", "permissions": ["auth.view_user"]},
 
         # external url that opens in a new window (Permissions can be added)
-        # {"name": "Support", "url": "https://github.com/farridav/django-jazzmin/issues", "new_window": True},
+        # {"name": "Support", "url": "", "new_window": True},
 
         # model admin to link to (Permissions checked against model)
         # {"model": "users.User"},
@@ -240,6 +240,18 @@ SIDE_MENU = [
             {
                 'model': 'preguntas_respuestas.Answer',
                 'label': "Answers",
+            },
+        ),
+    },
+    {
+        'label': 'Recsys',
+        'icon': 'fas fa-globe',
+        'models': (
+            {
+                'model': 'recsys.VisiteurCompanyRecommended',
+            },
+            {
+                'model': 'recsys.UserCompanyRecommended',
             },
         ),
     },
