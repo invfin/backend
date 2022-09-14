@@ -9,7 +9,6 @@ ipdb
 
 watchgod
 Collectfast
-django-widget-tweaks
 
 # Testing
 # ------------------------------------------------------------------------------
@@ -37,8 +36,7 @@ pre-commit
 
 # Django
 # ------------------------------------------------------------------------------
-factory-boy
-model_bakery
+bfet
 
 django-debug-toolbar
 django-extensions
