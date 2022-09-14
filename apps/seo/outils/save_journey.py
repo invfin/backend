@@ -33,7 +33,7 @@ class JourneyClassifier:
 
         elif request.user.is_anonymous:
             visiteur = None
-            if request.is_visiteur:
+            if hasattr(request, "is_visiteur") and request.is_visiteur:
                 visiteur = request.visiteur
             if not visiteur:
                 visiteur = SeoInformation().find_visiteur(request)
