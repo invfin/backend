@@ -95,7 +95,11 @@ class JourneyClassifier:
 
             elif '/definicion/' in current_path:
                 journey_model = 'TermVisited'
-                model_visited = Term.objects.get(slug=info)
+                model_visited = Term.objects.filter(slug=info)
+                if model_visited.exists():
+                    model_visited = model_visited.first()
+                else:
+                    model_visited, journey_model = None, None
 
         return model_visited, journey_model
 
