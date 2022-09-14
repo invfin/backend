@@ -79,7 +79,8 @@ class JourneyClassifier:
             else:
                 info = splited_path[1]
 
-
+            if "general/assets" in current_path:
+                return model_visited, journey_model
 
             if '/screener/analisis-de/' in current_path:
                 journey_model = 'CompanyVisited'
