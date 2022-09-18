@@ -8,16 +8,19 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         period = Period.objects.for_year_period(2021)
         company = Company.objects.get(ticker="AAPL")
-        incomestatementyahooquery = company.incomestatementyahooquery_set.get(period=period)
-        balancesheetyahooquery = company.balancesheetyahooquery_set.get(period=period)
-        cashflowstatementyahooquery = company.cashflowstatementyahooquery_set.get(period=period)
-        incomestatementyfinance = company.incomestatementyfinance_set.get(period=period)
-        balancesheetyfinance = company.balancesheetyfinance_set.get(period=period)
-        cashflowstatementyfinance = company.cashflowstatementyfinance_set.get(period=period)
+        # incomestatementyahooquery = company.incomestatementyahooquery_set.get(period=period)
+        # balancesheetyahooquery = company.balancesheetyahooquery_set.get(period=period)
+        # cashflowstatementyahooquery = company.cashflowstatementyahooquery_set.get(period=period)
+        # incomestatementyfinance = company.incomestatementyfinance_set.get(period=period)
+        # balancesheetyfinance = company.balancesheetyfinance_set.get(period=period)
+        # cashflowstatementyfinance = company.cashflowstatementyfinance_set.get(period=period)
+        incomestatementfinprep = company.incomestatementfinprep_set.get(period=period)
+        balancesheetfinprep = company.balancesheetfinprep_set.get(period=period)
+        cashflowstatementfinprep = company.cashflowstatementfinprep_set.get(period=period)
         inc_statements = company.inc_statements.get(period=period)
         balance_sheets = company.balance_sheets.get(period=period)
         cf_statements = company.cf_statements.get(period=period)
-        inc_statements_dict = cf_statements.__dict__
+        inc_statements_dict = inc_statements.__dict__
         inc_statements_dict.pop("year")
         inc_statements_dict.pop("_state")
         inc_statements_dict.pop("id")
@@ -28,10 +31,7 @@ class Command(BaseCommand):
         inc_statements_dict.pop("is_ttm")
 
         similar = dict()
-        for st, nombre in [
-            (cashflowstatementyahooquery, "yahooquery"), 
-            (cashflowstatementyfinance, "yfinance")
-        ]:
+        for st, nombre in [(incomestatementfinprep, "finprep")]:
             st_dict = st.__dict__
             st_dict.pop("year")
             st_dict.pop("_state")
@@ -47,5 +47,5 @@ class Command(BaseCommand):
                             similar[inc_key] = {nombre: key}
                         else:
                             similar[inc_key].update({nombre: key})
-        
+
         print(similar)

@@ -3,6 +3,8 @@ from django.db import models
 
 from django_json_widget.widgets import JSONEditorWidget
 
+from apps.empresas.parse.yahoo_query import YahooQueryInfo
+from apps.empresas.utils import arrange_quarters
 from apps.empresas.outils.retrieve_data import RetrieveCompanyData
 from apps.empresas.admin.filters.base import (
     NewCompanyToParseFilter,
@@ -12,16 +14,16 @@ from apps.empresas.admin.filters.base import (
 
 class BaseJSONWidgetInline(admin.StackedInline):
     formfield_overrides = {
-        models.JSONField: {'widget': JSONEditorWidget},
+        models.JSONField: {"widget": JSONEditorWidget},
     }
     extra = 0
 
 
 class BaseStatementAdmin(admin.ModelAdmin):
     formfield_overrides = {
-        models.JSONField: {'widget': JSONEditorWidget},
+        models.JSONField: {"widget": JSONEditorWidget},
     }
-    
+
     list_display = [
         "id",
         "date",
@@ -42,18 +44,20 @@ class BaseStatementAdmin(admin.ModelAdmin):
     ]
 
 
-@admin.action(description='Update financials')
+@admin.action(description="Update financials")
 def update_financials(modeladmin, request, queryset):
     for query in queryset:
         RetrieveCompanyData(query).create_financials_yahooquery("a")
         RetrieveCompanyData(query).create_financials_yahooquery("q")
         RetrieveCompanyData(query).create_financials_yfinance("a")
         RetrieveCompanyData(query).create_financials_yfinance("q")
+        YahooQueryInfo(query).match_quarters_with_earning_history_yahooquery()
+        arrange_quarters(query)
 
 
 class BaseCompanyAdmin(admin.ModelAdmin):
     formfield_overrides = {
-        models.JSONField: {'widget': JSONEditorWidget},
+        models.JSONField: {"widget": JSONEditorWidget},
     }
 
     actions = [
@@ -98,4 +102,3 @@ class BaseCompanyAdmin(admin.ModelAdmin):
         ("balance-sheet", "Balance Sheet"),
         ("cashflow-statement", "Cashflow Statement"),
     ]
-

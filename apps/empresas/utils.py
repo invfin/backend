@@ -7,20 +7,18 @@ from dateutil.relativedelta import relativedelta
 
 from apps.general import constants
 from apps.general.models import Period
-from apps.seo.models import UserCompanyVisited, VisiteurCompanyVisited
-from apps.seo.outils.visiteur_meta import SeoInformation
 from apps.empresas.constants import DEFAULT_JSON_CHECKS_FILE
 from apps.empresas.models import Company, CompanyUpdateLog
 
 
 def detect_outlier(list_data):
-    outliers=[]
-    threshold=3
+    outliers = []
+    threshold = 3
     mean_1 = np.mean(list_data)
-    std_1 =np.std(list_data)
+    std_1 = np.std(list_data)
 
     for y in list_data:
-        z_score= (y - mean_1)/std_1
+        z_score = (y - mean_1) / std_1
         if np.abs(z_score) > threshold:
             outliers.append(y)
 
@@ -51,7 +49,9 @@ def log_company(checking: str = None):
                 if checking:
                     has_it = had_error is False
                     company.modify_checkings(checking, has_it)
+
         return wrapper
+
     return decorator
 
 
@@ -93,27 +93,20 @@ def arrange_quarters(company):
 
 
 def company_searched(search, request):
-    empresa_ticker = search.split(' [')[1]
+    empresa_ticker = search.split(" [")[1]
     ticker = empresa_ticker[:-1]
     try:
-        empresa_busqueda = Company.objects.get(ticker = ticker)
+        empresa_busqueda = Company.objects.get(ticker=ticker)
         redirect_path = empresa_busqueda.get_absolute_url()
     except Exception as e:
-        redirect_path = request.META.get('HTTP_REFERER')
+        redirect_path = request.META.get("HTTP_REFERER")
     finally:
         return redirect_path
 
 
 def add_new_default_check(checking):
-    with open(DEFAULT_JSON_CHECKS_FILE, 'r') as read_checks_json:
+    with open(DEFAULT_JSON_CHECKS_FILE, "r") as read_checks_json:
         checks_json = json.load(read_checks_json)
-    checks_json.update(
-        {
-            f'has_{checking}': {
-                'state': 'no',
-                'time': ''
-            }
-        }
-    )
-    with open(DEFAULT_JSON_CHECKS_FILE, 'w') as writte_checks_json:
-        json.dump(checks_json, writte_checks_json, indent=2, separators=(',',': '))
+    checks_json.update({f"has_{checking}": {"state": "no", "time": ""}})
+    with open(DEFAULT_JSON_CHECKS_FILE, "w") as writte_checks_json:
+        json.dump(checks_json, writte_checks_json, indent=2, separators=(",", ": "))

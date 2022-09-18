@@ -1,4 +1,17 @@
-class AverageIncomeStatement:
+class BaseAverage:
+    reported_currency_id_field: str = "reported_currency_id"
+
+    def calculate_reported_currency(self):
+        return getattr(self, self.reported_currency_id_field, None)
+
+    @property
+    def return_standard(self):
+        return dict(
+            reported_currency_id=self.calculate_reported_currency(),
+        )
+
+
+class AverageIncomeStatement(BaseAverage):
     revenue_field: str = "revenue"
     cost_of_revenue_field: str = "cost_of_revenue"
     gross_profit_field: str = "gross_profit"
@@ -21,68 +34,69 @@ class AverageIncomeStatement:
     weighted_average_diluated_shares_outstanding_field: str = "weighted_average_diluated_shares_outstanding"
 
     def calculate_revenue(self):
-        return getattr(self, self.revenue_field)
+        return getattr(self, self.revenue_field, None)
 
     def calculate_cost_of_revenue(self):
-        return getattr(self, self.cost_of_revenue_field)
+        return getattr(self, self.cost_of_revenue_field, None)
 
     def calculate_gross_profit(self):
-        return getattr(self, self.gross_profit_field)
+        return getattr(self, self.gross_profit_field, None)
 
     def calculate_rd_expenses(self):
-        return getattr(self, self.rd_expenses_field)
+        return getattr(self, self.rd_expenses_field, None)
 
     def calculate_general_administrative_expenses(self):
-        return getattr(self, self.general_administrative_expenses_field)
+        return getattr(self, self.general_administrative_expenses_field, None)
 
     def calculate_selling_marketing_expenses(self):
-        return getattr(self, self.selling_marketing_expenses_field)
+        return getattr(self, self.selling_marketing_expenses_field, None)
 
     def calculate_sga_expenses(self):
-        return getattr(self, self.sga_expenses_field)
+        return getattr(self, self.sga_expenses_field, None)
 
     def calculate_other_expenses(self):
-        return getattr(self, self.other_expenses_field)
+        return getattr(self, self.other_expenses_field, None)
 
     def calculate_operating_expenses(self):
-        return getattr(self, self.operating_expenses_field)
+        return getattr(self, self.operating_expenses_field, None)
 
     def calculate_cost_and_expenses(self):
-        return getattr(self, self.cost_and_expenses_field)
+        return getattr(self, self.cost_and_expenses_field, None)
 
     def calculate_interest_expense(self):
-        return getattr(self, self.interest_expense_field)
+        return getattr(self, self.interest_expense_field, None)
 
     def calculate_depreciation_amortization(self):
-        return getattr(self, self.depreciation_amortization_field)
+        return getattr(self, self.depreciation_amortization_field, None)
 
     def calculate_ebitda(self):
-        return getattr(self, self.ebitda_field)
+        return getattr(self, self.ebitda_field, None)
 
     def calculate_operating_income(self):
-        return getattr(self, self.operating_income_field)
+        return getattr(self, self.operating_income_field, None)
 
     def calculate_net_total_other_income_expenses(self):
-        return getattr(self, self.net_total_other_income_expenses_field)
+        return getattr(self, self.net_total_other_income_expenses_field, None)
 
     def calculate_income_before_tax(self):
-        return getattr(self, self.income_before_tax_field)
+        return getattr(self, self.income_before_tax_field, None)
 
     def calculate_income_tax_expenses(self):
-        return getattr(self, self.income_tax_expenses_field)
+        return getattr(self, self.income_tax_expenses_field, None)
 
     def calculate_net_income(self):
-        return getattr(self, self.net_income_field)
+        return getattr(self, self.net_income_field, None)
 
     def calculate_weighted_average_shares_outstanding(self):
-        return getattr(self, self.weighted_average_shares_outstanding_field)
+        return getattr(self, self.weighted_average_shares_outstanding_field, None)
 
     def calculate_weighted_average_diluated_shares_outstanding(self):
-        return getattr(self, self.weighted_average_diluated_shares_outstanding_field)
+        return getattr(self, self.weighted_average_diluated_shares_outstanding_field, None)
 
     @property
     def return_standard(self):
         return dict(
+            **super().return_standard,
             revenue=self.calculate_revenue(),
             cost_of_revenue=self.calculate_cost_of_revenue(),
             gross_profit=self.calculate_gross_profit(),
@@ -106,7 +120,7 @@ class AverageIncomeStatement:
         )
 
 
-class AverageBalanceSheet:
+class AverageBalanceSheet(BaseAverage):
     cash_and_cash_equivalents_field: str = "cash_and_cash_equivalents"
     short_term_investments_field: str = "short_term_investments"
     cash_and_short_term_investments_field: str = "cash_and_short_term_investments"
@@ -148,125 +162,126 @@ class AverageBalanceSheet:
     net_debt_field: str = "net_debt"
 
     def calculate_cash_and_cash_equivalents(self):
-        return getattr(self, self.cash_and_cash_equivalents_field)
+        return getattr(self, self.cash_and_cash_equivalents_field, None)
 
     def calculate_short_term_investments(self):
-        return getattr(self, self.short_term_investments_field)
+        return getattr(self, self.short_term_investments_field, None)
 
     def calculate_cash_and_short_term_investments(self):
-        return getattr(self, self.cash_and_short_term_investments_field)
+        return getattr(self, self.cash_and_short_term_investments_field, None)
 
     def calculate_net_receivables(self):
-        return getattr(self, self.net_receivables_field)
+        return getattr(self, self.net_receivables_field, None)
 
     def calculate_inventory(self):
-        return getattr(self, self.inventory_field)
+        return getattr(self, self.inventory_field, None)
 
     def calculate_other_current_assets(self):
-        return getattr(self, self.other_current_assets_field)
+        return getattr(self, self.other_current_assets_field, None)
 
     def calculate_total_current_assets(self):
-        return getattr(self, self.total_current_assets_field)
+        return getattr(self, self.total_current_assets_field, None)
 
     def calculate_property_plant_equipment(self):
-        return getattr(self, self.property_plant_equipment_field)
+        return getattr(self, self.property_plant_equipment_field, None)
 
     def calculate_goodwill(self):
-        return getattr(self, self.goodwill_field)
+        return getattr(self, self.goodwill_field, None)
 
     def calculate_intangible_assets(self):
-        return getattr(self, self.intangible_assets_field)
+        return getattr(self, self.intangible_assets_field, None)
 
     def calculate_goodwill_and_intangible_assets(self):
-        return getattr(self, self.goodwill_and_intangible_assets_field)
+        return getattr(self, self.goodwill_and_intangible_assets_field, None)
 
     def calculate_long_term_investments(self):
-        return getattr(self, self.long_term_investments_field)
+        return getattr(self, self.long_term_investments_field, None)
 
     def calculate_tax_assets(self):
-        return getattr(self, self.tax_assets_field)
+        return getattr(self, self.tax_assets_field, None)
 
     def calculate_other_non_current_assets(self):
-        return getattr(self, self.other_non_current_assets_field)
+        return getattr(self, self.other_non_current_assets_field, None)
 
     def calculate_total_non_current_assets(self):
-        return getattr(self, self.total_non_current_assets_field)
+        return getattr(self, self.total_non_current_assets_field, None)
 
     def calculate_other_assets(self):
-        return getattr(self, self.other_assets_field)
+        return getattr(self, self.other_assets_field, None)
 
     def calculate_total_assets(self):
-        return getattr(self, self.total_assets_field)
+        return getattr(self, self.total_assets_field, None)
 
     def calculate_account_payables(self):
-        return getattr(self, self.account_payables_field)
+        return getattr(self, self.account_payables_field, None)
 
     def calculate_short_term_debt(self):
-        return getattr(self, self.short_term_debt_field)
+        return getattr(self, self.short_term_debt_field, None)
 
     def calculate_tax_payables(self):
-        return getattr(self, self.tax_payables_field)
+        return getattr(self, self.tax_payables_field, None)
 
     def calculate_deferred_revenue(self):
-        return getattr(self, self.deferred_revenue_field)
+        return getattr(self, self.deferred_revenue_field, None)
 
     def calculate_other_current_liabilities(self):
-        return getattr(self, self.other_current_liabilities_field)
+        return getattr(self, self.other_current_liabilities_field, None)
 
     def calculate_total_current_liabilities(self):
-        return getattr(self, self.total_current_liabilities_field)
+        return getattr(self, self.total_current_liabilities_field, None)
 
     def calculate_long_term_debt(self):
-        return getattr(self, self.long_term_debt_field)
+        return getattr(self, self.long_term_debt_field, None)
 
     def calculate_deferred_revenue_non_current(self):
-        return getattr(self, self.deferred_revenue_non_current_field)
+        return getattr(self, self.deferred_revenue_non_current_field, None)
 
     def calculate_deferred_tax_liabilities_non_current(self):
-        return getattr(self, self.deferred_tax_liabilities_non_current_field)
+        return getattr(self, self.deferred_tax_liabilities_non_current_field, None)
 
     def calculate_other_non_current_liabilities(self):
-        return getattr(self, self.other_non_current_liabilities_field)
+        return getattr(self, self.other_non_current_liabilities_field, None)
 
     def calculate_total_non_current_liabilities(self):
-        return getattr(self, self.total_non_current_liabilities_field)
+        return getattr(self, self.total_non_current_liabilities_field, None)
 
     def calculate_other_liabilities(self):
-        return getattr(self, self.other_liabilities_field)
+        return getattr(self, self.other_liabilities_field, None)
 
     def calculate_total_liabilities(self):
-        return getattr(self, self.total_liabilities_field)
+        return getattr(self, self.total_liabilities_field, None)
 
     def calculate_common_stocks(self):
-        return getattr(self, self.common_stocks_field)
+        return getattr(self, self.common_stocks_field, None)
 
     def calculate_retained_earnings(self):
-        return getattr(self, self.retained_earnings_field)
+        return getattr(self, self.retained_earnings_field, None)
 
     def calculate_accumulated_other_comprehensive_income_loss(self):
-        return getattr(self, self.accumulated_other_comprehensive_income_loss_field)
+        return getattr(self, self.accumulated_other_comprehensive_income_loss_field, None)
 
     def calculate_othertotal_stockholders_equity(self):
-        return getattr(self, self.othertotal_stockholders_equity_field)
+        return getattr(self, self.othertotal_stockholders_equity_field, None)
 
     def calculate_total_stockholders_equity(self):
-        return getattr(self, self.total_stockholders_equity_field)
+        return getattr(self, self.total_stockholders_equity_field, None)
 
     def calculate_total_liabilities_and_total_equity(self):
-        return getattr(self, self.total_liabilities_and_total_equity_field)
+        return getattr(self, self.total_liabilities_and_total_equity_field, None)
 
     def calculate_total_investments(self):
-        return getattr(self, self.total_investments_field)
+        return getattr(self, self.total_investments_field, None)
 
     def calculate_total_debt(self):
-        return getattr(self, self.total_debt_field)
+        return getattr(self, self.total_debt_field, None)
 
     def calculate_net_debt(self):
-        return getattr(self, self.net_debt_field)
+        return getattr(self, self.net_debt_field, None)
 
     @property
     def return_standard(self):
         return dict(
+            **super().return_standard,
             cash_and_cash_equivalents=self.calculate_cash_and_cash_equivalents(),
             short_term_investments=self.calculate_short_term_investments(),
             cash_and_short_term_investments=self.calculate_cash_and_short_term_investments(),
@@ -309,7 +324,7 @@ class AverageBalanceSheet:
         )
 
 
-class AverageCashflowStatement:
+class AverageCashflowStatement(BaseAverage):
     net_income_field: str = "net_income"
     depreciation_amortization_field: str = "depreciation_amortization"
     deferred_income_tax_field: str = "deferred_income_tax"
@@ -342,98 +357,99 @@ class AverageCashflowStatement:
     fcf_field: str = "fcf"
 
     def calculate_net_income(self):
-        return getattr(self, self.net_income_field)
+        return getattr(self, self.net_income_field, None)
 
     def calculate_depreciation_amortization(self):
-        return getattr(self, self.depreciation_amortization_field)
+        return getattr(self, self.depreciation_amortization_field, None)
 
     def calculate_deferred_income_tax(self):
-        return getattr(self, self.deferred_income_tax_field)
+        return getattr(self, self.deferred_income_tax_field, None)
 
     def calculate_stock_based_compesation(self):
-        return getattr(self, self.stock_based_compesation_field)
+        return getattr(self, self.stock_based_compesation_field, None)
 
     def calculate_change_in_working_capital(self):
-        return getattr(self, self.change_in_working_capital_field)
+        return getattr(self, self.change_in_working_capital_field, None)
 
     def calculate_accounts_receivables(self):
-        return getattr(self, self.accounts_receivables_field)
+        return getattr(self, self.accounts_receivables_field, None)
 
     def calculate_inventory(self):
-        return getattr(self, self.inventory_field)
+        return getattr(self, self.inventory_field, None)
 
     def calculate_accounts_payable(self):
-        return getattr(self, self.accounts_payable_field)
+        return getattr(self, self.accounts_payable_field, None)
 
     def calculate_other_working_capital(self):
-        return getattr(self, self.other_working_capital_field)
+        return getattr(self, self.other_working_capital_field, None)
 
     def calculate_other_non_cash_items(self):
-        return getattr(self, self.other_non_cash_items_field)
+        return getattr(self, self.other_non_cash_items_field, None)
 
     def calculate_operating_activities_cf(self):
-        return getattr(self, self.operating_activities_cf_field)
+        return getattr(self, self.operating_activities_cf_field, None)
 
     def calculate_investments_property_plant_equipment(self):
-        return getattr(self, self.investments_property_plant_equipment_field)
+        return getattr(self, self.investments_property_plant_equipment_field, None)
 
     def calculate_acquisitions_net(self):
-        return getattr(self, self.acquisitions_net_field)
+        return getattr(self, self.acquisitions_net_field, None)
 
     def calculate_purchases_investments(self):
-        return getattr(self, self.purchases_investments_field)
+        return getattr(self, self.purchases_investments_field, None)
 
     def calculate_sales_maturities_investments(self):
-        return getattr(self, self.sales_maturities_investments_field)
+        return getattr(self, self.sales_maturities_investments_field, None)
 
     def calculate_other_investing_activites(self):
-        return getattr(self, self.other_investing_activites_field)
+        return getattr(self, self.other_investing_activites_field, None)
 
     def calculate_investing_activities_cf(self):
-        return getattr(self, self.investing_activities_cf_field)
+        return getattr(self, self.investing_activities_cf_field, None)
 
     def calculate_debt_repayment(self):
-        return getattr(self, self.debt_repayment_field)
+        return getattr(self, self.debt_repayment_field, None)
 
     def calculate_common_stock_issued(self):
-        return getattr(self, self.common_stock_issued_field)
+        return getattr(self, self.common_stock_issued_field, None)
 
     def calculate_common_stock_repurchased(self):
-        return getattr(self, self.common_stock_repurchased_field)
+        return getattr(self, self.common_stock_repurchased_field, None)
 
     def calculate_dividends_paid(self):
-        return getattr(self, self.dividends_paid_field)
+        return getattr(self, self.dividends_paid_field, None)
 
     def calculate_other_financing_activities(self):
-        return getattr(self, self.other_financing_activities_field)
+        return getattr(self, self.other_financing_activities_field, None)
 
     def calculate_financing_activities_cf(self):
-        return getattr(self, self.financing_activities_cf_field)
+        return getattr(self, self.financing_activities_cf_field, None)
 
     def calculate_effect_forex_exchange(self):
-        return getattr(self, self.effect_forex_exchange_field)
+        return getattr(self, self.effect_forex_exchange_field, None)
 
     def calculate_net_change_cash(self):
-        return getattr(self, self.net_change_cash_field)
+        return getattr(self, self.net_change_cash_field, None)
 
     def calculate_cash_end_period(self):
-        return getattr(self, self.cash_end_period_field)
+        return getattr(self, self.cash_end_period_field, None)
 
     def calculate_cash_beginning_period(self):
-        return getattr(self, self.cash_beginning_period_field)
+        return getattr(self, self.cash_beginning_period_field, None)
 
     def calculate_operating_cf(self):
-        return getattr(self, self.operating_cf_field)
+        return getattr(self, self.operating_cf_field, None)
 
     def calculate_capex(self):
-        return getattr(self, self.capex_field)
+        return getattr(self, self.capex_field, None)
 
     def calculate_fcf(self):
-        return getattr(self, self.fcf_field)
+        return getattr(self, self.fcf_field, None)
 
     @property
     def return_standard(self):
         return dict(
+            **super().return_standard,
             net_income=self.calculate_net_income(),
             depreciation_amortization=self.calculate_depreciation_amortization(),
             deferred_income_tax=self.calculate_deferred_income_tax(),

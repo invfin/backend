@@ -1,16 +1,10 @@
-from django.db.models import (
-    FloatField,
-    DateTimeField,
-    CharField,
-    JSONField,
-    DateTimeField
-)
+from django.db.models import FloatField, DateTimeField, CharField, JSONField, DateTimeField
 
 from apps.empresas.models import BaseStatement
 from apps.empresas.extensions.yahoo_query import (
     IncomeStatementYahooQueryExtended,
     BalanceSheetYahooQueryExtended,
-    CashflowStatementYahooQueryExtended
+    CashflowStatementYahooQueryExtended,
 )
 
 
@@ -69,9 +63,6 @@ class IncomeStatementYahooQuery(BaseUnknownField, IncomeStatementYahooQueryExten
         verbose_name = "Yahooquery Income Statement"
         verbose_name_plural = "Yahooquery Income Statements"
         db_table = "assets_companies_income_statements_yahooquery"
-
-    def __str__(self):
-        return self.company.ticker + str(self.date)
 
 
 class BalanceSheetYahooQuery(BaseUnknownField, BalanceSheetYahooQueryExtended):
@@ -144,9 +135,6 @@ class BalanceSheetYahooQuery(BaseUnknownField, BalanceSheetYahooQueryExtended):
         verbose_name_plural = "Yahooquery Balance Sheets"
         db_table = "assets_companies_balance_sheet_statements_yahooquery"
 
-    def __str__(self):
-        return self.company.ticker + str(self.date)
-
 
 class CashflowStatementYahooQuery(BaseUnknownField, CashflowStatementYahooQueryExtended):
     as_of_date = DateTimeField(blank=True, null=True)
@@ -214,9 +202,6 @@ class CashflowStatementYahooQuery(BaseUnknownField, CashflowStatementYahooQueryE
         verbose_name_plural = "Yahooquery Cash flow Statements"
         db_table = "assets_companies_cashflow_statements_yahooquery"
 
-    def __str__(self):
-        return self.company.ticker + str(self.date)
-
 
 class KeyStatsYahooQuery(BaseUnknownField):
     period = None
@@ -262,6 +247,3 @@ class KeyStatsYahooQuery(BaseUnknownField):
         verbose_name = "Yahooquery Key stats"
         verbose_name_plural = "Yahooquery Key stats"
         db_table = "assets_companies_key stats_yahooquery"
-
-    def __str__(self):
-        return self.company.ticker + str(self.date)

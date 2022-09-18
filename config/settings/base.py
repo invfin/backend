@@ -16,6 +16,10 @@ if READ_DOT_ENV_FILE:
 
 IS_PROD = env.bool("IS_PROD", False)
 
+PROTOCOL = "http://"
+if IS_PROD:
+    PROTOCOL = "https://"
+
 # GENERAL
 # ------------------------------------------------------------------------------
 CURRENT_DOMAIN = env("CURRENT_DOMAIN", default="example.com")
@@ -47,15 +51,15 @@ USE_TZ = True
 LOCALE_PATHS = [str(ROOT_DIR / "locale")]
 
 DATE_INPUT_FORMATS = [
-    '%d/%m/%Y',  # '10/25/06'
-    '%d-%m-%Y',  # '10-25-06'
+    "%d/%m/%Y",  # '10/25/06'
+    "%d-%m-%Y",  # '10-25-06'
 ]
 
 DATETIME_INPUT_FORMATS = [
-    '%d/%m/%Y %H:%M:%S',     # '10/25/06'
-    '%d-%m-%Y %H:%M',        # '10-25-06'
-    '%d/%m/%Y %H:%M:%S',     # '10/25/06'
-    '%d-%m-%Y %H:%M',        # '10-25-06'
+    "%d/%m/%Y %H:%M:%S",  # '10/25/06'
+    "%d-%m-%Y %H:%M",  # '10-25-06'
+    "%d/%m/%Y %H:%M:%S",  # '10/25/06'
+    "%d-%m-%Y %H:%M",  # '10-25-06'
 ]
 
 # Boolean that sets whether to add thousand separator when formatting numbers
@@ -82,8 +86,8 @@ WSGI_APPLICATION = "config.wsgi.application"
 # ------------------------------------------------------------------------------
 
 APPS_BEFORE_DJANGO_APPS = [
-    'apps.admin_custom',
-    'jazzmin',
+    "apps.admin_custom",
+    "jazzmin",
 ]
 
 DJANGO_APPS = [
@@ -100,9 +104,9 @@ DJANGO_APPS = [
 ]
 
 THIRD_PARTY_APPS = [
-    'allauth',
-    'allauth.account',
-    'allauth.socialaccount',
+    "allauth",
+    "allauth.account",
+    "allauth.socialaccount",
     "crispy_forms",
     "crispy_bootstrap5",
     "django_celery_beat",
@@ -113,8 +117,8 @@ THIRD_PARTY_APPS = [
     "django_countries",
     "import_export",
     "admin_honeypot",
-    'widget_tweaks',
-    'django_json_widget',
+    "widget_tweaks",
+    "django_json_widget",
 ]
 
 LOCAL_APPS = [
@@ -150,7 +154,7 @@ MIGRATION_MODULES = {"sites": "apps.contrib.sites.migrations"}
 # https://docs.djangoproject.com/en/dev/ref/settings/#authentication-backends
 AUTHENTICATION_BACKENDS = [
     "django.contrib.auth.backends.ModelBackend",
-    'allauth.account.auth_backends.AuthenticationBackend',
+    "allauth.account.auth_backends.AuthenticationBackend",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#auth-user-model
 AUTH_USER_MODEL = "users.User"
@@ -203,7 +207,7 @@ SESSION_COOKIE_NAME = "sessionid"
 SESSION_COOKIE_DOMAIN = f".{CURRENT_DOMAIN}"
 # Whether to save the session data on every request.
 SESSION_SAVE_EVERY_REQUEST = False
-SESSION_SERIALIZER = 'django.contrib.sessions.serializers.JSONSerializer'
+SESSION_SERIALIZER = "django.contrib.sessions.serializers.JSONSerializer"
 # https://docs.djangoproject.com/en/dev/ref/settings/#csrf-cookie-httponly
 CSRF_COOKIE_HTTPONLY = True
 CSRF_COOKIE_DOMAIN = f".{CURRENT_DOMAIN}"
@@ -220,9 +224,7 @@ STATIC_ROOT = str(ROOT_DIR / "staticfiles")
 # https://docs.djangoproject.com/en/dev/ref/settings/#static-url
 STATIC_URL = "/static/"
 # https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#std:setting-STATICFILES_DIRS
-STATICFILES_DIRS = [
-    str(APPS_DIR / "static")
-    ]
+STATICFILES_DIRS = [str(APPS_DIR / "static")]
 # https://docs.djangoproject.com/en/dev/ref/contrib/staticfiles/#staticfiles-finders
 STATICFILES_FINDERS = [
     "django.contrib.staticfiles.finders.FileSystemFinder",
@@ -247,7 +249,6 @@ TEMPLATES = [
         "DIRS": [Path(f"{APPS_DIR}/templates/")],
         # https://docs.djangoproject.com/en/dev/ref/settings/#app-dirs
         "APP_DIRS": True,
-
         "OPTIONS": {
             # https://docs.djangoproject.com/en/dev/ref/settings/#template-context-processors
             "context_processors": [
@@ -362,24 +363,24 @@ if DEBUG:
 # django-rest-framework
 # -------------------------------------------------------------------------------
 # django-rest-framework - https://www.django-rest-framework.org/api-guide/settings/
-DRF_DEFAULT_RENDERER_CLASSES = {"DRF_DEFAULT_RENDERER_CLASSES": 'rest_framework.renderers.JSONRenderer'}
+DRF_DEFAULT_RENDERER_CLASSES = {"DRF_DEFAULT_RENDERER_CLASSES": "rest_framework.renderers.JSONRenderer"}
 DEFAULT_SCHEMA_CLASS = {}
 if DEBUG:
-    DRF_DEFAULT_RENDERER_CLASSES = {"DRF_DEFAULT_RENDERER_CLASSES": 'rest_framework.renderers.BrowsableAPIRenderer'}
+    DRF_DEFAULT_RENDERER_CLASSES = {"DRF_DEFAULT_RENDERER_CLASSES": "rest_framework.renderers.BrowsableAPIRenderer"}
     DEFAULT_SCHEMA_CLASS = {"DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema"}
 
 REST_FRAMEWORK = {
     **DEFAULT_SCHEMA_CLASS,
     **DRF_DEFAULT_RENDERER_CLASSES,
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        'rest_framework.authentication.SessionAuthentication',
+        "rest_framework.authentication.SessionAuthentication",
         "apps.api.authentication.KeyAuthentication",
-        'rest_framework.authentication.BasicAuthentication',
+        "rest_framework.authentication.BasicAuthentication",
     ],
     "DEFAULT_PERMISSION_CLASSES": ["apps.api.permissions.ReadOnly"],
-    'DEFAULT_VERSIONING_CLASS': "rest_framework.versioning.NamespaceVersioning",
-    'DEFAULT_PARSER_CLASSES': ['rest_framework.parsers.JSONParser'],
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
+    "DEFAULT_VERSIONING_CLASS": "rest_framework.versioning.NamespaceVersioning",
+    "DEFAULT_PARSER_CLASSES": ["rest_framework.parsers.JSONParser"],
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
     # 'DEFAULT_THROTTLE_CLASSES': [
     #     'example.throttles.BurstRateThrottle',
     #     'example.throttles.SustainedRateThrottle'
@@ -406,20 +407,19 @@ SPECTACULAR_SETTINGS = {
 }
 # API versions
 # ------------------------------------------------------------------------------
-API_VERSION = {'CURRENT_VERSION': 'v1'}
-
+API_VERSION = {"CURRENT_VERSION": "v1"}
 
 
 # Tags
 # ------------------------------------------------------------------------------
 # MESSAGE_STORAGE = 'django.contrib.messages.storage.fallback.FallbackStorage'
-MESSAGE_STORAGE = 'django.contrib.messages.storage.session.SessionStorage'
+MESSAGE_STORAGE = "django.contrib.messages.storage.session.SessionStorage"
 MESSAGE_TAGS = {
-    messages.DEBUG: 'debug',
-    messages.INFO: 'info',
-    messages.SUCCESS: 'success',
-    messages.WARNING: 'warning',
-    messages.ERROR: 'danger',
+    messages.DEBUG: "debug",
+    messages.INFO: "info",
+    messages.SUCCESS: "success",
+    messages.WARNING: "warning",
+    messages.ERROR: "danger",
 }
 
 # GEOIP
@@ -434,28 +434,28 @@ FINPREP_KEY = env.str("FINPREP_KEY")
 
 # GOOGLE KEYS
 # ------------------------------------------------------------------------------
-GOOGLE_RECAPTCHA_SECRET_KEY = env.str('GOOGLE_RECAPTCHA_SECRET_KEY')
-GOOGLE_RECAPTCHA_PUBLIC_KEY = env.str('GOOGLE_RECAPTCHA_PUBLIC_KEY')
+GOOGLE_RECAPTCHA_SECRET_KEY = env.str("GOOGLE_RECAPTCHA_SECRET_KEY")
+GOOGLE_RECAPTCHA_PUBLIC_KEY = env.str("GOOGLE_RECAPTCHA_PUBLIC_KEY")
 
 # FACEBOOK KEYS
 # ------------------------------------------------------------------------------
-OLD_FB_PAGE_ACCESS_TOKEN = env.str('OLD_FB_PAGE_ACCESS_TOKEN')
-NEW_FB_PAGE_ACCESS_TOKEN = env.str('NEW_FB_PAGE_ACCESS_TOKEN')
-FACEBOOK_APP_SECRET = env.str('FACEBOOK_APP_SECRET')
-OLD_FACEBOOK_ID = env.str('OLD_FACEBOOK_ID')
-NEW_FACEBOOK_ID = env.str('NEW_FACEBOOK_ID')
-FB_USER_ACCESS_TOKEN = env.str('FB_USER_ACCESS_TOKEN')
+OLD_FB_PAGE_ACCESS_TOKEN = env.str("OLD_FB_PAGE_ACCESS_TOKEN")
+NEW_FB_PAGE_ACCESS_TOKEN = env.str("NEW_FB_PAGE_ACCESS_TOKEN")
+FACEBOOK_APP_SECRET = env.str("FACEBOOK_APP_SECRET")
+OLD_FACEBOOK_ID = env.str("OLD_FACEBOOK_ID")
+NEW_FACEBOOK_ID = env.str("NEW_FACEBOOK_ID")
+FB_USER_ACCESS_TOKEN = env.str("FB_USER_ACCESS_TOKEN")
 
 # INSTAGRAM KEYS
 # ------------------------------------------------------------------------------
-INSTAGRAM_ID = env.str('INSTAGRAM_ID')
+INSTAGRAM_ID = env.str("INSTAGRAM_ID")
 
 # TWITTER KEYS
 # ------------------------------------------------------------------------------
-TWITTER_CONSUMER_KEY = env.str('TWITTER_CONSUMER_KEY')
-TWITTER_CONSUMER_SECRET = env.str('TWITTER_CONSUMER_SECRET')
-TWITTER_ACCESS_TOKEN = env.str('TWITTER_ACCESS_TOKEN')
-TWITTER_ACCESS_TOKEN_SECRET = env.str('TWITTER_ACCESS_TOKEN_SECRET')
+TWITTER_CONSUMER_KEY = env.str("TWITTER_CONSUMER_KEY")
+TWITTER_CONSUMER_SECRET = env.str("TWITTER_CONSUMER_SECRET")
+TWITTER_ACCESS_TOKEN = env.str("TWITTER_ACCESS_TOKEN")
+TWITTER_ACCESS_TOKEN_SECRET = env.str("TWITTER_ACCESS_TOKEN_SECRET")
 
 
 # List of compiled regular expression objects representing User-Agent strings
@@ -471,14 +471,12 @@ TWITTER_ACCESS_TOKEN_SECRET = env.str('TWITTER_ACCESS_TOKEN_SECRET')
 
 # IMAKIT
 # ------------------------------------------------------------------------------
-IMAGEKIT_PRIVATE_KEY = env.str('IMAGEKIT_PRIVATE_KEY')
-IMAGEKIT_PUBLIC_KEY = env.str('IMAGEKIT_PUBLIC_KEY')
-IMAGEKIT_URL_ENDPOINT = env.str('IMAGEKIT_URL_ENDPOINT')
+IMAGEKIT_PRIVATE_KEY = env.str("IMAGEKIT_PRIVATE_KEY")
+IMAGEKIT_PUBLIC_KEY = env.str("IMAGEKIT_PUBLIC_KEY")
+IMAGEKIT_URL_ENDPOINT = env.str("IMAGEKIT_URL_ENDPOINT")
 
 IMAGE_KIT = ImageKit(
-    private_key=IMAGEKIT_PRIVATE_KEY,
-    public_key=IMAGEKIT_PUBLIC_KEY,
-    url_endpoint=IMAGEKIT_URL_ENDPOINT
+    private_key=IMAGEKIT_PRIVATE_KEY, public_key=IMAGEKIT_PUBLIC_KEY, url_endpoint=IMAGEKIT_URL_ENDPOINT
 )
 
 STRIPE_PRIVATE_KEY = "TEST_STRIPE_PRIVATE"

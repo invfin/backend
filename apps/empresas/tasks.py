@@ -10,12 +10,15 @@ from apps.empresas.outils.update import UpdateCompany
 from apps.empresas.outils.retrieve_data import RetrieveCompanyData
 from apps.empresas.utils import arrange_quarters
 from apps.empresas.parse.yahoo_query import YahooQueryInfo
-from apps.empresas.models import (
-    Company,
-    BalanceSheetFinprep,
-    IncomeStatementFinprep,
-    CashflowStatementFinprep
-)
+from apps.empresas.models import Company, BalanceSheetFinprep, IncomeStatementFinprep, CashflowStatementFinprep
+
+
+@celery_app.task()
+def create_averages_task(company_id):
+    company = Company.objects.get(id=company_id)
+    period = Period.objects.quarterly_periods().first()
+    if not company.inc_statements.filter(period=period).exists():
+        UpdateCompany(company).update_base_financials_statements(period)
 
 
 @celery_app.task()
@@ -25,10 +28,7 @@ def fix_information_incorrect_filed_task(company_id):
         operating_expenses = statement.operating_expenses
         statement.operating_expenses = statement.operating_income
         statement.operating_income = operating_expenses
-        statement.save(update_fields=[
-            "operating_expenses", 
-            "operating_income"
-        ])
+        statement.save(update_fields=["operating_expenses", "operating_income"])
     for statement in company.cf_statements.all():
         net_income = statement.net_income
         operating_activities_cf = statement.operating_activities_cf
@@ -41,14 +41,16 @@ def fix_information_incorrect_filed_task(company_id):
         statement.investments_property_plant_equipment = financing_activities_cf
         statement.investing_activities_cf = investments_property_plant_equipment
         statement.net_change_cash = statement.cash_beginning_period - statement.cash_end_period
-        statement.save(update_fields=[
-            "net_income",
-            "financing_activities_cf",
-            "operating_activities_cf",
-            "investments_property_plant_equipment",
-            "investing_activities_cf",
-            "net_change_cash",
-        ])
+        statement.save(
+            update_fields=[
+                "net_income",
+                "financing_activities_cf",
+                "operating_activities_cf",
+                "investments_property_plant_equipment",
+                "investing_activities_cf",
+                "net_change_cash",
+            ]
+        )
 
 
 @celery_app.task()
@@ -56,12 +58,6 @@ def arrange_quarters_task(company_id):
     company = Company.objects.get(id=company_id)
     YahooQueryInfo(company).match_quarters_with_earning_history_yahooquery()
     arrange_quarters(company)
-
-
-@celery_app.task()
-def start_arrange_quarters_task():
-    for company in Company.objects.all():
-        arrange_quarters_task.delay(company.id)
 
 
 @celery_app.task()
@@ -73,69 +69,43 @@ def update_periods_current_average_statements(company_id):
         statement.save(update_fields=["period"])
 
     company.balance_sheets.all().update(
-        period_id=Subquery(
-            Period.objects.filter(year=OuterRef("date"), period=PERIOD_FOR_YEAR).only("id")
-        )
+        period_id=Subquery(Period.objects.filter(year=OuterRef("date"), period=PERIOD_FOR_YEAR).only("id"))
     )
     company.cf_statements.all().update(
-        period_id=Subquery(
-            Period.objects.filter(year=OuterRef("date"), period=PERIOD_FOR_YEAR).only("id")
-        )
+        period_id=Subquery(Period.objects.filter(year=OuterRef("date"), period=PERIOD_FOR_YEAR).only("id"))
     )
     company.rentability_ratios.all().update(
-        period_id=Subquery(
-            Period.objects.filter(year=OuterRef("date"), period=PERIOD_FOR_YEAR).only("id")
-        )
+        period_id=Subquery(Period.objects.filter(year=OuterRef("date"), period=PERIOD_FOR_YEAR).only("id"))
     )
     company.liquidity_ratios.all().update(
-        period_id=Subquery(
-            Period.objects.filter(year=OuterRef("date"), period=PERIOD_FOR_YEAR).only("id")
-        )
+        period_id=Subquery(Period.objects.filter(year=OuterRef("date"), period=PERIOD_FOR_YEAR).only("id"))
     )
     company.margins.all().update(
-        period_id=Subquery(
-            Period.objects.filter(year=OuterRef("date"), period=PERIOD_FOR_YEAR).only("id")
-        )
+        period_id=Subquery(Period.objects.filter(year=OuterRef("date"), period=PERIOD_FOR_YEAR).only("id"))
     )
     company.fcf_ratios.all().update(
-        period_id=Subquery(
-            Period.objects.filter(year=OuterRef("date"), period=PERIOD_FOR_YEAR).only("id")
-        )
+        period_id=Subquery(Period.objects.filter(year=OuterRef("date"), period=PERIOD_FOR_YEAR).only("id"))
     )
     company.per_share_values.all().update(
-        period_id=Subquery(
-            Period.objects.filter(year=OuterRef("date"), period=PERIOD_FOR_YEAR).only("id")
-        )
+        period_id=Subquery(Period.objects.filter(year=OuterRef("date"), period=PERIOD_FOR_YEAR).only("id"))
     )
     company.non_gaap_figures.all().update(
-        period_id=Subquery(
-            Period.objects.filter(year=OuterRef("date"), period=PERIOD_FOR_YEAR).only("id")
-        )
+        period_id=Subquery(Period.objects.filter(year=OuterRef("date"), period=PERIOD_FOR_YEAR).only("id"))
     )
     company.operation_risks_ratios.all().update(
-        period_id=Subquery(
-            Period.objects.filter(year=OuterRef("date"), period=PERIOD_FOR_YEAR).only("id")
-        )
+        period_id=Subquery(Period.objects.filter(year=OuterRef("date"), period=PERIOD_FOR_YEAR).only("id"))
     )
     company.ev_ratios.all().update(
-        period_id=Subquery(
-            Period.objects.filter(year=OuterRef("date"), period=PERIOD_FOR_YEAR).only("id")
-        )
+        period_id=Subquery(Period.objects.filter(year=OuterRef("date"), period=PERIOD_FOR_YEAR).only("id"))
     )
     company.growth_rates.all().update(
-        period_id=Subquery(
-            Period.objects.filter(year=OuterRef("date"), period=PERIOD_FOR_YEAR).only("id")
-        )
+        period_id=Subquery(Period.objects.filter(year=OuterRef("date"), period=PERIOD_FOR_YEAR).only("id"))
     )
     company.efficiency_ratios.all().update(
-        period_id=Subquery(
-            Period.objects.filter(year=OuterRef("date"), period=PERIOD_FOR_YEAR).only("id")
-        )
+        period_id=Subquery(Period.objects.filter(year=OuterRef("date"), period=PERIOD_FOR_YEAR).only("id"))
     )
     company.price_to_ratios.all().update(
-        period_id=Subquery(
-            Period.objects.filter(year=OuterRef("date"), period=PERIOD_FOR_YEAR).only("id")
-        )
+        period_id=Subquery(Period.objects.filter(year=OuterRef("date"), period=PERIOD_FOR_YEAR).only("id"))
     )
 
 
@@ -148,7 +118,7 @@ def update_finprep_from_current(company_id):
         company_data.pop("id")
         company_data.pop("is_ttm")
         company_data["period_id"] = period.id
-        IncomeStatementFinprep.objects.get_or_create(
+        IncomeStatementFinprep.objects.update_or_create(
             cost_and_expenses=company_data.pop("cost_and_expenses"),
             cost_of_revenue=company_data.pop("cost_of_revenue"),
             depreciation_and_amortization=company_data.pop("depreciation_amortization"),
@@ -169,7 +139,7 @@ def update_finprep_from_current(company_id):
             total_other_income_expenses_net=company_data.pop("net_total_other_income_expenses"),
             weighted_average_shs_out=company_data.pop("weighted_average_shares_outstanding"),
             weighted_average_shs_out_dil=company_data.pop("weighted_average_diluated_shares_outstanding"),
-            **company_data
+            **company_data,
         )
     for company_data in company.balance_sheets.all().values():
         date = company_data["date"]
@@ -177,10 +147,10 @@ def update_finprep_from_current(company_id):
         company_data.pop("id")
         company_data.pop("is_ttm")
         company_data["period_id"] = period.id
-        BalanceSheetFinprep.objects.get_or_create(
+        BalanceSheetFinprep.objects.update_or_create(
             property_plant_equipment_net=company_data.pop("property_plant_equipment"),
             common_stock=company_data.pop("common_stocks"),
-            **company_data
+            **company_data,
         )
     for company_data in company.cf_statements.all().values():
         date = company_data["date"]
@@ -188,7 +158,7 @@ def update_finprep_from_current(company_id):
         company_data.pop("id")
         company_data.pop("is_ttm")
         company_data["period_id"] = period.id
-        CashflowStatementFinprep.objects.get_or_create(
+        CashflowStatementFinprep.objects.update_or_create(
             depreciation_and_amortization=company_data.pop("depreciation_amortization"),
             stock_based_compensation=company_data.pop("stock_based_compesation"),
             accounts_payables=company_data.pop("accounts_payable"),
@@ -206,8 +176,17 @@ def update_finprep_from_current(company_id):
             net_change_in_cash=company_data.pop("net_change_cash"),
             cash_at_end_of_period=company_data.pop("cash_end_period"),
             cash_at_beginning_of_period=company_data.pop("cash_beginning_period"),
-            **company_data
+            **company_data,
         )
+
+
+@celery_app.task()
+def update_fix_statemenets_populate_finprep():
+    for company in Company.objects.all():
+        fix_information_incorrect_filed_task.delay(company.id)
+        update_periods_current_average_statements.delay(company.id)
+        arrange_quarters_task.delay(company.id)
+        update_finprep_from_current.delay(company.id)
 
 
 @celery_app.task()
@@ -217,7 +196,9 @@ def update_basic_info_company_task():
         company = companies_without_info.first()
         return UpdateCompany(company).general_update()
     else:
-        return send_mail('No companies left', 'All companies have info', settings.EMAIL_DEFAULT, [settings.EMAIL_DEFAULT])
+        return send_mail(
+            "No companies left", "All companies have info", settings.EMAIL_DEFAULT, [settings.EMAIL_DEFAULT]
+        )
 
 
 @celery_app.task()
@@ -228,10 +209,10 @@ def update_company_key_stats_task():
         return RetrieveCompanyData(company).create_key_stats_yahooquery()
     else:
         return send_mail(
-            'No companies left to update key_stats',
-            f'All companies have info for key_stats',
+            "No companies left to update key_stats",
+            f"All companies have info for key_stats",
             settings.EMAIL_DEFAULT,
-            [settings.EMAIL_DEFAULT]
+            [settings.EMAIL_DEFAULT],
         )
 
 
@@ -243,10 +224,10 @@ def update_company_institutionals_task():
         return RetrieveCompanyData(company).create_institutionals_yahooquery()
     else:
         return send_mail(
-            'No companies left to update institutionals',
-            f'All companies have info for institutionals',
+            "No companies left to update institutionals",
+            f"All companies have info for institutionals",
             settings.EMAIL_DEFAULT,
-            [settings.EMAIL_DEFAULT]
+            [settings.EMAIL_DEFAULT],
         )
 
 
@@ -258,10 +239,10 @@ def update_company_financials_finprep_task():
         return RetrieveCompanyData(company).create_financials_finprep()
     else:
         return send_mail(
-            'No companies left to update financials for latest_financials_finprep_info',
-            f'All companies have info for latest_financials_finprep_info',
+            "No companies left to update financials for latest_financials_finprep_info",
+            f"All companies have info for latest_financials_finprep_info",
             settings.EMAIL_DEFAULT,
-            [settings.EMAIL_DEFAULT]
+            [settings.EMAIL_DEFAULT],
         )
 
 
@@ -273,10 +254,10 @@ def update_company_financials_finnhub_task():
         return RetrieveCompanyData(company).create_financials_finnhub()
     else:
         return send_mail(
-            'No companies left to update financials first_financials_finnhub_info',
-            f'All companies have info for first_financials_finnhub_info',
+            "No companies left to update financials first_financials_finnhub_info",
+            f"All companies have info for first_financials_finnhub_info",
             settings.EMAIL_DEFAULT,
-            [settings.EMAIL_DEFAULT]
+            [settings.EMAIL_DEFAULT],
         )
 
 
@@ -287,12 +268,13 @@ def update_company_financials_yfinance_task():
         company = companies_without_info.first()
         RetrieveCompanyData(company).create_financials_yfinance("a")
         RetrieveCompanyData(company).create_financials_yfinance("q")
+        arrange_quarters_task.delay(company.id)
     else:
         return send_mail(
-            'No companies left to update financials for first_financials_yfinance_info',
-            f'All companies have info for first_financials_yfinance_info',
+            "No companies left to update financials for first_financials_yfinance_info",
+            f"All companies have info for first_financials_yfinance_info",
             settings.EMAIL_DEFAULT,
-            [settings.EMAIL_DEFAULT]
+            [settings.EMAIL_DEFAULT],
         )
 
 
@@ -303,10 +285,11 @@ def update_company_financials_yahooquery_task():
         company = companies_without_info.first()
         RetrieveCompanyData(company).create_financials_yahooquery("a")
         RetrieveCompanyData(company).create_financials_yahooquery("q")
+        arrange_quarters_task.delay(company.id)
     else:
         return send_mail(
-            'No companies left to update financials ofr first_financials_yahooquery_info',
-            f'All companies have info for first_financials_yahooquery_info',
+            "No companies left to update financials ofr first_financials_yahooquery_info",
+            f"All companies have info for first_financials_yahooquery_info",
             settings.EMAIL_DEFAULT,
-            [settings.EMAIL_DEFAULT]
+            [settings.EMAIL_DEFAULT],
         )

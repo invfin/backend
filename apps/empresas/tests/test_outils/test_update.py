@@ -1,11 +1,10 @@
+from django.test import TestCase
+
 from bfet import DjangoTestingModel as DTM, DataCreator
 
-from apps.general.constants import PERIOD_FOR_YEAR
-from apps.general.models import Country, Period, Sector, Currency
-from apps.general.tests.data import SECTORS, COUNTRIES
+from apps.general.constants import PERIOD_FOR_YEAR, PERIODS_QUARRTERS
+from apps.general.models import Period, Currency
 from apps.empresas.outils.update import UpdateCompany
-from apps.socialmedias.tests.data import AAPL
-from apps.empresas.tests.finprep_data import INCOME_STATEMENT, BALANCE_SHEET, CASHFLOW_STATEMENT
 from apps.empresas.models import (
     Company,
     IncomeStatementYahooQuery,
@@ -17,38 +16,15 @@ from apps.empresas.models import (
     CashflowStatementYahooQuery,
     CashflowStatementYFinance,
     CashflowStatementFinprep,
+    IncomeStatement,
+    BalanceSheet,
+    CashflowStatement,
 )
 
 
-class AppleExample:
-    def create_company(self):
-        Country.objects.get_or_create(**COUNTRIES[0])
-        Sector.objects.get_or_create(**SECTORS[0])
-        company = Company.objects.create(**AAPL)
-        return company
-
-    def include_fianancials(self):
-        company = self.create_company()
-        update_company = UpdateCompany(company)
-        for inc in INCOME_STATEMENT:
-            update_company.create_income_statement(inc)
-        for bs in BALANCE_SHEET:
-            update_company.create_balance_sheet(bs)
-        for cf in CASHFLOW_STATEMENT:
-            update_company.create_cashflow_statement(cf)
-        update_company.create_all_ratios(
-            update_company.calculate_all_ratios(INCOME_STATEMENT, BALANCE_SHEET, CASHFLOW_STATEMENT)
-        )
-        return company
-
+class TestUpdateCompany(TestCase):
     @classmethod
-    def return_example(cls):
-        return cls().include_fianancials()
-
-
-class CompanyExample:
-    @classmethod
-    def create_example_company(cls):
+    def setUpTestData(cls):
         cls.company = DTM.create(Company)
         cls.period = DTM.create(Period, year=2021, period=PERIOD_FOR_YEAR)
         cls.currency = DTM.create(Currency)
@@ -96,3 +72,23 @@ class CompanyExample:
         cls.cf_st_finprep = DTM.create(CashflowStatementFinprep, company=cls.company, period=cls.period)
         cls.cf_st_yahooquery = DTM.create(CashflowStatementYahooQuery, company=cls.company, period=cls.period)
         cls.cf_st_yfinance = DTM.create(CashflowStatementYFinance, company=cls.company, period=cls.period)
+
+    def test_update_base_financials_statements(self):
+        self.assertEqual(0, IncomeStatement.objects.all().count())
+        self.assertEqual(0, BalanceSheet.objects.all().count())
+        self.assertEqual(0, CashflowStatement.objects.all().count())
+        UpdateCompany(self.company).update_base_financials_statements(self.period)
+        self.assertEqual(1, IncomeStatement.objects.all().count())
+        self.assertEqual(1, BalanceSheet.objects.all().count())
+        self.assertEqual(1, CashflowStatement.objects.all().count())
+
+    def test_create_ttm(self):
+        for index in range(2):
+            year = 2000 + index
+            for quarter_period, name in PERIODS_QUARRTERS:
+                period = DTM.create(Period, year=year, period=quarter_period)
+                DTM.create(IncomeStatement, company=self.company, period=period)
+                DTM.create(BalanceSheet, company=self.company, period=period)
+                DTM.create(CashflowStatement, company=self.company, period=period)
+
+        UpdateCompany(self.company).create_ttm()
