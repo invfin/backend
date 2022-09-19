@@ -147,7 +147,7 @@ class VisiteurAdmin(admin.ModelAdmin, ExportCsv):
         'id',
         'ip',
         'session_id',
-        'HTTP_USER_AGENT',
+        'http_user_agent',
         'country_code',
         'country_name',
         'dma_code',

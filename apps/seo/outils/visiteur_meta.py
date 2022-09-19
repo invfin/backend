@@ -2,6 +2,8 @@ from django.conf import settings
 from django.contrib.gis.geoip2 import GeoIP2
 from django.contrib.sessions.models import Session
 
+from geoip2.errors import AddressNotFoundError
+
 from apps.seo.models import Visiteur
 
 
@@ -22,11 +24,17 @@ class SeoInformation:
         ip = self.get_client_ip(request)
         if settings.DEBUG:
             ip = '162.158.50.77'
-        return {
+        
+        meta_information = {
             'http_user_agent': request.META.get("HTTP_USER_AGENT"),
-            'location': g.city(ip),
             'ip': ip
         }
+        try:
+            location_info = g.city(ip)
+            meta_information.update({"location": location_info})
+        except AddressNotFoundError:
+            location_info = {}
+        return meta_information
 
     def update_visiteur_session(self, visiteur, request):
         if not request.session or not request.session.session_key:
@@ -54,12 +62,12 @@ class SeoInformation:
             find_visiteur = Visiteur.objects.filter(ip=seo['ip'])
             if find_visiteur.exists():
                 if find_visiteur.count() != 1:
-                    second_filter = find_visiteur.filter(HTTP_USER_AGENT = seo['http_user_agent'])
+                    second_filter = find_visiteur.filter(http_user_agent = seo['http_user_agent'])
                     if second_filter.exists():
                         if second_filter.count() != 1:
                             visiteur = self.create_visiteur(request)
                         else:
-                            visiteur = Visiteur.objects.get(ip=seo['ip'], HTTP_USER_AGENT = seo['http_user_agent'])
+                            visiteur = Visiteur.objects.get(ip=seo['ip'], http_user_agent = seo['http_user_agent'])
                             self.update_visiteur_session(visiteur, request)
                     else:
                         visiteur = self.create_visiteur(request)
@@ -90,7 +98,7 @@ class SeoInformation:
             postal_code=seo['location']['postal_code'],
             continent_code=seo['location']['continent_code'],
             continent_name=seo['location']['continent_name'],
-            HTTP_USER_AGENT=seo['http_user_agent']
+            http_user_agent=seo['http_user_agent']
         )
         request.session['visiteur_id'] = visiteur.id
         request.session.modified = True

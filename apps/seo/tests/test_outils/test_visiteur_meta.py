@@ -75,7 +75,7 @@ class TestSeoInformation(TestCase):
         self.assertEqual("", visiteur_found.postal_code)
         self.assertEqual("", visiteur_found.continent_code)
         self.assertEqual("", visiteur_found.continent_name)
-        self.assertEqual("", visiteur_found.HTTP_USER_AGENT)
+        self.assertEqual("", visiteur_found.http_user_agent)
 
         visiteur = SeoInformation().find_visiteur(request)
         self.assertEqual("", visiteur.ip)
@@ -92,7 +92,7 @@ class TestSeoInformation(TestCase):
         self.assertEqual("", visiteur.postal_code)
         self.assertEqual("", visiteur.continent_code)
         self.assertEqual("", visiteur.continent_name)
-        self.assertEqual("", visiteur.HTTP_USER_AGENT)
+        self.assertEqual("", visiteur.http_user_agent)
 
     def test_create_visiteur(self):
         request = self.client.request()
@@ -111,4 +111,4 @@ class TestSeoInformation(TestCase):
         self.assertEqual("", visiteur.postal_code)
         self.assertEqual("", visiteur.continent_code)
         self.assertEqual("", visiteur.continent_name)
-        self.assertEqual("", visiteur.HTTP_USER_AGENT)
+        self.assertEqual("", visiteur.http_user_agent)
