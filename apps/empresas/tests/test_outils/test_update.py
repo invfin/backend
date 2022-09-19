@@ -2,7 +2,7 @@ from django.test import TestCase
 
 from bfet import DjangoTestingModel as DTM, DataCreator
 
-from apps.general.constants import PERIOD_FOR_YEAR, PERIODS_QUARRTERS
+from apps.general import constants
 from apps.general.models import Period, Currency
 from apps.empresas.outils.update import UpdateCompany
 from apps.empresas.models import (
@@ -26,7 +26,7 @@ class TestUpdateCompany(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.company = DTM.create(Company)
-        cls.period = DTM.create(Period, year=2021, period=PERIOD_FOR_YEAR)
+        cls.period = DTM.create(Period, year=2021, period=constants.PERIOD_FOR_YEAR)
         cls.currency = DTM.create(Currency)
         cls.revenue = DataCreator.create_random_float()
         cls.cost_of_revenue = DataCreator.create_random_float()
@@ -83,12 +83,21 @@ class TestUpdateCompany(TestCase):
         self.assertEqual(1, CashflowStatement.objects.all().count())
 
     def test_create_ttm(self):
-        for index in range(2):
-            year = 2000 + index
-            for quarter_period, name in PERIODS_QUARRTERS:
-                period = DTM.create(Period, year=year, period=quarter_period)
-                DTM.create(IncomeStatement, company=self.company, period=period)
-                DTM.create(BalanceSheet, company=self.company, period=period)
-                DTM.create(CashflowStatement, company=self.company, period=period)
+        self.assertEqual(0, IncomeStatement.objects.filter(is_ttm=True).count())
+        self.assertEqual(0, BalanceSheet.objects.filter(is_ttm=True).count())
+        self.assertEqual(0, CashflowStatement.objects.filter(is_ttm=True).count())
+        periods = [
+            DTM.create(Period, year=2001, period=constants.PERIOD_2_QUARTER),
+            DTM.create(Period, year=2001, period=constants.PERIOD_3_QUARTER),
+            DTM.create(Period, year=2001, period=constants.PERIOD_4_QUARTER),
+            DTM.create(Period, year=2002, period=constants.PERIOD_1_QUARTER),
+        ]
+        for period in periods:
+            DTM.create(IncomeStatement, company=self.company, period=period, date=period.year)
+            DTM.create(BalanceSheet, company=self.company, period=period, date=period.year)
+            DTM.create(CashflowStatement, company=self.company, period=period, date=period.year)
 
         UpdateCompany(self.company).create_ttm()
+        self.assertEqual(1, IncomeStatement.objects.filter(is_ttm=True).count())
+        self.assertEqual(1, BalanceSheet.objects.filter(is_ttm=True).count())
+        self.assertEqual(1, CashflowStatement.objects.filter(is_ttm=True).count())

@@ -48,14 +48,33 @@ class UpdateCompany(CalculateCompanyFinancialRatios, AverageStatements):
                 funct_create_statement(averaged_stement)
 
     def create_ttm(self):
-        for statements_manager in [
+        for statement_manager in [
             self.company.inc_statements,
             self.company.balance_sheets,
             self.company.cf_statements,
         ]:
-            last_statements = statements_manager.all().exclude(period=PERIOD_FOR_YEAR).order_by("-period", "year")[:4]
-            print(last_statements)
-            statements_manager.create()
+            last_statements = statement_manager.all().exclude(period=PERIOD_FOR_YEAR).order_by("period", "date")[:4]
+            ttm_dict = {}
+            for statement in last_statements:
+                st_dict = statement.__dict__
+                st_dict.pop("_state")
+                st_dict.pop("id")
+                date = st_dict.pop("date")
+                st_dict.pop("period_id")
+                st_dict.pop("year")
+                if "date" not in ttm_dict:
+                    ttm_dict["date"] = date
+                st_dict.pop("company_id")
+                st_dict.pop("is_ttm")
+                st_dict.pop("reported_currency_id")
+                for key, value in st_dict.items():
+                    if key in ttm_dict:
+                        ttm_dict[key] += value
+                    else:
+                        ttm_dict[key] = value
+            ttm_dict["is_ttm"] = True
+            ttm_dict["company"] = self.company
+            statement_manager.create(**ttm_dict)
 
     def create_all_ratios(self, all_ratios: dict):
         self.create_current_stock_price(price=all_ratios["current_data"]["currentPrice"])
