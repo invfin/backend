@@ -4,7 +4,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import redirect, render
-from django.views.generic import CreateView, DetailView, UpdateView
+from django.views.generic import CreateView, UpdateView
+from django.urls import reverse
 
 from apps.general import constants as general_constants
 from apps.general.forms import DefaultNewsletterForm
@@ -23,23 +24,24 @@ User = get_user_model()
 
 
 def following_management_view(request):
-    if request.POST:
-        writter = request.POST['writter']
-        action = request.POST['what']
-        writter = User.objects.get(id = writter)
-        follower = User.objects.get_or_create_quick_user(request, just_newsletter=True)
-        update_follower = writter.update_followers(follower, action)
+	redirect_to = reverse("users:user_inicio")
+	if request.POST:
+		writter = request.POST['writter']
+		action = request.POST['what']
+		writter = User.objects.get(id = writter)
+		follower = User.objects.get_or_create_quick_user(request, just_newsletter=True)
+		update_follower = writter.update_followers(follower, action)
+		redirect_to = request.META.get('HTTP_REFERER')
+		if update_follower == 'already follower':
+			messages.success(request, f'Ya estás siguiendo a {writter.full_name}')
+			return redirect(redirect_to)
 
-        if update_follower == 'already follower':
-            messages.success(request, f'Ya estás siguiendo a {writter.full_name}')
-            return redirect(request.META.get('HTTP_REFERER'))
-
-        prepare_notification_task.delay(
-            writter.dict_for_task,
-            general_constants.NEW_FOLLOWER
-        )
-        messages.success(request, f'A partir de ahora recibirás las newsletters de {writter.full_name}')
-        return redirect(request.META.get('HTTP_REFERER'))
+		prepare_notification_task.delay(
+		writter.dict_for_task,
+		general_constants.NEW_FOLLOWER
+		)
+		messages.success(request, f'A partir de ahora recibirás las newsletters de {writter.full_name}')
+	return redirect(redirect_to)
 
 
 @login_required

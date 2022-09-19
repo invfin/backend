@@ -24,8 +24,10 @@ class CompanyExtended(ChartSerializer):
                 self.save(update_fields=["currency"])
         else:
             currency = self.currency
-        self.currency_to_use = currency.currency
-        return currency.currency
+        if currency:
+            self.currency_to_use = currency.currency
+            return currency.currency
+        return "$"
 
     def all_income_statements(self, limit) ->list:
         inc = self.inc_statements.all()
