@@ -31,7 +31,7 @@ class SeoInformation:
         }
         try:
             location_info = g.city(ip)
-            meta_information.update({"location": location_info})
+            meta_information.update(location_info)
         except AddressNotFoundError:
             location_info = {}
         return meta_information
@@ -79,26 +79,13 @@ class SeoInformation:
         return visiteur
 
     def create_visiteur(self, request):
-        seo = self.meta_information(request)
+        meta_visiteur = self.meta_information(request)
         if not request.session or not request.session.session_key:
             request.session.save()
         session_id = request.session.session_key
         visiteur = Visiteur.objects.create(
-            ip=seo['ip'],
             session_id=session_id,
-            country_code=seo['location']['country_code'],
-            country_name=seo['location']['country_name'],
-            dma_code=seo['location']['dma_code'],
-            is_in_european_union=seo['location']['is_in_european_union'],
-            latitude=seo['location']['latitude'],
-            longitude=seo['location']['longitude'],
-            city=seo['location']['city'],
-            region=seo['location']['region'],
-            time_zone=seo['location']['time_zone'],
-            postal_code=seo['location']['postal_code'],
-            continent_code=seo['location']['continent_code'],
-            continent_name=seo['location']['continent_name'],
-            http_user_agent=seo['http_user_agent']
+            **meta_visiteur
         )
         request.session['visiteur_id'] = visiteur.id
         request.session.modified = True
