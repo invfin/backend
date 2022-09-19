@@ -27,7 +27,7 @@ User = get_user_model()
 class Visiteur(BaseToAll):
     ip = CharField(max_length=50, null=True, blank=True)
     session_id = CharField(max_length=1000, null=True, blank=True)
-    HTTP_USER_AGENT = CharField(max_length=1000, null=True, blank=True)
+    http_user_agent = CharField(max_length=1000, null=True, blank=True)
     country_code = CharField(max_length=300, null=True, blank=True)
     country_name = CharField(max_length=300, null=True, blank=True)
     dma_code = CharField(max_length=300, null=True, blank=True)

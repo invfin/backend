@@ -33,7 +33,7 @@ class JourneyClassifier:
 
         elif request.user.is_anonymous:
             visiteur = None
-            if request.is_visiteur:
+            if hasattr(request, "is_visiteur") and request.is_visiteur:
                 visiteur = request.visiteur
             if not visiteur:
                 visiteur = SeoInformation().find_visiteur(request)
@@ -79,7 +79,8 @@ class JourneyClassifier:
             else:
                 info = splited_path[1]
 
-
+            if "general/assets" in current_path:
+                return model_visited, journey_model
 
             if '/screener/analisis-de/' in current_path:
                 journey_model = 'CompanyVisited'
@@ -95,7 +96,11 @@ class JourneyClassifier:
 
             elif '/definicion/' in current_path:
                 journey_model = 'TermVisited'
-                model_visited = Term.objects.get(slug=info)
+                model_visited = Term.objects.filter(slug=info)
+                if model_visited.exists():
+                    model_visited = model_visited.first()
+                else:
+                    model_visited, journey_model = None, None
 
         return model_visited, journey_model
 
