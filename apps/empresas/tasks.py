@@ -15,10 +15,13 @@ from apps.empresas.models import Company, BalanceSheetFinprep, IncomeStatementFi
 
 @celery_app.task()
 def create_averages_task(company_id):
+    """
+    Creates the average statement for a given company according to their last quarterly financials statements
+    """
     company = Company.objects.get(id=company_id)
-    period = Period.objects.quarterly_periods().first()
-    if not company.inc_statements.filter(period=period).exists():
-        UpdateCompany(company).update_base_financials_statements(period)
+    for period in Period.objects.quarterly_periods():
+        if not company.inc_statements.filter(period=period).exists():
+            UpdateCompany(company).update_average_financials_statements(period)
 
 
 @celery_app.task()
@@ -54,6 +57,12 @@ def fix_information_incorrect_filed_task(company_id):
 
 
 @celery_app.task()
+def create_ttm_task(company_id):
+    company = Company.objects.get(id=company_id)
+    UpdateCompany(company).create_ttm()
+
+
+@celery_app.task()
 def arrange_quarters_task(company_id):
     company = Company.objects.get(id=company_id)
     YahooQueryInfo(company).match_quarters_with_earning_history_yahooquery()
@@ -61,7 +70,10 @@ def arrange_quarters_task(company_id):
 
 
 @celery_app.task()
-def update_periods_current_average_statements(company_id):
+def update_periods_final_statements(company_id):
+    """
+    Loops over the company statements and update their period to match the FY acording to the statement year
+    """
     company = Company.objects.get(id=company_id)
     for statement in company.inc_statements.all():
         period, created = Period.objects.get_or_create(year=statement.date, period=PERIOD_FOR_YEAR)
@@ -181,15 +193,6 @@ def update_finprep_from_current(company_id):
 
 
 @celery_app.task()
-def update_fix_statemenets_populate_finprep():
-    for company in Company.objects.all():
-        fix_information_incorrect_filed_task.delay(company.id)
-        update_periods_current_average_statements.delay(company.id)
-        arrange_quarters_task.delay(company.id)
-        update_finprep_from_current.delay(company.id)
-
-
-@celery_app.task()
 def update_basic_info_company_task():
     companies_without_info = Company.objects.filter(Q(has_logo=False) | Q(description_translated=False))
     if companies_without_info.exists():
@@ -262,10 +265,14 @@ def update_company_financials_finnhub_task():
 
 
 @celery_app.task()
-def update_company_financials_yfinance_task():
-    companies_without_info = Company.objects.filter_checkings_not_seen("first_financials_yfinance_info")
-    if companies_without_info.exists():
-        company = companies_without_info.first()
+def update_company_financials_yfinance_task(company_id: int = None):
+    if company_id:
+        company = Company.objects.get(id=company_id)
+    else:
+        companies_without_info = Company.objects.filter_checkings_not_seen("first_financials_yfinance_info")
+        if companies_without_info.exists():
+            company = companies_without_info.first()
+    if company:
         RetrieveCompanyData(company).create_financials_yfinance("a")
         RetrieveCompanyData(company).create_financials_yfinance("q")
         arrange_quarters_task.delay(company.id)
@@ -279,10 +286,14 @@ def update_company_financials_yfinance_task():
 
 
 @celery_app.task()
-def update_company_financials_yahooquery_task():
-    companies_without_info = Company.objects.filter_checkings_not_seen("first_financials_yahooquery_info")
-    if companies_without_info.exists():
-        company = companies_without_info.first()
+def update_company_financials_yahooquery_task(company_id: int = None):
+    if company_id:
+        company = Company.objects.get(id=company_id)
+    else:
+        companies_without_info = Company.objects.filter_checkings_not_seen("first_financials_yahooquery_info")
+        if companies_without_info.exists():
+            company = companies_without_info.first()
+    if company:
         RetrieveCompanyData(company).create_financials_yahooquery("a")
         RetrieveCompanyData(company).create_financials_yahooquery("q")
         arrange_quarters_task.delay(company.id)
