@@ -1,3 +1,5 @@
+import time
+
 from django.conf import settings
 from django.core.mail import send_mail
 from django.db.models import OuterRef, Subquery, Q
@@ -65,7 +67,6 @@ def create_ttm_task(company_id):
 @celery_app.task()
 def arrange_quarters_task(company_id):
     company = Company.objects.get(id=company_id)
-    YahooQueryInfo(company).match_quarters_with_earning_history_yahooquery()
     arrange_quarters(company)
 
 
@@ -304,3 +305,21 @@ def update_company_financials_yahooquery_task(company_id: int = None):
             settings.EMAIL_DEFAULT,
             [settings.EMAIL_DEFAULT],
         )
+
+
+@celery_app.task()
+def fix_update_financials_task(company_id):
+    company = Company.objects.get(id=company_id)
+    fix_information_incorrect_filed_task.delay(company.id)
+    update_periods_final_statements.delay(company.id)
+    update_finprep_from_current.delay(company.id)
+    if not company.check_checkings("first_financials_yfinance_info"):
+        update_company_financials_yfinance_task.delay(company.id)
+    if not company.check_checkings("first_financials_yahooquery_info"):
+        update_company_financials_yahooquery_task.delay(company.id)
+    if not company.check_checkings("first_financials_yfinance_info") and not company.check_checkings(
+        "first_financials_yahooquery_info"
+    ):
+        time.sleep(15)
+    create_averages_task.delay(company.id)
+    create_ttm_task.delay(company.id)

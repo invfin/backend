@@ -51,7 +51,6 @@ def update_financials(modeladmin, request, queryset):
         RetrieveCompanyData(query).create_financials_yahooquery("q")
         RetrieveCompanyData(query).create_financials_yfinance("a")
         RetrieveCompanyData(query).create_financials_yfinance("q")
-        YahooQueryInfo(query).match_quarters_with_earning_history_yahooquery()
         arrange_quarters(query)
 
 
