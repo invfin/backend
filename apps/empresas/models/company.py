@@ -25,7 +25,7 @@ from apps.empresas.managers import CompanyManager, CompanyUpdateLogManager
 
 
 def default_dict():
-    with open(constants.DEFAULT_JSON_CHECKS_FILE, 'r') as checks_json:
+    with open(constants.DEFAULT_JSON_CHECKS_FILE, "r") as checks_json:
         return json.load(checks_json)
 
 
@@ -35,21 +35,21 @@ class Company(BaseToAll, CompanyExtended):
     currency = ForeignKey("general.Currency", on_delete=SET_NULL, null=True, blank=True)
     industry = ForeignKey("general.Industry", on_delete=SET_NULL, null=True, blank=True)
     sector = ForeignKey("general.Sector", on_delete=SET_NULL, null=True, blank=True)
-    website = CharField(max_length=250 , null=True, blank=True)
-    state = CharField(max_length=250 , null=True, blank=True)
+    website = CharField(max_length=250, null=True, blank=True)
+    state = CharField(max_length=250, null=True, blank=True)
     country = ForeignKey("general.Country", on_delete=SET_NULL, null=True, blank=True)
-    ceo = CharField(max_length=250 , null=True, blank=True)
-    image = CharField(max_length=250 , null=True, blank=True)
-    city = CharField(max_length=250 , null=True, blank=True)
-    employees = CharField(max_length=250 , null=True, blank=True)
-    address = CharField(max_length=250 , null=True, blank=True)
-    zip_code = CharField(max_length=250 , null=True, blank=True)
-    cik = CharField(max_length=250 , null=True, blank=True)
+    ceo = CharField(max_length=250, null=True, blank=True)
+    image = CharField(max_length=250, null=True, blank=True)
+    city = CharField(max_length=250, null=True, blank=True)
+    employees = CharField(max_length=250, null=True, blank=True)
+    address = CharField(max_length=250, null=True, blank=True)
+    zip_code = CharField(max_length=250, null=True, blank=True)
+    cik = CharField(max_length=250, null=True, blank=True)
     exchange = ForeignKey("empresas.Exchange", on_delete=SET_NULL, null=True, blank=True, related_name="companies")
-    cusip = CharField(max_length=250 , null=True, blank=True)
-    isin = CharField(max_length=250 , null=True, blank=True)
-    description = TextField( null=True, blank=True)
-    ipoDate = CharField(max_length=250 , null=True, blank=True)
+    cusip = CharField(max_length=250, null=True, blank=True)
+    isin = CharField(max_length=250, null=True, blank=True)
+    description = TextField(null=True, blank=True)
+    ipoDate = CharField(max_length=250, null=True, blank=True)
     beta = FloatField(default=0, blank=True, null=True)
     is_trust = BooleanField(default=False)
     last_div = FloatField(default=0, blank=True, null=True)
@@ -65,9 +65,9 @@ class Company(BaseToAll, CompanyExtended):
     last_update = DateTimeField(null=True, blank=True)
     date_updated = BooleanField(default=False)
     has_error = BooleanField(default=False)
-    error_message = TextField( null=True, blank=True)
-    remote_image_imagekit = CharField(max_length=500, default='', blank=True)
-    remote_image_cloudinary = CharField(max_length=500, default='', blank=True)
+    error_message = TextField(null=True, blank=True)
+    remote_image_imagekit = CharField(max_length=500, default="", blank=True)
+    remote_image_cloudinary = CharField(max_length=500, default="", blank=True)
     checkings = JSONField(default=default_dict)
 
     objects = CompanyManager()
@@ -76,7 +76,7 @@ class Company(BaseToAll, CompanyExtended):
         verbose_name = "Company"
         verbose_name_plural = "Companies"
         db_table = "assets_companies"
-        ordering = ['ticker']
+        ordering = ["ticker"]
 
     def __str__(self):
         return self.full_name
@@ -86,14 +86,11 @@ class Company(BaseToAll, CompanyExtended):
 
     @property
     def full_name(self):
-        return f'{self.ticker} {self.name}'
+        return f"{self.ticker} {self.name}"
 
     @property
     def has_meta_image(self):
-        if (
-            'has_meta_image' in self.checkings and
-            self.check_checkings('has_meta_image')
-        ):
+        if "has_meta_image" in self.checkings and self.check_checkings("has_meta_image"):
             return True
         if self.remote_image_imagekit or self.remote_image_cloudinary:
             return True
@@ -110,10 +107,10 @@ class Company(BaseToAll, CompanyExtended):
     @property
     def short_introduction(self):
         current_ratios = self.calculate_current_ratios()
-        last_income_statement = current_ratios['last_income_statement']
+        last_income_statement = current_ratios["last_income_statement"]
         currency = last_income_statement.reported_currency
         try:
-            cagr = round(current_ratios['cagr'], 2)
+            cagr = round(current_ratios["cagr"], 2)
         except TypeError:
             cagr = 0
 
@@ -125,29 +122,29 @@ class Company(BaseToAll, CompanyExtended):
             f"La empresa cotiza a {round(current_ratios['current_price'], 2)} {currency} por acción, con "
             f"{current_ratios['average_shares_out']} acciones en circulación la empresa obtiene una capitalización "
             f"bursátil de {round(current_ratios['marketcap'], 2)} {currency}"
-                )
+        )
 
     def check_checkings(self, main_dict: str) -> bool:
-        return self.checkings[f"has_{main_dict}"]['state'] == 'yes'
+        return self.checkings[f"has_{main_dict}"]["state"] == "yes"
 
     def modify_checkings(self, main_dict: str, has_it: bool):
         dt = datetime.now()
         ts = datetime.timestamp(dt)
         state = "yes" if has_it else "no"
-        self.checkings.update(
-            {
-                f"has_{main_dict}":
-                {
-                    'state': state,
-                    'time': ts
-                }
-            }
-        )
-        self.save(update_fields=['checkings'])
+        self.checkings.update({f"has_{main_dict}": {"state": state, "time": ts}})
+        self.save(update_fields=["checkings"])
 
     @property
     def has_institutions(self):
         return self.topinstitutionalownership_set.all().exists()
+
+    @property
+    def has_ttm(self):
+        return (
+            self.inc_statements.filter(is_ttm=True).exists()
+            and self.balance_sheets.filter(is_ttm=True).exists()
+            and self.cf_statements.filter(is_ttm=True).exists()
+        )
 
 
 class CompanyYahooQueryProxy(Company):
@@ -236,15 +233,11 @@ class CompanyStockPrice(Model):
     date = IntegerField(default=0)
     year = DateTimeField(auto_now=True)
     price = FloatField(default=0, blank=True, null=True)
-    data_source = CharField(
-        max_length=100,
-        choices=constants.DATA_SOURCES,
-        default=constants.DATA_SOURCE_YFINANCE
-    )
+    data_source = CharField(max_length=100, choices=constants.DATA_SOURCES, default=constants.DATA_SOURCE_YFINANCE)
 
     class Meta:
-        get_latest_by = 'date'
-        ordering = ['-date']
+        get_latest_by = "date"
+        ordering = ["-date"]
         verbose_name = "Stock price"
         verbose_name_plural = "Stock prices"
         db_table = "assets_companies_stock_prices"
@@ -262,12 +255,12 @@ class CompanyUpdateLog(Model):
     date = DateTimeField(null=True, blank=True)
     where = CharField(max_length=250)
     had_error = BooleanField(default=False)
-    error_message = TextField(default='', null=True)
+    error_message = TextField(default="", null=True)
     objects = CompanyUpdateLogManager()
 
     class Meta:
-        get_latest_by = 'date'
-        ordering = ['-date']
+        get_latest_by = "date"
+        ordering = ["-date"]
         verbose_name = "Logs"
         verbose_name_plural = "Logs"
         db_table = "assets_companies_updates_logs"

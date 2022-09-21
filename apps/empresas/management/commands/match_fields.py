@@ -47,5 +47,3 @@ class Command(BaseCommand):
                             similar[inc_key] = {nombre: key}
                         else:
                             similar[inc_key].update({nombre: key})
-
-        print(similar)

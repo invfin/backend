@@ -1,4 +1,3 @@
-
 from django.conf import settings
 
 PROTOCOL = settings.PROTOCOL
@@ -15,17 +14,18 @@ class UserExtended:
             current_domain = CURRENT_DOMAIN
             if not settings.IS_PROD:
                 current_domain = f"{CURRENT_DOMAIN}:8000"
-            url = f'{PROTOCOL}{host_name}.{current_domain}'
+            url = f"{PROTOCOL}{host_name}.{current_domain}"
         return url
 
     @property
     def shareable_link(self):
-        return f'{FULL_DOMAIN}/invitacion/{self.user_profile.ref_code}'
+        return f"{FULL_DOMAIN}/invitacion/{self.user_profile.ref_code}"
 
     @property
     def has_investor_profile(self):
         from apps.roboadvisor.models import InvestorProfile
-        return InvestorProfile.objects.filter(user = self).exists()
+
+        return InvestorProfile.objects.filter(user=self).exists()
 
     @property
     def foto(self):
@@ -36,7 +36,7 @@ class UserExtended:
         if self.first_name:
             full_name = self.first_name
         if self.first_name and self.last_name:
-            full_name = f'{self.first_name} {self.last_name}'
+            full_name = f"{self.first_name} {self.last_name}"
         else:
             full_name = self.username
         return full_name
@@ -44,6 +44,7 @@ class UserExtended:
     @property
     def user_api_key(self):
         from apps.api.models import Key
+
         key = Key.objects.filter(user=self, in_use=True)
         if key.exists() is True:
             return key.first()
@@ -59,7 +60,7 @@ class UserExtended:
 
     @property
     def answers_accepted(self):
-        return self.answers_apported.filter(is_accepted = True)
+        return self.answers_apported.filter(is_accepted=True)
 
     @property
     def number_of_questions(self):
@@ -75,14 +76,12 @@ class UserExtended:
 
     @property
     def number_of_contributions(self):
-        return (
-            self.number_of_questions
-            + self.number_of_answers)
+        return self.number_of_questions + self.number_of_answers
 
     @property
     def blogs_written(self):
         if self.is_writter:
-            return self.publicblog_set.filter(status = 1)
+            return self.publicblog_set.filter(status=1)
         return []
 
     @property
@@ -103,111 +102,117 @@ class UserExtended:
     @property
     def fav_writters(self):
         from apps.public_blog.models import NewsletterFollowers
-        fav_writters = NewsletterFollowers.objects.filter(followers = self)
-        if fav_writters.count() !=0:
+
+        fav_writters = NewsletterFollowers.objects.filter(followers=self)
+        if fav_writters.count() != 0:
             return [writter.user for writter in fav_writters]
         return []
 
     def update_credits(self, number_of_credits):
         self.user_profile.creditos += number_of_credits
-        self.user_profile.save(update_fields=['creditos'])
+        self.user_profile.save(update_fields=["creditos"])
 
     def update_followers(self, user, action):
         from apps.public_blog.models import FollowingHistorial
+
         if self.is_writter:
-            following_historial = FollowingHistorial.objects.create(user_followed = self, user_following = user)
+            following_historial = FollowingHistorial.objects.create(user_followed=self, user_following=user)
             writter_followers = self.main_writter_followed
-            if action == 'stop':
+            if action == "stop":
                 following_historial.stop_following = True
                 writter_followers.followers.remove(user)
-            elif action == 'start':
+            elif action == "start":
                 if user in writter_followers.followers.all():
-                    return 'already follower'
+                    return "already follower"
                 following_historial.started_following = True
                 writter_followers.followers.add(user)
-                #enviar email para avisar que tiene un nuevo seguidor
+                # enviar email para avisar que tiene un nuevo seguidor
 
-            following_historial.save(update_fields=['stop_following', 'started_following'])
+            following_historial.save(update_fields=["stop_following", "started_following"])
             writter_followers.save()
 
             return True
 
     def update_reputation(self, points):
         self.user_profile.reputation_score += points
-        self.user_profile.save(update_fields=['reputation_score'])
+        self.user_profile.save(update_fields=["reputation_score"])
 
     def create_meta_profile(self, request):
         from apps.seo.outils.visiteur_meta import SeoInformation
 
         from .models import MetaProfileInfo
+
         seo = SeoInformation().meta_information(request)
         meta_profile = MetaProfileInfo.objects.create(
-            user = self,
-            ip = seo['ip'],
-            country_code = seo['location']['country_code'],
-            country_name = seo['location']['country_name'],
-            dma_code = seo['location']['dma_code'],
-            is_in_european_union = seo['location']['is_in_european_union'],
-            latitude = seo['location']['latitude'],
-            longitude = seo['location']['longitude'],
-            city = seo['location']['city'],
-            region = seo['location']['region'],
-            time_zone = seo['location']['time_zone'],
-            postal_code = seo['location']['postal_code'],
-            continent_code = seo['location']['continent_code'],
-            continent_name = seo['location']['continent_name'],
-            user_agent = seo['http_user_agent']
+            user=self,
+            ip=seo["ip"],
+            country_code=seo["location"]["country_code"],
+            country_name=seo["location"]["country_name"],
+            dma_code=seo["location"]["dma_code"],
+            is_in_european_union=seo["location"]["is_in_european_union"],
+            latitude=seo["location"]["latitude"],
+            longitude=seo["location"]["longitude"],
+            city=seo["location"]["city"],
+            region=seo["location"]["region"],
+            time_zone=seo["location"]["time_zone"],
+            postal_code=seo["location"]["postal_code"],
+            continent_code=seo["location"]["continent_code"],
+            continent_name=seo["location"]["continent_name"],
+            user_agent=seo["http_user_agent"],
         )
 
-        self.meta_profile.model.objects.create(
-            meta_info = meta_profile
-        )
+        self.meta_profile.model.objects.create(meta_info=meta_profile)
         return True
 
     def create_profile(self, request):
         from .models import Profile
-        user_profile = Profile.objects.create(user = self)
-        user_recomending_id = request.session.get('recommender')
+
+        user_profile = Profile.objects.create(user=self)
+        user_recomending_id = request.session.get("recommender")
         if user_recomending_id is not None:
             recommended_by_user = self.__class__.objects.get(id=user_recomending_id)
             user_profile.recommended_by = recommended_by_user
-            user_profile.save(update_fields=['recommended_by'])
+            user_profile.save(update_fields=["recommended_by"])
         return True
 
     def add_fav_lists(self):
         from apps.escritos.models import FavoritesTermsList
         from apps.screener.models import FavoritesStocksList
 
-        FavoritesTermsList.objects.create(user = self)
-        FavoritesStocksList.objects.create(user = self)
+        FavoritesTermsList.objects.create(user=self)
+        FavoritesStocksList.objects.create(user=self)
 
     def create_new_user(self, request):
+        """
+        TODO
+        Switch print to loggin
+        """
         from allauth.account.utils import sync_user_email_addresses
 
         from apps.seo.models import VisiteurUserRelation
 
         try:
-            if 'visiteur_id' in request.session:
-                visiteur_id = request.session['visiteur_id']
+            if "visiteur_id" in request.session:
+                visiteur_id = request.session["visiteur_id"]
                 VisiteurUserRelation.objects.create(user=self, visiteur_id=visiteur_id)
         except Exception as e:
-            print('VisiteurUserRelation',e)
+            print("VisiteurUserRelation", e)
         try:
             sync_user_email_addresses(self)
         except Exception as e:
-            print('sync_user_email_addresses',e)
+            print("sync_user_email_addresses", e)
         try:
             self.create_profile(request)
         except Exception as e:
-            print('create_profile',e)
+            print("create_profile", e)
         try:
             self.create_meta_profile(request)
         except Exception as e:
-            print('create_meta_profile',e)
+            print("create_meta_profile", e)
         try:
             self.add_fav_lists()
         except Exception as e:
-            print('add_fav_lists',e)
+            print("add_fav_lists", e)
         return True
 
     @property

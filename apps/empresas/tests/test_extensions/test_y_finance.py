@@ -23,7 +23,6 @@ class TestAverageStatementsYFinance(TestCase):
 
     def test_return_standard_income_statement(self):
         inc_st_yfinance_dict = self.inc_st_yfinance.return_standard
-        print(inc_st_yfinance_dict)
         inc_st_yfinance_dict["revenue"] = self.inc_st_yfinance.total_revenue
         inc_st_yfinance_dict["cost_of_revenue"] = self.inc_st_yfinance.cost_of_revenue
         inc_st_yfinance_dict["gross_profit"] = self.inc_st_yfinance.gross_profit

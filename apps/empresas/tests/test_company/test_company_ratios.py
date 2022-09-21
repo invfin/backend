@@ -10,9 +10,10 @@ from apps.empresas.models import Company
 
 
 company_vcr = vcr.VCR(
-    cassette_library_dir='cassettes/company/',
-    path_transformer=vcr.VCR.ensure_suffix('.yaml'),
+    cassette_library_dir="cassettes/company/",
+    path_transformer=vcr.VCR.ensure_suffix(".yaml"),
 )
+
 
 @skip("Don't want to test")
 class TestScrapCompanyInfo(TestCase):
@@ -21,29 +22,25 @@ class TestScrapCompanyInfo(TestCase):
         cls.company = DTM.create(Company)
         cls.company_update = UpdateCompany(cls.company)
         cls.company.inc_statements.create(date=2018)
-        cls.zinga = DTM.create(Company, ticker='ZNGA')
+        cls.zinga = DTM.create(Company, ticker="ZNGA")
 
     @company_vcr.use_cassette
     def test_need_update(self):
         need_update = self.company_update.check_last_filing()
-        self.assertEqual(need_update, 'need update')
+        self.assertEqual(need_update, "need update")
 
         company2_update = UpdateCompany(self.company)
         self.company.inc_statements.create(date=2021)
         need_update2 = company2_update.check_last_filing()
-        self.assertEqual(need_update2, 'updated')
+        self.assertEqual(need_update2, "updated")
 
     def test_all_data(self):
         current_data = self.company_update.generate_current_data(
-            data.INCOME_STATEMENT,
-            data.BALANCE_SHEET,
-            data.CASHFLOW_STATEMENT
-            )
+            data.INCOME_STATEMENT, data.BALANCE_SHEET, data.CASHFLOW_STATEMENT
+        )
         last_year_data = self.company_update.generate_last_year_data(
-            data.INCOME_STATEMENT,
-            data.BALANCE_SHEET,
-            data.CASHFLOW_STATEMENT
-            )
+            data.INCOME_STATEMENT, data.BALANCE_SHEET, data.CASHFLOW_STATEMENT
+        )
 
         all_data = current_data
         all_data.update(last_year_data)
@@ -89,7 +86,7 @@ class TestScrapCompanyInfo(TestCase):
         self.assertEqual(self.company.efficiency_ratios.count(), 0)
         self.assertEqual(self.company.growth_rates.count(), 0)
 
-        created_current_stock_price = self.company_update.create_current_stock_price(price = current_data['currentPrice'])
+        created_current_stock_price = self.company_update.create_current_stock_price(price=current_data["currentPrice"])
         created_rentability_ratios = self.company_update.create_rentability_ratios(rentability_ratios)
         created_liquidity_ratio = self.company_update.create_liquidity_ratio(liquidity_ratio)
         created_margin_ratio = self.company_update.create_margin_ratio(margin_ratio)
@@ -102,9 +99,9 @@ class TestScrapCompanyInfo(TestCase):
         created_eficiency_ratio = self.company_update.create_eficiency_ratio(eficiency_ratio)
         created_company_growth = self.company_update.create_company_growth(company_growth)
 
-        self.assertEqual(created_current_stock_price.price, current_data['currentPrice'])
+        self.assertEqual(created_current_stock_price.price, current_data["currentPrice"])
 
-        self.assertEqual(self.company.stock_prices.latest().price, current_data['currentPrice'])
+        self.assertEqual(self.company.stock_prices.latest().price, current_data["currentPrice"])
         self.assertEqual(self.company.rentability_ratios.latest(), created_rentability_ratios)
         self.assertEqual(self.company.liquidity_ratios.latest(), created_liquidity_ratio)
         self.assertEqual(self.company.margins.latest(), created_margin_ratio)
@@ -137,6 +134,3 @@ class TestScrapCompanyInfo(TestCase):
         bls = up_comp.request_balance_sheets_finprep()
         time.sleep(5)
         cfs = up_comp.request_cashflow_statements_finprep()
-        print(inc)
-        print(bls)
-        print(cfs)

@@ -38,21 +38,7 @@ class YahooQueryInfo(DFInfoCreator, NormalizeYahooQuery, ParseYahooQuery):
         for index, data in df.iterrows():
             financials_data = data.to_dict()
             financials_data["asOfDate"] = financials_data["asOfDate"].to_pydatetime().date().strftime("%m/%d/%Y")
-            # if model.objects.filter(
-            #     as_of_date=financials_data["asOfDate"],
-            #     period_type=financials_data["periodType"]
-            # ).exists():
-            #     print("existo")
-            # else:
-            #     print("no existo")
-            #     print(model.objects.filter(
-            #         as_of_date=financials_data["asOfDate"],
-            #         period_type=financials_data["periodType"]
-            #     ))
-            #     continue
-            model.objects.create(financials=financials_data, **function(data, period))
-            # print(m)
-            print("*" * 100)
+            model.objects.get_or_create(financials=financials_data, defaults=function(data, period))
 
     def create_quarterly_financials_yahooquery(self):
         self.create_financials(

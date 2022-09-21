@@ -3,14 +3,13 @@ from django.conf import settings
 import sys
 from bfet import Autotest
 
+
 class Command(BaseCommand):
     def handle(self, *args, **options):
-
         # mods = []
         # for m in sys.modules.keys():
         #     if m.startswith("apps.seo"):
         #         mods.append(m)
-        # print(mods)
         for local_app in settings.LOCAL_APPS:
             if "etfs" in local_app:
                 continue

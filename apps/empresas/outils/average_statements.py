@@ -12,6 +12,7 @@ class AverageStatements:
         currency = self.find_correct_currency(reunited_data)
         reunited_data = self.calculate_averages(reunited_data)
         reunited_data.update({"date": period.year, "period_id": period.id, **currency})
+        print(reunited_data)
         return reunited_data
 
     def find_correct_currency(self, reunited_data: dict) -> Dict[str, int]:
