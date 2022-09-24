@@ -8,7 +8,7 @@ from django.db.models import (
     ForeignKey,
     IntegerField,
     Model,
-    ManyToManyField
+    ManyToManyField,
 )
 
 User = get_user_model()
@@ -21,15 +21,15 @@ from apps.general import constants
 class EscritosClassification(BaseToAll):
     name = CharField(
         max_length=500,
-        null = True,
+        null=True,
         blank=True,
-        unique = True,
+        unique=True,
     )
     slug = CharField(
         max_length=500,
-        null = True,
+        null=True,
         blank=True,
-        unique = True,
+        unique=True,
     )
 
     class Meta:
@@ -38,7 +38,7 @@ class EscritosClassification(BaseToAll):
     def __str__(self):
         return self.name or f"{self.id}"
 
-    def save(self, *args, **kwargs): # new
+    def save(self, *args, **kwargs):  # new
         if not self.slug:
             self.slug = self.save_unique_field("slug", self.name)
         return super().save(*args, **kwargs)
@@ -178,7 +178,7 @@ class Currency(Model):
     countries = ManyToManyField(
         Country,
         blank=True,
-        related_name = "currency",
+        related_name="currency",
     )
     objects = CurrencyManager()
 
@@ -202,7 +202,7 @@ class Notification(BaseGenericModels):
 
 
 class EmailNotification(BaseEmail):
-    email_related = ForeignKey(Notification, null=True, blank=True, on_delete=SET_NULL, related_name = "email_related")
+    email_related = ForeignKey(Notification, null=True, blank=True, on_delete=SET_NULL, related_name="email_related")
 
     class Meta:
         verbose_name = "Email from notifications"
@@ -218,13 +218,13 @@ class Period(Model):
         verbose_name = "Period"
         verbose_name_plural = "Periods"
         db_table = "assets_periods"
-        ordering = ['-year', '-period']
-        get_latest_by = ['-year', '-period']
+        ordering = ["-year", "-period"]
+        get_latest_by = ["-year", "-period"]
 
     def __str__(self):
         if self.is_full_year:
-            return f'FY {str(self.period_year)}'
-        return f'Q{self.period} {str(self.period_year)}'
+            return f"FY {str(self.period_year)}"
+        return f"Q{self.period} {str(self.period_year)}"
 
     @property
     def is_full_year(self):

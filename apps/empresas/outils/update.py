@@ -1,6 +1,8 @@
 from typing import Type
 from datetime import datetime
 
+from django.db.models import Q
+
 from apps.translate.google_trans_new import google_translator
 from apps.empresas.utils import log_company
 from apps.empresas.outils.ratios import CalculateCompanyFinancialRatios
@@ -41,117 +43,166 @@ class UpdateCompany(CalculateCompanyFinancialRatios, AverageStatements):
 
     @log_company()
     def update_average_financials_statements(self, period: Type["Period"]):
-        for funct_calculate_statement, funct_create_statement in [
-            (self.calculate_average_income_statement, self.create_inc_statements),
-            (self.calculate_average_balance_sheet, self.create_balance_sheets),
-            (self.calculate_average_cashflow_statement, self.create_cf_statements),
+        """
+        TODO
+        Move all the calculation logic into SQL
+        """
+        for funct_calculate_statement, funct_create_or_update_statement in [
+            (self.calculate_average_income_statement, self.create_or_update_inc_statements),
+            (self.calculate_average_balance_sheet, self.create_or_update_balance_sheets),
+            (self.calculate_average_cashflow_statement, self.create_or_update_cf_statements),
         ]:
             averaged_stement = funct_calculate_statement(period)
             if averaged_stement:
-                averaged_stement.update({"company": self.company})
-                funct_create_statement(averaged_stement)
+                averaged_stement.update({"company": self.company, "from_average": True})
+                funct_create_or_update_statement(averaged_stement, period)
 
     @log_company()
-    def create_ttm(self):
+    def create_or_update_ttm(self):
+        """
+        TODO
+        Use Sum from django to make the calculations
+        """
         for statement_manager in [
             self.company.inc_statements,
             self.company.balance_sheets,
             self.company.cf_statements,
         ]:
-            last_statements = statement_manager.all().exclude(period=PERIOD_FOR_YEAR).order_by("period", "date")[:4]
+            last_statements = statement_manager.filter(~Q(period=PERIOD_FOR_YEAR), is_ttm=False)[:4]
             ttm_dict = {}
             for statement in last_statements:
                 st_dict = statement.__dict__
-                st_dict.pop("_state")
-                st_dict.pop("id")
+                for field in ["_state", "id", "period_id", "year", "company_id", "is_ttm", "reported_currency_id"]:
+                    st_dict.pop(field)
                 date = st_dict.pop("date")
-                st_dict.pop("period_id")
-                st_dict.pop("year")
                 if "date" not in ttm_dict:
                     ttm_dict["date"] = date
-                st_dict.pop("company_id")
-                st_dict.pop("is_ttm")
-                st_dict.pop("reported_currency_id")
                 for key, value in st_dict.items():
                     if key in ttm_dict:
                         ttm_dict[key] += value
                     else:
                         ttm_dict[key] = value
-            ttm_dict["is_ttm"] = True
-            ttm_dict["company"] = self.company
+            ttm_dict.update(
+                {
+                    "is_ttm": True,
+                    "from_average": True,
+                }
+            )
             statement_manager.create(**ttm_dict)
 
     @log_company()
-    def create_all_ratios(self, all_ratios: dict):
-        self.create_current_stock_price(price=all_ratios["current_data"]["currentPrice"])
-        self.create_rentability_ratios(all_ratios["rentability_ratios"])
-        self.create_liquidity_ratio(all_ratios["liquidity_ratio"])
-        self.create_margin_ratio(all_ratios["margin_ratio"])
-        self.create_fcf_ratio(all_ratios["fcf_ratio"])
-        self.create_ps_value(all_ratios["ps_value"])
-        self.create_non_gaap(all_ratios["non_gaap"])
-        self.create_operation_risk_ratio(all_ratios["operation_risk_ratio"])
-        self.create_price_to_ratio(all_ratios["price_to_ratio"])
-        self.create_enterprise_value_ratio(all_ratios["enterprise_value_ratio"])
-        self.create_eficiency_ratio(all_ratios["eficiency_ratio"])
-        self.create_company_growth(all_ratios["company_growth"])
+    def create_or_update_all_ratios(self, all_ratios: dict):
+        self.create_or_update_current_stock_price(price=all_ratios["current_data"]["currentPrice"])
+        self.create_or_update_rentability_ratios(all_ratios["rentability_ratios"])
+        self.create_or_update_liquidity_ratio(all_ratios["liquidity_ratio"])
+        self.create_or_update_margin_ratio(all_ratios["margin_ratio"])
+        self.create_or_update_fcf_ratio(all_ratios["fcf_ratio"])
+        self.create_or_update_ps_value(all_ratios["ps_value"])
+        self.create_or_update_non_gaap(all_ratios["non_gaap"])
+        self.create_or_update_operation_risk_ratio(all_ratios["operation_risk_ratio"])
+        self.create_or_update_price_to_ratio(all_ratios["price_to_ratio"])
+        self.create_or_update_enterprise_value_ratio(all_ratios["enterprise_value_ratio"])
+        self.create_or_update_eficiency_ratio(all_ratios["eficiency_ratio"])
+        self.create_or_update_company_growth(all_ratios["company_growth"])
 
     @log_company()
-    def create_inc_statements(self, data: dict):
-        return self.company.inc_statements.create(**data)
+    def create_or_update_inc_statements(self, data: dict, period: Type["Period"] = None):
+        financial_model = self.company.inc_statements
+        if period:
+            return financial_model.update_or_create(period=period, defaults=data)
+        return financial_model.create(**data)
 
     @log_company()
-    def create_balance_sheets(self, data: dict):
-        return self.company.balance_sheets.create(**data)
+    def create_or_update_balance_sheets(self, data: dict, period: Type["Period"] = None):
+        financial_model = self.company.balance_sheets
+        if period:
+            return financial_model.update_or_create(period=period, defaults=data)
+        return financial_model.create(**data)
 
     @log_company()
-    def create_cf_statements(self, data: dict):
-        return self.company.cf_statements.create(**data)
+    def create_or_update_cf_statements(self, data: dict, period: Type["Period"] = None):
+        financial_model = self.company.cf_statements
+        if period:
+            return financial_model.update_or_create(period=period, defaults=data)
+        return financial_model.create(**data)
 
     @log_company()
-    def create_current_stock_price(self, price):
+    def create_or_update_current_stock_price(self, price):
         return self.company.stock_prices.create(price=price)
 
     @log_company()
-    def create_rentability_ratios(self, data: dict):
-        return self.company.rentability_ratios.create(**data)
+    def create_or_update_rentability_ratios(self, data: dict, period: Type["Period"] = None):
+        financial_model = self.company.rentability_ratios
+        if period:
+            return financial_model.update_or_create(period=period, defaults=data)
+        return financial_model.create(**data)
 
     @log_company()
-    def create_liquidity_ratio(self, data: dict):
-        return self.company.liquidity_ratios.create(**data)
+    def create_or_update_liquidity_ratio(self, data: dict, period: Type["Period"] = None):
+        financial_model = self.company.liquidity_ratios
+        if period:
+            return financial_model.update_or_create(period=period, defaults=data)
+        return financial_model.create(**data)
 
     @log_company()
-    def create_margin_ratio(self, data: dict):
-        return self.company.margins.create(**data)
+    def create_or_update_margin_ratio(self, data: dict, period: Type["Period"] = None):
+        financial_model = self.company.margins
+        if period:
+            return financial_model.update_or_create(period=period, defaults=data)
+        return financial_model.create(**data)
 
     @log_company()
-    def create_fcf_ratio(self, data: dict):
-        return self.company.fcf_ratios.create(**data)
+    def create_or_update_fcf_ratio(self, data: dict, period: Type["Period"] = None):
+        financial_model = self.company.fcf_ratios
+        if period:
+            return financial_model.update_or_create(period=period, defaults=data)
+        return financial_model.create(**data)
 
     @log_company()
-    def create_ps_value(self, data: dict):
-        return self.company.per_share_values.create(**data)
+    def create_or_update_ps_value(self, data: dict, period: Type["Period"] = None):
+        financial_model = self.company.per_share_values
+        if period:
+            return financial_model.update_or_create(period=period, defaults=data)
+        return financial_model.create(**data)
 
     @log_company()
-    def create_non_gaap(self, data: dict):
-        return self.company.non_gaap_figures.create(**data)
+    def create_or_update_non_gaap(self, data: dict, period: Type["Period"] = None):
+        financial_model = self.company.non_gaap_figures
+        if period:
+            return financial_model.update_or_create(period=period, defaults=data)
+        return financial_model.create(**data)
 
     @log_company()
-    def create_operation_risk_ratio(self, data: dict):
-        return self.company.operation_risks_ratios.create(**data)
+    def create_or_update_operation_risk_ratio(self, data: dict, period: Type["Period"] = None):
+        financial_model = self.company.operation_risks_ratios
+        if period:
+            return financial_model.update_or_create(period=period, defaults=data)
+        return financial_model.create(**data)
 
     @log_company()
-    def create_enterprise_value_ratio(self, data: dict):
-        return self.company.ev_ratios.create(**data)
+    def create_or_update_enterprise_value_ratio(self, data: dict, period: Type["Period"] = None):
+        financial_model = self.company.ev_ratios
+        if period:
+            return financial_model.update_or_create(period=period, defaults=data)
+        return financial_model.create(**data)
 
     @log_company()
-    def create_company_growth(self, data: dict):
-        return self.company.growth_rates.create(**data)
+    def create_or_update_company_growth(self, data: dict, period: Type["Period"] = None):
+        financial_model = self.company.growth_rates
+        if period:
+            return financial_model.update_or_create(period=period, defaults=data)
+        return financial_model.create(**data)
 
     @log_company()
-    def create_eficiency_ratio(self, data: dict):
-        return self.company.efficiency_ratios.create(**data)
+    def create_or_update_eficiency_ratio(self, data: dict, period: Type["Period"] = None):
+        financial_model = self.company.efficiency_ratios
+        if period:
+            return financial_model.update_or_create(period=period, defaults=data)
+        return financial_model.create(**data)
 
     @log_company()
-    def create_price_to_ratio(self, data: dict):
-        return self.company.price_to_ratios.create(**data)
+    def create_or_update_price_to_ratio(self, data: dict, period: Type["Period"] = None):
+        financial_model = self.company.price_to_ratios
+        if period:
+            return financial_model.update_or_create(period=period, defaults=data)
+        return financial_model.create(**data)

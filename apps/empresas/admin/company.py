@@ -3,6 +3,7 @@ from django.db import models
 
 from django_json_widget.widgets import JSONEditorWidget
 
+from apps.empresas.tasks import fix_update_financials_task
 from apps.general.models import Period
 from apps.empresas.outils.update import UpdateCompany
 from apps.empresas.utils import arrange_quarters
@@ -39,6 +40,12 @@ class CompanyUpdateLogInline(BaseJSONWidgetInline):
     jazzmin_tab_id = "logs"
 
 
+@admin.action(description="Add periods to statements")
+def add_periods(modeladmin, request, queryset):
+    for query in queryset:
+        fix_update_financials_task(query.id)
+
+
 @admin.action(description="Match quarters")
 def match_quarters(modeladmin, request, queryset):
     for query in queryset:
@@ -55,15 +62,15 @@ def calculate_averages(modeladmin, request, queryset):
 @admin.action(description="Calculate ttm")
 def calculate_ttm(modeladmin, request, queryset):
     for query in queryset:
-        UpdateCompany(query).create_ttm()
+        UpdateCompany(query).create_or_update_ttm()
 
 
 @admin.action(description="Calculate ttm and averages")
 def calculate_averages_and_ttm(modeladmin, request, queryset):
     for query in queryset:
-        UpdateCompany(query).create_ttm()
         for period in Period.objects.all():
             UpdateCompany(query).update_average_financials_statements(period)
+        UpdateCompany(query).create_or_update_ttm()
 
 
 @admin.register(Company)
@@ -78,6 +85,7 @@ class CompanyAdmin(admin.ModelAdmin):
         calculate_averages,
         calculate_ttm,
         calculate_averages_and_ttm,
+        add_periods,
     ]
 
     inlines = [

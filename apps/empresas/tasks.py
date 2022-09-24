@@ -11,7 +11,6 @@ from apps.general.models import Period
 from apps.empresas.outils.update import UpdateCompany
 from apps.empresas.outils.retrieve_data import RetrieveCompanyData
 from apps.empresas.utils import arrange_quarters
-from apps.empresas.parse.yahoo_query import YahooQueryInfo
 from apps.empresas.models import Company, BalanceSheetFinprep, IncomeStatementFinprep, CashflowStatementFinprep
 
 
@@ -76,50 +75,28 @@ def update_periods_final_statements(company_id):
     Loops over the company statements and update their period to match the FY acording to the statement year
     """
     company = Company.objects.get(id=company_id)
-    for statement in company.inc_statements.all():
+    for statement in company.inc_statements.filter(period__isnull=True, is_ttm=False):
         period, created = Period.objects.get_or_create(year=statement.date, period=PERIOD_FOR_YEAR)
         statement.period = period
         statement.save(update_fields=["period"])
-
-    company.balance_sheets.all().update(
-        period_id=Subquery(Period.objects.filter(year=OuterRef("date"), period=PERIOD_FOR_YEAR).only("id"))
-    )
-    company.cf_statements.all().update(
-        period_id=Subquery(Period.objects.filter(year=OuterRef("date"), period=PERIOD_FOR_YEAR).only("id"))
-    )
-    company.rentability_ratios.all().update(
-        period_id=Subquery(Period.objects.filter(year=OuterRef("date"), period=PERIOD_FOR_YEAR).only("id"))
-    )
-    company.liquidity_ratios.all().update(
-        period_id=Subquery(Period.objects.filter(year=OuterRef("date"), period=PERIOD_FOR_YEAR).only("id"))
-    )
-    company.margins.all().update(
-        period_id=Subquery(Period.objects.filter(year=OuterRef("date"), period=PERIOD_FOR_YEAR).only("id"))
-    )
-    company.fcf_ratios.all().update(
-        period_id=Subquery(Period.objects.filter(year=OuterRef("date"), period=PERIOD_FOR_YEAR).only("id"))
-    )
-    company.per_share_values.all().update(
-        period_id=Subquery(Period.objects.filter(year=OuterRef("date"), period=PERIOD_FOR_YEAR).only("id"))
-    )
-    company.non_gaap_figures.all().update(
-        period_id=Subquery(Period.objects.filter(year=OuterRef("date"), period=PERIOD_FOR_YEAR).only("id"))
-    )
-    company.operation_risks_ratios.all().update(
-        period_id=Subquery(Period.objects.filter(year=OuterRef("date"), period=PERIOD_FOR_YEAR).only("id"))
-    )
-    company.ev_ratios.all().update(
-        period_id=Subquery(Period.objects.filter(year=OuterRef("date"), period=PERIOD_FOR_YEAR).only("id"))
-    )
-    company.growth_rates.all().update(
-        period_id=Subquery(Period.objects.filter(year=OuterRef("date"), period=PERIOD_FOR_YEAR).only("id"))
-    )
-    company.efficiency_ratios.all().update(
-        period_id=Subquery(Period.objects.filter(year=OuterRef("date"), period=PERIOD_FOR_YEAR).only("id"))
-    )
-    company.price_to_ratios.all().update(
-        period_id=Subquery(Period.objects.filter(year=OuterRef("date"), period=PERIOD_FOR_YEAR).only("id"))
-    )
+    for statement_manager in [
+        company.balance_sheets,
+        company.cf_statements,
+        company.rentability_ratios,
+        company.liquidity_ratios,
+        company.margins,
+        company.fcf_ratios,
+        company.per_share_values,
+        company.non_gaap_figures,
+        company.operation_risks_ratios,
+        company.ev_ratios,
+        company.growth_rates,
+        company.efficiency_ratios,
+        company.price_to_ratios,
+    ]:
+        statement_manager.filter(period__isnull=True, is_ttm=False).update(
+            period_id=Subquery(Period.objects.filter(year=OuterRef("date"), period=PERIOD_FOR_YEAR).only("id"))
+        )
 
 
 @celery_app.task()

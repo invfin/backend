@@ -1,5 +1,4 @@
 from django.contrib import admin
-from django.db import models
 
 from apps.empresas.admin.base import BaseCompanyAdmin, BaseJSONWidgetInline, BaseStatementAdmin
 from apps.empresas.admin.filters.base import HasQuarterFilter
@@ -23,144 +22,85 @@ from apps.empresas.models import (
 )
 
 
-@admin.register(IncomeStatement)
-class IncomeStatementAdmin(BaseStatementAdmin):
+class BaseFinalAdmin(BaseStatementAdmin):
     list_display = BaseStatementAdmin.list_display + [
         "is_ttm",
+        "from_average",
     ]
     list_filter = BaseStatementAdmin.list_filter + [
         "is_ttm",
+        "from_average",
     ]
+
+
+@admin.register(IncomeStatement)
+class IncomeStatementAdmin(BaseFinalAdmin):
+    pass
 
 
 @admin.register(BalanceSheet)
-class BalanceSheetAdmin(BaseStatementAdmin):
-    list_display = BaseStatementAdmin.list_display + [
-        "is_ttm",
-    ]
-    list_filter = BaseStatementAdmin.list_filter + [
-        "is_ttm",
-    ]
+class BalanceSheetAdmin(BaseFinalAdmin):
+    pass
 
 
 @admin.register(CashflowStatement)
-class CashflowStatementAdmin(BaseStatementAdmin):
-    list_display = BaseStatementAdmin.list_display + [
-        "is_ttm",
-    ]
-    list_filter = BaseStatementAdmin.list_filter + [
-        "is_ttm",
-    ]
+class CashflowStatementAdmin(BaseFinalAdmin):
+    pass
 
 
 @admin.register(RentabilityRatio)
-class RentabilityRatioAdmin(BaseStatementAdmin):
-    list_display = BaseStatementAdmin.list_display + [
-        "is_ttm",
-    ]
-    list_filter = BaseStatementAdmin.list_filter + [
-        "is_ttm",
-    ]
+class RentabilityRatioAdmin(BaseFinalAdmin):
+    pass
 
 
 @admin.register(LiquidityRatio)
-class LiquidityRatioAdmin(BaseStatementAdmin):
-    list_display = BaseStatementAdmin.list_display + [
-        "is_ttm",
-    ]
-    list_filter = BaseStatementAdmin.list_filter + [
-        "is_ttm",
-    ]
+class LiquidityRatioAdmin(BaseFinalAdmin):
+    pass
 
 
 @admin.register(MarginRatio)
-class MarginRatioAdmin(BaseStatementAdmin):
-    list_display = BaseStatementAdmin.list_display + [
-        "is_ttm",
-    ]
-    list_filter = BaseStatementAdmin.list_filter + [
-        "is_ttm",
-    ]
+class MarginRatioAdmin(BaseFinalAdmin):
+    pass
 
 
 @admin.register(FreeCashFlowRatio)
-class FreeCashFlowRatioAdmin(BaseStatementAdmin):
-    list_display = BaseStatementAdmin.list_display + [
-        "is_ttm",
-    ]
-    list_filter = BaseStatementAdmin.list_filter + [
-        "is_ttm",
-    ]
+class FreeCashFlowRatioAdmin(BaseFinalAdmin):
+    pass
 
 
 @admin.register(PerShareValue)
-class PerShareValueAdmin(BaseStatementAdmin):
-    list_display = BaseStatementAdmin.list_display + [
-        "is_ttm",
-    ]
-    list_filter = BaseStatementAdmin.list_filter + [
-        "is_ttm",
-    ]
+class PerShareValueAdmin(BaseFinalAdmin):
+    pass
 
 
 @admin.register(NonGaap)
-class NonGaapAdmin(BaseStatementAdmin):
-    list_display = BaseStatementAdmin.list_display + [
-        "is_ttm",
-    ]
-    list_filter = BaseStatementAdmin.list_filter + [
-        "is_ttm",
-    ]
+class NonGaapAdmin(BaseFinalAdmin):
+    pass
 
 
 @admin.register(OperationRiskRatio)
-class OperationRiskRatioAdmin(BaseStatementAdmin):
-    list_display = BaseStatementAdmin.list_display + [
-        "is_ttm",
-    ]
-    list_filter = BaseStatementAdmin.list_filter + [
-        "is_ttm",
-    ]
+class OperationRiskRatioAdmin(BaseFinalAdmin):
+    pass
 
 
 @admin.register(EnterpriseValueRatio)
-class EnterpriseValueRatioAdmin(BaseStatementAdmin):
-    list_display = BaseStatementAdmin.list_display + [
-        "is_ttm",
-    ]
-    list_filter = BaseStatementAdmin.list_filter + [
-        "is_ttm",
-    ]
+class EnterpriseValueRatioAdmin(BaseFinalAdmin):
+    pass
 
 
 @admin.register(CompanyGrowth)
-class CompanyGrowthAdmin(BaseStatementAdmin):
-    list_display = BaseStatementAdmin.list_display + [
-        "is_ttm",
-    ]
-    list_filter = BaseStatementAdmin.list_filter + [
-        "is_ttm",
-    ]
+class CompanyGrowthAdmin(BaseFinalAdmin):
+    pass
 
 
 @admin.register(EficiencyRatio)
-class EficiencyRatioAdmin(BaseStatementAdmin):
-    list_display = BaseStatementAdmin.list_display + [
-        "is_ttm",
-    ]
-    list_filter = BaseStatementAdmin.list_filter + [
-        "is_ttm",
-    ]
+class EficiencyRatioAdmin(BaseFinalAdmin):
+    pass
 
 
 @admin.register(PriceToRatio)
-class PriceToRatioAdmin(BaseStatementAdmin):
-    list_display = BaseStatementAdmin.list_display + [
-        "is_ttm",
-    ]
-    list_filter = BaseStatementAdmin.list_filter + [
-        "is_ttm",
-    ]
+class PriceToRatioAdmin(BaseFinalAdmin):
+    pass
 
 
 class HasAverageQuarterFilter(HasQuarterFilter):

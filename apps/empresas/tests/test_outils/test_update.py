@@ -101,3 +101,10 @@ class TestUpdateCompany(TestCase):
         self.assertEqual(1, IncomeStatement.objects.filter(is_ttm=True).count())
         self.assertEqual(1, BalanceSheet.objects.filter(is_ttm=True).count())
         self.assertEqual(1, CashflowStatement.objects.filter(is_ttm=True).count())
+
+        income_statement = IncomeStatement.objects.filter(is_ttm=True).first()
+        balance_sheet = BalanceSheet.objects.filter(is_ttm=True).first()
+        cashflow_statement = CashflowStatement.objects.filter(is_ttm=True).first()
+        self.assertEqual(2022, income_statement.year)
+        self.assertEqual(2022, balance_sheet.year)
+        self.assertEqual(2022, cashflow_statement.year)
