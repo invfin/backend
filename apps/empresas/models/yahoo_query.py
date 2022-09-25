@@ -204,7 +204,6 @@ class CashflowStatementYahooQuery(BaseUnknownField, CashflowStatementYahooQueryE
 
 
 class KeyStatsYahooQuery(BaseUnknownField):
-    period = None
     reported_currency = None
     max_age = FloatField(default=0, blank=True, null=True)
     price_hint = FloatField(default=0, blank=True, null=True)

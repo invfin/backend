@@ -1,6 +1,7 @@
-from django.db.models import SET_NULL, BooleanField, FloatField, ForeignKey, Model, IntegerField, DateField
+from django.db.models import SET_NULL, BooleanField, FloatField, ForeignKey, IntegerField, DateField
 
 from apps.empresas.models import Company
+from apps.empresas.managers import BaseStatementManager
 from apps.general.models import Period
 from apps.general.mixins import BaseToAll
 
@@ -11,18 +12,20 @@ class BaseStatement(BaseToAll):
     company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True)
     period = ForeignKey(Period, on_delete=SET_NULL, null=True, blank=True)
     reported_currency = ForeignKey("general.Currency", on_delete=SET_NULL, null=True, blank=True)
+    objects = BaseStatementManager()
 
     class Meta:
         abstract = True
         get_latest_by = ["-date", "period"]
         ordering = ["-date", "period"]
+        base_manager_name = "objects"
 
     def __str__(self) -> str:
         period = self.period if self.period else self.date
         return f"{self.company} - {period}"
 
 
-class FinalBase(BaseStatement):
+class BaseFinalStatement(BaseStatement):
     is_ttm = BooleanField(default=False)
     from_average = BooleanField(default=False)
 
@@ -30,7 +33,7 @@ class FinalBase(BaseStatement):
         abstract = True
 
 
-class IncomeStatement(FinalBase):
+class IncomeStatement(BaseFinalStatement):
     company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="inc_statements")
     revenue = FloatField(default=0, blank=True, null=True)
     cost_of_revenue = FloatField(default=0, blank=True, null=True)
@@ -59,7 +62,7 @@ class IncomeStatement(FinalBase):
         db_table = "assets_companies_income_statements"
 
 
-class BalanceSheet(FinalBase):
+class BalanceSheet(BaseFinalStatement):
     company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="balance_sheets")
     cash_and_cash_equivalents = FloatField(default=0, blank=True, null=True)
     short_term_investments = FloatField(default=0, blank=True, null=True)
@@ -107,7 +110,7 @@ class BalanceSheet(FinalBase):
         db_table = "assets_companies_balance_sheet_statements"
 
 
-class CashflowStatement(FinalBase):
+class CashflowStatement(BaseFinalStatement):
     company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="cf_statements")
     net_income = FloatField(default=0, blank=True, null=True)
     depreciation_amortization = FloatField(default=0, blank=True, null=True)
@@ -150,7 +153,7 @@ class CashflowStatement(FinalBase):
         return self.fcf / self.net_income if self.net_income != 0 else 0
 
 
-class RentabilityRatio(FinalBase):
+class RentabilityRatio(BaseFinalStatement):
     company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="rentability_ratios")
     roa = FloatField(default=0, blank=True, null=True)
     roe = FloatField(default=0, blank=True, null=True)
@@ -167,7 +170,7 @@ class RentabilityRatio(FinalBase):
         db_table = "assets_companies_rentability_ratios"
 
 
-class LiquidityRatio(FinalBase):
+class LiquidityRatio(BaseFinalStatement):
     company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="liquidity_ratios")
     cash_ratio = FloatField(default=0, blank=True, null=True)
     current_ratio = FloatField(default=0, blank=True, null=True)
@@ -181,7 +184,7 @@ class LiquidityRatio(FinalBase):
         db_table = "assets_companies_liquidity_ratios"
 
 
-class MarginRatio(FinalBase):
+class MarginRatio(BaseFinalStatement):
     company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="margins")
     gross_margin = FloatField(default=0, blank=True, null=True)
     ebitda_margin = FloatField(default=0, blank=True, null=True)
@@ -198,7 +201,7 @@ class MarginRatio(FinalBase):
         db_table = "assets_companies_margins_ratios"
 
 
-class FreeCashFlowRatio(FinalBase):
+class FreeCashFlowRatio(BaseFinalStatement):
     company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="fcf_ratios")
     fcf_equity = FloatField(default=0, blank=True, null=True)
     unlevered_fcf = FloatField(default=0, blank=True, null=True)
@@ -211,7 +214,7 @@ class FreeCashFlowRatio(FinalBase):
         db_table = "assets_companies_freecashflow_ratios"
 
 
-class PerShareValue(FinalBase):
+class PerShareValue(BaseFinalStatement):
     company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="per_share_values")
     sales_ps = FloatField(default=0, blank=True, null=True)
     book_ps = FloatField(default=0, blank=True, null=True)
@@ -229,7 +232,7 @@ class PerShareValue(FinalBase):
         db_table = "assets_companies_per_share_value"
 
 
-class NonGaap(FinalBase):
+class NonGaap(BaseFinalStatement):
     company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="non_gaap_figures")
     normalized_income = FloatField(default=0, blank=True, null=True)
     effective_tax_rate = FloatField(default=0, blank=True, null=True)
@@ -254,7 +257,7 @@ class NonGaap(FinalBase):
         db_table = "assets_companies_non_gaap"
 
 
-class OperationRiskRatio(FinalBase):
+class OperationRiskRatio(BaseFinalStatement):
     company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="operation_risks_ratios")
     asset_coverage_ratio = FloatField(default=0, blank=True, null=True)
     cash_flow_coverage_ratios = FloatField(default=0, blank=True, null=True)
@@ -272,7 +275,7 @@ class OperationRiskRatio(FinalBase):
         db_table = "assets_companies_operations_risk_ratio"
 
 
-class EnterpriseValueRatio(FinalBase):
+class EnterpriseValueRatio(BaseFinalStatement):
     company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="ev_ratios")
     market_cap = FloatField(default=0, blank=True, null=True)
     enterprise_value = FloatField(default=0, blank=True, null=True)
@@ -288,7 +291,7 @@ class EnterpriseValueRatio(FinalBase):
         db_table = "assets_companies_enterprise_value_ratios"
 
 
-class CompanyGrowth(FinalBase):
+class CompanyGrowth(BaseFinalStatement):
     company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="growth_rates")
     revenue_growth = FloatField(default=0, blank=True, null=True)
     cost_revenue_growth = FloatField(default=0, blank=True, null=True)
@@ -307,7 +310,7 @@ class CompanyGrowth(FinalBase):
         db_table = "assets_companies_growths"
 
 
-class EficiencyRatio(FinalBase):
+class EficiencyRatio(BaseFinalStatement):
     company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="efficiency_ratios")
     asset_turnover = FloatField(default=0, blank=True, null=True)
     inventory_turnover = FloatField(default=0, blank=True, null=True)
@@ -327,7 +330,7 @@ class EficiencyRatio(FinalBase):
         db_table = "assets_companies_eficiency_ratios"
 
 
-class PriceToRatio(FinalBase):
+class PriceToRatio(BaseFinalStatement):
     company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="price_to_ratios")
     price_book = FloatField(default=0, blank=True, null=True)
     price_cf = FloatField(default=0, blank=True, null=True)
