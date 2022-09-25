@@ -32,6 +32,18 @@ class BaseFinalStatement(BaseStatement):
     class Meta:
         abstract = True
 
+    def __str__(self) -> str:
+        period = self.period if self.period else self.date
+        if self.is_ttm:
+            return f"{self.company} - TTM"
+        return f"{self.company} - {period}"
+
+    @property
+    def date_year(self):
+        if self.is_ttm:
+            return "TTM"
+        return f"{self.date}"
+
 
 class IncomeStatement(BaseFinalStatement):
     company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="inc_statements")

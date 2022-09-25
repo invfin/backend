@@ -15,4 +15,4 @@ class BaseStatementManager(Manager):
         return self.filter(~Q(period__period=constants.PERIOD_FOR_YEAR))
 
     def yearly(self) -> QuerySet:
-        return self.filter(period__period=constants.PERIOD_FOR_YEAR)
+        return self.filter(Q(is_ttm=True) | Q(period__period=constants.PERIOD_FOR_YEAR))
