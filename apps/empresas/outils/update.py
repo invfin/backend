@@ -68,7 +68,7 @@ class UpdateCompany(CalculateCompanyFinancialRatios, AverageStatements):
             self.company.balance_sheets,
             self.company.cf_statements,
         ]:
-            last_statements = statement_manager.filter(~Q(period=PERIOD_FOR_YEAR), is_ttm=False)[:4]
+            last_statements = statement_manager.filter(~Q(period__period=PERIOD_FOR_YEAR), is_ttm=False)[:4]
             ttm_dict = {}
             for statement in last_statements:
                 st_dict = statement.__dict__

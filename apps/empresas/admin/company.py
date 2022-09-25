@@ -3,7 +3,7 @@ from django.db import models
 
 from django_json_widget.widgets import JSONEditorWidget
 
-from apps.empresas.tasks import fix_update_financials_task
+from apps.empresas.tasks import update_periods_final_statements
 from apps.general.models import Period
 from apps.empresas.outils.update import UpdateCompany
 from apps.empresas.utils import arrange_quarters
@@ -43,7 +43,7 @@ class CompanyUpdateLogInline(BaseJSONWidgetInline):
 @admin.action(description="Add periods to statements")
 def add_periods(modeladmin, request, queryset):
     for query in queryset:
-        fix_update_financials_task(query.id)
+        update_periods_final_statements(query.id)
 
 
 @admin.action(description="Match quarters")
