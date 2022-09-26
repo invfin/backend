@@ -6,15 +6,14 @@ from bfet import DjangoTestingModel as DTM
 
 from rest_framework import status
 from rest_framework.exceptions import ErrorDetail
-from rest_framework.test import APITestCase
 
-from apps.api.mixins import APIViewTestMixin
+from apps.api.mixins import BaseAPIViewTest
 from apps.empresas.models import IncomeStatement, BalanceSheet, CashflowStatement, Company
 
 
-class TestExcelAPIIncome(APITestCase, APIViewTestMixin):
+class TestExcelAPIIncome(BaseAPIViewTest):
     path_name = "empresas:ExcelAPIIncome"
-    url_path = "company-information/excel-api/income"
+    url_path = "/company-information/excel-api/income"
 
     @classmethod
     def setUpTestData(cls) -> None:
@@ -28,6 +27,7 @@ class TestExcelAPIIncome(APITestCase, APIViewTestMixin):
 
     def test_success_response(self):
         response = self.client.get(self.full_endpoint)
+        print(response)
         self.assertDictEqual(response.data, {})
 
     def test_not_found(self):
@@ -37,7 +37,7 @@ class TestExcelAPIIncome(APITestCase, APIViewTestMixin):
         self.assertDictEqual(response.data, {"detail": ErrorDetail(string="Not found.", code="not_found")})
 
 
-class TestExcelAPIBalance(APITestCase, APIViewTestMixin):
+class TestExcelAPIBalance(BaseAPIViewTest):
     path_name = "empresas:ExcelAPIBalance"
 
     @classmethod
@@ -49,7 +49,7 @@ class TestExcelAPIBalance(APITestCase, APIViewTestMixin):
         self.assertEqual(self.endpoint, f"company-information/excel-api/balance")
 
 
-class TestExcelAPICashflow(APITestCase, APIViewTestMixin):
+class TestExcelAPICashflow(BaseAPIViewTest):
     path_name = "empresas:ExcelAPICashflow"
 
     @classmethod

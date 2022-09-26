@@ -23,13 +23,13 @@ class SuperinvestorActivityAPIView(BaseAPIView):
     serializer_class = SuperinvestorActivitySerializer
     queryset = SuperinvestorActivity
     pagination_class = StandardResultPagination
-    query_name = ['slug']
-    fk_lookup_model = 'superinvestor_related__info_accronym'
+    url_parameters = ["slug"]
+    fk_lookup_model = "superinvestor_related__info_accronym"
 
 
 class SuperinvestorHistoryAPIView(BaseAPIView):
     serializer_class = SuperinvestorHistorySerializer
     queryset = SuperinvestorHistory
     pagination_class = StandardResultPagination
-    query_name = ['slug']
-    fk_lookup_model = 'superinvestor_related__info_accronym'
+    url_parameters = ["slug"]
+    fk_lookup_model = "superinvestor_related__info_accronym"

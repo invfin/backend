@@ -5,6 +5,7 @@ import urllib
 from django.urls import reverse
 from django.contrib.auth import get_user_model
 
+from rest_framework.test import APITestCase
 from rest_framework.exceptions import ErrorDetail
 from rest_framework import status
 from bfet import DjangoTestingModel as DTM
@@ -25,7 +26,7 @@ HTTP_VERBS = {
 }
 
 
-class APIViewTestMixin:
+class BaseAPIViewTest(APITestCase):
     """
     Mixin for sharing test methods for views.
     Needs the following attributes:
@@ -34,6 +35,7 @@ class APIViewTestMixin:
       - endpoint: full url
     """
 
+    allowed_verbs = {"GET", "HEAD", "OPTIONS"}
     path_name: str = ""
     url_path: str = ""
     api_key_param: str = "api_key"
@@ -50,10 +52,10 @@ class APIViewTestMixin:
     @classmethod
     def setUpTestData(cls) -> None:
         cls.auth_user = DTM.create(get_user_model())
-        cls.user_sub_key = DTM.create(Key, user=cls.auth_user)
+        cls.user_sub_key = DTM.create(Key, user=cls.auth_user, in_use=True)
 
         cls.auth_user_2 = DTM.create(get_user_model())
-        cls.user_no_sub_key = DTM.create(Key, user=cls.auth_user_2)
+        cls.user_no_sub_key = DTM.create(Key, user=cls.auth_user_2, in_use=True)
 
         cls.no_auth_user = DTM.create(get_user_model())
 

@@ -373,8 +373,8 @@ REST_FRAMEWORK = {
     **DEFAULT_SCHEMA_CLASS,
     **DRF_DEFAULT_RENDERER_CLASSES,
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.SessionAuthentication",
         "apps.api.authentication.KeyAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
         "rest_framework.authentication.BasicAuthentication",
     ],
     "DEFAULT_PERMISSION_CLASSES": ["apps.api.permissions.ReadOnly"],

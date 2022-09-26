@@ -29,34 +29,34 @@ class AllExchangesAPIView(BaseAPIView):
 
 class BasicCompanyAPIView(BaseAPIView):
     serializer_class = BasicCompanySerializer
-    query_name = ['ticker']
+    url_parameters = ["ticker"]
 
 
 class CompleteCompanyAPIView(BaseAPIView):
     serializer_class = CompanySerializer
-    custom_query = (Company.objects.fast_full(), False)
-    query_name = ['ticker']
+    queryset = (Company.objects.fast_full, False)
+    url_parameters = ["ticker"]
 
 
 class CompanyIncomeStatementAPIView(BaseAPIView):
     serializer_class = IncomeStatementSerializer
     limited = True
-    query_name = ['ticker']
-    custom_queryset = IncomeStatement
-    fk_lookup_model = 'company__ticker'
+    url_parameters = ["ticker"]
+    queryset = (IncomeStatement.objects.yearly, True)
+    fk_lookup_model = "company__ticker"
 
 
 class CompanyBalanceSheetAPIView(BaseAPIView):
     serializer_class = BalanceSheetSerializer
     limited = True
-    custom_queryset = BalanceSheet
-    query_name = ['ticker']
-    fk_lookup_model = 'company__ticker'
+    queryset = (BalanceSheet.objects.yearly, True)
+    url_parameters = ["ticker"]
+    fk_lookup_model = "company__ticker"
 
 
 class CompanyCashflowStatementAPIView(BaseAPIView):
     serializer_class = CashflowStatementSerializer
     limited = True
-    custom_queryset = CashflowStatement
-    query_name = ['ticker']
-    fk_lookup_model = 'company__ticker'
+    queryset = (CashflowStatement.objects.yearly, True)
+    url_parameters = ["ticker"]
+    fk_lookup_model = "company__ticker"

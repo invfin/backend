@@ -27,10 +27,9 @@ from apps.empresas.models import (
 
 
 class ExchangeOrganisationSerializer(ModelSerializer):
-
     class Meta:
         model = ExchangeOrganisation
-        exclude = ['id', 'order']
+        exclude = ["id", "order"]
 
 
 class ExchangeSerializer(ModelSerializer):
@@ -38,7 +37,7 @@ class ExchangeSerializer(ModelSerializer):
 
     class Meta:
         model = Exchange
-        exclude = ['id', 'main_org']
+        exclude = ["id", "main_org"]
 
 
 class BasicCompanySerializer(ModelSerializer):
@@ -51,39 +50,35 @@ class BasicCompanySerializer(ModelSerializer):
     class Meta:
         model = Company
         fields = [
-            'ticker',
-            'name',
-            'currency',
-            'industry',
-            'sector',
-            'website',
-            'state',
-            'country',
-            'ceo',
-            'image',
-            'city',
-            'employees',
-            'address',
-            'zip_code',
-            'cik',
-            'exchange',
-            'cusip',
-            'isin',
-            'description',
-            'ipoDate',
-            'beta',
-            'last_div',
+            "ticker",
+            "name",
+            "currency",
+            "industry",
+            "sector",
+            "website",
+            "state",
+            "country",
+            "ceo",
+            "image",
+            "city",
+            "employees",
+            "address",
+            "zip_code",
+            "cik",
+            "exchange",
+            "cusip",
+            "isin",
+            "description",
+            "ipoDate",
+            "beta",
+            "last_div",
         ]
 
 
 class CompanyStockPriceSerializer(ModelSerializer):
-
     class Meta:
         model = CompanyStockPrice
-        exclude = [
-            'id',
-            'year'
-        ]
+        exclude = ["id", "year"]
 
 
 class ExcelIncomeStatementSerializer(ModelSerializer):
@@ -214,10 +209,7 @@ class IncomeStatementSerializer(ModelSerializer):
 
     class Meta:
         model = IncomeStatement
-        exclude = [
-            'id',
-            'year'
-        ]
+        exclude = ["id", "year"]
 
 
 class BalanceSheetSerializer(ModelSerializer):
@@ -226,10 +218,7 @@ class BalanceSheetSerializer(ModelSerializer):
 
     class Meta:
         model = BalanceSheet
-        exclude = [
-            'id',
-            'year'
-        ]
+        exclude = ["id", "year"]
 
 
 class CashflowStatementSerializer(ModelSerializer):
@@ -238,10 +227,7 @@ class CashflowStatementSerializer(ModelSerializer):
 
     class Meta:
         model = CashflowStatement
-        exclude = [
-            'id',
-            'year'
-        ]
+        exclude = ["id", "year"]
 
 
 class RentabilityRatioSerializer(ModelSerializer):
@@ -249,10 +235,7 @@ class RentabilityRatioSerializer(ModelSerializer):
 
     class Meta:
         model = RentabilityRatio
-        exclude = [
-            'id',
-            'year'
-        ]
+        exclude = ["id", "year"]
 
 
 class LiquidityRatioSerializer(ModelSerializer):
@@ -260,10 +243,7 @@ class LiquidityRatioSerializer(ModelSerializer):
 
     class Meta:
         model = LiquidityRatio
-        exclude = [
-            'id',
-            'year'
-        ]
+        exclude = ["id", "year"]
 
 
 class MarginRatioSerializer(ModelSerializer):
@@ -271,10 +251,7 @@ class MarginRatioSerializer(ModelSerializer):
 
     class Meta:
         model = MarginRatio
-        exclude = [
-            'id',
-            'year'
-        ]
+        exclude = ["id", "year"]
 
 
 class FreeCashFlowRatioSerializer(ModelSerializer):
@@ -282,10 +259,7 @@ class FreeCashFlowRatioSerializer(ModelSerializer):
 
     class Meta:
         model = FreeCashFlowRatio
-        exclude = [
-            'id',
-            'year'
-        ]
+        exclude = ["id", "year"]
 
 
 class PerShareValueSerializer(ModelSerializer):
@@ -293,10 +267,7 @@ class PerShareValueSerializer(ModelSerializer):
 
     class Meta:
         model = PerShareValue
-        exclude = [
-            'id',
-            'year'
-        ]
+        exclude = ["id", "year"]
 
 
 class NonGaapSerializer(ModelSerializer):
@@ -304,10 +275,7 @@ class NonGaapSerializer(ModelSerializer):
 
     class Meta:
         model = NonGaap
-        exclude = [
-            'id',
-            'year'
-        ]
+        exclude = ["id", "year"]
 
 
 class OperationRiskRatioSerializer(ModelSerializer):
@@ -315,10 +283,7 @@ class OperationRiskRatioSerializer(ModelSerializer):
 
     class Meta:
         model = OperationRiskRatio
-        exclude = [
-            'id',
-            'year'
-        ]
+        exclude = ["id", "year"]
 
 
 class EnterpriseValueRatioSerializer(ModelSerializer):
@@ -326,10 +291,7 @@ class EnterpriseValueRatioSerializer(ModelSerializer):
 
     class Meta:
         model = EnterpriseValueRatio
-        exclude = [
-            'id',
-            'year'
-        ]
+        exclude = ["id", "year"]
 
 
 class CompanyGrowthSerializer(ModelSerializer):
@@ -337,10 +299,7 @@ class CompanyGrowthSerializer(ModelSerializer):
 
     class Meta:
         model = CompanyGrowth
-        exclude = [
-            'id',
-            'year'
-        ]
+        exclude = ["id", "year"]
 
 
 class EficiencyRatioSerializer(ModelSerializer):
@@ -348,10 +307,7 @@ class EficiencyRatioSerializer(ModelSerializer):
 
     class Meta:
         model = EficiencyRatio
-        exclude = [
-            'id',
-            'year'
-        ]
+        exclude = ["id", "year"]
 
 
 class PriceToRatioSerializer(ModelSerializer):
@@ -359,10 +315,7 @@ class PriceToRatioSerializer(ModelSerializer):
 
     class Meta:
         model = PriceToRatio
-        exclude = [
-            'id',
-            'year'
-        ]
+        exclude = ["id", "year"]
 
 
 class CompanySerializer(BasicCompanySerializer):
@@ -384,22 +337,22 @@ class CompanySerializer(BasicCompanySerializer):
     class Meta:
         model = Company
         exclude = [
-            'id',
-            'is_adr',
-            'is_fund',
-            'is_etf',
-            'no_incs',
-            'no_bs',
-            'no_cfs',
-            'description_translated',
-            'has_logo',
-            'updated',
-            'last_update',
-            'date_updated',
-            'has_error',
-            'error_message',
-            'remote_image_imagekit',
-            'remote_image_cloudinary',
+            "id",
+            "is_adr",
+            "is_fund",
+            "is_etf",
+            "no_incs",
+            "no_bs",
+            "no_cfs",
+            "description_translated",
+            "has_logo",
+            "updated",
+            "last_update",
+            "date_updated",
+            "has_error",
+            "error_message",
+            "remote_image_imagekit",
+            "remote_image_cloudinary",
         ]
 
     def slicing(self) -> int:
@@ -407,85 +360,70 @@ class CompanySerializer(BasicCompanySerializer):
 
     def get_inc_statements(self, obj):
         limit = self.slicing()
-        queryset = obj.inc_statements.all()[:limit]
+        queryset = obj.inc_statements.yearly()[:limit]
         return IncomeStatementSerializer(queryset, many=True).data
-
 
     def get_balance_sheets(self, obj):
         limit = self.slicing()
-        queryset = obj.balance_sheets.all()[:limit]
+        queryset = obj.balance_sheets.yearly()[:limit]
         return BalanceSheetSerializer(queryset, many=True).data
-
 
     def get_cf_statements(self, obj):
         limit = self.slicing()
-        queryset = obj.cf_statements.all()[:limit]
+        queryset = obj.cf_statements.yearly()[:limit]
         return CashflowStatementSerializer(queryset, many=True).data
-
 
     def get_rentability_ratios(self, obj):
         limit = self.slicing()
-        queryset = obj.rentability_ratios.all()[:limit]
+        queryset = obj.rentability_ratios.yearly()[:limit]
         return RentabilityRatioSerializer(queryset, many=True).data
-
 
     def get_liquidity_ratios(self, obj):
         limit = self.slicing()
-        queryset = obj.liquidity_ratios.all()[:limit]
+        queryset = obj.liquidity_ratios.yearly()[:limit]
         return LiquidityRatioSerializer(queryset, many=True).data
-
 
     def get_margins(self, obj):
         limit = self.slicing()
-        queryset = obj.margins.all()[:limit]
+        queryset = obj.margins.yearly()[:limit]
         return MarginRatioSerializer(queryset, many=True).data
-
 
     def get_fcf_ratios(self, obj):
         limit = self.slicing()
-        queryset = obj.fcf_ratios.all()[:limit]
+        queryset = obj.fcf_ratios.yearly()[:limit]
         return FreeCashFlowRatioSerializer(queryset, many=True).data
-
 
     def get_per_share_values(self, obj):
         limit = self.slicing()
-        queryset = obj.per_share_values.all()[:limit]
+        queryset = obj.per_share_values.yearly()[:limit]
         return PerShareValueSerializer(queryset, many=True).data
-
 
     def get_non_gaap_figures(self, obj):
         limit = self.slicing()
-        queryset = obj.non_gaap_figures.all()[:limit]
+        queryset = obj.non_gaap_figures.yearly()[:limit]
         return NonGaapSerializer(queryset, many=True).data
-
 
     def get_operation_risks_ratios(self, obj):
         limit = self.slicing()
-        queryset = obj.operation_risks_ratios.all()[:limit]
+        queryset = obj.operation_risks_ratios.yearly()[:limit]
         return OperationRiskRatioSerializer(queryset, many=True).data
-
 
     def get_ev_ratios(self, obj):
         limit = self.slicing()
-        queryset = obj.ev_ratios.all()[:limit]
+        queryset = obj.ev_ratios.yearly()[:limit]
         return EnterpriseValueRatioSerializer(queryset, many=True).data
-
 
     def get_growth_rates(self, obj):
         limit = self.slicing()
-        queryset = obj.growth_rates.all()[:limit]
+        queryset = obj.growth_rates.yearly()[:limit]
         return CompanyGrowthSerializer(queryset, many=True).data
-
 
     def get_efficiency_ratios(self, obj):
         limit = self.slicing()
-        queryset = obj.efficiency_ratios.all()[:limit]
+        queryset = obj.efficiency_ratios.yearly()[:limit]
         return EficiencyRatioSerializer(queryset, many=True).data
-
 
     def get_price_to_ratios(self, obj):
         limit = self.slicing()
-        queryset = obj.price_to_ratios.all()[:limit]
+        queryset = obj.price_to_ratios.yearly()[:limit]
         return PriceToRatioSerializer(queryset, many=True).data
-
-

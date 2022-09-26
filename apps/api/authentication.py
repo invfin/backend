@@ -7,7 +7,7 @@ from .models import Key
 
 class KeyAuthentication(BaseAuthentication):
     def authenticate(self, request):
-        key = request.GET.get('api_key')
+        key = request.GET.get("api_key")
         if key:
             if Key.objects.filter(key=key).exists():
                 if Key.objects.key_is_active(key) is True:
@@ -15,11 +15,9 @@ class KeyAuthentication(BaseAuthentication):
 
                 key = Key.objects.filter(key=key).first()
                 raise AuthenticationFailed(
-                    f'Tu clave ya no es válida desde el {key.removed}, cera una nueva desde tu perfil'
+                    f"Tu clave ya no es válida desde el {key.removed}, crea una nueva desde tu perfil"
                 )
             raise AuthenticationFailed(
-                'Tu clave es incorrecta, asegúrate que está bien escrita o pide tu clave desde tu perfil'
+                "Tu clave es incorrecta, asegúrate que está bien escrita o pide tu clave desde tu perfil"
             )
-        raise AuthenticationFailed(
-            'Introduce tu clave en api_key, si no tienes alguna entra en tu perfil para crearla'
-        )
+        raise AuthenticationFailed("Introduce tu clave en api_key, si no tienes alguna entra en tu perfil para crearla")
