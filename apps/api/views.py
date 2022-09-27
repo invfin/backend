@@ -4,7 +4,7 @@ from django.apps import apps
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect
-from django.db.models import QuerySet, Model
+from django.db.models import QuerySet
 
 from rest_framework import parsers, status
 from rest_framework.authentication import BasicAuthentication, SessionAuthentication
@@ -13,7 +13,7 @@ from rest_framework.response import Response
 from rest_framework.schemas import ManualSchema
 from rest_framework.schemas import coreapi as coreapi_schema
 from rest_framework.views import APIView
-from rest_framework.exceptions import AuthenticationFailed, ParseError, APIException
+from rest_framework.exceptions import AuthenticationFailed, ParseError, APIException, NotFound
 
 from apps.seo.outils.visiteur_meta import SeoInformation
 from apps.seo.views import SEOListView
@@ -149,10 +149,20 @@ class BaseAPIView(APIView):
             return apps.get_model("api", object_name, require_ready=True)
         raise NotImplementedError('You need to set a "model_to_track"')
 
+    def get_object_searched(self, queryset: Union[Type, QuerySet]) -> Type:
+        search = queryset
+        if type(queryset).__name__ == "BaseStatementQuerySet" or type(queryset) == list:
+            search = None
+            if "ticker" in self.url_parameters and queryset[0]._meta.app_label == "empresas":
+                search = queryset[0].company
+            else:
+                raise ParseError("Ha habido un problema con tu búsqueda, asegúrate de haber introducido un valor")
+        return search
+
     def save_request(self, key: Type, queryset: Union[Type, QuerySet], path: str, ip: str) -> None:
         request_model = self.get_model_to_track()
-        search = queryset
-        if type(queryset) == QuerySet:
+        search = self.get_object_searched(queryset)
+        if type(queryset).__name__ == "BaseStatementQuerySet":
             search = None
             if "ticker" in self.url_parameters and queryset and queryset[0]._meta.app_label == "empresas":
                 search = queryset[0].company
@@ -195,7 +205,7 @@ class BaseAPIView(APIView):
 
     def find_query_value(self, query_dict: dict) -> Union[Tuple[str, str], Tuple[None, None]]:
         for url_query_param, url_query_value in query_dict.items():
-            if url_query_param in self.url_params and url_query_value:
+            if url_query_param in self.url_parameters and url_query_value:
                 return url_query_param, url_query_value
         return None, None
 
@@ -228,12 +238,14 @@ class BaseAPIView(APIView):
             lookup_data = {url_query_param: url_query_value}
         if many:
             obj_or_queryset = model_or_callable(**lookup_data)
+            if not obj_or_queryset:
+                raise NotFound("Tu búsqueda no ha devuelto ningún resultado")
         else:
             if url_query_value:
                 try:
                     obj_or_queryset = model_or_callable.objects.get(**lookup_data)
                 except model_or_callable.DoesNotExist:
-                    raise ParseError("Tu búsqueda no ha devuelto ningún resultado")
+                    raise NotFound("Tu búsqueda no ha devuelto ningún resultado")
             else:
                 raise ParseError("No has introducido ninguna búsqueda")
         return obj_or_queryset
