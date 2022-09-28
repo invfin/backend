@@ -40,11 +40,11 @@ class Twitter:
         json_response = response._json
         return json_response['id']
 
-    def create_thread(self, title, description, hashtags):
+    def create_thread(self, title, link, description, hashtags):
         twitter_api = self.do_authenticate()
         total_number_parts = int(math.ceil(len(description) / constants.TWEET_MAX_LENGTH))
 
-        initial_tweet = f"{title} {hashtags} [0/{total_number_parts}]"
+        initial_tweet = f"{title} Más en {link} {hashtags} [0/{total_number_parts}]"
         initial_tweet_response = twitter_api.update_status(initial_tweet)
         list_tweets = [{
             'post_type': constants.POST_TYPE_THREAD,
@@ -92,7 +92,7 @@ class Twitter:
                     post_type == constants.POST_TYPE_REPOST
                 ):
                     if len(tweet) > 186:
-                        post_response = self.create_thread(title, description, hashtags)
+                        post_response = self.create_thread(title, link, description, hashtags)
                     else:
                         post_response = self.tweet_text(tweet)
 

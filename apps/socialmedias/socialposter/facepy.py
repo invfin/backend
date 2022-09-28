@@ -149,7 +149,8 @@ class Facebook():
         emojis = Emoji.objects.random_emojis(num_emojis)
         hashtags = Hashtag.objects.random_hashtags(platform)
         
-        custom_title = f'{emojis[0].emoji} {title}'
+        link_extra = f"más en {link}" if link else ""
+        custom_title = f'{emojis[0].emoji} {title} {link_extra}'
 
         utm_source = f'utm_source={platform}'
         utm_medium = f'utm_medium={platform}'
