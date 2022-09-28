@@ -70,6 +70,9 @@ class TestAverageStatements(TestCase):
         cls.cf_st_yahooquery = DTM.create(CashflowStatementYahooQuery, company=cls.company, period=cls.period)
         cls.cf_st_yfinance = DTM.create(CashflowStatementYFinance, company=cls.company, period=cls.period)
 
+    def test_find_correct_currency(self):
+        pass
+
     def test_return_standard_keys(self):
         inc_st_finprep_keys = self.inc_st_finprep.return_standard.keys()
         inc_st_yahooquery_keys = self.inc_st_yahooquery.return_standard.keys()

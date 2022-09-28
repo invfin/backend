@@ -4,6 +4,43 @@ from collections import Counter
 
 
 class AverageStatements:
+    """
+    Used to calculate the average over different financial sources
+
+    Attributes
+    ----------
+        company: Type["Company"]
+            The company to get the statements from. Set it when initializing the class.
+
+    Methods
+    -------
+        return_averaged_data:
+            Method that accepts a list of statements and a specific period. It then to the calculations, find the currency
+            and returns a dict with the information for the new statement.
+
+        find_correct_currency:
+            Method that get a list of currencies IDs and find the most common.
+
+        calculate_averages:
+            Method that get a list of values and calculates the mean.
+
+        prepare_data:
+            Method that loops over the statements and builds a dict with the fields for the multiples statements, the values of
+            all the statements related to the company and the period.
+
+        calculate_average_income_statement:
+            Method that filter according to the company and the period and get the first of all the statements.
+            It returns the result of return_averaged_data
+
+        calculate_average_balance_sheet:
+            Method that filter according to the company and the period and get the first of all the statements.
+            It returns the result of return_averaged_data
+
+        calculate_average_cashflow_statement:
+            Method that filter according to the company and the period and get the first of all the statements.
+            It returns the result of return_averaged_data
+    """
+
     def __init__(self, company: Type["Company"]) -> None:
         self.company = company
 
