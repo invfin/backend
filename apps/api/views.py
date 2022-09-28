@@ -220,17 +220,17 @@ class BaseAPIView(APIView):
         """
         Parameters
         ----------
-        model_or_queryset: a model class or a model's manager
-            The list of integers to sum up.
+        model_or_queryset: Union[Type, QuerySet]
+            A model class or a model's manager
 
         Returns
         -------
-        res: int
-        sum of elements of foo
+        obj_or_queryset: Union[Type, QuerySet]
+            Return a specific object or a queryset according to the users lookup
 
-        See also
+        TODO
         --------
-        cumsum:  compute cumulative sum of elemenents
+            Improve lookup
         """
         if self.fk_lookup_model:
             lookup_data = {f"{self.fk_lookup_model}": url_query_value}
