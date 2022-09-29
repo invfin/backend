@@ -1,7 +1,11 @@
 from bfet import DjangoTestingModel as DTM
 
 from django.conf import settings
-from django.test import TestCase
+import pytest
+
+from django.test import TestCase 
+
+pytestmark = pytest.mark.django_db
 from django.template.defaultfilters import slugify
 
 from apps.escritos.models import (

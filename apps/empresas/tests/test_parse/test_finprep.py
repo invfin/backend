@@ -2,7 +2,11 @@ import vcr
 
 from bfet import DjangoTestingModel as DTM
 
-from django.test import TestCase
+import pytest
+
+from django.test import TestCase 
+
+pytestmark = pytest.mark.django_db
 
 from apps.empresas.models import (
     BalanceSheetFinprep,

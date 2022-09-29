@@ -1,7 +1,11 @@
 import vcr
 
 from django.conf import settings
-from django.test import TestCase
+import pytest
+
+from django.test import TestCase 
+
+pytestmark = pytest.mark.django_db
 from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
 

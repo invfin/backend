@@ -2,17 +2,21 @@ import time
 import vcr
 from unittest import skip
 
+import pytest
+
 from django.test import TestCase
 
 from bfet import DjangoTestingModel as DTM
-from apps.empresas.company.update import UpdateCompany
+from apps.empresas.outils.update import UpdateCompany
 from apps.empresas.models import Company
-
+from apps.empresas.tests import finprep_data as data
 
 company_vcr = vcr.VCR(
     cassette_library_dir="cassettes/company/",
     path_transformer=vcr.VCR.ensure_suffix(".yaml"),
 )
+
+pytestmark = pytest.mark.django_db
 
 
 @skip("Don't want to test")

@@ -1,6 +1,10 @@
 import vcr
 
-from django.test import TestCase
+import pytest
+
+from django.test import TestCase 
+
+pytestmark = pytest.mark.django_db
 
 from bfet import DjangoTestingModel as DTM
 from apps.general.models import Period

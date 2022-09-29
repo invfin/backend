@@ -1,6 +1,10 @@
 from datetime import datetime, timedelta
 
-from django.test import TestCase
+import pytest
+
+from django.test import TestCase 
+
+pytestmark = pytest.mark.django_db
 
 from apps.web.utils import more_than_month
 

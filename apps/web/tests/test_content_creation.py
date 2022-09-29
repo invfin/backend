@@ -1,6 +1,10 @@
 from bfet import DjangoTestingModel as DTM
 
-from django.test import TestCase
+import pytest
+
+from django.test import TestCase 
+
+pytestmark = pytest.mark.django_db
 
 from apps.web.outils.content_creation import WebsiteContentCreation
 from apps.socialmedias.models import DefaultContent, DefaultTilte, Emoji

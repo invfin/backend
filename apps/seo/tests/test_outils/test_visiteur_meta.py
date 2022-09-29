@@ -1,4 +1,8 @@
-from django.test import TestCase, RequestFactory
+import pytest
+
+from django.test import TestCase 
+
+pytestmark = pytest.mark.django_db, RequestFactory
 from django.contrib.sessions.middleware import SessionMiddleware
 
 from apps.seo.models import Visiteur

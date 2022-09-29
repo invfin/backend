@@ -1,4 +1,8 @@
-from django.test import TestCase
+import pytest
+
+from django.test import TestCase 
+
+pytestmark = pytest.mark.django_db
 from django.contrib.auth import get_user_model
 
 from bfet import DjangoTestingModel as DTM

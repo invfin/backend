@@ -1,8 +1,14 @@
 import vcr
 
+import pytest
+
 from freezegun import freeze_time
 
-from django.test import TestCase
+import pytest
+
+from django.test import TestCase 
+
+pytestmark = pytest.mark.django_db
 
 from apps.business.models import (
     Product,
@@ -16,6 +22,10 @@ business_vcr = vcr.VCR(
     cassette_library_dir='cassettes/business/',
     path_transformer=vcr.VCR.ensure_suffix('.yaml'),
 )
+
+
+
+pytestmark = pytest.mark.django_db
 
 
 class TestBusinessSignal(TestCase):

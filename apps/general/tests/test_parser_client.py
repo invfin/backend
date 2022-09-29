@@ -1,4 +1,8 @@
-from django.test import TestCase
+import pytest
+
+from django.test import TestCase 
+
+pytestmark = pytest.mark.django_db
 
 from apps.general.outils.parser_client import ParserClient
 

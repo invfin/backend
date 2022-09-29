@@ -1,7 +1,11 @@
 import vcr
 
 from django.conf import settings
-from django.test import TestCase
+import pytest
+
+from django.test import TestCase 
+
+pytestmark = pytest.mark.django_db
 
 from apps.empresas.models import Company
 from apps.empresas.tests.factories import AppleExample

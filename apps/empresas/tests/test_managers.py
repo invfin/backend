@@ -1,8 +1,9 @@
-from django.test import TestCase
+import pytest
+
+from django.test import TestCase 
 
 from bfet import DjangoTestingModel as DTM
 
-from apps.empresas.outils.update import UpdateCompany
 from apps.general.models import Sector, Industry
 
 from apps.empresas.models import (
@@ -11,6 +12,8 @@ from apps.empresas.models import (
     ExchangeOrganisation,
     IncomeStatement
 )
+
+pytestmark = pytest.mark.django_db
 
 
 class TestCompanyManagers(TestCase):

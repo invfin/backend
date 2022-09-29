@@ -1,5 +1,7 @@
 import json
 
+import pytest
+
 from django.urls import reverse
 from django.db import connection
 from django.test.utils import CaptureQueriesContext
@@ -13,6 +15,8 @@ from apps.general.models import Period
 from apps.general.constants import PERIOD_FOR_YEAR
 from apps.empresas.models import IncomeStatement, BalanceSheet, CashflowStatement, Company
 
+
+pytestmark = pytest.mark.django_db
 
 class TestExcelAPIIncome(BaseAPIViewTest, APITestCase):
     path_name = "empresas:ExcelAPIIncome"
