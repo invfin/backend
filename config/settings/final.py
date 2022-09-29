@@ -1,4 +1,4 @@
-from .base import IS_PROD
+from .base import IS_PROD, env
 
 from .ckeditor import *
 from .custom_admin import *
@@ -8,6 +8,9 @@ if IS_PROD:
 
     # REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"] = ["rest_framework.renderers.JSONRenderer"]
 else:
-    from .local import *
+    if env("IS_TESTING", False):
+        from .test import *
+    else:
+        from .local import *
 
-    # REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"] = ["rest_framework.renderers.BrowsableAPIRenderer"]
+        # REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"] = ["rest_framework.renderers.BrowsableAPIRenderer"]
