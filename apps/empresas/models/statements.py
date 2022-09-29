@@ -26,7 +26,7 @@ class BaseStatement(BaseToAll):
 
 
 class BaseFinalStatement(BaseStatement):
-    is_ttm = BooleanField(default=False)
+    # is_ttm = BooleanField(default=False)
     from_average = BooleanField(default=False)
 
     class Meta:
