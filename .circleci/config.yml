@@ -20,26 +20,27 @@ jobs:
     # A list of available CircleCI Docker convenience images are available here: https://circleci.com/developer/images/image/cimg/python
     # The executor is the environment in which the steps below will be executed - below will use a python 3.10.2 container
     # Change the version below to your required version of python
-    docker:
-      - image: cimg/python:3.10.1
-        environment:
-          DATABASE_URL: postgresql://root@localhost/circle_test?sslmode=disable
-      - image: circleci/postgres:13.2 # an example of how to specify a service container
-        environment:
-          POSTGRES_USER: root
-          POSTGRES_DB: circle_test
-          POSTGRES_PASSWORD: password
+    # docker:
+    #   - image: cimg/python:3.10.1
+    #     environment:
+    #       DATABASE_URL: postgresql://root@localhost/circle_test?sslmode=disable
+    #   - image: circleci/postgres:13.2 # an example of how to specify a service container
+    #     environment:
+    #       POSTGRES_USER: root
+    #       POSTGRES_DB: circle_test
+    #       POSTGRES_PASSWORD: password
     
     # Checkout the code as the first step. This is a dedicated CircleCI step.
     # The python orb's install-packages step will install the dependencies from a Pipfile via Pipenv by default.
     # Here we're making sure we use just use the system-wide pip. By default it uses the project root's requirements.txt.
     # Then run your tests!
     # CircleCI will report the results back to your VCS provider.
+    executor: python/default
     steps:
       - checkout
       - python/install-packages:
           pkg-manager: pip
-          app-dir: ~/invfin/requirements  # If you're requirements.txt isn't in the root directory.
+          app-dir: ./requirements  # If you're requirements.txt isn't in the root directory.
           pip-dependency-file: local.txt  # if you have a different name for your requirements file, maybe one that combines your runtime and test requirements.
       # - run:
           # name: Run lint
