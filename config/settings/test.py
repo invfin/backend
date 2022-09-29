@@ -14,13 +14,13 @@ SECRET_KEY = env(
 )
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#test-runner
-# TEST_RUNNER = "django.test.runner.DiscoverRunner"
-TEST_RUNNER = "apps.general.tests.runner.PytestTestRunner"
+TEST_RUNNER = "django.test.runner.DiscoverRunner"
+# TEST_RUNNER = "apps.general.tests.runner.PytestTestRunner"
 
 # DATABASES
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
-DATABASES = {"default": env.db("LOCAL_DATABASE_URL")}
+DATABASES = {"default": env.db("LOCAL_DATABASE_URL", default="postgres://test:test@127.0.0.1:5432/prod")}
 DATABASES["default"]["ATOMIC_REQUESTS"] = True
 
 # PASSWORDS

@@ -293,14 +293,14 @@ EMAIL_BACKEND = env(
 # https://docs.djangoproject.com/en/dev/ref/settings/#email-timeout
 EMAIL_TIMEOUT = 5
 
-EMAIL_CONTACT = env("EMAIL_CONTACT")
-EMAIL_SUBJECT_PREFIX = env("EMAIL_SUBJECT_PREFIX")
-DEFAULT_EMAIL = env("DEFAULT_EMAIL")
-EMAIL_NEWSLETTER = env("EMAIL_NEWSLETTER")
-MAIN_EMAIL = env("MAIN_EMAIL")
-EMAIL_ACCOUNTS = env("EMAIL_ACCOUNTS")
-EMAIL_DEFAULT = env("EMAIL_DEFAULT")
-EMAIL_SUGGESTIONS = env("EMAIL_SUGGESTIONS")
+EMAIL_CONTACT = env("EMAIL_CONTACT", default="EMAIL_CONTACT@inversionesyfinanzas.xyz")
+EMAIL_SUBJECT_PREFIX = env("EMAIL_SUBJECT_PREFIX", default="EMAIL_SUBJECT_PREFIX@inversionesyfinanzas.xyz")
+DEFAULT_EMAIL = env("DEFAULT_EMAIL", default="DEFAULT_EMAIL@inversionesyfinanzas.xyz")
+EMAIL_NEWSLETTER = env("EMAIL_NEWSLETTER", default="EMAIL_NEWSLETTER@inversionesyfinanzas.xyz")
+MAIN_EMAIL = env("MAIN_EMAIL", default="MAIN_EMAIL@inversionesyfinanzas.xyz")
+EMAIL_ACCOUNTS = env("EMAIL_ACCOUNTS", default="EMAIL_ACCOUNTS@inversionesyfinanzas.xyz")
+EMAIL_DEFAULT = env("EMAIL_DEFAULT", default="EMAIL_DEFAULT@inversionesyfinanzas.xyz")
+EMAIL_SUGGESTIONS = env("EMAIL_SUGGESTIONS", default="EMAIL_SUGGESTIONS@inversionesyfinanzas.xyz")
 
 # ADMIN
 # ------------------------------------------------------------------------------
@@ -339,7 +339,7 @@ if USE_TZ:
     # http://docs.celeryproject.org/en/latest/userguide/configuration.html#std:setting-timezone
     CELERY_TIMEZONE = TIME_ZONE
 # http://docs.celeryproject.org/en/latest/userguide/configuration.html#std:setting-broker_url
-CELERY_BROKER_URL = env("CELERY_BROKER_URL")
+CELERY_BROKER_URL = env("CELERY_BROKER_URL", "not-set")
 # http://docs.celeryproject.org/en/latest/userguide/configuration.html#std:setting-result_backend
 CELERY_RESULT_BACKEND = CELERY_BROKER_URL
 # http://docs.celeryproject.org/en/latest/userguide/configuration.html#std:setting-accept_content
@@ -435,34 +435,34 @@ GEOIP_PATH = str(ROOT_DIR / "geoip")
 
 # Financial data KEYS
 # ------------------------------------------------------------------------------
-FINNHUB_TOKEN = env.str("FINNHUB_TOKEN")
-FINNHUB_SANDBOX_TOKEN = env.str("FINNHUB_SANDBOX_TOKEN")
-FINPREP_KEY = env.str("FINPREP_KEY")
+FINNHUB_TOKEN = env.str("FINNHUB_TOKEN", "not-set")
+FINNHUB_SANDBOX_TOKEN = env.str("FINNHUB_SANDBOX_TOKEN", "not-set")
+FINPREP_KEY = env.str("FINPREP_KEY", "not-set")
 
 # GOOGLE KEYS
 # ------------------------------------------------------------------------------
-GOOGLE_RECAPTCHA_SECRET_KEY = env.str("GOOGLE_RECAPTCHA_SECRET_KEY")
-GOOGLE_RECAPTCHA_PUBLIC_KEY = env.str("GOOGLE_RECAPTCHA_PUBLIC_KEY")
+GOOGLE_RECAPTCHA_SECRET_KEY = env.str("GOOGLE_RECAPTCHA_SECRET_KEY", "not-set")
+GOOGLE_RECAPTCHA_PUBLIC_KEY = env.str("GOOGLE_RECAPTCHA_PUBLIC_KEY", "not-set")
 
 # FACEBOOK KEYS
 # ------------------------------------------------------------------------------
-OLD_FB_PAGE_ACCESS_TOKEN = env.str("OLD_FB_PAGE_ACCESS_TOKEN")
-NEW_FB_PAGE_ACCESS_TOKEN = env.str("NEW_FB_PAGE_ACCESS_TOKEN")
-FACEBOOK_APP_SECRET = env.str("FACEBOOK_APP_SECRET")
-OLD_FACEBOOK_ID = env.str("OLD_FACEBOOK_ID")
-NEW_FACEBOOK_ID = env.str("NEW_FACEBOOK_ID")
-FB_USER_ACCESS_TOKEN = env.str("FB_USER_ACCESS_TOKEN")
+OLD_FB_PAGE_ACCESS_TOKEN = env.str("OLD_FB_PAGE_ACCESS_TOKEN", "not-set")
+NEW_FB_PAGE_ACCESS_TOKEN = env.str("NEW_FB_PAGE_ACCESS_TOKEN", "not-set")
+FACEBOOK_APP_SECRET = env.str("FACEBOOK_APP_SECRET", "not-set")
+OLD_FACEBOOK_ID = env.str("OLD_FACEBOOK_ID", "not-set")
+NEW_FACEBOOK_ID = env.str("NEW_FACEBOOK_ID", "not-set")
+FB_USER_ACCESS_TOKEN = env.str("FB_USER_ACCESS_TOKEN", "not-set")
 
 # INSTAGRAM KEYS
 # ------------------------------------------------------------------------------
-INSTAGRAM_ID = env.str("INSTAGRAM_ID")
+INSTAGRAM_ID = env.str("INSTAGRAM_ID", "not-set")
 
 # TWITTER KEYS
 # ------------------------------------------------------------------------------
-TWITTER_CONSUMER_KEY = env.str("TWITTER_CONSUMER_KEY")
-TWITTER_CONSUMER_SECRET = env.str("TWITTER_CONSUMER_SECRET")
-TWITTER_ACCESS_TOKEN = env.str("TWITTER_ACCESS_TOKEN")
-TWITTER_ACCESS_TOKEN_SECRET = env.str("TWITTER_ACCESS_TOKEN_SECRET")
+TWITTER_CONSUMER_KEY = env.str("TWITTER_CONSUMER_KEY", "not-set")
+TWITTER_CONSUMER_SECRET = env.str("TWITTER_CONSUMER_SECRET", "not-set")
+TWITTER_ACCESS_TOKEN = env.str("TWITTER_ACCESS_TOKEN", "not-set")
+TWITTER_ACCESS_TOKEN_SECRET = env.str("TWITTER_ACCESS_TOKEN_SECRET", "not-set")
 
 
 # List of compiled regular expression objects representing User-Agent strings
@@ -478,13 +478,14 @@ TWITTER_ACCESS_TOKEN_SECRET = env.str("TWITTER_ACCESS_TOKEN_SECRET")
 
 # IMAKIT
 # ------------------------------------------------------------------------------
-IMAGEKIT_PRIVATE_KEY = env.str("IMAGEKIT_PRIVATE_KEY")
-IMAGEKIT_PUBLIC_KEY = env.str("IMAGEKIT_PUBLIC_KEY")
-IMAGEKIT_URL_ENDPOINT = env.str("IMAGEKIT_URL_ENDPOINT")
+if env.bool("USE_IMAGEKIT", False):
+    IMAGEKIT_PRIVATE_KEY = env.str("IMAGEKIT_PRIVATE_KEY")
+    IMAGEKIT_PUBLIC_KEY = env.str("IMAGEKIT_PUBLIC_KEY")
+    IMAGEKIT_URL_ENDPOINT = env.str("IMAGEKIT_URL_ENDPOINT")
 
-IMAGE_KIT = ImageKit(
-    private_key=IMAGEKIT_PRIVATE_KEY, public_key=IMAGEKIT_PUBLIC_KEY, url_endpoint=IMAGEKIT_URL_ENDPOINT
-)
+    IMAGE_KIT = ImageKit(
+        private_key=IMAGEKIT_PRIVATE_KEY, public_key=IMAGEKIT_PUBLIC_KEY, url_endpoint=IMAGEKIT_URL_ENDPOINT
+    )
 
 STRIPE_PRIVATE_KEY = "TEST_STRIPE_PRIVATE"
 STRIPE_PUBLIC_KEY = "TEST_STRIPE_PUBLIC"
@@ -493,8 +494,9 @@ if IS_PROD:
     STRIPE_PRIVATE_KEY = "STRIPE_PRIVATE"
     STRIPE_PUBLIC_KEY = "STRIPE_PUBLIC"
     WEBHOOK_SECRET_KEY = "WEBHOOK_SECRET"
+
 # STRIPE
 # ------------------------------------------------------------------------------
-STRIPE_PRIVATE = env.str(STRIPE_PRIVATE_KEY)
-STRIPE_PUBLIC = env.str(STRIPE_PUBLIC_KEY)
-WEBHOOK_SECRET = env.str(WEBHOOK_SECRET_KEY)
+STRIPE_PRIVATE = env.str(STRIPE_PRIVATE_KEY, "not-set")
+STRIPE_PUBLIC = env.str(STRIPE_PUBLIC_KEY, "not-set")
+WEBHOOK_SECRET = env.str(WEBHOOK_SECRET_KEY, "not-set")

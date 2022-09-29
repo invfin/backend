@@ -1,3 +1,5 @@
+[![CircleCI](https://dl.circleci.com/status-badge/img/gh/lluc2397/InvFin/tree/master.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/lluc2397/InvFin/tree/master)
+
 # InvFin
 The main purpose of the webapp is to centralise information about investing, in spanish.
 

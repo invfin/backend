@@ -46,12 +46,16 @@ jobs:
           # name: Run lint
           # command: pylint apps/
       - run:
-          command: echo "$PWD"
+          command: echo "ls $PWD"
+      - run:
+          command: echo "ls"
+      - run:
+          command: echo "ls -a"
       - run:
           name: Run tests
           # This assumes pytest is installed via the install-package step above
           # command: pytest
-          command: python manage.py test
+          command: python manage.py test --settings=config.settings.test
       - store_test_results:
           path: test-results
     parallelism: 4
