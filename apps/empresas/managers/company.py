@@ -4,13 +4,7 @@ from typing import Type
 from django.db.models import Count, F, Manager, Q, Subquery, OuterRef, QuerySet, Prefetch
 
 
-class CompanyQuerySet(QuerySet):
-    pass
-
-
 class CompanyManager(Manager):
-    def get_queryset(self) -> QuerySet:
-        return CompanyQuerySet(self.model, using=self._db)
 
     """
     TODO
@@ -81,25 +75,29 @@ class CompanyManager(Manager):
             "price_to_ratios",
         )
 
-    def fast_full(self) -> QuerySet:
-        return self.prefetch_historical_data().only(
-            "ticker",
-            "name",
-            "sector",
-            "website",
-            "state",
-            "country",
-            "ceo",
-            "image",
-            "city",
-            "employees",
-            "address",
-            "zip_code",
-            "cik",
-            "cusip",
-            "isin",
-            "description",
-            "ipoDate",
+    def fast_full(self, **kwargs) -> QuerySet:
+        return (
+            self.prefetch_historical_data()
+            .only(
+                "ticker",
+                "name",
+                "sector",
+                "website",
+                "state",
+                "country",
+                "ceo",
+                "image",
+                "city",
+                "employees",
+                "address",
+                "zip_code",
+                "cik",
+                "cusip",
+                "isin",
+                "description",
+                "ipoDate",
+            )
+            .get(**kwargs)
         )
 
     def get_random(self, query=None) -> QuerySet:

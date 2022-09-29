@@ -300,3 +300,9 @@ def fix_update_financials_task(company_id):
         time.sleep(15)
     create_averages_task.delay(company.id)
     create_ttm_task.delay(company.id)
+
+
+@celery_app.task()
+def launch_fix_update_financials_task():
+    for company in Company.objects.clean_companies():
+        fix_update_financials_task.delay(company.id)

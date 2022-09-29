@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.views.generic import DetailView, ListView, RedirectView
 
 from apps.empresas.outils.update import UpdateCompany
-from apps.empresas.models import Company, ExchangeOrganisation
+from apps.empresas.models import Company, ExchangeOrganisation, IncomeStatement
 from apps.empresas.utils import company_searched
 from apps.etfs.models import Etf
 from apps.seo.views import SEODetailView, SEOListView
@@ -94,7 +94,7 @@ class CompanyDetailsView(SEODetailView):
     def get_object(self):
         ticker = self.kwargs.get("ticker")
         try:
-            response = Company.objects.prefetch_yearly_historical_data(ticker=ticker)
+            response = Company.objects.fast_full(ticker=ticker)
         except Company.DoesNotExist:
             response, _ = Company.objects.get_or_create(name="Need-parsing", ticker=ticker)
         except Exception as e:

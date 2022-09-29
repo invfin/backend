@@ -198,7 +198,7 @@ class CompanyExtended(ChartSerializer):
         return data, inc
 
     def all_balance_sheets(self, limit) -> list:
-        bls = self.balance_sheets.all()
+        bls = self.balance_sheets.yearly_exclude_ttm()
         if limit != 0:
             bls = bls[:limit]
         return bls
@@ -497,7 +497,7 @@ class CompanyExtended(ChartSerializer):
         return data, bls
 
     def all_cashflow_statements(self, limit) -> list:
-        cf = self.cf_statements.all()
+        cf = self.cf_statements.yearly_exclude_ttm()
         if limit != 0:
             cf = cf[:limit]
         return cf
@@ -733,7 +733,7 @@ class CompanyExtended(ChartSerializer):
         return data, cf
 
     def all_rentablity_ratios(self, limit) -> list:
-        rr = self.rentability_ratios.all()
+        rr = self.rentability_ratios.yearly_exclude_ttm()
         if limit != 0:
             rr = rr[:limit]
         return rr
@@ -792,7 +792,7 @@ class CompanyExtended(ChartSerializer):
         return data, rr
 
     def all_liquidity_ratios(self, limit) -> list:
-        lr = self.liquidity_ratios.all()
+        lr = self.liquidity_ratios.yearly_exclude_ttm()
         if limit != 0:
             lr = lr[:limit]
         return lr
@@ -848,7 +848,7 @@ class CompanyExtended(ChartSerializer):
         return data, lr
 
     def all_margins(self, limit) -> list:
-        margins = self.margins.all()
+        margins = self.margins.yearly_exclude_ttm()
         if limit != 0:
             margins = margins[:limit]
         return margins
@@ -925,7 +925,7 @@ class CompanyExtended(ChartSerializer):
         return data, cf
 
     def all_fcf_ratios(self, limit) -> list:
-        fcf_ratios = self.fcf_ratios.all()
+        fcf_ratios = self.fcf_ratios.yearly_exclude_ttm()
         if limit != 0:
             fcf_ratios = fcf_ratios[:limit]
         return fcf_ratios
@@ -974,7 +974,7 @@ class CompanyExtended(ChartSerializer):
         return data, cf
 
     def all_per_share_values(self, limit) -> list:
-        per_share_values = self.per_share_values.all()
+        per_share_values = self.per_share_values.yearly_exclude_ttm()
         if limit != 0:
             per_share_values = per_share_values[:limit]
         return per_share_values
@@ -1058,7 +1058,7 @@ class CompanyExtended(ChartSerializer):
         return data, cf
 
     def all_non_gaap(self, limit) -> list:
-        nongaap = self.non_gaap_figures.all()
+        nongaap = self.non_gaap_figures.yearly_exclude_ttm()
         if limit != 0:
             nongaap = nongaap[:limit]
         return nongaap
@@ -1191,7 +1191,7 @@ class CompanyExtended(ChartSerializer):
         return data, nongaap
 
     def all_operation_risks_ratios(self, limit) -> list:
-        operation_risks_ratios = self.operation_risks_ratios.all()
+        operation_risks_ratios = self.operation_risks_ratios.yearly_exclude_ttm()
         if limit != 0:
             operation_risks_ratios = operation_risks_ratios[:limit]
         return operation_risks_ratios
@@ -1275,7 +1275,7 @@ class CompanyExtended(ChartSerializer):
         return data, cf
 
     def all_ev_ratios(self, limit) -> list:
-        ev_ratios = self.ev_ratios.all()
+        ev_ratios = self.ev_ratios.yearly_exclude_ttm()
         if limit != 0:
             ev_ratios = ev_ratios[:limit]
         return ev_ratios
@@ -1345,7 +1345,7 @@ class CompanyExtended(ChartSerializer):
         return data, ev_ratios
 
     def all_growth_rates(self, limit) -> list:
-        growth_rates = self.growth_rates.all()
+        growth_rates = self.growth_rates.yearly_exclude_ttm()
         if limit != 0:
             growth_rates = growth_rates[:limit]
         return growth_rates
@@ -1436,7 +1436,7 @@ class CompanyExtended(ChartSerializer):
         return data, cf
 
     def all_efficiency_ratios(self, limit) -> list:
-        efficiency_ratios = self.efficiency_ratios.all()
+        efficiency_ratios = self.efficiency_ratios.yearly_exclude_ttm()
         if limit != 0:
             efficiency_ratios = efficiency_ratios[:limit]
         return efficiency_ratios
@@ -1527,7 +1527,7 @@ class CompanyExtended(ChartSerializer):
         return data, cf
 
     def all_price_to_ratios(self, limit) -> list:
-        price_to_ratios = self.price_to_ratios.all()
+        price_to_ratios = self.price_to_ratios.yearly_exclude_ttm()
         if limit != 0:
             price_to_ratios = price_to_ratios[:limit]
         return price_to_ratios

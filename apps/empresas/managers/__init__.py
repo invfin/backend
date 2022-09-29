@@ -1,9 +1,8 @@
 from .company import CompanyManager, CompanyUpdateLogManager
-from .statements import BaseStatementQuerySet, BaseStatementManager
+from .statements import BaseStatementManager
 
 __all__ = [
     "CompanyManager",
     "CompanyUpdateLogManager",
-    "BaseStatementQuerySet",
     "BaseStatementManager",
 ]
