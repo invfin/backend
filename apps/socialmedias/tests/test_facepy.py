@@ -23,9 +23,9 @@ from .factories import GenerateSocialmediasExample
 
 
 facebook_vcr = vcr.VCR(
-    cassette_library_dir='cassettes/facebook/',
-    path_transformer=vcr.VCR.ensure_suffix('.yaml'),
-    filter_post_data_parameters=['access_token']
+    cassette_library_dir="cassettes/facebook/",
+    path_transformer=vcr.VCR.ensure_suffix(".yaml"),
+    filter_post_data_parameters=["access_token"],
 )
 
 
@@ -39,8 +39,7 @@ class TestFacePoster(TestCase):
 
     @facebook_vcr.use_cassette
     def test_posting(self):
-        with vcr.use_cassette('cassettes/company/retrieve/test_get_current_price.yaml'):
+        with vcr.use_cassette("cassettes/company/retrieve/test_get_current_price.yaml"):
             content = SocialPosting().company_content(self.company)
-        
+
         fb_response = self.facebook_poster.post_on_facebook(**content)
-        print(fb_response)

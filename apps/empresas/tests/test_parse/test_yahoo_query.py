@@ -12,14 +12,14 @@ from apps.empresas.models import (
     IncomeStatementYahooQuery,
     CashflowStatementYahooQuery,
     InstitutionalOrganization,
-    TopInstitutionalOwnership
+    TopInstitutionalOwnership,
 )
 from apps.empresas.parse.yahoo_query import ParseYahooQuery, YahooQueryInfo
 
 
 parse_vcr = vcr.VCR(
-    cassette_library_dir='cassettes/company/parse/yahoo_query',
-    path_transformer=vcr.VCR.ensure_suffix('.yaml'),
+    cassette_library_dir="cassettes/company/parse/yahoo_query",
+    path_transformer=vcr.VCR.ensure_suffix(".yaml"),
 )
 
 
@@ -31,7 +31,7 @@ class TestYahooQueryInfo(TestCase):
         cls.current_year = datetime.now().year
 
     def test_create_quarterly_financials_yfinance(self):
-        period_2021 = Period.objects.first_quarter_period(self.current_year-1)
+        period_2021 = Period.objects.first_quarter_period(self.current_year - 1)
         period_2022 = Period.objects.first_quarter_period(self.current_year)
         self.assertEqual(0, BalanceSheetYahooQuery.objects.filter(period=period_2021).count())
         self.assertEqual(0, CashflowStatementYahooQuery.objects.filter(period=period_2021).count())
@@ -70,5 +70,3 @@ class TestYahooQueryInfo(TestCase):
         self.assertEqual(0, InstitutionalOrganization.objects.all().count())
         self.assertEqual(0, TopInstitutionalOwnership.objects.all().count())
         self.parser.normalize_institutional_yahooquery()
-        print(InstitutionalOrganization.objects.all())
-        print(TopInstitutionalOwnership.objects.all())

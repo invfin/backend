@@ -4,34 +4,32 @@ from django.forms import CharField, DateTimeField, Form, ModelForm, Textarea
 
 class DefaultNewsletterForm(Form):
     title = CharField()
-    content = CharField(widget=CKEditorWidget(config_name='writter'))
+    content = CharField(widget=CKEditorWidget(config_name="writter"))
     date_to_send = DateTimeField()
 
     def annotate_changes(self, user):
-        title = self.fields['title']
-        intro = self.fields['intro']
-        despedida = self.fields['despedida']
+        title = self.fields["title"]
+        intro = self.fields["intro"]
+        despedida = self.fields["despedida"]
         if title.has_changed:
-            print(title.initial)
-            print('*'*100)
-            print(title)
+            pass
         if intro.has_changed:
-            print('si')
+            pass
         if despedida.has_changed:
-            print('si')   
+            pass
 
     def creating_newsletter(self, newsletter_model):
-        title = self.cleaned_data['title']
-        intro = self.cleaned_data['intro']
-        despedida = self.cleaned_data['despedida']
-        content = self.cleaned_data['content']
-        date_to_send = self.cleaned_data['date_to_send']
+        title = self.cleaned_data["title"]
+        intro = self.cleaned_data["intro"]
+        despedida = self.cleaned_data["despedida"]
+        content = self.cleaned_data["content"]
+        date_to_send = self.cleaned_data["date_to_send"]
         newsletter = newsletter_model.objects.create(
-            title = title,
-            introduction = intro,
-            despedida = despedida,
-            content = content,
-            date_to_send = date_to_send,
+            title=title,
+            introduction=intro,
+            despedida=despedida,
+            content=content,
+            date_to_send=date_to_send,
         )
         return newsletter
 

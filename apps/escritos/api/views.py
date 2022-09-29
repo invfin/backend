@@ -13,7 +13,7 @@ class AllTermsAPIView(BaseAPIView):
 
 class TermAPIView(BaseAPIView):
     serializer_class = TermSerializer
-    query_name = ['slug', 'id']
+    query_name = ["slug", "id"]
 
 
 class TermContentAPIView(BaseAPIView):

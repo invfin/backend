@@ -1,4 +1,4 @@
-from django.db.models import Manager
+from django.db.models import Manager, Q
 
 from apps.general import constants
 
@@ -25,3 +25,13 @@ class PeriodManager(Manager):
     def third_quarter_period(self, year):
         period, created = self.get_or_create(year=year, period=constants.PERIOD_3_QUARTER)
         return period
+
+    def fourth_quarter_period(self, year):
+        period, created = self.get_or_create(year=year, period=constants.PERIOD_4_QUARTER)
+        return period
+
+    def quarterly_periods(self):
+        return self.all().exclude(period=constants.PERIOD_FOR_YEAR)
+
+    def yearly_periods(self):
+        return self.filter(period=constants.PERIOD_FOR_YEAR)

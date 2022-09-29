@@ -1,14 +1,7 @@
-from django.db.models import (
-    SET_NULL,
-    BooleanField,
-    FloatField,
-    ForeignKey,
-    Model,
-    IntegerField,
-    DateField
-)
+from django.db.models import SET_NULL, BooleanField, FloatField, ForeignKey, IntegerField, DateField
 
 from apps.empresas.models import Company
+from apps.empresas.managers import BaseStatementManager
 from apps.general.models import Period
 from apps.general.mixins import BaseToAll
 
@@ -19,15 +12,40 @@ class BaseStatement(BaseToAll):
     company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True)
     period = ForeignKey(Period, on_delete=SET_NULL, null=True, blank=True)
     reported_currency = ForeignKey("general.Currency", on_delete=SET_NULL, null=True, blank=True)
+    objects = BaseStatementManager()
 
     class Meta:
         abstract = True
-        get_latest_by = 'year'
-        ordering = ['-year']
+        get_latest_by = ["-date", "period"]
+        ordering = ["-date", "period"]
+        base_manager_name = "objects"
+
+    def __str__(self) -> str:
+        period = self.period if self.period else self.date
+        return f"{self.company} - {period}"
 
 
-class IncomeStatement(BaseStatement):
+class BaseFinalStatement(BaseStatement):
     is_ttm = BooleanField(default=False)
+    from_average = BooleanField(default=False)
+
+    class Meta:
+        abstract = True
+
+    def __str__(self) -> str:
+        period = self.period if self.period else self.date
+        if self.is_ttm:
+            return f"{self.company} - TTM"
+        return f"{self.company} - {period}"
+
+    @property
+    def date_year(self):
+        if self.is_ttm:
+            return "TTM"
+        return f"{self.date}"
+
+
+class IncomeStatement(BaseFinalStatement):
     company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="inc_statements")
     revenue = FloatField(default=0, blank=True, null=True)
     cost_of_revenue = FloatField(default=0, blank=True, null=True)
@@ -55,12 +73,8 @@ class IncomeStatement(BaseStatement):
         verbose_name_plural = "Income Statements"
         db_table = "assets_companies_income_statements"
 
-    def __str__(self):
-        return self.company.ticker + str(self.date)
 
-
-class BalanceSheet(BaseStatement):
-    is_ttm = BooleanField(default=False)
+class BalanceSheet(BaseFinalStatement):
     company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="balance_sheets")
     cash_and_cash_equivalents = FloatField(default=0, blank=True, null=True)
     short_term_investments = FloatField(default=0, blank=True, null=True)
@@ -107,17 +121,13 @@ class BalanceSheet(BaseStatement):
         verbose_name_plural = "Balance Sheets"
         db_table = "assets_companies_balance_sheet_statements"
 
-    def __str__(self):
-        return self.company.ticker + str(self.date)
 
-
-class CashflowStatement(BaseStatement):
-    is_ttm = BooleanField(default=False)
+class CashflowStatement(BaseFinalStatement):
     company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="cf_statements")
     net_income = FloatField(default=0, blank=True, null=True)
     depreciation_amortization = FloatField(default=0, blank=True, null=True)
     deferred_income_tax = FloatField(default=0, blank=True, null=True)
-    stock_based_compesation = FloatField(default=0, blank=True, null=True)#stock_based_compensation
+    stock_based_compesation = FloatField(default=0, blank=True, null=True)  # stock_based_compensation
     change_in_working_capital = FloatField(default=0, blank=True, null=True)
     accounts_receivables = FloatField(default=0, blank=True, null=True)
     inventory = FloatField(default=0, blank=True, null=True)
@@ -150,16 +160,12 @@ class CashflowStatement(BaseStatement):
         verbose_name_plural = "Cash flow Statements"
         db_table = "assets_companies_cashflow_statements"
 
-    def __str__(self):
-        return self.company.ticker + str(self.date)
-
     @property
     def cash_conversion_ratio_to_save(self):
         return self.fcf / self.net_income if self.net_income != 0 else 0
 
 
-class RentabilityRatio(BaseStatement):
-    is_ttm = BooleanField(default=False)
+class RentabilityRatio(BaseFinalStatement):
     company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="rentability_ratios")
     roa = FloatField(default=0, blank=True, null=True)
     roe = FloatField(default=0, blank=True, null=True)
@@ -175,12 +181,8 @@ class RentabilityRatio(BaseStatement):
         verbose_name_plural = "Rentability Ratios"
         db_table = "assets_companies_rentability_ratios"
 
-    def __str__(self):
-        return self.company.ticker + str(self.date)
 
-
-class LiquidityRatio(BaseStatement):
-    is_ttm = BooleanField(default=False)
+class LiquidityRatio(BaseFinalStatement):
     company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="liquidity_ratios")
     cash_ratio = FloatField(default=0, blank=True, null=True)
     current_ratio = FloatField(default=0, blank=True, null=True)
@@ -193,12 +195,8 @@ class LiquidityRatio(BaseStatement):
         verbose_name_plural = "Liquidity Ratios"
         db_table = "assets_companies_liquidity_ratios"
 
-    def __str__(self):
-        return self.company.ticker + str(self.date)
 
-
-class MarginRatio(BaseStatement):
-    is_ttm = BooleanField(default=False)
+class MarginRatio(BaseFinalStatement):
     company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="margins")
     gross_margin = FloatField(default=0, blank=True, null=True)
     ebitda_margin = FloatField(default=0, blank=True, null=True)
@@ -214,12 +212,8 @@ class MarginRatio(BaseStatement):
         verbose_name_plural = "Margin Ratios"
         db_table = "assets_companies_margins_ratios"
 
-    def __str__(self):
-        return self.company.ticker + str(self.date)
 
-
-class FreeCashFlowRatio(BaseStatement):
-    is_ttm = BooleanField(default=False)
+class FreeCashFlowRatio(BaseFinalStatement):
     company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="fcf_ratios")
     fcf_equity = FloatField(default=0, blank=True, null=True)
     unlevered_fcf = FloatField(default=0, blank=True, null=True)
@@ -231,12 +225,8 @@ class FreeCashFlowRatio(BaseStatement):
         verbose_name_plural = "Free cash flow Ratios"
         db_table = "assets_companies_freecashflow_ratios"
 
-    def __str__(self):
-        return self.company.ticker + str(self.date)
 
-
-class PerShareValue(BaseStatement):
-    is_ttm = BooleanField(default=False)
+class PerShareValue(BaseFinalStatement):
     company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="per_share_values")
     sales_ps = FloatField(default=0, blank=True, null=True)
     book_ps = FloatField(default=0, blank=True, null=True)
@@ -253,12 +243,8 @@ class PerShareValue(BaseStatement):
         verbose_name_plural = "Per shares"
         db_table = "assets_companies_per_share_value"
 
-    def __str__(self):
-        return self.company.ticker + str(self.date)
 
-
-class NonGaap(BaseStatement):
-    is_ttm = BooleanField(default=False)
+class NonGaap(BaseFinalStatement):
     company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="non_gaap_figures")
     normalized_income = FloatField(default=0, blank=True, null=True)
     effective_tax_rate = FloatField(default=0, blank=True, null=True)
@@ -282,12 +268,8 @@ class NonGaap(BaseStatement):
         verbose_name_plural = "Non GAAP figures"
         db_table = "assets_companies_non_gaap"
 
-    def __str__(self):
-        return  str(self.date)
 
-
-class OperationRiskRatio(BaseStatement):
-    is_ttm = BooleanField(default=False)
+class OperationRiskRatio(BaseFinalStatement):
     company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="operation_risks_ratios")
     asset_coverage_ratio = FloatField(default=0, blank=True, null=True)
     cash_flow_coverage_ratios = FloatField(default=0, blank=True, null=True)
@@ -304,12 +286,8 @@ class OperationRiskRatio(BaseStatement):
         verbose_name_plural = "Operation Risk Ratios"
         db_table = "assets_companies_operations_risk_ratio"
 
-    def __str__(self):
-        return self.company.ticker + str(self.date)
 
-
-class EnterpriseValueRatio(BaseStatement):
-    is_ttm = BooleanField(default=False)
+class EnterpriseValueRatio(BaseFinalStatement):
     company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="ev_ratios")
     market_cap = FloatField(default=0, blank=True, null=True)
     enterprise_value = FloatField(default=0, blank=True, null=True)
@@ -324,12 +302,8 @@ class EnterpriseValueRatio(BaseStatement):
         verbose_name_plural = "Enterprise Values"
         db_table = "assets_companies_enterprise_value_ratios"
 
-    def __str__(self):
-        return self.company.ticker + str(self.date)
 
-
-class CompanyGrowth(BaseStatement):
-    is_ttm = BooleanField(default=False)
+class CompanyGrowth(BaseFinalStatement):
     company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="growth_rates")
     revenue_growth = FloatField(default=0, blank=True, null=True)
     cost_revenue_growth = FloatField(default=0, blank=True, null=True)
@@ -347,12 +321,8 @@ class CompanyGrowth(BaseStatement):
         verbose_name_plural = "Companies growth"
         db_table = "assets_companies_growths"
 
-    def __str__(self):
-        return self.company.ticker + str(self.date)
 
-
-class EficiencyRatio(BaseStatement):
-    is_ttm = BooleanField(default=False)
+class EficiencyRatio(BaseFinalStatement):
     company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="efficiency_ratios")
     asset_turnover = FloatField(default=0, blank=True, null=True)
     inventory_turnover = FloatField(default=0, blank=True, null=True)
@@ -371,12 +341,8 @@ class EficiencyRatio(BaseStatement):
         verbose_name_plural = "Efficiency Ratios"
         db_table = "assets_companies_eficiency_ratios"
 
-    def __str__(self):
-        return self.company.ticker + str(self.date)
 
-
-class PriceToRatio(BaseStatement):
-    is_ttm = BooleanField(default=False)
+class PriceToRatio(BaseFinalStatement):
     company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="price_to_ratios")
     price_book = FloatField(default=0, blank=True, null=True)
     price_cf = FloatField(default=0, blank=True, null=True)
@@ -392,6 +358,3 @@ class PriceToRatio(BaseStatement):
         verbose_name = "Price to Ratio"
         verbose_name_plural = "Price to Ratios"
         db_table = "assets_companies_price_to_ratios"
-
-    def __str__(self):
-        return self.company.ticker + str(self.date)

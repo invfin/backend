@@ -18,18 +18,10 @@ class YFinanceInfo(DFInfoCreator, NormalizeYFinance, ParseYFinance):
         self.normalize_balance_sheet = self.normalize_balance_sheets_yfinance
         self.normalize_cashflow_statement = self.normalize_cashflow_statements_yfinance
 
-    def create_statements_from_df(
-        self,
-        df: Type[pd.DataFrame],
-        period: Callable,
-        function: Callable,
-        model: Type
-    ):
-
+    def create_statements_from_df(self, df: Type[pd.DataFrame], period: Callable, function: Callable, model: Type):
         for column in df:
-            model.objects.create(
-                financials=df[column].to_dict(),
-                **function(df[column], column, period)
+            model.objects.get_or_create(
+                financials=df[column].to_dict(), defaults={**function(df[column], column, period)}
             )
 
     def create_quarterly_financials_yfinance(self):
@@ -37,7 +29,7 @@ class YFinanceInfo(DFInfoCreator, NormalizeYFinance, ParseYFinance):
             self.request_quarterly_financials_yfinance,
             self.request_quarterly_balance_sheet_yfinance,
             self.request_quarterly_cashflow_yfinance,
-            self.period_quarter
+            self.period_quarter,
         )
 
     def create_yearly_financials_yfinance(self):
@@ -45,5 +37,5 @@ class YFinanceInfo(DFInfoCreator, NormalizeYFinance, ParseYFinance):
             self.request_financials_yfinance,
             self.request_balance_sheet_yfinance,
             self.request_cashflow_yfinance,
-            self.period_year
+            self.period_year,
         )

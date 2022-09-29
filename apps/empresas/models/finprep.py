@@ -1,18 +1,10 @@
-from django.db.models import (
-    SET_NULL,
-    FloatField,
-    ForeignKey,
-    DateField,
-    DateTimeField,
-    IntegerField,
-    CharField
-)
+from django.db.models import SET_NULL, FloatField, ForeignKey, DateField, DateTimeField, IntegerField, CharField
 
 from apps.empresas.models.statements import BaseStatement
 from apps.empresas.extensions.finprep import (
     BalanceSheetFinprepExtended,
     CashflowStatementFinprepExtended,
-    IncomeStatementFinprepExtended
+    IncomeStatementFinprepExtended,
 )
 
 
@@ -64,9 +56,6 @@ class IncomeStatementFinprep(BaseFinprep, IncomeStatementFinprepExtended):
         verbose_name = "Finprep Income Statement"
         verbose_name_plural = "Finprep Income Statements"
         db_table = "assets_companies_income_statements_finprep"
-
-    def __str__(self):
-        return self.company.ticker + str(self.date)
 
 
 class BalanceSheetFinprep(BaseFinprep, BalanceSheetFinprepExtended):
@@ -120,9 +109,6 @@ class BalanceSheetFinprep(BaseFinprep, BalanceSheetFinprepExtended):
         verbose_name_plural = "Finprep Balance Sheets"
         db_table = "assets_companies_balance_sheet_statements_finprep"
 
-    def __str__(self):
-        return self.company.ticker + str(self.date)
-
 
 class CashflowStatementFinprep(BaseFinprep, CashflowStatementFinprepExtended):
     accounts_payables = FloatField(default=0, blank=True, null=True)
@@ -160,9 +146,6 @@ class CashflowStatementFinprep(BaseFinprep, CashflowStatementFinprepExtended):
         verbose_name = "Finprep Cash flow Statement"
         verbose_name_plural = "Finprep Cash flow Statements"
         db_table = "assets_companies_cashflow_statements_finprep"
-
-    def __str__(self):
-        return self.company.ticker + str(self.date)
 
     @property
     def cash_conversion_ratio_to_save(self):

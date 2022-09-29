@@ -4,8 +4,9 @@ from apps.empresas.models import BaseStatement
 from apps.empresas.extensions.y_finance import (
     BalanceSheetYFinanceExtended,
     CashflowStatementYFinanceExtended,
-    IncomeStatementYFinanceExtended
+    IncomeStatementYFinanceExtended,
 )
+
 
 class BaseUnknownField(BaseStatement):
     financials = JSONField(default=dict)
@@ -43,9 +44,6 @@ class IncomeStatementYFinance(BaseUnknownField, IncomeStatementYFinanceExtended)
         verbose_name_plural = "YFinance Income Statements"
         db_table = "assets_companies_income_statements_yfinance"
 
-    def __str__(self):
-        return self.company.ticker + str(self.date)
-
 
 class BalanceSheetYFinance(BaseUnknownField, BalanceSheetYFinanceExtended):
     intangible_assets = FloatField(default=0, blank=True, null=True)
@@ -80,9 +78,6 @@ class BalanceSheetYFinance(BaseUnknownField, BalanceSheetYFinanceExtended):
         verbose_name_plural = "YFinance Balance Sheets"
         db_table = "assets_companies_balance_sheet_statements_yfinance"
 
-    def __str__(self):
-        return self.company.ticker + str(self.date)
-
 
 class CashflowStatementYFinance(BaseUnknownField, CashflowStatementYFinanceExtended):
     investments = FloatField(default=0, blank=True, null=True)
@@ -110,6 +105,3 @@ class CashflowStatementYFinance(BaseUnknownField, CashflowStatementYFinanceExten
         verbose_name = "YFinance Cash flow Statement"
         verbose_name_plural = "YFinance Cash flow Statements"
         db_table = "assets_companies_cashflow_statements_yfinance"
-
-    def __str__(self):
-        return self.company.ticker + str(self.date)

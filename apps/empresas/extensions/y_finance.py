@@ -78,7 +78,7 @@ class CashflowStatementYFinanceExtended(AverageCashflowStatement):
     change_in_working_capital_field = ""
     accounts_receivables_field = "change_to_account_receivables"
     inventory_field = "change_to_inventory"
-    accounts_payable_field = "change_in_payables_and_accrued_expense"
+    accounts_payable_field = ""
     other_working_capital_field = ""
     other_non_cash_items_field = ""
     operating_activities_cf_field = ""

@@ -1,7 +1,10 @@
 from django.test import TestCase
 
-from bfet import DjangoTestingModel as DTM
+from bfet import DjangoTestingModel as DTM, DataCreator
 
+from apps.general.constants import PERIOD_FOR_YEAR
+from apps.general.models import Period, Currency
+from apps.empresas.outils.average_statements import AverageStatements
 from apps.empresas.models import (
     Company,
     IncomeStatementYahooQuery,
@@ -19,19 +22,57 @@ from apps.empresas.models import (
 class TestAverageStatements(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.company = DTM.create(
-            Company,
+        cls.company = DTM.create(Company)
+        cls.period = DTM.create(Period, year=2021, period=PERIOD_FOR_YEAR)
+        cls.currency = DTM.create(Currency)
+        cls.revenue = DataCreator.create_random_float()
+        cls.cost_of_revenue = DataCreator.create_random_float()
+        cls.gross_profit = DataCreator.create_random_float()
+        cls.research_and_development_expenses = DataCreator.create_random_float()
+        cls.selling_general_and_administrative_expenses = DataCreator.create_random_float()
+        cls.inc_st_finprep = DTM.create(
+            IncomeStatementFinprep,
+            reported_currency=cls.currency,
+            company=cls.company,
+            period=cls.period,
+            revenue=cls.revenue,
+            cost_of_revenue=cls.cost_of_revenue,
+            gross_profit=cls.gross_profit,
+            research_and_development_expenses=cls.research_and_development_expenses,
+            selling_general_and_administrative_expenses=cls.selling_general_and_administrative_expenses,
         )
-        cls.inc_st_finprep = DTM.create(IncomeStatementFinprep)
-        cls.inc_st_yahooquery = DTM.create(IncomeStatementYahooQuery)
-        cls.inc_st_yfinance = DTM.create(IncomeStatementYFinance)
-        cls.bs_finprep = DTM.create(BalanceSheetFinprep)
-        cls.bs_yahooquery = DTM.create(BalanceSheetYahooQuery)
-        cls.bs_yfinance = DTM.create(BalanceSheetYFinance)
-        cls.cf_st_finprep = DTM.create(CashflowStatementFinprep)
-        cls.cf_st_yahooquery = DTM.create(CashflowStatementYahooQuery)
-        cls.cf_st_yfinance = DTM.create(CashflowStatementYFinance)
-    
+        cls.inc_st_yahooquery = DTM.create(
+            IncomeStatementYahooQuery,
+            reported_currency=cls.currency,
+            company=cls.company,
+            period=cls.period,
+            total_revenue=cls.revenue,
+            reconciled_cost_of_revenue=cls.cost_of_revenue,
+            gross_profit=cls.gross_profit,
+            research_and_development=cls.research_and_development_expenses,
+            selling_general_and_administration=cls.selling_general_and_administrative_expenses,
+        )
+        cls.inc_st_yfinance = DTM.create(
+            IncomeStatementYFinance,
+            reported_currency=cls.currency,
+            company=cls.company,
+            period=cls.period,
+            total_revenue=cls.revenue,
+            cost_of_revenue=cls.cost_of_revenue,
+            gross_profit=cls.gross_profit,
+            research_development=cls.research_and_development_expenses,
+            selling_general_administrative=cls.selling_general_and_administrative_expenses,
+        )
+        cls.bs_finprep = DTM.create(BalanceSheetFinprep, company=cls.company, period=cls.period)
+        cls.bs_yahooquery = DTM.create(BalanceSheetYahooQuery, company=cls.company, period=cls.period)
+        cls.bs_yfinance = DTM.create(BalanceSheetYFinance, company=cls.company, period=cls.period)
+        cls.cf_st_finprep = DTM.create(CashflowStatementFinprep, company=cls.company, period=cls.period)
+        cls.cf_st_yahooquery = DTM.create(CashflowStatementYahooQuery, company=cls.company, period=cls.period)
+        cls.cf_st_yfinance = DTM.create(CashflowStatementYFinance, company=cls.company, period=cls.period)
+
+    def test_find_correct_currency(self):
+        pass
+
     def test_return_standard_keys(self):
         inc_st_finprep_keys = self.inc_st_finprep.return_standard.keys()
         inc_st_yahooquery_keys = self.inc_st_yahooquery.return_standard.keys()
@@ -51,7 +92,7 @@ class TestAverageStatements(TestCase):
         self.assertEqual(cf_st_finprep_keys, cf_st_yahooquery_keys)
         self.assertEqual(cf_st_finprep_keys, cf_st_yfinance_keys)
         self.assertEqual(cf_st_yfinance_keys, cf_st_yahooquery_keys)
-        
+
     def test_return_standard_income_statement_keys(self):
         inc_st_finprep_keys = self.inc_st_finprep.return_standard.keys()
         self.assertTrue("revenue" in inc_st_finprep_keys)
@@ -74,7 +115,7 @@ class TestAverageStatements(TestCase):
         self.assertTrue("net_income" in inc_st_finprep_keys)
         self.assertTrue("weighted_average_shares_outstanding" in inc_st_finprep_keys)
         self.assertTrue("weighted_average_diluated_shares_outstanding" in inc_st_finprep_keys)
-    
+
     def test_return_standard_balance_sheet_keys(self):
         bs_finprep_keys = self.bs_finprep.return_standard.keys()
         self.assertTrue("cash_and_cash_equivalents" in bs_finprep_keys)
@@ -116,7 +157,7 @@ class TestAverageStatements(TestCase):
         self.assertTrue("total_investments" in bs_finprep_keys)
         self.assertTrue("total_debt" in bs_finprep_keys)
         self.assertTrue("net_debt" in bs_finprep_keys)
-    
+
     def test_return_standard_cashflow_statement_keys(self):
         cf_st_finprep_keys = self.cf_st_finprep.return_standard.keys()
         self.assertTrue("net_income" in cf_st_finprep_keys)
@@ -149,4 +190,15 @@ class TestAverageStatements(TestCase):
         self.assertTrue("operating_cf" in cf_st_finprep_keys)
         self.assertTrue("capex" in cf_st_finprep_keys)
         self.assertTrue("fcf" in cf_st_finprep_keys)
-        
+
+    def test_calculate_average_income_statement(self):
+        average = AverageStatements(self.company).calculate_average_income_statement(self.period)
+        self.assertEqual(type(average), dict)
+        self.assertEqual(self.revenue, average["revenue"])
+        self.assertEqual(self.cost_of_revenue, average["cost_of_revenue"])
+        self.assertEqual(self.gross_profit, average["gross_profit"])
+        self.assertEqual(self.research_and_development_expenses, average["rd_expenses"])
+        self.assertEqual(self.selling_general_and_administrative_expenses, average["sga_expenses"])
+        self.assertEqual(self.period.id, average["period_id"])
+        self.assertEqual(self.period.year, average["date"])
+        self.assertEqual(self.currency.id, average["reported_currency_id"])

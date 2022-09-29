@@ -1,5 +1,7 @@
 {
     "makefile.extensionOutputFolder": "./.vscode",
+    "editor.formatOnSave": true,
+    "python.formatting.provider": "black",
     "explorer.autoReveal": false,
     "workbench.editor.enablePreview": false,
     "python.testing.unittestArgs": [
