@@ -24,10 +24,11 @@ jobs:
       - image: cimg/python:3.10.1
         environment:
           DATABASE_URL: postgresql://root@localhost/circle_test?sslmode=disable
-      - image: circleci/postgres:12.12
+      - image: circleci/postgres:13.2 # an example of how to specify a service container
         environment:
           POSTGRES_USER: root
           POSTGRES_DB: circle_test
+          POSTGRES_PASSWORD: password
     
     # Checkout the code as the first step. This is a dedicated CircleCI step.
     # The python orb's install-packages step will install the dependencies from a Pipfile via Pipenv by default.
@@ -38,10 +39,10 @@ jobs:
       - checkout
       - python/install-packages:
           pkg-manager: pip
-          app-dir: ~/requirements  # If you're requirements.txt isn't in the root directory.
+          app-dir: ~/invfin/requirements  # If you're requirements.txt isn't in the root directory.
           pip-dependency-file: local.txt  # if you have a different name for your requirements file, maybe one that combines your runtime and test requirements.
       # - run:
-          # name: lint
+          # name: Run lint
           # command: pylint apps/
       - run:
           command: echo "$PWD"
