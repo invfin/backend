@@ -18,6 +18,8 @@ pytest
 pytest-sugar
 djangorestframework-stubs
 vcrpy
+pytest-xdist
+bfet
 
 # Documentation
 # ------------------------------------------------------------------------------
@@ -36,8 +38,6 @@ pre-commit
 
 # Django
 # ------------------------------------------------------------------------------
-bfet
-
 django-debug-toolbar
 django-extensions
 django-coverage-plugin
