@@ -48,10 +48,6 @@ jobs:
       - run:
           command: ls -a
       - run:
-          command: ls
-      - run:
-          command: echo | ls -a
-      - run:
           name: Run tests
           # This assumes pytest is installed via the install-package step above
           # command: pytest
