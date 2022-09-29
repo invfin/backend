@@ -1,4 +1,5 @@
 BLACK_FOLDERS=apps
+MYPY_FOLDERS=apps
 
 .PHONY: requirements
 
@@ -124,10 +125,10 @@ docs_check:
 
 # Testing
 new-test:
-	docker-compose -f local.yml run --rm invfin python -u manage.py test $(ar) --noinput --settings=config.settings.final
+	docker-compose -f local.yml run --rm invfin python -u manage.py test $(ar) --noinput --settings=config.settings.test
 
 test:
-	docker-compose -f local.yml run --rm invfin python -u manage.py test $(ar) --noinput --keepdb --settings=config.settings.final
+	docker-compose -f local.yml run --rm invfin python -u manage.py test $(ar) --noinput --keepdb --settings=config.settings.test
 
 pytest:
 	docker-compose -f local.yml run --rm invfin pytest
@@ -141,14 +142,46 @@ pycov:
 	docker-compose -f local.yml run --rm invfin coverage report
 
 # Style
-flake:
-	docker-compose -f local.yml run invfin flake8 $(ar)
-
-isort:
-	docker-compose -f local.yml run invfin isort .
-
-black:
-	docker-compose -f local.yml run invfin black ${BLACK_FOLDERS}
-
 format:
 	docker-compose -f local.yml run invfin flake8 && isort . && black ${BLACK_FOLDERS}
+
+flake8:
+	docker-compose -f local.yml run --rm invfin make local/flake8
+
+isort:
+	docker-compose -f local.yml run --rm invfin make local/isort
+
+black:
+	docker-compose -f local.yml run --rm invfin local/black
+
+mypy:
+	docker-compose -f local.yml run --rm invfin local/mypy
+
+local/flake8:
+	flake8
+
+local/isort:
+	isort .
+
+local/mypy:
+	mypy ${MYPY_FOLDERS}
+
+local/format: local/isort local/black local/flake8 local/djlint local/mypy
+
+format:
+	docker-compose -f local.yml run --rm invfin make local/format
+
+isort_check:
+	docker-compose -f local.yml run --rm invfin make local/isort_check
+
+local/isort_check:
+	isort --df -c .
+
+local/black:
+	black ${BLACK_FOLDERS}
+
+black_check:
+	docker-compose -f local.yml run --rm invfin black local/black_check
+
+local/black_check:
+	black ${BLACK_FOLDERS} --check

@@ -5,6 +5,9 @@ With these settings, tests run faster.
 from .base import *  # noqa
 from .base import env
 
+from .ckeditor import *
+from .custom_admin import *
+
 # GENERAL
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#secret-key

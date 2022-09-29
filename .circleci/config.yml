@@ -42,9 +42,6 @@ jobs:
           pkg-manager: pip
           app-dir: ./requirements  # If you're requirements.txt isn't in the root directory.
           pip-dependency-file: local.txt  # if you have a different name for your requirements file, maybe one that combines your runtime and test requirements.
-      - run:
-          name: "Setup custom environment variables"
-          command: echo 'export IS_TESTING="True"' >> "$BASH_ENV"
       # - run:
           # name: Run lint
           # command: pylint apps/
@@ -52,7 +49,7 @@ jobs:
           name: Run tests
           # This assumes pytest is installed via the install-package step above
           # command: pytest
-          command: python manage.py test
+          command: python manage.py test --settings=config.settings.test
       - store_test_results:
           path: test-results
     parallelism: 4
