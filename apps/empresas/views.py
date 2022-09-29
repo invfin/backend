@@ -27,25 +27,41 @@ def companies_searcher(request):
     return HttpResponse(data, "application/json")
 
 
-class ExcelAPIIncome(BaseAPIView):
-    custom_queryset = IncomeStatement
+class BaseExcelAPIView(BaseAPIView):
+    """
+    Used to share across API endpoints that serve the Inteligent Excel
+    It will lookup for "ticker" in the url parameters and will look for the company's ticker
+    """
+
+    url_parameters = ["ticker"]
+    fk_lookup_model = "company__ticker"
+    limited = True
+    is_excel = True
+    model_to_track = "Company"
+
+
+class ExcelAPIIncome(BaseExcelAPIView):
+    """
+    Used to serves the Inteligent Excel with the company's income statements
+    """
+
+    queryset = (IncomeStatement.objects.yearly, True)
     serializer_class = ExcelIncomeStatementSerializer
-    query_name = ["ticker"]
-    fk_lookup_model = "company__ticker"
-    limited = True
 
 
-class ExcelAPIBalance(BaseAPIView):
-    custom_queryset = BalanceSheet
+class ExcelAPIBalance(BaseExcelAPIView):
+    """
+    Used to serves the Inteligent Excel with the company's balance sheets
+    """
+
+    queryset = (BalanceSheet.objects.yearly, True)
     serializer_class = ExcelBalanceSheetSerializer
-    query_name = ["ticker"]
-    fk_lookup_model = "company__ticker"
-    limited = True
 
 
-class ExcelAPICashflow(BaseAPIView):
-    custom_queryset = CashflowStatement
+class ExcelAPICashflow(BaseExcelAPIView):
+    """
+    Used to serves the Inteligent Excel with the company's cashflow statements
+    """
+
+    queryset = (CashflowStatement.objects.yearly, True)
     serializer_class = ExcelCashflowStatementSerializer
-    query_name = ["ticker"]
-    fk_lookup_model = "company__ticker"
-    limited = True

@@ -363,18 +363,25 @@ if DEBUG:
 # django-rest-framework
 # -------------------------------------------------------------------------------
 # django-rest-framework - https://www.django-rest-framework.org/api-guide/settings/
-DRF_DEFAULT_RENDERER_CLASSES = {"DRF_DEFAULT_RENDERER_CLASSES": "rest_framework.renderers.JSONRenderer"}
 DEFAULT_SCHEMA_CLASS = {}
 if DEBUG:
-    DRF_DEFAULT_RENDERER_CLASSES = {"DRF_DEFAULT_RENDERER_CLASSES": "rest_framework.renderers.BrowsableAPIRenderer"}
     DEFAULT_SCHEMA_CLASS = {"DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema"}
 
 REST_FRAMEWORK = {
     **DEFAULT_SCHEMA_CLASS,
-    **DRF_DEFAULT_RENDERER_CLASSES,
+    "TEST_REQUEST_DEFAULT_FORMAT": "json",
+    "TEST_REQUEST_RENDERER_CLASSES": [
+        "rest_framework.renderers.MultiPartRenderer",
+        "rest_framework.renderers.JSONRenderer",
+        "rest_framework.renderers.TemplateHTMLRenderer",
+    ],
+    "DEFAULT_RENDERER_CLASSES": [
+        "rest_framework.renderers.JSONRenderer",
+        "rest_framework.renderers.BrowsableAPIRenderer",
+    ],
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "rest_framework.authentication.SessionAuthentication",
         "apps.api.authentication.KeyAuthentication",
+        "rest_framework.authentication.SessionAuthentication",
         "rest_framework.authentication.BasicAuthentication",
     ],
     "DEFAULT_PERMISSION_CLASSES": ["apps.api.permissions.ReadOnly"],

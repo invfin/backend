@@ -6,16 +6,29 @@ from .serializers import AllTermsSerializer, TermContentSerializer, TermSerializ
 
 
 class AllTermsAPIView(BaseAPIView):
+    """
+    Returns all the terms that are clean
+    """
+
     serializer_class = AllTermsSerializer
-    custom_queryset = Term.objects.clean_terms()
+    queryset = (Term.objects.clean_terms, True)
     pagination_class = StandardResultPagination
 
 
 class TermAPIView(BaseAPIView):
+    """
+    Returns one term and all his content (TermContents related)
+    It can be queryed throught by it's ID or slug
+    """
+
     serializer_class = TermSerializer
-    query_name = ["slug", "id"]
+    url_parameters = ["slug", "id"]
 
 
 class TermContentAPIView(BaseAPIView):
+    """
+    Not used neither publicly available
+    """
+
     serializer_class = TermContentSerializer
     queryset = TermContent
