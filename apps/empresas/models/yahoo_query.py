@@ -245,6 +245,6 @@ class KeyStatsYahooQuery(BaseUnknownField):
     class Meta(BaseStatement.Meta):
         verbose_name = "Yahooquery Key stats"
         verbose_name_plural = "Yahooquery Key stats"
-        db_table = "assets_companies_key stats_yahooquery"
+        db_table = "assets_companies_key_stats_yahooquery"
         get_latest_by = ["-date"]
         ordering = ["-date"]
