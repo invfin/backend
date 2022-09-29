@@ -43,7 +43,7 @@ jobs:
       # - run:
           # name: lint
           # command: pylint apps/
-      -run:
+      - run:
         command: echo $PWD 
       - run:
           name: Run tests
