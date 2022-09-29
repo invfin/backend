@@ -6,5 +6,5 @@ from apps.empresas.models import Company
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        for company in Company.objects.filter(ticker="AAPL"):
+        for company in Company.objects.clean_companies():
             fix_update_financials_task.delay(company.id)

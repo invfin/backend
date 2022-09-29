@@ -60,7 +60,7 @@ def fix_information_incorrect_filed_task(company_id):
 @celery_app.task()
 def create_ttm_task(company_id):
     company = Company.objects.get(id=company_id)
-    UpdateCompany(company).create_ttm()
+    UpdateCompany(company).create_or_update_ttm()
 
 
 @celery_app.task()
