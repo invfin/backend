@@ -304,5 +304,5 @@ def fix_update_financials_task(company_id):
 
 @celery_app.task()
 def launch_fix_update_financials_task():
-    for company in Company.objects.clean_companies():
+    for company in Company.objects.filter_checkings_not_seen("launch_fix_update"):
         fix_update_financials_task.delay(company.id)
