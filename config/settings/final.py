@@ -8,7 +8,7 @@ if IS_PROD:
 
     # REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"] = ["rest_framework.renderers.JSONRenderer"]
 else:
-    if env("IS_TESTING", False):
+    if env.str("IS_TESTING", False):
         from .test import *
     else:
         from .local import *
