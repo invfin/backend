@@ -7,7 +7,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
     dependencies = [
         ("general", "0007_auto_20220903_1124"),
-        ("empresas", "0012_auto_20220929_1654"),
+        ("empresas", "0011_auto_20220831_2115"),
     ]
 
     operations = [
@@ -233,11 +233,6 @@ class Migration(migrations.Migration):
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
-            model_name="balancesheet",
-            name="is_ttm",
-            field=models.BooleanField(default=False),
-        ),
-        migrations.AddField(
             model_name="balancesheetyfinance",
             name="accounts_payable",
             field=models.FloatField(blank=True, default=0, null=True),
@@ -373,11 +368,6 @@ class Migration(migrations.Migration):
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
-            model_name="cashflowstatement",
-            name="is_ttm",
-            field=models.BooleanField(default=False),
-        ),
-        migrations.AddField(
             model_name="cashflowstatementyfinance",
             name="capital_expenditures",
             field=models.FloatField(blank=True, default=0, null=True),
@@ -483,18 +473,8 @@ class Migration(migrations.Migration):
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
-            model_name="companygrowth",
-            name="is_ttm",
-            field=models.BooleanField(default=False),
-        ),
-        migrations.AddField(
             model_name="eficiencyratio",
             name="from_average",
-            field=models.BooleanField(default=False),
-        ),
-        migrations.AddField(
-            model_name="eficiencyratio",
-            name="is_ttm",
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
@@ -503,28 +483,13 @@ class Migration(migrations.Migration):
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
-            model_name="enterprisevalueratio",
-            name="is_ttm",
-            field=models.BooleanField(default=False),
-        ),
-        migrations.AddField(
             model_name="freecashflowratio",
             name="from_average",
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
-            model_name="freecashflowratio",
-            name="is_ttm",
-            field=models.BooleanField(default=False),
-        ),
-        migrations.AddField(
             model_name="incomestatement",
             name="from_average",
-            field=models.BooleanField(default=False),
-        ),
-        migrations.AddField(
-            model_name="incomestatement",
-            name="is_ttm",
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
@@ -650,18 +615,8 @@ class Migration(migrations.Migration):
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
-            model_name="liquidityratio",
-            name="is_ttm",
-            field=models.BooleanField(default=False),
-        ),
-        migrations.AddField(
             model_name="marginratio",
             name="from_average",
-            field=models.BooleanField(default=False),
-        ),
-        migrations.AddField(
-            model_name="marginratio",
-            name="is_ttm",
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
@@ -670,18 +625,8 @@ class Migration(migrations.Migration):
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
-            model_name="nongaap",
-            name="is_ttm",
-            field=models.BooleanField(default=False),
-        ),
-        migrations.AddField(
             model_name="operationriskratio",
             name="from_average",
-            field=models.BooleanField(default=False),
-        ),
-        migrations.AddField(
-            model_name="operationriskratio",
-            name="is_ttm",
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
@@ -690,28 +635,13 @@ class Migration(migrations.Migration):
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
-            model_name="persharevalue",
-            name="is_ttm",
-            field=models.BooleanField(default=False),
-        ),
-        migrations.AddField(
             model_name="pricetoratio",
             name="from_average",
             field=models.BooleanField(default=False),
         ),
         migrations.AddField(
-            model_name="pricetoratio",
-            name="is_ttm",
-            field=models.BooleanField(default=False),
-        ),
-        migrations.AddField(
             model_name="rentabilityratio",
             name="from_average",
-            field=models.BooleanField(default=False),
-        ),
-        migrations.AddField(
-            model_name="rentabilityratio",
-            name="is_ttm",
             field=models.BooleanField(default=False),
         ),
     ]
