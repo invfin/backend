@@ -46,11 +46,11 @@ jobs:
           # name: Run lint
           # command: pylint apps/
       - run:
-          command: echo "ls $PWD"
+          command: ls -a
       - run:
-          command: echo "ls"
+          command: ls
       - run:
-          command: echo "ls -a"
+          command: echo | ls -a
       - run:
           name: Run tests
           # This assumes pytest is installed via the install-package step above
