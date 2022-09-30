@@ -15,6 +15,7 @@ from apps.users.example_tests.factories import UserFactory
 pytestmark = pytest.mark.django_db
 
 
+@pytest.mark.django_db
 class TestUserUpdateView:
     """
     TODO:
@@ -65,6 +66,7 @@ class TestUserUpdateView:
     #     assert messages_sent == ["Information successfully updated"]
 
 
+@pytest.mark.django_db
 class TestUserRedirectView:
     def test_get_redirect_url(self, user: User, rf: RequestFactory):
         view = UserRedirectView()
@@ -76,6 +78,7 @@ class TestUserRedirectView:
         assert view.get_redirect_url() == f"/users/{user.username}/"
 
 
+@pytest.mark.django_db
 class TestUserDetailView:
     def test_authenticated(self, user: User, rf: RequestFactory):
         request = rf.get("/fake-url/")

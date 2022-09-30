@@ -10,6 +10,7 @@ from apps.users.models import User
 pytestmark = pytest.mark.django_db
 
 
+@pytest.mark.django_db
 class TestUserAdminCreationForm:
     """
     Test class for all tests related to the UserAdminCreationForm

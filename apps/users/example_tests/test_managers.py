@@ -8,17 +8,18 @@ from django.test import TestCase
 pytestmark = pytest.mark.django_db
 
 from apps.users.managers import (
-CreditHistorialManager,
-ProfileManager,
-UserExtraManager,
+    CreditHistorialManager,
+    ProfileManager,
+    UserExtraManager,
 )
 
 users_vcr = vcr.VCR(
-    cassette_library_dir='cassettes/users/managers/',
-    path_transformer=vcr.VCR.ensure_suffix('.yaml'),
+    cassette_library_dir="cassettes/users/managers/",
+    path_transformer=vcr.VCR.ensure_suffix(".yaml"),
 )
 
 
+@pytest.mark.django_db
 class TestCreditHistorialManager:
     @classmethod
     def setup_class(cls):
@@ -31,6 +32,7 @@ class TestCreditHistorialManager:
         pass
 
 
+@pytest.mark.django_db
 class TestProfileManager:
     @classmethod
     def setup_class(cls):
@@ -40,6 +42,7 @@ class TestProfileManager:
         pass
 
 
+@pytest.mark.django_db
 class TestUserExtraManager:
     @classmethod
     def setup_class(cls):
@@ -47,4 +50,3 @@ class TestUserExtraManager:
 
     def test_get_or_create_quick_user(self):
         pass
-

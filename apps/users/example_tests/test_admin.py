@@ -6,6 +6,7 @@ from apps.users.models import User
 pytestmark = pytest.mark.django_db
 
 
+@pytest.mark.django_db
 class TestUserAdmin:
     def test_changelist(self, admin_client):
         url = reverse("admin:users_user_changelist")
