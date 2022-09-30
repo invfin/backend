@@ -1,17 +1,19 @@
 import pytest
 
-from django.test import TestCase 
+from django.test import RequestFactory
 
-pytestmark = pytest.mark.django_db, RequestFactory
 from django.contrib.sessions.middleware import SessionMiddleware
 
 from apps.seo.models import Visiteur
 from apps.seo.outils.visiteur_meta import SeoInformation
 
 
-class TestSeoInformation(TestCase):
+pytestmark = pytest.mark.django_db, RequestFactory
+
+
+class TestSeoInformation:
     @classmethod
-    def setUpTestData(cls):
+    def setup_class(cls):
         cls.request = RequestFactory().request()
         cls.request.META = {
             "HTTP_X_FORWARDED_FOR": "203.0.113.195, 70.41.3.18, 150.172.238.178",
@@ -23,15 +25,15 @@ class TestSeoInformation(TestCase):
 
     def test_get_client_ip(self):
         forwarded = SeoInformation.get_client_ip(self.request)
-        self.assertEqual("150.172.238.178", forwarded)
+        assert "150.172.238.178" == forwarded
 
         self.request.META.pop("HTTP_X_FORWARDED_FOR")
         real_ip = SeoInformation.get_client_ip(self.request)
-        self.assertEqual("162.158.50.77", real_ip)
+        assert "162.158.50.77" == real_ip
 
         self.request.META.pop("HTTP_X_REAL_IP")
         remote_addr = SeoInformation.get_client_ip(self.request)
-        self.assertEqual("198.456.53.65", remote_addr)
+        assert "198.456.53.65" == remote_addr
 
     def test_meta_information(self):
         meta_information = SeoInformation().meta_information(self.request)
@@ -41,7 +43,7 @@ class TestSeoInformation(TestCase):
             "location": expected_location,
             "ip": '162.158.50.77',
         }
-        self.assertEqual(expected_result, meta_information)
+        assert expected_result == meta_information
 
     def test_update_visiteur_session(self):
         # self.middleware.process_request(self.request)
@@ -49,70 +51,70 @@ class TestSeoInformation(TestCase):
         request = self.client.request()
         visiteur = SeoInformation().update_visiteur_session(self.visiteur, request)
         session = self.client.session
-        self.assertEqual(session["visiteur_id"], visiteur.id)
-        self.assertEqual(session.session_key, visiteur.session_id)
+        assert session["visiteur_id"] == visiteur.id
+        assert session.session_key == visiteur.session_id
 
     def test_get_visiteur_by_old_session(self):
         request = self.client.request()
         visiteur = SeoInformation().update_visiteur_session(self.visiteur, request)
         found_visiteur = SeoInformation().get_visiteur_by_old_session()
-        self.assertEqual(visiteur, found_visiteur)
+        assert visiteur == found_visiteur
 
         request = self.client.request()
         not_found_visiteur = SeoInformation().get_visiteur_by_old_session()
-        self.assertEqual(False, not_found_visiteur)
+        assert not_found_visiteur is False
 
     def test_find_visiteur(self):
         request = self.client.request()
         visiteur_found = SeoInformation().find_visiteur(request)
-        self.assertEqual("", visiteur_found.ip)
-        self.assertEqual("", visiteur_found.session_id)
-        self.assertEqual("", visiteur_found.country_code)
-        self.assertEqual("", visiteur_found.country_name)
-        self.assertEqual("", visiteur_found.dma_code)
-        self.assertEqual("", visiteur_found.is_in_european_union)
-        self.assertEqual("", visiteur_found.latitude)
-        self.assertEqual("", visiteur_found.longitude)
-        self.assertEqual("", visiteur_found.city)
-        self.assertEqual("", visiteur_found.region)
-        self.assertEqual("", visiteur_found.time_zone)
-        self.assertEqual("", visiteur_found.postal_code)
-        self.assertEqual("", visiteur_found.continent_code)
-        self.assertEqual("", visiteur_found.continent_name)
-        self.assertEqual("", visiteur_found.http_user_agent)
+        assert "" == visiteur_found.ip
+        assert "" == visiteur_found.session_id
+        assert "" == visiteur_found.country_code
+        assert "" == visiteur_found.country_name
+        assert "" == visiteur_found.dma_code
+        assert "" == visiteur_found.is_in_european_union
+        assert "" == visiteur_found.latitude
+        assert "" == visiteur_found.longitude
+        assert "" == visiteur_found.city
+        assert "" == visiteur_found.region
+        assert "" == visiteur_found.time_zone
+        assert "" == visiteur_found.postal_code
+        assert "" == visiteur_found.continent_code
+        assert "" == visiteur_found.continent_name
+        assert "" == visiteur_found.http_user_agent
 
         visiteur = SeoInformation().find_visiteur(request)
-        self.assertEqual("", visiteur.ip)
-        self.assertEqual("", visiteur.session_id)
-        self.assertEqual("", visiteur.country_code)
-        self.assertEqual("", visiteur.country_name)
-        self.assertEqual("", visiteur.dma_code)
-        self.assertEqual("", visiteur.is_in_european_union)
-        self.assertEqual("", visiteur.latitude)
-        self.assertEqual("", visiteur.longitude)
-        self.assertEqual("", visiteur.city)
-        self.assertEqual("", visiteur.region)
-        self.assertEqual("", visiteur.time_zone)
-        self.assertEqual("", visiteur.postal_code)
-        self.assertEqual("", visiteur.continent_code)
-        self.assertEqual("", visiteur.continent_name)
-        self.assertEqual("", visiteur.http_user_agent)
+        assert "" == visiteur.ip
+        assert "" == visiteur.session_id
+        assert "" == visiteur.country_code
+        assert "" == visiteur.country_name
+        assert "" == visiteur.dma_code
+        assert "" == visiteur.is_in_european_union
+        assert "" == visiteur.latitude
+        assert "" == visiteur.longitude
+        assert "" == visiteur.city
+        assert "" == visiteur.region
+        assert "" == visiteur.time_zone
+        assert "" == visiteur.postal_code
+        assert "" == visiteur.continent_code
+        assert "" == visiteur.continent_name
+        assert "" == visiteur.http_user_agent
 
     def test_create_visiteur(self):
         request = self.client.request()
         visiteur = SeoInformation().create_visiteur(request)
-        self.assertEqual("", visiteur.ip)
-        self.assertEqual("", visiteur.session_id)
-        self.assertEqual("", visiteur.country_code)
-        self.assertEqual("", visiteur.country_name)
-        self.assertEqual("", visiteur.dma_code)
-        self.assertEqual("", visiteur.is_in_european_union)
-        self.assertEqual("", visiteur.latitude)
-        self.assertEqual("", visiteur.longitude)
-        self.assertEqual("", visiteur.city)
-        self.assertEqual("", visiteur.region)
-        self.assertEqual("", visiteur.time_zone)
-        self.assertEqual("", visiteur.postal_code)
-        self.assertEqual("", visiteur.continent_code)
-        self.assertEqual("", visiteur.continent_name)
-        self.assertEqual("", visiteur.http_user_agent)
+        assert "" == visiteur.ip
+        assert "" == visiteur.session_id
+        assert "" == visiteur.country_code
+        assert "" == visiteur.country_name
+        assert "" == visiteur.dma_code
+        assert "" == visiteur.is_in_european_union
+        assert "" == visiteur.latitude
+        assert "" == visiteur.longitude
+        assert "" == visiteur.city
+        assert "" == visiteur.region
+        assert "" == visiteur.time_zone
+        assert "" == visiteur.postal_code
+        assert "" == visiteur.continent_code
+        assert "" == visiteur.continent_name
+        assert "" == visiteur.http_user_agent

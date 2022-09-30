@@ -1,6 +1,7 @@
+import pytest
+
 from django.contrib.auth import get_user_model
 from django.test import RequestFactory
-from rest_framework import status
 from rest_framework.test import APITestCase
 
 from bfet import DjangoTestingModel as DTM
@@ -18,11 +19,12 @@ from apps.roboadvisor.views import RoboAdvisorResultView
 
 
 User = get_user_model()
+pytestmark = pytest.mark.django_db
 
 
 class TestInvoicesAllAPI(APITestCase):
     def setUp(self):
-        self.user = DTM.create()
+        self.user = DTM.create(User)
         self.company = DTM.create(Company)
 
     def test_roboadvisor_question_company_analysis_API_view(self, rf: RequestFactory):

@@ -1,28 +1,26 @@
 import time
 import vcr
-from unittest import skip
-
 import pytest
 
-from django.test import TestCase
-
+from unittest import skip
 from bfet import DjangoTestingModel as DTM
+
 from apps.empresas.outils.update import UpdateCompany
 from apps.empresas.models import Company
 from apps.empresas.tests import finprep_data as data
+
 
 company_vcr = vcr.VCR(
     cassette_library_dir="cassettes/company/",
     path_transformer=vcr.VCR.ensure_suffix(".yaml"),
 )
-
 pytestmark = pytest.mark.django_db
 
 
 @skip("Don't want to test")
-class TestScrapCompanyInfo(TestCase):
+class TestScrapCompanyInfo:
     @classmethod
-    def setUpTestData(cls) -> None:
+    def setup_class(cls) -> None:
         cls.company = DTM.create(Company)
         cls.company_update = UpdateCompany(cls.company)
         cls.company.inc_statements.create(date=2018)
@@ -31,12 +29,12 @@ class TestScrapCompanyInfo(TestCase):
     @company_vcr.use_cassette
     def test_need_update(self):
         need_update = self.company_update.check_last_filing()
-        self.assertEqual(need_update, "need update")
+        assert(need_update, "need update")
 
         company2_update = UpdateCompany(self.company)
         self.company.inc_statements.create(date=2021)
         need_update2 = company2_update.check_last_filing()
-        self.assertEqual(need_update2, "updated")
+        assert(need_update2, "updated")
 
     def test_all_data(self):
         current_data = self.company_update.generate_current_data(
@@ -76,19 +74,19 @@ class TestScrapCompanyInfo(TestCase):
 
         rentability_ratios = self.company_update.calculate_rentability_ratios(all_data)
 
-        self.assertEqual(self.company.inc_statements.count(), 1)
-        self.assertEqual(self.company.stock_prices.count(), 0)
-        self.assertEqual(self.company.rentability_ratios.count(), 0)
-        self.assertEqual(self.company.liquidity_ratios.count(), 0)
-        self.assertEqual(self.company.margins.count(), 0)
-        self.assertEqual(self.company.fcf_ratios.count(), 0)
-        self.assertEqual(self.company.per_share_values.count(), 0)
-        self.assertEqual(self.company.non_gaap_figures.count(), 0)
-        self.assertEqual(self.company.operation_risks_ratios.count(), 0)
-        self.assertEqual(self.company.price_to_ratios.count(), 0)
-        self.assertEqual(self.company.ev_ratios.count(), 0)
-        self.assertEqual(self.company.efficiency_ratios.count(), 0)
-        self.assertEqual(self.company.growth_rates.count(), 0)
+        assert(self.company.inc_statements.count() == 1)
+        assert(self.company.stock_prices.count() == 0)
+        assert(self.company.rentability_ratios.count() == 0)
+        assert(self.company.liquidity_ratios.count() == 0)
+        assert(self.company.margins.count() == 0)
+        assert(self.company.fcf_ratios.count() == 0)
+        assert(self.company.per_share_values.count() == 0)
+        assert(self.company.non_gaap_figures.count() == 0)
+        assert(self.company.operation_risks_ratios.count() == 0)
+        assert(self.company.price_to_ratios.count() == 0)
+        assert(self.company.ev_ratios.count() == 0)
+        assert(self.company.efficiency_ratios.count() == 0)
+        assert(self.company.growth_rates.count() == 0)
 
         created_current_stock_price = self.company_update.create_current_stock_price(price=current_data["currentPrice"])
         created_rentability_ratios = self.company_update.create_rentability_ratios(rentability_ratios)
@@ -103,33 +101,33 @@ class TestScrapCompanyInfo(TestCase):
         created_eficiency_ratio = self.company_update.create_eficiency_ratio(eficiency_ratio)
         created_company_growth = self.company_update.create_company_growth(company_growth)
 
-        self.assertEqual(created_current_stock_price.price, current_data["currentPrice"])
+        assert(created_current_stock_price.price, current_data["currentPrice"])
 
-        self.assertEqual(self.company.stock_prices.latest().price, current_data["currentPrice"])
-        self.assertEqual(self.company.rentability_ratios.latest(), created_rentability_ratios)
-        self.assertEqual(self.company.liquidity_ratios.latest(), created_liquidity_ratio)
-        self.assertEqual(self.company.margins.latest(), created_margin_ratio)
-        self.assertEqual(self.company.fcf_ratios.latest(), created_fcf_ratio)
-        self.assertEqual(self.company.per_share_values.latest(), created_ps_value)
-        self.assertEqual(self.company.non_gaap_figures.latest(), created_non_gaap)
-        self.assertEqual(self.company.operation_risks_ratios.latest(), created_operation_risk_ratio)
-        self.assertEqual(self.company.price_to_ratios.latest(), created_price_to_ratio)
-        self.assertEqual(self.company.ev_ratios.latest(), created_enterprise_value_ratio)
-        self.assertEqual(self.company.efficiency_ratios.latest(), created_eficiency_ratio)
-        self.assertEqual(self.company.growth_rates.latest(), created_company_growth)
+        assert(self.company.stock_prices.latest().price == current_data["currentPrice"])
+        assert(self.company.rentability_ratios.latest() == created_rentability_ratios)
+        assert(self.company.liquidity_ratios.latest() == created_liquidity_ratio)
+        assert(self.company.margins.latest() == created_margin_ratio)
+        assert(self.company.fcf_ratios.latest() == created_fcf_ratio)
+        assert(self.company.per_share_values.latest() == created_ps_value)
+        assert(self.company.non_gaap_figures.latest() == created_non_gaap)
+        assert(self.company.operation_risks_ratios.latest() == created_operation_risk_ratio)
+        assert(self.company.price_to_ratios.latest() == created_price_to_ratio)
+        assert(self.company.ev_ratios.latest() == created_enterprise_value_ratio)
+        assert(self.company.efficiency_ratios.latest() == created_eficiency_ratio)
+        assert(self.company.growth_rates.latest() == created_company_growth)
 
-        self.assertEqual(self.company.stock_prices.count(), 1)
-        self.assertEqual(self.company.rentability_ratios.count(), 1)
-        self.assertEqual(self.company.liquidity_ratios.count(), 1)
-        self.assertEqual(self.company.margins.count(), 1)
-        self.assertEqual(self.company.fcf_ratios.count(), 1)
-        self.assertEqual(self.company.per_share_values.count(), 1)
-        self.assertEqual(self.company.non_gaap_figures.count(), 1)
-        self.assertEqual(self.company.operation_risks_ratios.count(), 1)
-        self.assertEqual(self.company.price_to_ratios.count(), 1)
-        self.assertEqual(self.company.ev_ratios.count(), 1)
-        self.assertEqual(self.company.efficiency_ratios.count(), 1)
-        self.assertEqual(self.company.growth_rates.count(), 1)
+        assert(self.company.stock_prices.count() == 1)
+        assert(self.company.rentability_ratios.count() == 1)
+        assert(self.company.liquidity_ratios.count() == 1)
+        assert(self.company.margins.count() == 1)
+        assert(self.company.fcf_ratios.count() == 1)
+        assert(self.company.per_share_values.count() == 1)
+        assert(self.company.non_gaap_figures.count() == 1)
+        assert(self.company.operation_risks_ratios.count() == 1)
+        assert(self.company.price_to_ratios.count() == 1)
+        assert(self.company.ev_ratios.count() == 1)
+        assert(self.company.efficiency_ratios.count() == 1)
+        assert(self.company.growth_rates.count() == 1)
 
     def test_requests(self):
         up_comp = UpdateCompany(self.zinga)

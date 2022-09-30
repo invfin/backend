@@ -1,5 +1,4 @@
 import json
-
 import pytest
 
 from django.urls import reverse
@@ -18,14 +17,15 @@ from apps.empresas.models import IncomeStatement, BalanceSheet, CashflowStatemen
 
 pytestmark = pytest.mark.django_db
 
+
 class TestExcelAPIIncome(BaseAPIViewTest, APITestCase):
     path_name = "empresas:ExcelAPIIncome"
     url_path = "/company-information/excel-api/income"
     params = {"ticker": "AAPL"}
 
     @classmethod
-    def setUpTestData(cls) -> None:
-        super().setUpTestData()
+    def setup_class(cls) -> None:
+        super().setup_class()
         cls.statement = DTM.create(
             IncomeStatement,
             company=DTM.create(Company, name="Apple", ticker="AAPL"),
@@ -35,12 +35,12 @@ class TestExcelAPIIncome(BaseAPIViewTest, APITestCase):
     # def test_number_of_queries(self):
     #     with CaptureQueriesContext(connection) as ctx:
     #         self.client.get(self.endpoint)
-    #     self.assertEqual(len(ctx), 6)
+    #     assert(len(ctx), 6)
 
     def test_success_response(self):
         response = self.client.get(self.full_endpoint, format="json")
-        self.assertDictEqual(
-            json.loads(json.dumps(response.data))[0],
+        assert(
+            json.loads(json.dumps(response.data))[0] ==
             {
                 "date": self.statement.date,
                 "reported_currency": self.statement.reported_currency,
@@ -74,8 +74,8 @@ class TestExcelAPIBalance(BaseAPIViewTest, APITestCase):
     params = {"ticker": "AAPL"}
 
     @classmethod
-    def setUpTestData(cls) -> None:
-        super().setUpTestData()
+    def setup_class(cls) -> None:
+        super().setup_class()
         cls.statement = DTM.create(
             BalanceSheet,
             company=DTM.create(Company, name="Apple", ticker="AAPL"),
@@ -84,8 +84,8 @@ class TestExcelAPIBalance(BaseAPIViewTest, APITestCase):
 
     def test_success_response(self):
         response = self.client.get(self.full_endpoint, format="json")
-        self.assertDictEqual(
-            json.loads(json.dumps(response.data))[0],
+        assert(
+            json.loads(json.dumps(response.data))[0] ==
             {
                 "date": self.statement.date,
                 "reported_currency": self.statement.reported_currency,
@@ -138,8 +138,8 @@ class TestExcelAPICashflow(BaseAPIViewTest, APITestCase):
     params = {"ticker": "AAPL"}
 
     @classmethod
-    def setUpTestData(cls) -> None:
-        super().setUpTestData()
+    def setup_class(cls) -> None:
+        super().setup_class()
         cls.statement = DTM.create(
             CashflowStatement,
             company=DTM.create(Company, name="Apple", ticker="AAPL"),
@@ -148,8 +148,8 @@ class TestExcelAPICashflow(BaseAPIViewTest, APITestCase):
 
     def test_success_response(self):
         response = self.client.get(self.full_endpoint, format="json")
-        self.assertDictEqual(
-            json.loads(json.dumps(response.data))[0],
+        assert(
+            json.loads(json.dumps(response.data))[0] ==
             {
                 "date": self.statement.date,
                 "reported_currency": self.statement.reported_currency,

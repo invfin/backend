@@ -51,7 +51,7 @@ class BaseAPIViewTest:
     server_problem_error_message: str = "Lo siento ha habido un problema"
 
     @classmethod
-    def setUpTestData(cls) -> None:
+    def setup_class(cls) -> None:
         cls.auth_user = DTM.create(get_user_model())
         cls.user_sub_key = DTM.create(Key, user=cls.auth_user, in_use=True)
 
@@ -76,21 +76,21 @@ class BaseAPIViewTest:
                     self.client.generic(verb, self.full_endpoint).status_code,
                     status.HTTP_405_METHOD_NOT_ALLOWED,
                 )
-                self.assertEqual(
+                assert(
                     self.client.generic(verb, self.full_endpoint).status_code,
                     status.HTTP_200_OK,
                 )
 
         for verb in HTTP_VERBS - self.allowed_verbs:
             with self.subTest(f"Testing {verb}"):
-                self.assertEqual(
+                assert(
                     self.client.generic(verb, self.full_endpoint).status_code,
                     # status.HTTP_405_METHOD_NOT_ALLOWED,
                     status.HTTP_403_FORBIDDEN,
                 )
 
     def test_url(self):
-        self.assertEqual(self.endpoint, self.url_path)
+        assert(self.endpoint, self.url_path)
 
     @skip("Skipping")
     def test_no_auth(self):
@@ -101,7 +101,7 @@ class BaseAPIViewTest:
         Add key not allowed
         """
         response = self.client.get(self.full_endpoint_no_auth)
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        assert(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertDictEqual(
             response.data, {"detail": ErrorDetail(string=self.no_key_error_message, code="permission_denied")}
         )
@@ -113,7 +113,7 @@ class BaseAPIViewTest:
         Mock the request to assert en error
         """
         response = self.client.get(self.endpoint_key)
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
+        assert(response.status_code, status.HTTP_403_FORBIDDEN)
         self.assertDictEqual(
             response.data, {"detail": ErrorDetail(string=self.server_problem_error_message, code="permission_denied")}
         )
@@ -127,7 +127,7 @@ class BaseAPIViewTest:
         if self.params:
             response = self.client.get(self.endpoint_key)
             print(response.data)
-            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+            assert(response.status_code, status.HTTP_400_BAD_REQUEST)
             self.assertDictEqual(
                 response.data, {"detail": ErrorDetail(string=self.no_param_error_messages, code="parse_error")}
             )
@@ -145,7 +145,7 @@ class BaseAPIViewTest:
                     params["bad"] = params.pop(key)
                     params = urllib.parse.urlencode(params)
                     response = self.client.get(f"{self.endpoint_key}&{params}")
-                    self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
+                    assert(response.status_code, status.HTTP_400_BAD_REQUEST)
                     self.assertDictEqual(
                         response.data,
                         {"detail": ErrorDetail(string=self.wrong_param_error_message, code="parse_error")},
@@ -159,11 +159,11 @@ class BaseAPIViewTest:
                     params[key] = "random"
                     params = urllib.parse.urlencode(params)
                     response = self.client.get(f"{self.endpoint_key}&{params}")
-                    self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
+                    assert(response.status_code, status.HTTP_404_NOT_FOUND)
                     self.assertDictEqual(
                         response.data, {"detail": ErrorDetail(string=self.not_found_error_messages, code="not_found")}
                     )
 
     def test_success(self):
         response = self.client.get(self.full_endpoint)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        assert(response.status_code, status.HTTP_200_OK)

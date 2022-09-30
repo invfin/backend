@@ -2,20 +2,19 @@ from datetime import datetime, timedelta
 
 import pytest
 
-from django.test import TestCase 
-
-pytestmark = pytest.mark.django_db
-
 from apps.web.utils import more_than_month
 
 
-class TestUtils(TestCase):
+pytestmark = pytest.mark.django_db
+
+
+class TestUtils:
     def test_more_than_month(self):
         now_less_ten = datetime.now() - timedelta(10)
-        self.assertFalse(more_than_month(now_less_ten))
+        assert more_than_month(now_less_ten) is False
 
         now_less_twenty = datetime.now() - timedelta(20)
-        self.assertFalse(more_than_month(now_less_twenty))
+        assert more_than_month(now_less_twenty) is False
 
         now_less_thirty = datetime.now() - timedelta(40)
-        self.assertTrue(more_than_month(now_less_thirty))
+        assert more_than_month(now_less_thirty) is True

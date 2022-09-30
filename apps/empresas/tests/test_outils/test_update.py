@@ -1,9 +1,5 @@
 import pytest
 
-from django.test import TestCase 
-
-pytestmark = pytest.mark.django_db
-
 from bfet import DjangoTestingModel as DTM, DataCreator
 
 from apps.general import constants
@@ -25,10 +21,12 @@ from apps.empresas.models import (
     CashflowStatement,
 )
 
+pytestmark = pytest.mark.django_db
 
-class TestUpdateCompany(TestCase):
+
+class TestUpdateCompany:
     @classmethod
-    def setUpTestData(cls):
+    def setup_class(cls):
         cls.company = DTM.create(Company, ticker="INTC", name="Intel")
         cls.period = DTM.create(Period, year=2021, period=constants.PERIOD_FOR_YEAR)
         cls.currency = DTM.create(Currency)
@@ -78,18 +76,18 @@ class TestUpdateCompany(TestCase):
         cls.cf_st_yfinance = DTM.create(CashflowStatementYFinance, company=cls.company, period=cls.period)
 
     def test_update_average_financials_statements(self):
-        self.assertEqual(0, IncomeStatement.objects.all().count())
-        self.assertEqual(0, BalanceSheet.objects.all().count())
-        self.assertEqual(0, CashflowStatement.objects.all().count())
+        assert(0 == IncomeStatement.objects.all().count())
+        assert(0 == BalanceSheet.objects.all().count())
+        assert(0 == CashflowStatement.objects.all().count())
         UpdateCompany(self.company).update_average_financials_statements(self.period)
-        self.assertEqual(1, IncomeStatement.objects.all().count())
-        self.assertEqual(1, BalanceSheet.objects.all().count())
-        self.assertEqual(1, CashflowStatement.objects.all().count())
+        assert(1 == IncomeStatement.objects.all().count())
+        assert(1 == BalanceSheet.objects.all().count())
+        assert(1 == CashflowStatement.objects.all().count())
 
     def test_create_ttm(self):
-        self.assertEqual(0, IncomeStatement.objects.filter(is_ttm=True).count())
-        self.assertEqual(0, BalanceSheet.objects.filter(is_ttm=True).count())
-        self.assertEqual(0, CashflowStatement.objects.filter(is_ttm=True).count())
+        assert(0 == IncomeStatement.objects.filter(is_ttm=True).count())
+        assert(0 == BalanceSheet.objects.filter(is_ttm=True).count())
+        assert(0 == CashflowStatement.objects.filter(is_ttm=True).count())
         periods = [
             DTM.create(Period, year=2021, period=constants.PERIOD_2_QUARTER),
             DTM.create(Period, year=2021, period=constants.PERIOD_3_QUARTER),
@@ -102,13 +100,13 @@ class TestUpdateCompany(TestCase):
             DTM.create(CashflowStatement, company=self.company, period=period, date=period.year, is_ttm=False)
 
         UpdateCompany(self.company).create_ttm()
-        self.assertEqual(1, IncomeStatement.objects.filter(is_ttm=True).count())
-        self.assertEqual(1, BalanceSheet.objects.filter(is_ttm=True).count())
-        self.assertEqual(1, CashflowStatement.objects.filter(is_ttm=True).count())
+        assert(1 == IncomeStatement.objects.filter(is_ttm=True).count())
+        assert(1 == BalanceSheet.objects.filter(is_ttm=True).count())
+        assert(1 == CashflowStatement.objects.filter(is_ttm=True).count())
 
         income_statement = IncomeStatement.objects.filter(is_ttm=True).first()
         balance_sheet = BalanceSheet.objects.filter(is_ttm=True).first()
         cashflow_statement = CashflowStatement.objects.filter(is_ttm=True).first()
-        self.assertEqual(2022, income_statement.year)
-        self.assertEqual(2022, balance_sheet.year)
-        self.assertEqual(2022, cashflow_statement.year)
+        assert(2022 == income_statement.year)
+        assert(2022 == balance_sheet.year)
+        assert(2022 == cashflow_statement.year)

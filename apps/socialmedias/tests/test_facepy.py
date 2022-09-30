@@ -3,7 +3,7 @@ import vcr
 from django.conf import settings
 import pytest
 
-from django.test import TestCase 
+from django.test import TestCase
 
 pytestmark = pytest.mark.django_db
 
@@ -33,9 +33,9 @@ facebook_vcr = vcr.VCR(
 )
 
 
-class TestFacePoster(TestCase):
+class TestFacePoster:
     @classmethod
-    def setUpTestData(cls):
+    def setup_class(cls):
         cls.facebook_poster = Facebook(settings.NEW_FACEBOOK_ID, settings.NEW_FB_PAGE_ACCESS_TOKEN)
         cls.company = AppleExample.return_example()
         GenerateSocialmediasExample.generate_all()

@@ -7,7 +7,7 @@ pytestmark = pytest.mark.django_db
 
 class TestValuation:
 
-    def test_discounted_cashflow():
+    def test_discounted_cashflow(self):
         assert 11.29 == discounted_cashflow(
             last_revenue=6464164,
             revenue_growth=13,

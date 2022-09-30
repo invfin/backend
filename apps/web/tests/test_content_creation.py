@@ -1,10 +1,6 @@
-from bfet import DjangoTestingModel as DTM
-
 import pytest
 
-from django.test import TestCase 
-
-pytestmark = pytest.mark.django_db
+from bfet import DjangoTestingModel as DTM
 
 from apps.web.outils.content_creation import WebsiteContentCreation
 from apps.socialmedias.models import DefaultContent, DefaultTilte, Emoji
@@ -16,9 +12,12 @@ from apps.web.models import (
 )
 
 
-class TestWebsiteContentCreation(TestCase):
+pytestmark = pytest.mark.django_db
+
+
+class TestWebsiteContentCreation:
     @classmethod
-    def setUpTestData(cls) -> None:
+    def setup_class(cls) -> None:
         cls.filters = {
             "for_content": social_constants.WEB,
             "purpose": web_constants.CONTENT_FOR_ENGAGEMENT
@@ -39,34 +38,34 @@ class TestWebsiteContentCreation(TestCase):
         custom_title = "Custom title"
         custom_dict = WebsiteContentCreation.create_title(custom_title)
         custom_expected_result = {"title": custom_title}
-        self.assertEqual(custom_dict, custom_expected_result)
+        assert custom_dict == custom_expected_result
 
         default_dict = WebsiteContentCreation.create_title(filter=self.filters)
         default_expected_result = {
             "title": self.title.title,
             "default_title": self.title
         }
-        self.assertEqual(default_dict, default_expected_result)
+        assert default_dict == default_expected_result
 
     def test_create_content(self):
         custom_content = "Custom custom_content"
         custom_dict = WebsiteContentCreation.create_content(custom_content)
         custom_expected_result = {"content": custom_content}
-        self.assertEqual(custom_dict, custom_expected_result)
+        assert custom_dict == custom_expected_result
 
         default_dict = WebsiteContentCreation.create_content(filter=self.filters)
         default_expected_result = {
             "content": self.content.content,
             "default_content": self.content
         }
-        self.assertEqual(default_dict, default_expected_result)
+        assert default_dict == default_expected_result
 
     def test_create_emojis(self):
         emojis = WebsiteContentCreation.create_emojis()
         emoji_1 = emojis[0]
         emoji_2 = emojis[1]
-        self.assertTrue(emoji_1 in self.emojis)
-        self.assertTrue(emoji_2 in self.emojis)
+        assert emoji_1 in self.emojis
+        assert emoji_2 in self.emojis
 
     def test_create_save_email(self):
         web_email_type = web_constants.CONTENT_FOR_ENGAGEMENT
@@ -99,10 +98,10 @@ class TestWebsiteContentCreation(TestCase):
             web_email_type
         )
 
-        self.assertEqual(expected_web_email.title, web_email.title)
-        self.assertEqual(expected_web_email.content, web_email.content)
-        self.assertEqual(expected_web_email.default_title, web_email.default_title)
-        self.assertEqual(expected_web_email.default_content, web_email.default_content)
-        self.assertEqual(expected_web_email.title_emojis, web_email.title_emojis)
-        self.assertEqual(expected_web_email.sent, web_email.sent)
-        self.assertEqual(expected_web_email.date_to_send, web_email.date_to_send)
+        assert expected_web_email.title == web_email.title
+        assert expected_web_email.content == web_email.content
+        assert expected_web_email.default_title == web_email.default_title
+        assert expected_web_email.default_content == web_email.default_content
+        assert expected_web_email.title_emojis == web_email.title_emojis
+        assert expected_web_email.sent == web_email.sent
+        assert expected_web_email.date_to_send == web_email.date_to_send

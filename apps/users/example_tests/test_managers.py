@@ -3,7 +3,7 @@ from model_bakery import baker
 
 import pytest
 
-from django.test import TestCase 
+from django.test import TestCase
 
 pytestmark = pytest.mark.django_db
 
@@ -19,32 +19,32 @@ users_vcr = vcr.VCR(
 )
 
 
-class TestCreditHistorialManager(TestCase):
+class TestCreditHistorialManager:
     @classmethod
-    def setUpTestData(cls):
+    def setup_class(cls):
         pass
-    
+
     def test_check_enought_credits(self):
         pass
-    
+
     def test_update_credits(self):
         pass
-    
 
-class TestProfileManager(TestCase):
+
+class TestProfileManager:
     @classmethod
-    def setUpTestData(cls):
+    def setup_class(cls):
         pass
-    
+
     def test_create_ref_code(self):
         pass
-    
 
-class TestUserExtraManager(TestCase):
+
+class TestUserExtraManager:
     @classmethod
-    def setUpTestData(cls):
+    def setup_class(cls):
         pass
-    
+
     def test_get_or_create_quick_user(self):
         pass
-    
+

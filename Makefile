@@ -142,8 +142,35 @@ pycov:
 	docker-compose -f local.yml run --rm invfin coverage report
 
 # Style
+local/flake8:
+	flake8
+
+local/isort:
+	isort .
+
+local/mypy:
+	mypy ${MYPY_FOLDERS}
+
+local/isort_check:
+	isort --df -c .
+
+local/black:
+	black ${BLACK_FOLDERS}
+
+local/black_check:
+	black ${BLACK_FOLDERS} --check
+
+local/format:
+	local/isort local/black local/flake8 local/mypy
+
 format:
-	docker-compose -f local.yml run invfin flake8 && isort . && black ${BLACK_FOLDERS}
+	docker-compose -f local.yml run --rm invfin make local/format
+
+isort_check:
+	docker-compose -f local.yml run --rm invfin make local/isort_check
+
+black_check:
+	docker-compose -f local.yml run --rm invfin black local/black_check
 
 flake8:
 	docker-compose -f local.yml run --rm invfin make local/flake8
@@ -156,32 +183,3 @@ black:
 
 mypy:
 	docker-compose -f local.yml run --rm invfin local/mypy
-
-local/flake8:
-	flake8
-
-local/isort:
-	isort .
-
-local/mypy:
-	mypy ${MYPY_FOLDERS}
-
-local/format: local/isort local/black local/flake8 local/djlint local/mypy
-
-format:
-	docker-compose -f local.yml run --rm invfin make local/format
-
-isort_check:
-	docker-compose -f local.yml run --rm invfin make local/isort_check
-
-local/isort_check:
-	isort --df -c .
-
-local/black:
-	black ${BLACK_FOLDERS}
-
-black_check:
-	docker-compose -f local.yml run --rm invfin black local/black_check
-
-local/black_check:
-	black ${BLACK_FOLDERS} --check

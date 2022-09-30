@@ -1,11 +1,8 @@
 import pytest
 
-from django.test import TestCase 
-
 from bfet import DjangoTestingModel as DTM
 
 from apps.general.models import Sector, Industry
-
 from apps.empresas.models import (
     Company,
     Exchange,
@@ -16,9 +13,9 @@ from apps.empresas.models import (
 pytestmark = pytest.mark.django_db
 
 
-class TestCompanyManagers(TestCase):
+class TestCompanyManagers:
     @classmethod
-    def setUpTestData(cls):
+    def setup_class(cls):
         cls.sector = DTM.create(
             Sector,
             sector='sector'
@@ -122,48 +119,48 @@ class TestCompanyManagers(TestCase):
         )
 
     def test_filter_checkings(self):
-        self.assertEqual(
-            [self.zinga],
+        assert(
+            [self.zinga] ==
             list(Company.objects.filter_checkings("institutionals", True))
         )
-        self.assertEqual(
-            [self.apple, self.google, self.intel],
+        assert(
+            [self.apple, self.google, self.intel] ==
             list(Company.objects.filter_checkings("institutionals", False))
         )
 
     def test_companies_by_main_exchange(self):
-        self.assertEqual(
-            [self.apple, self.google, self.zinga],
+        assert(
+            [self.apple, self.google, self.zinga] ==
             list(Company.objects.companies_by_main_exchange("Estados Unidos"))
         )
 
     def test_clean_companies(self):
-        self.assertEqual(
-            [self.apple, self.google, self.zinga],
+        assert(
+            [self.apple, self.google, self.zinga] ==
             list(Company.objects.clean_companies())
         )
 
     def test_clean_companies_by_main_exchange(self):
-        self.assertEqual(
-            [self.apple, self.google, self.zinga],
+        assert(
+            [self.apple, self.google, self.zinga] ==
             list(Company.objects.clean_companies_by_main_exchange("Estados Unidos"))
         )
 
     def test_complete_companies_by_main_exchange(self):
-        self.assertEqual(
-            [self.apple, self.google],
+        assert(
+            [self.apple, self.google] ==
             list(Company.objects.complete_companies_by_main_exchange("Estados Unidos"))
         )
 
     def test_get_similar_companies(self):
-        self.assertEqual(
-            [self.apple, self.google],
+        assert(
+            [self.apple, self.google] ==
             list(Company.objects.get_similar_companies(self.sector.id, self.industry.id))
         )
 
     def test_clean_companies_to_update(self):
-        self.assertEqual(
-            [self.google],
+        assert(
+            [self.google] ==
             list(Company.objects.clean_companies_to_update("Estados Unidos"))
         )
 

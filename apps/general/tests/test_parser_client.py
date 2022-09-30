@@ -1,15 +1,14 @@
 import pytest
 
-from django.test import TestCase 
-
-pytestmark = pytest.mark.django_db
-
 from apps.general.outils.parser_client import ParserClient
 
 
-class TestParserClient(TestCase):
+pytestmark = pytest.mark.django_db
+
+
+class TestParserClient:
     @classmethod
-    def setUpTestData(cls) -> None:
+    def setup_class(cls) -> None:
         cls.parser_client = ParserClient()
         cls.parser_client.base_path = "https://www.google.com/"
         cls.parser_client.api_version = None
@@ -28,20 +27,20 @@ class TestParserClient(TestCase):
             'https://www.google.com/search?q=galletas&oq=galletas'
             '&aqs=chrome..69i57.1073j0j1&sourceid=chrome&ie=UTF-8'
         )
-        self.assertEqual(
-            f"https://www.google.com/{self.path}",
+        assert(
+            f"https://www.google.com/{self.path}" ==
             self.parser_client._build_full_path(self.path)
         )
-        self.assertEqual(
-            f"https://www.google.com/V6/{self.path}",
+        assert(
+            f"https://www.google.com/V6/{self.path}" ==
             self.parser_client._build_full_path(self.path, "V6", )
         )
-        self.assertEqual(
-            f"https://www.google.com/V6/{self.path}/str-params",
+        assert(
+            f"https://www.google.com/V6/{self.path}/str-params" ==
             self.parser_client._build_full_path(self.path, "V6", "str-params")
         )
-        self.assertEqual(
-            multiple_params_url,
+        assert(
+            multiple_params_url ==
             self.parser_client._build_full_path(self.path, None, None, **self.dict_params)
         )
         multiple_params_url_with_auth = (
@@ -49,7 +48,7 @@ class TestParserClient(TestCase):
             '&aqs=chrome..69i57.1073j0j1&sourceid=chrome&ie=UTF-8'
         )
         self.parser_client.auth = {"token": "password"}
-        self.assertEqual(
-            multiple_params_url_with_auth,
+        assert(
+            multiple_params_url_with_auth ==
             self.parser_client._build_full_path(self.path, None, None, **self.dict_params)
         )

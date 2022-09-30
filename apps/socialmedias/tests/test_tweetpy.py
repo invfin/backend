@@ -1,10 +1,5 @@
 import vcr
-
 import pytest
-
-from django.test import TestCase 
-
-pytestmark = pytest.mark.django_db
 
 from apps.empresas.models import Company
 from apps.escritos.models import Term
@@ -24,15 +19,17 @@ from ..poster import SocialPosting
 from .factories import DefaultTilteFactory, EmojiFactory, HashtagFactory
 
 
+pytestmark = pytest.mark.django_db
+
 twitter_vcr = vcr.VCR(
     cassette_library_dir='cassettes/twitter/',
     path_transformer=vcr.VCR.ensure_suffix('.yaml'),
 )
 
 
-class PosterTest(TestCase):
+class TestPoster:
     @classmethod
-    def setUpTestData(cls) -> None:
+    def setup_class(cls) -> None:
         cls.term = Term.objects.create(
             title='term',
             resume='resumen',

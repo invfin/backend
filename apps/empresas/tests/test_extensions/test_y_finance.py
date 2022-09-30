@@ -1,9 +1,5 @@
 import pytest
 
-from django.test import TestCase 
-
-pytestmark = pytest.mark.django_db
-
 from bfet import DjangoTestingModel as DTM
 
 from apps.general.constants import PERIOD_FOR_YEAR
@@ -16,9 +12,12 @@ from apps.empresas.models import (
 )
 
 
-class TestAverageStatementsYFinance(TestCase):
+pytestmark = pytest.mark.django_db
+
+
+class TestAverageStatementsYFinance:
     @classmethod
-    def setUpTestData(cls):
+    def setup_class(cls):
         cls.company = DTM.create(Company)
         cls.period = DTM.create(Period, year=2021, period=PERIOD_FOR_YEAR)
         cls.inc_st_yfinance = DTM.create(IncomeStatementYFinance, company=cls.company, period=cls.period)

@@ -1,11 +1,9 @@
+import pytest
+
 from bfet import DjangoTestingModel as DTM
 
 from django.conf import settings
-import pytest
 
-from django.test import TestCase 
-
-pytestmark = pytest.mark.django_db
 from django.template.defaultfilters import slugify
 
 from apps.escritos.models import (
@@ -18,12 +16,13 @@ TermsComment,
 TermsRelatedToResume,
 )
 
+pytestmark = pytest.mark.django_db
 FULL_DOMAIN = settings.FULL_DOMAIN
 
 
-class TestTerm(TestCase):
+class TestTerm:
     @classmethod
-    def setUpTestData(cls):
+    def setup_class(cls):
         cls.term = DTM.create(
             Term,
             title="test contenido",
@@ -31,15 +30,15 @@ class TestTerm(TestCase):
         )
 
     def test_link(self):
-        self.assertEqual(
-            f'{FULL_DOMAIN}/definicion/test-contenido/',
+        assert(
+            f'{FULL_DOMAIN}/definicion/test-contenido/' ==
             self.term.link()
         )
 
 
-class TestTermContent(TestCase):
+class TestTermContent:
     @classmethod
-    def setUpTestData(cls):
+    def setup_class(cls):
         cls.term_contet = DTM.create(
             TermContent,
             title="test contenido",
@@ -52,15 +51,15 @@ class TestTermContent(TestCase):
     def test_get_absolute_url(self):
         slug = "test-contenido"
         path = "/definicion/test-main-contenido/"
-        self.assertEqual(
-            f'{path}#{slug}',
+        assert(
+            f'{path}#{slug}' ==
             self.term_contet.get_absolute_url()
         )
 
     def test_link(self):
         slug = "test-contenido"
         path = "/definicion/test-main-contenido/"
-        self.assertEqual(
-            f'{FULL_DOMAIN}{path}#{slug}',
+        assert(
+            f'{FULL_DOMAIN}{path}#{slug}' ==
             self.term_contet.link()
         )
