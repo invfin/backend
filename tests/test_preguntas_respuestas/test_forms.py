@@ -9,7 +9,7 @@ from apps.preguntas_respuestas.forms import (
 )
 from apps.preguntas_respuestas.models import Answer, Question
 
-from tests.test_preguntas_respuestas.data import QUESTION, ANSWER
+from tests.data.preguntas_respuestas_data import QUESTION, ANSWER
 
 preguntas_respuestas_vcr = vcr.VCR(
     cassette_library_dir="cassettes/preguntas_respuestas/forms/",
