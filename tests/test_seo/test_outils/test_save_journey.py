@@ -14,7 +14,6 @@ from apps.seo.outils.save_journey import JourneyClassifier
 
 
 User = get_user_model()
-pytestmark = pytest.mark.django_db
 
 
 class MockRequest:

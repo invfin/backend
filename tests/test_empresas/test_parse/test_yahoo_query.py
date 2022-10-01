@@ -17,7 +17,6 @@ from apps.empresas.models import (
 from apps.empresas.parse.yahoo_query import ParseYahooQuery, YahooQueryInfo
 
 
-pytestmark = pytest.mark.django_db
 parse_vcr = vcr.VCR(
     cassette_library_dir="cassettes/company/parse/yahoo_query",
     path_transformer=vcr.VCR.ensure_suffix(".yaml"),

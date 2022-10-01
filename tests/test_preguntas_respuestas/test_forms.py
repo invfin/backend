@@ -15,7 +15,6 @@ preguntas_respuestas_vcr = vcr.VCR(
     cassette_library_dir="cassettes/preguntas_respuestas/forms/",
     path_transformer=vcr.VCR.ensure_suffix(".yaml"),
 )
-pytestmark = pytest.mark.django_db
 
 
 @pytest.mark.django_db

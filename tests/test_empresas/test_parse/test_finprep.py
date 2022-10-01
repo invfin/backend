@@ -7,10 +7,9 @@ from apps.empresas.models import BalanceSheetFinprep, IncomeStatementFinprep, Ca
 from apps.empresas.parse.finprep import FinprepInfo
 from apps.empresas.parse.finprep.normalize_data import NormalizeFinprep
 from apps.empresas.parse.finprep.parse_data import ParseFinprep
-from tests.test_empresas import finprep_data
+from tests.data import finprep_data
 
 
-pytestmark = pytest.mark.django_db
 parse_vcr = vcr.VCR(
     cassette_library_dir="cassettes/company/parse/finprep/",
     path_transformer=vcr.VCR.ensure_suffix(".yaml"),

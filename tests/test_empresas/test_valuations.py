@@ -1,12 +1,6 @@
-import pytest
-
 from apps.empresas.outils.valuations import discounted_cashflow
 
 
-pytestmark = pytest.mark.django_db
-
-
-@pytest.mark.django_db
 class TestValuation:
     def test_discounted_cashflow(self):
         assert 11.29 == discounted_cashflow(

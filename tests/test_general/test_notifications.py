@@ -13,7 +13,6 @@ from apps.users.models import Profile
 
 
 User = get_user_model()
-pytestmark = pytest.mark.django_db
 
 
 @pytest.mark.django_db

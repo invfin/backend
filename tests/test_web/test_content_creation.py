@@ -35,6 +35,10 @@ class TestWebsiteContentCreation:
         assert emoji_2 in web_emojis
 
     def test_create_save_email(self):
+        """
+        TODO
+        Avoid using other functions to create the initial data
+        """
         web_email_type = web_constants.CONTENT_FOR_ENGAGEMENT
         base_filters = {"for_content": social_constants.WEB, "purpose": web_email_type}
 

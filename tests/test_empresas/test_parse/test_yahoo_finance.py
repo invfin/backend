@@ -8,7 +8,6 @@ from bfet import DjangoTestingModel as DTM
 from apps.empresas.parse.others.yahoo_finance import ParseYahooFinance
 
 
-pytestmark = pytest.mark.django_db
 parse_vcr = vcr.VCR(
     cassette_library_dir="cassettes/company/parse/yahoo_finance/",
     path_transformer=vcr.VCR.ensure_suffix(".yaml"),

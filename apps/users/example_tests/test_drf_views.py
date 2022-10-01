@@ -4,8 +4,6 @@ from django.test import RequestFactory
 from apps.users.api.views import UserViewSet
 from apps.users.models import User
 
-pytestmark = pytest.mark.django_db
-
 
 @pytest.mark.django_db
 class TestUserViewSet:

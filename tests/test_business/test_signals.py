@@ -16,7 +16,6 @@ business_vcr = vcr.VCR(
     cassette_library_dir="cassettes/business/",
     path_transformer=vcr.VCR.ensure_suffix(".yaml"),
 )
-pytestmark = pytest.mark.django_db
 
 
 @pytest.mark.django_db

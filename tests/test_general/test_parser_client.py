@@ -3,9 +3,6 @@ import pytest
 from apps.general.outils.parser_client import ParserClient
 
 
-pytestmark = pytest.mark.django_db
-
-
 @pytest.mark.django_db
 class TestParserClient:
     @classmethod

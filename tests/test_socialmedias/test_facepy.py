@@ -5,7 +5,6 @@ import pytest
 
 from django.test import TestCase
 
-pytestmark = pytest.mark.django_db
 
 from apps.empresas.models import Company
 
@@ -23,7 +22,6 @@ from apps.socialmedias.constants import FACEBOOK
 from apps.socialmedias.socialposter.facepy import Facebook
 
 from apps.socialmedias.poster import SocialPosting
-from .factories import GenerateSocialmediasExample
 
 
 facebook_vcr = vcr.VCR(

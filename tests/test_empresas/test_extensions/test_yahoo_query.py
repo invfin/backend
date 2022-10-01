@@ -12,9 +12,6 @@ from apps.empresas.models import (
 )
 
 
-pytestmark = pytest.mark.django_db
-
-
 @pytest.mark.django_db
 class TestAverageStatementsYahooQuery:
     @classmethod

@@ -3,8 +3,6 @@ from django.urls import reverse
 
 from apps.users.models import User
 
-pytestmark = pytest.mark.django_db
-
 
 @pytest.mark.django_db
 class TestUserAdmin:

@@ -8,7 +8,6 @@ from apps.empresas.parse.y_finance import YFinanceInfo, NormalizeYFinance
 from apps.empresas.models import BalanceSheetYFinance, CashflowStatementYFinance, IncomeStatementYFinance
 
 
-pytestmark = pytest.mark.django_db
 parse_vcr = vcr.VCR(
     cassette_library_dir="cassettes/company/parse/yfinance/",
     path_transformer=vcr.VCR.ensure_suffix(".yaml"),

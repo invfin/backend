@@ -8,9 +8,6 @@ from django.utils.safestring import mark_safe
 
 from bfet import DjangoTestingModel as DTM
 
-# from apps.empresas.tests.factories import AppleExample
-# from apps.general.tests.factories import GenerateGeneralExample
-# from apps.escritos.tests.factories import GenerateEscritosExample
 
 from apps.socialmedias.models import (
     BlogSharedHistorial,
@@ -23,10 +20,6 @@ from apps.socialmedias.models import (
 from apps.socialmedias.poster import SocialPosting
 from apps.socialmedias import constants
 
-from .factories import GenerateSocialmediasExample
-
-
-pytestmark = pytest.mark.django_db
 
 FULL_DOMAIN = settings.FULL_DOMAIN
 

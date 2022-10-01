@@ -5,9 +5,6 @@ from apps.general.models import Period
 from apps.general import constants
 
 
-pytestmark = pytest.mark.django_db
-
-
 @pytest.mark.django_db
 class TestPeriodManager:
     @classmethod

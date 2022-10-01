@@ -17,7 +17,6 @@ from apps.socialmedias.socialposter.tweetpy import Twitter
 
 from apps.socialmedias.poster import SocialPosting
 
-pytestmark = pytest.mark.django_db
 
 twitter_vcr = vcr.VCR(
     cassette_library_dir="cassettes/twitter/",

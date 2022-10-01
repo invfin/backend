@@ -19,7 +19,6 @@ from apps.roboadvisor.views import RoboAdvisorResultView
 
 
 User = get_user_model()
-pytestmark = pytest.mark.django_db
 
 
 @pytest.mark.django_db

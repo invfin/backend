@@ -16,7 +16,7 @@ from apps.escritos.models import (
     TermsRelatedToResume,
 )
 
-pytestmark = pytest.mark.django_db
+
 FULL_DOMAIN = settings.FULL_DOMAIN
 
 

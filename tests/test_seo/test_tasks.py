@@ -4,8 +4,6 @@ from apps.seo.models import Visiteur
 from apps.seo.outils.visiteur_meta import SeoInformation
 from apps.seo.tasks import clean_journeys, loop_over_journeys
 
-pytestmark = pytest.mark.django_db
-
 
 @pytest.mark.django_db
 class TestTasks:

@@ -7,7 +7,6 @@ from bfet import DjangoTestingModel as DTM
 from apps.empresas.parse.finnhub import ParseFinnhub
 
 
-pytestmark = pytest.mark.django_db
 parse_vcr = vcr.VCR(
     cassette_library_dir="cassettes/company/parse/finnhub/",
     path_transformer=vcr.VCR.ensure_suffix(".yaml"),
