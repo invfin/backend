@@ -56,6 +56,7 @@ def log_company(checking: str = None):
 
 
 def arrange_quarters(company):
+    """ """
     statements_models = [
         company.incomestatementyahooquery_set,
         company.balancesheetyahooquery_set,
@@ -65,9 +66,9 @@ def arrange_quarters(company):
         company.cashflowstatementyfinance_set,
     ]
     for statement_obj in statements_models:
-        company_statements = statement_obj.all()
+        company_statements = statement_obj.all().order_by("year")
         if company_statements:
-            for statement in company_statements.order_by("year"):
+            for statement in company_statements:
                 if statement.period.period == constants.PERIOD_FOR_YEAR:
                     date_quarter_4 = statement.year
                     date_quarter_1 = date_quarter_4 + relativedelta(months=+3) + relativedelta(years=+1)
