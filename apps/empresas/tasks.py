@@ -106,6 +106,7 @@ def update_finprep_from_current(company_id):
         date = company_data["date"]
         period, created = Period.objects.get_or_create(year=date, period=PERIOD_FOR_YEAR)
         company_data.pop("id")
+        company_data.pop("from_average")
         company_data.pop("is_ttm")
         company_data["period_id"] = period.id
         IncomeStatementFinprep.objects.update_or_create(
@@ -136,6 +137,7 @@ def update_finprep_from_current(company_id):
         period, created = Period.objects.get_or_create(year=date, period=PERIOD_FOR_YEAR)
         company_data.pop("id")
         company_data.pop("is_ttm")
+        company_data.pop("from_average")
         company_data["period_id"] = period.id
         BalanceSheetFinprep.objects.update_or_create(
             property_plant_equipment_net=company_data.pop("property_plant_equipment"),
@@ -146,6 +148,7 @@ def update_finprep_from_current(company_id):
         date = company_data["date"]
         period, created = Period.objects.get_or_create(year=date, period=PERIOD_FOR_YEAR)
         company_data.pop("id")
+        company_data.pop("from_average")
         company_data.pop("is_ttm")
         company_data["period_id"] = period.id
         CashflowStatementFinprep.objects.update_or_create(
@@ -304,5 +307,6 @@ def fix_update_financials_task(company_id):
 
 @celery_app.task()
 def launch_fix_update_financials_task():
-    for company in Company.objects.clean_companies():
+    # for company in Company.objects.filter_checkings_not_seen("launch_fix_update"):
+    for company in Company.objects.filter(ticker="INTC"):
         fix_update_financials_task.delay(company.id)

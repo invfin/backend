@@ -26,5 +26,9 @@
   "has_first_financials_yahooquery_info": {
     "time": "",
     "state": "no"
+  },
+  "has_launch_fix_update": {
+    "state": "no",
+    "time": ""
   }
 }

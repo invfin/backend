@@ -56,6 +56,10 @@ def log_company(checking: str = None):
 
 
 def arrange_quarters(company):
+    """
+    TODO
+    Fix the try except for when a aurater isn't correctly set becasuse the month is different
+    """
     statements_models = [
         company.incomestatementyahooquery_set,
         company.balancesheetyahooquery_set,
@@ -65,30 +69,34 @@ def arrange_quarters(company):
         company.cashflowstatementyfinance_set,
     ]
     for statement_obj in statements_models:
-        company_statements = statement_obj.all()
+        company_statements = statement_obj.all().order_by("year")
         if company_statements:
-            for statement in company_statements.order_by("year"):
-                if statement.period.period == constants.PERIOD_FOR_YEAR:
-                    date_quarter_4 = statement.year
-                    date_quarter_1 = date_quarter_4 + relativedelta(months=+3) + relativedelta(years=+1)
-                    date_quarter_2 = date_quarter_1 + relativedelta(months=+3) + relativedelta(years=-1)
-                    date_quarter_3 = date_quarter_2 + relativedelta(months=+3)
-                    period_dict = {
-                        date_quarter_4.month: Period.objects.get_or_create(
-                            year=date_quarter_4.year, period=constants.PERIOD_4_QUARTER
-                        )[0],
-                        date_quarter_1.month: Period.objects.get_or_create(
-                            year=date_quarter_1.year, period=constants.PERIOD_1_QUARTER
-                        )[0],
-                        date_quarter_2.month: Period.objects.get_or_create(
-                            year=date_quarter_2.year, period=constants.PERIOD_2_QUARTER
-                        )[0],
-                        date_quarter_3.month: Period.objects.get_or_create(
-                            year=date_quarter_3.year, period=constants.PERIOD_3_QUARTER
-                        )[0],
-                    }
-                else:
-                    statement.period = period_dict[statement.year.month]
+            for statement in company_statements:
+                try:
+                    if statement.period.period == constants.PERIOD_FOR_YEAR:
+                        date_quarter_4 = statement.year
+                        date_quarter_1 = date_quarter_4 + relativedelta(months=+3) + relativedelta(years=+1)
+                        date_quarter_2 = date_quarter_1 + relativedelta(months=+3) + relativedelta(years=-1)
+                        date_quarter_3 = date_quarter_2 + relativedelta(months=+3)
+                        period_dict = {
+                            date_quarter_4.month: Period.objects.get_or_create(
+                                year=date_quarter_4.year, period=constants.PERIOD_4_QUARTER
+                            )[0],
+                            date_quarter_1.month: Period.objects.get_or_create(
+                                year=date_quarter_1.year, period=constants.PERIOD_1_QUARTER
+                            )[0],
+                            date_quarter_2.month: Period.objects.get_or_create(
+                                year=date_quarter_2.year, period=constants.PERIOD_2_QUARTER
+                            )[0],
+                            date_quarter_3.month: Period.objects.get_or_create(
+                                year=date_quarter_3.year, period=constants.PERIOD_3_QUARTER
+                            )[0],
+                        }
+                    else:
+                        statement.period = period_dict[statement.year.month]
+                        statement.save(update_fields=["period"])
+                except KeyError:
+                    statement.period = None
                     statement.save(update_fields=["period"])
 
 
