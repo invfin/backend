@@ -18,28 +18,25 @@ class PeriodFilter(SimpleListFilter):
 
 
 class HasQuarterFilter(SimpleListFilter):
-    #Not efficient
-    title = 'Has quarters'
+    # Not efficient
+    title = "Has quarters"
 
-    parameter_name = 'has_quarters'
+    parameter_name = "has_quarters"
 
     statements = []
 
     def get_related_statements(self):
         companies_id = set()
         for statement in self.statements:
-            query_companies_id = statement.objects.filter(
-                ~Q(period__period=constants.PERIOD_FOR_YEAR)
-            ).values_list("company_id", flat=True)
+            query_companies_id = statement.objects.filter(~Q(period__period=constants.PERIOD_FOR_YEAR)).values_list(
+                "company_id", flat=True
+            )
             if query_companies_id:
                 companies_id.update(list(query_companies_id))
         return list(companies_id)
 
     def lookups(self, request, model_admin):
-        return (
-            (True, True),
-            (False, False)
-        )
+        return ((True, True), (False, False))
 
     def queryset(self, request, queryset):
         companies_id = self.get_related_statements()
@@ -52,15 +49,12 @@ class HasQuarterFilter(SimpleListFilter):
 
 
 class NewCompanyToParseFilter(SimpleListFilter):
-    title = 'New company need parsing'
+    title = "New company need parsing"
 
-    parameter_name = 'has_need_parsing'
+    parameter_name = "has_need_parsing"
 
     def lookups(self, request, model_admin):
-        return (
-            ('True', True),
-            ('False', False)
-        )
+        return (("True", True), ("False", False))
 
     def queryset(self, request, queryset):
         if self.value():
@@ -70,38 +64,36 @@ class NewCompanyToParseFilter(SimpleListFilter):
 
 
 class JSONFieldFilter(SimpleListFilter):
-    """
-    """
+    """ """
 
     def __init__(self, *args, **kwargs):
-
         super(JSONFieldFilter, self).__init__(*args, **kwargs)
 
-        assert hasattr(self, 'title'), (
-        'Class {} missing "title" attribute'.format(self.__class__.__name__)
+        assert hasattr(self, "title"), 'Class {} missing "title" attribute'.format(self.__class__.__name__)
+        assert hasattr(self, "parameter_name"), 'Class {} missing "parameter_name" attribute'.format(
+            self.__class__.__name__
         )
-        assert hasattr(self, 'parameter_name'), (
-        'Class {} missing "parameter_name" attribute'.format(self.__class__.__name__)
+        assert hasattr(self, "json_field_name"), 'Class {} missing "json_field_name" attribute'.format(
+            self.__class__.__name__
         )
-        assert hasattr(self, 'json_field_name'), (
-        'Class {} missing "json_field_name" attribute'.format(self.__class__.__name__)
-        )
-        assert hasattr(self, 'json_field_property_name'), (
-        'Class {} missing "json_field_property_name" attribute'.format(self.__class__.__name__)
-        )
+        assert hasattr(
+            self, "json_field_property_name"
+        ), 'Class {} missing "json_field_property_name" attribute'.format(self.__class__.__name__)
 
     def lookups(self, request, model_admin):
         """
         # Improvemnt needed: if the size of jsonfield is large and there are lakhs of row
         """
-        if '__' in self.json_field_property_name:  # NOTE: this will cover only one nested level
-            keys = self.json_field_property_name.split('__')
+        if "__" in self.json_field_property_name:  # NOTE: this will cover only one nested level
+            keys = self.json_field_property_name.split("__")
             field_value_set = set(
-            data[keys[0]][keys[1]] for data in model_admin.model.objects.values_list(self.json_field_name, flat=True)
+                data[keys[0]][keys[1]]
+                for data in model_admin.model.objects.values_list(self.json_field_name, flat=True)
             )
         else:
             field_value_set = set(
-            data[self.json_field_property_name] for data in model_admin.model.objects.values_list(self.json_field_name, flat=True)
+                data[self.json_field_property_name]
+                for data in model_admin.model.objects.values_list(self.json_field_name, flat=True)
             )
             return [(v, v) for v in field_value_set]
 
@@ -117,19 +109,9 @@ class JSONFieldFilter(SimpleListFilter):
 
 # admin.py
 class AgeFilter(JSONFieldFilter):
-    """
-    """
+    """ """
 
-    title = 'Age'  # for admin sidebar (above the filter options)
-    parameter_name = 'jsonage'  # Parameter for the filter that will be used in the URL query
-    json_field_name = 'jsonfield'
-    json_field_property_name = 'age'  # property/field in json data
-
-class CountryFilter(JSONFieldFilter):
-    """
-    """
-
-    title = 'Country'  # for admin sidebar (above the filter options)
-    parameter_name = 'jsoncountry'  # Parameter for the filter that will be used in the URL query
-    json_field_name = 'jsonfield'
-    json_field_property_name = 'address__country'  # property/field in json data
+    title = "Age"  # for admin sidebar (above the filter options)
+    parameter_name = "jsonage"  # Parameter for the filter that will be used in the URL query
+    json_field_name = "jsonfield"
+    json_field_property_name = "age"  # property/field in json data

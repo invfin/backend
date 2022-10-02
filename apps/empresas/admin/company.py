@@ -9,6 +9,7 @@ from apps.empresas.outils.update import UpdateCompany
 from apps.empresas.utils import arrange_quarters
 from apps.empresas.admin.base import BaseJSONWidgetInline, update_financials
 from apps.empresas.models import Company, TopInstitutionalOwnership, CompanyUpdateLog
+from apps.empresas.admin.filters.company import CompanyLogsFilter
 
 
 @admin.register(CompanyUpdateLog)
@@ -25,9 +26,7 @@ class CompanyUpdateLogAdmin(admin.ModelAdmin):
         "had_error",
     ]
 
-    list_filter = [
-        "had_error",
-    ]
+    list_filter = ["had_error", CompanyLogsFilter]
 
 
 class TopInstitutionalOwnershipInline(BaseJSONWidgetInline):
