@@ -1,12 +1,8 @@
 from typing import Type
 
-from apps.empresas.parse import (
-    FinnhubInfo,
-    FinprepInfo,
-    YahooQueryInfo,
-    YFinanceInfo
-)
+from apps.empresas.parse import FinnhubInfo, FinprepInfo, YahooQueryInfo, YFinanceInfo
 from apps.empresas.utils import log_company
+from apps.empresas.parse.yahoo_query.exceptions import TickerNotFound
 
 
 class RetrieveCompanyData:
@@ -19,13 +15,18 @@ class RetrieveCompanyData:
 
     def get_most_recent_price(self):
         yfinance_info = self.yfinance.request_info_yfinance
-        if 'currentPrice' in yfinance_info:
-            current_price = yfinance_info['currentPrice']
+        if "currentPrice" in yfinance_info:
+            current_price = yfinance_info["currentPrice"]
+        elif "regularMarketPrice" in yfinance_info:
+            current_price = yfinance_info["regularMarketPrice"]
         else:
             yahooquery_info = self.yahooquery.request_price_info_yahooquery
-            for key in yahooquery_info.keys():
-                current_price = yahooquery_info[key]['regularMarketPrice']
-        return {'currentPrice': current_price}
+            try:
+                for key in yahooquery_info.keys():
+                    current_price = yahooquery_info[key]["regularMarketPrice"]
+            except TickerNotFound:
+                current_price = None
+        return {"currentPrice": current_price}
 
     @log_company("latest_financials_finprep_info")
     def create_financials_finprep(self):
