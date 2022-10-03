@@ -20,6 +20,7 @@ djangorestframework-stubs
 vcrpy
 pytest-xdist
 bfet
+freezegun
 
 # Documentation
 # ------------------------------------------------------------------------------

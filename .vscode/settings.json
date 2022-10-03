@@ -4,13 +4,10 @@
     "python.formatting.provider": "black",
     "explorer.autoReveal": false,
     "workbench.editor.enablePreview": false,
-    "python.testing.unittestArgs": [
-        "-v",
-        "-s",
-        "./apps",
-        "-p",
-        "test_*.py"
-    ],
-    "python.testing.pytestEnabled": false,
-    "python.testing.unittestEnabled": true
+    "python.testing.pytestEnabled": true,
+    "python.testing.pytestArgs": [
+        // "-n 8",
+        "--tb=long",
+        "-rAf"
+    ]
 }

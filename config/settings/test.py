@@ -18,7 +18,6 @@ SECRET_KEY = env(
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#test-runner
 TEST_RUNNER = "django.test.runner.DiscoverRunner"
-# TEST_RUNNER = "apps.general.tests.runner.PytestTestRunner"
 
 # DATABASES
 # ------------------------------------------------------------------------------

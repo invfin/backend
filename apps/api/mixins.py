@@ -1,17 +1,14 @@
 import urllib
+import pytest
 
-from typing import Union, Dict, Any
+from typing import Dict, Any
 from unittest import skip
 
+from django.http import HttpResponseServerError
 from django.shortcuts import resolve_url
-from django.contrib.auth import get_user_model
 
-from rest_framework.test import APITestCase
 from rest_framework.exceptions import ErrorDetail
 from rest_framework import status
-from bfet import DjangoTestingModel as DTM
-
-from apps.api.models import Key
 
 
 HTTP_VERBS = {
@@ -50,120 +47,126 @@ class BaseAPIViewTest:
     not_found_error_messages: str = "Tu búsqueda no ha devuelto ningún resultado"
     server_problem_error_message: str = "Lo siento ha habido un problema"
 
-    @classmethod
-    def setUpTestData(cls) -> None:
-        cls.auth_user = DTM.create(get_user_model())
-        cls.user_sub_key = DTM.create(Key, user=cls.auth_user, in_use=True)
+    def test_verbs(self, client, subscription_key):
+        endpoint = resolve_url(self.path_name)
+        full_endpoint = f"{endpoint}?{self.api_key_param}={subscription_key.key}"
+        if params:
+            params = urllib.parse.urlencode(params)
+            full_endpoint = f"{full_endpoint}&{params}"
 
-        cls.auth_user_2 = DTM.create(get_user_model())
-        cls.user_no_sub_key = DTM.create(Key, user=cls.auth_user_2, in_use=True)
-
-        cls.no_auth_user = DTM.create(get_user_model())
-
-        cls.endpoint = resolve_url(cls.path_name)
-        cls.full_endpoint = cls.endpoint_key = f"{cls.endpoint}?{cls.api_key_param}={cls.user_sub_key.key}"
-        cls.full_endpoint_no_auth = f"{cls.endpoint}?{cls.api_key_param}="
-
-        if cls.params:
-            params = urllib.parse.urlencode(cls.params)
-            cls.full_endpoint = f"{cls.full_endpoint}&{params}"
-            cls.full_endpoint_no_auth = f"{cls.full_endpoint_no_auth}?{params}"
-
-    def test_verbs(self):
         for verb in self.allowed_verbs:
-            with self.subTest(f"Testing {verb}"):
-                self.assertNotEqual(
-                    self.client.generic(verb, self.full_endpoint).status_code,
-                    status.HTTP_405_METHOD_NOT_ALLOWED,
-                )
-                self.assertEqual(
-                    self.client.generic(verb, self.full_endpoint).status_code,
-                    status.HTTP_200_OK,
-                )
+            assert client.generic(verb, full_endpoint).status_code != status.HTTP_405_METHOD_NOT_ALLOWED
+            assert client.generic(verb, full_endpoint).status_code == status.HTTP_200_OK
 
         for verb in HTTP_VERBS - self.allowed_verbs:
-            with self.subTest(f"Testing {verb}"):
-                self.assertEqual(
-                    self.client.generic(verb, self.full_endpoint).status_code,
-                    # status.HTTP_405_METHOD_NOT_ALLOWED,
-                    status.HTTP_403_FORBIDDEN,
-                )
+            assert (
+                client.generic(verb, full_endpoint).status_code == status.HTTP_403_FORBIDDEN
+            )  # status.HTTP_405_METHOD_NOT_ALLOWED
 
     def test_url(self):
-        self.assertEqual(self.endpoint, self.url_path)
+        assert resolve_url(self.path_name) == self.url_path
 
     @skip("Skipping")
-    def test_no_auth(self):
+    def test_no_auth(self, client, removed_key):
         """
         TODO
         Add wrong key
         Add no key
         Add key not allowed
         """
-        response = self.client.get(self.full_endpoint_no_auth)
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-        self.assertDictEqual(
-            response.data, {"detail": ErrorDetail(string=self.no_key_error_message, code="permission_denied")}
-        )
+        endpoint = resolve_url(self.path_name)
+        full_endpoint_removed_key = f"{endpoint}?{self.api_key_param}={removed_key.key}"
+        full_endpoint_wrong_key = f"{endpoint}?{self.api_key_param}={removed_key.key}4"
+        full_endpoint_no_key = f"{endpoint}?{self.api_key_param}="
+        if params:
+            params = urllib.parse.urlencode(params)
+            full_endpoint_removed_key = f"{full_endpoint_removed_key}&{params}"
+            full_endpoint_wrong_key = f"{full_endpoint_wrong_key}&{params}"
+            full_endpoint_no_key = f"{full_endpoint_no_key}&{params}"
+
+        response = client.get(full_endpoint_removed_key)
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+        assert response.data == {"detail": ErrorDetail(string=self.no_key_error_message, code="permission_denied")}
+
+        response = client.get(full_endpoint_wrong_key)
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+        assert response.data == {"detail": ErrorDetail(string=self.no_key_error_message, code="permission_denied")}
+
+        response = client.get(full_endpoint_no_key)
+        assert response.status_code == status.HTTP_403_FORBIDDEN
+        assert response.data == {"detail": ErrorDetail(string=self.no_key_error_message, code="permission_denied")}
 
     @skip("Skipping")
-    def test_server_problem(self):
+    def test_server_problem(self, client, key):
         """
         TODO
         Mock the request to assert en error
         """
-        response = self.client.get(self.endpoint_key)
-        self.assertEqual(response.status_code, status.HTTP_403_FORBIDDEN)
-        self.assertDictEqual(
-            response.data, {"detail": ErrorDetail(string=self.server_problem_error_message, code="permission_denied")}
-        )
+        endpoint = resolve_url(self.path_name)
+
+        full_endpoint = f"{endpoint}?{self.api_key_param}={key.key}"
+        if params:
+            params = urllib.parse.urlencode(params)
+            full_endpoint = f"{full_endpoint}&{params}"
+
+        with pytest.raises(HttpResponseServerError):
+            response = client.get(self.endpoint_key)
+            assert response.status_code == status.HTTP_403_FORBIDDEN
+            assert response.data == {
+                "detail": ErrorDetail(string=self.server_problem_error_message, code="permission_denied")
+            }
 
     @skip("Skipping")
-    def test_no_params(self):
+    def test_no_params(self, client, key):
         """
         TODO
         Fix it, it returns 404 instead of 400
         """
+        endpoint = resolve_url(self.path_name)
+        endpoint_key = f"{endpoint}?{self.api_key_param}={key.key}&"
         if self.params:
-            response = self.client.get(self.endpoint_key)
-            print(response.data)
-            self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-            self.assertDictEqual(
-                response.data, {"detail": ErrorDetail(string=self.no_param_error_messages, code="parse_error")}
-            )
+            response = client.get(endpoint_key)
+            assert response.status_code == status.HTTP_400_BAD_REQUEST
+            assert response.data == {"detail": ErrorDetail(string=self.no_param_error_messages, code="parse_error")}
 
     @skip("Skipping")
-    def test_wrong_params(self):
+    def test_wrong_params(self, client, key):
         """
         TODO
         Fix it, it returns 404 instead of 400
         """
+        endpoint = resolve_url(self.path_name)
+        endpoint_key = f"{endpoint}?{self.api_key_param}={key.key}"
+
         if self.params:
             for key in self.params.keys():
-                with self.subTest(f"Testing param {key}"):
-                    params = self.params
-                    params["bad"] = params.pop(key)
-                    params = urllib.parse.urlencode(params)
-                    response = self.client.get(f"{self.endpoint_key}&{params}")
-                    self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST)
-                    self.assertDictEqual(
-                        response.data,
-                        {"detail": ErrorDetail(string=self.wrong_param_error_message, code="parse_error")},
-                    )
+                params = self.params
+                params["bad"] = params.pop(key)
+                params = urllib.parse.urlencode(params)
+                response = client.get(f"{endpoint_key}&{params}")
+                assert response.status_code == status.HTTP_400_BAD_REQUEST
+                assert response.data == {
+                    "detail": ErrorDetail(string=self.wrong_param_error_message, code="parse_error")
+                }
 
-    def test_not_found(self):
+    def test_not_found(self, client, key):
+        endpoint = resolve_url(self.path_name)
+        endpoint_key = f"{endpoint}?{self.api_key_param}={key.key}"
         if self.params:
             for key in self.params.keys():
-                with self.subTest(f"Testing param {key}"):
-                    params = self.params
-                    params[key] = "random"
-                    params = urllib.parse.urlencode(params)
-                    response = self.client.get(f"{self.endpoint_key}&{params}")
-                    self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
-                    self.assertDictEqual(
-                        response.data, {"detail": ErrorDetail(string=self.not_found_error_messages, code="not_found")}
-                    )
+                params = self.params
+                params[key] = "random"
+                params = urllib.parse.urlencode(params)
+                response = client.get(f"{endpoint_key}&{params}")
+                assert response.status_code == status.HTTP_404_NOT_FOUND
+                assert response.data == {"detail": ErrorDetail(string=self.not_found_error_messages, code="not_found")}
 
-    def test_success(self):
-        response = self.client.get(self.full_endpoint)
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
+    def test_success(self, client, key):
+        endpoint = resolve_url(self.path_name)
+        full_endpoint = f"{endpoint}?{self.api_key_param}={key.key}"
+        if params:
+            params = urllib.parse.urlencode(params)
+            full_endpoint = f"{full_endpoint}&{params}"
+
+        response = client.get(full_endpoint)
+        assert response.status_code == status.HTTP_200_OK
