@@ -39,6 +39,8 @@ class BaseStatementAdmin(admin.ModelAdmin):
     ]
 
     list_filter = [
+        "company__exchange__main_org",
+        "company__exchange",
         "date",
         "period",
     ]

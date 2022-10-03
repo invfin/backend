@@ -46,7 +46,7 @@ class ExcelAPIIncome(BaseExcelAPIView):
     """
 
     # queryset = (IncomeStatement.objects.yearly, True)
-    queryset = (IncomeStatement.objects.filter, True)
+    queryset = (IncomeStatement.objects.yearly, True)
     serializer_class = ExcelIncomeStatementSerializer
 
 
@@ -56,7 +56,7 @@ class ExcelAPIBalance(BaseExcelAPIView):
     """
 
     # queryset = (BalanceSheet.objects.yearly, True)
-    queryset = (BalanceSheet.objects.filter, True)
+    queryset = (BalanceSheet.objects.yearly, True)
     serializer_class = ExcelBalanceSheetSerializer
 
 
@@ -66,5 +66,5 @@ class ExcelAPICashflow(BaseExcelAPIView):
     """
 
     # queryset = (CashflowStatement.objects.yearly, True)
-    queryset = (CashflowStatement.objects.filter, True)
+    queryset = (CashflowStatement.objects.yearly, True)
     serializer_class = ExcelCashflowStatementSerializer

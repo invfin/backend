@@ -94,7 +94,7 @@ class CompanyDetailsView(SEODetailView):
     def get_object(self):
         ticker = self.kwargs.get("ticker")
         try:
-            response = Company.objects.fast_full(ticker=ticker)
+            response = Company.objects.prefetch_yearly_historical_data(ticker=ticker)
         except Company.DoesNotExist:
             response, _ = Company.objects.get_or_create(name="Need-parsing", ticker=ticker)
         except Exception as e:

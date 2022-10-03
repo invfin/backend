@@ -8,7 +8,16 @@ class BaseStatementManager(Manager):
         return self.filter(~Q(period__period=constants.PERIOD_FOR_YEAR), **kwargs)
 
     def yearly(self, **kwargs) -> QuerySet:
-        return self.filter(Q(is_ttm=True) | Q(period__period=constants.PERIOD_FOR_YEAR), **kwargs)
+        yearly_filtered = self.filter(Q(is_ttm=True) | Q(period__period=constants.PERIOD_FOR_YEAR), **kwargs)
+        print("yearly_filtered", yearly_filtered)
+        print("filter is null", self.filter(period__isnull=False))
+        if yearly_filtered.exists():
+            return yearly_filtered
+        else:
+            if kwargs:
+                return self.filter(**kwargs)
+            else:
+                return self.all()
 
     def yearly_exclude_ttm(self, **kwargs) -> QuerySet:
         return self.filter(Q(is_ttm=False) | Q(period__period=constants.PERIOD_FOR_YEAR), **kwargs)
