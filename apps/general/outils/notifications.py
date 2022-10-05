@@ -24,6 +24,7 @@ class NotificationSystem:
 
     The annonunce_ method return a list 'cause on the task we iterate over the emails to send
     """
+
     def save_notif(self, object_related, user, notif_type, email_data):
         notification = Notification.objects.create(
             user=user,
@@ -33,20 +34,18 @@ class NotificationSystem:
         return {
             **email_data,
             "url_to_join": object_related.shareable_link,
-            'app_label': notification.app_label,
-            'object_name': notification.object_name,
-            'id': notification.pk
+            "app_label": notification.app_label,
+            "object_name": notification.object_name,
+            "id": notification.pk,
         }
 
     def notify(self, object_related: Dict, notif_type: str):
         time.sleep(10)
-        app_label = object_related['app_label']
-        object_name = object_related['object_name']
-        pk = object_related['id']
+        app_label = object_related["app_label"]
+        object_name = object_related["object_name"]
+        pk = object_related["id"]
 
-        object_related = apps.get_model(
-            app_label, object_name, require_ready=True
-        )._default_manager.get(pk=pk)
+        object_related = apps.get_model(app_label, object_name, require_ready=True)._default_manager.get(pk=pk)
 
         notif_type_fnct = {
             constants.NEW_BLOG_POST: self.announce_new_blog,
@@ -60,51 +59,58 @@ class NotificationSystem:
         return notif_type_fnct[notif_type](object_related, notif_type)
 
     def announce_new_follower(self, writter, notif_type):
-        return[{
-            "email": self.save_notif(
-                writter,
-                writter,
-                notif_type,
-                {
-                    "subject": constants.NEW_FOLLOWER,
-                    "content": (
-                        "Tus blogs sigen pagando, tu comunidad de lectores sigue aumentando día a día, felicitaciones"
-                    ),
-                }
-            ),
-            "receiver_id": writter.id,
-            "is_for": constants.EMAIL_FOR_NOTIFICATION
-        }]
+        return [
+            {
+                "email": self.save_notif(
+                    writter,
+                    writter,
+                    notif_type,
+                    {
+                        "subject": constants.NEW_FOLLOWER,
+                        "content": (
+                            "Tus blogs sigen pagando, tu comunidad de lectores sigue aumentando día a día,"
+                            " felicitaciones"
+                        ),
+                    },
+                ),
+                "receiver_id": writter.id,
+                "is_for": constants.EMAIL_FOR_NOTIFICATION,
+            }
+        ]
 
     def announce_new_comment(self, obj, notif_type):
-        return[{
-            "email": self.save_notif(
-                obj,
-                obj.content_related.author,
-                notif_type,
-                {
-                    "subject": constants.NEW_COMMENT,
-                    "content": f"{obj.content_related.title} ha recibido un nuevo comentario",
-                }
-            ),
-            "receiver_id": obj.content_related.author.id,
-            "is_for": constants.EMAIL_FOR_NOTIFICATION
-        }]
+        return [
+            {
+                "email": self.save_notif(
+                    obj,
+                    obj.content_related.author,
+                    notif_type,
+                    {
+                        "subject": constants.NEW_COMMENT,
+                        "content": f"{obj.content_related.title} ha recibido un nuevo comentario",
+                    },
+                ),
+                "receiver_id": obj.content_related.author.id,
+                "is_for": constants.EMAIL_FOR_NOTIFICATION,
+            }
+        ]
 
     def announce_new_vote(self, obj, notif_type):
-        return[{
-            "email": self.save_notif(
-                obj,
-                obj.author,
-                notif_type,
-                {
-                    "subject": constants.NEW_VOTE,
-                    "content": f"{obj.title} ha recibido un nuevo voto",
-                }
-            ),
-            "receiver_id": obj.author.id,
-            "is_for": constants.EMAIL_FOR_NOTIFICATION
-        }]
+        return [
+            {
+                "email": self.save_notif(
+                    obj,
+                    obj.author,
+                    notif_type,
+                    {
+                        "subject": constants.NEW_VOTE,
+                        "content": f"{obj.title} ha recibido un nuevo voto",
+                    },
+                ),
+                "receiver_id": obj.author.id,
+                "is_for": constants.EMAIL_FOR_NOTIFICATION,
+            }
+        ]
 
     def announce_new_question(self, question, notif_type):
         notif_info = []
@@ -118,15 +124,9 @@ class NotificationSystem:
                 {
                     "subject": subject,
                     "content": question.content,
-                }
+                },
             )
-            notif_info.append(
-                {
-                    "email": email,
-                    "receiver_id": user.id,
-                    "is_for": constants.EMAIL_FOR_NOTIFICATION
-                }
-            )
+            notif_info.append({"email": email, "receiver_id": user.id, "is_for": constants.EMAIL_FOR_NOTIFICATION})
         return notif_info
 
     def announce_new_blog(self, blog, notif_type):
@@ -140,15 +140,9 @@ class NotificationSystem:
                 {
                     "subject": blog.title,
                     "content": blog.resume,
-                }
+                },
             )
-            notif_info.append(
-                {
-                    "email": email,
-                    "receiver_id": user.id,
-                    "is_for": constants.EMAIL_FOR_NOTIFICATION
-                }
-            )
+            notif_info.append({"email": email, "receiver_id": user.id, "is_for": constants.EMAIL_FOR_NOTIFICATION})
         return notif_info
 
     def announce_new_answer(self, answer, notif_type):
@@ -169,15 +163,9 @@ class NotificationSystem:
                     {
                         "subject": subject,
                         "content": answer.content,
-                    }
+                    },
                 )
-                notif_info.append(
-                    {
-                        "email": email,
-                        "receiver_id": user.id,
-                        "is_for": constants.EMAIL_FOR_NOTIFICATION
-                    }
-                )
+                notif_info.append({"email": email, "receiver_id": user.id, "is_for": constants.EMAIL_FOR_NOTIFICATION})
         return notif_info
 
     def announce_answer_accepted(self, answer, notif_type):
@@ -195,13 +183,7 @@ class NotificationSystem:
                 {
                     "subject": subject,
                     "content": f"Tu respuesta a {question.title} ha sido acceptda. Felicidades.",
-                }
+                },
             )
-            notif_info.append(
-                {
-                    "email": email,
-                    "receiver_id": user.id,
-                    "is_for": constants.EMAIL_FOR_NOTIFICATION
-                }
-            )
+            notif_info.append({"email": email, "receiver_id": user.id, "is_for": constants.EMAIL_FOR_NOTIFICATION})
         return notif_info

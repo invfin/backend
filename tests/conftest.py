@@ -41,8 +41,10 @@ from apps.escritos.models import (
     TermsRelatedToResume,
 )
 
-# from apps.preguntas_respuestas.models import *
-# from apps.public_blog.models import *
+from apps.preguntas_respuestas.models import Question, QuesitonComment, Answer, AnswerComment
+
+from apps.public_blog.models import PublicBlog, NewsletterFollowers
+
 # from apps.web.models import WebsiteEmail, WebsiteEmailsType
 # from apps.seo.models import *
 
@@ -52,7 +54,7 @@ from apps.socialmedias.models import DefaultContent, DefaultTilte, Emoji
 
 # from apps.super_investors.models import *
 # from apps.roboadvisor.models import *
-from apps.users.models import User
+from apps.users.models import User, Profile
 from apps.general.models import (
     Category,
     Country,
@@ -101,6 +103,37 @@ Check if all fixtures are required to be used in session, class or maybe functio
 def currency(django_db_blocker) -> Currency:
     with django_db_blocker.unblock():
         return DjangoTestingModel.create(Currency)
+
+
+@pytest.fixture(scope="class")
+def notification_system(django_db_blocker, request) -> None:
+    with django_db_blocker.unblock():
+        request.cls.writter = DjangoTestingModel.create(User, is_writter=True)
+        request.cls.user_1 = DjangoTestingModel.create(User)
+        request.cls.user_2 = DjangoTestingModel.create(User)
+        DjangoTestingModel.create(Profile, user=request.cls.writter)
+        DjangoTestingModel.create(Profile, user=request.cls.user_1)
+        DjangoTestingModel.create(Profile, user=request.cls.user_2)
+        request.cls.question = DjangoTestingModel.create(Question, author=request.cls.user_1)
+        request.cls.question_comment = DjangoTestingModel.create(
+            QuesitonComment, content_related=DjangoTestingModel.create(Question), author=DjangoTestingModel.create(User)
+        )
+        request.cls.answer = DjangoTestingModel.create(
+            Answer, author=DjangoTestingModel.create(User), question_related=request.cls.question
+        )
+        request.cls.answer_comment = DjangoTestingModel.create(
+            AnswerComment,
+            author=DjangoTestingModel.create(User),
+            content_related=DjangoTestingModel.create(
+                Answer,
+                author=DjangoTestingModel.create(User),
+                question_related=DjangoTestingModel.create(Question, author=DjangoTestingModel.create(User)),
+            ),
+        )
+        request.cls.followers = DjangoTestingModel.create(NewsletterFollowers, user=request.cls.writter)
+        request.cls.blog = DjangoTestingModel.create(PublicBlog, author=request.cls.writter)
+        request.cls.followers.followers.add(request.cls.user_1)
+        yield
 
 
 # Users

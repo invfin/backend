@@ -1,46 +1,17 @@
 import pytest
 
-from bfet import DjangoTestingModel as DTM
-
 from django.contrib.auth import get_user_model
 
 from apps.general import constants
 from apps.general.outils.notifications import NotificationSystem
 from apps.general.models import Notification
-from apps.preguntas_respuestas.models import Question, Answer, QuesitonComment, AnswerComment
-from apps.public_blog.models import PublicBlog, NewsletterFollowers
-from apps.users.models import Profile
-
 
 User = get_user_model()
 
 
 @pytest.mark.django_db
+@pytest.mark.usefixtures("notification_system")
 class TestNotificationSystem:
-    @classmethod
-    def setup_class(cls) -> None:
-        cls.writter = DTM.create(User, is_writter=True)
-        cls.user_1 = DTM.create(User)
-        cls.user_2 = DTM.create(User)
-        DTM.create(Profile, user=cls.writter)
-        DTM.create(Profile, user=cls.user_1)
-        DTM.create(Profile, user=cls.user_2)
-        cls.question = DTM.create(Question, author=cls.user_1)
-        cls.question_comment = DTM.create(
-            QuesitonComment, content_related=DTM.create(Question), author=DTM.create(User)
-        )
-        cls.answer = DTM.create(Answer, author=DTM.create(User), question_related=cls.question)
-        cls.answer_comment = DTM.create(
-            AnswerComment,
-            author=DTM.create(User),
-            content_related=DTM.create(
-                Answer, author=DTM.create(User), question_related=DTM.create(Question, author=DTM.create(User))
-            ),
-        )
-        cls.followers = DTM.create(NewsletterFollowers, user=cls.writter)
-        cls.blog = DTM.create(PublicBlog, author=cls.writter)
-        cls.followers.followers.add(cls.user_1)
-
     def test_save_notif(self):
         assert 0 == Notification.objects.all().count()
         notif_question = NotificationSystem().save_notif(
@@ -49,7 +20,12 @@ class TestNotificationSystem:
             notif_type=constants.NEW_QUESTION,
             email_data={"subject": "question title", "content": "question content"},
         )
+        print("notif_question", notif_question)
         first_notif = Notification.objects.all().first()
+        first_notif.refresh_from_db()
+        print("notif", first_notif.__dict__)
+        print("notif", first_notif.object.__dict__)
+        assert first_notif.object == self.question
         assert 1 == Notification.objects.all().count()
         assert "question title" == notif_question["subject"]
         assert "question content" == notif_question["content"]
@@ -87,9 +63,6 @@ class TestNotificationSystem:
         assert "general" == notif_blog["app_label"]
         assert "Notification" == notif_blog["object_name"]
         assert third_notif.id == notif_blog["id"]
-
-    def test_notify(self):
-        pass
 
     def test_announce_new_follower(self):
         announce_new_follower = NotificationSystem().announce_new_follower(self.user_1, constants.NEW_FOLLOWER)
