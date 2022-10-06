@@ -203,119 +203,82 @@ class ExcelCashflowStatementSerializer(ModelSerializer):
         ]
 
 
-class IncomeStatementSerializer(ModelSerializer):
+class BaseStatementSerializer(ModelSerializer):
     reported_currency = StringRelatedField(many=False)
     company = StringRelatedField(many=False)
 
     class Meta:
+        exclude = ["id", "year", "is_ttm", "from_average", "period"]
+
+
+class IncomeStatementSerializer(BaseStatementSerializer):
+    class Meta(BaseStatementSerializer.Meta):
         model = IncomeStatement
-        exclude = ["id", "year"]
 
 
-class BalanceSheetSerializer(ModelSerializer):
-    reported_currency = StringRelatedField(many=False)
-    company = StringRelatedField(many=False)
-
-    class Meta:
+class BalanceSheetSerializer(BaseStatementSerializer):
+    class Meta(BaseStatementSerializer.Meta):
         model = BalanceSheet
-        exclude = ["id", "year"]
 
 
-class CashflowStatementSerializer(ModelSerializer):
-    reported_currency = StringRelatedField(many=False)
-    company = StringRelatedField(many=False)
-
-    class Meta:
+class CashflowStatementSerializer(BaseStatementSerializer):
+    class Meta(BaseStatementSerializer.Meta):
         model = CashflowStatement
-        exclude = ["id", "year"]
 
 
-class RentabilityRatioSerializer(ModelSerializer):
-    company = StringRelatedField(many=False)
-
-    class Meta:
+class RentabilityRatioSerializer(BaseStatementSerializer):
+    class Meta(BaseStatementSerializer.Meta):
         model = RentabilityRatio
-        exclude = ["id", "year"]
 
 
-class LiquidityRatioSerializer(ModelSerializer):
-    company = StringRelatedField(many=False)
-
-    class Meta:
+class LiquidityRatioSerializer(BaseStatementSerializer):
+    class Meta(BaseStatementSerializer.Meta):
         model = LiquidityRatio
-        exclude = ["id", "year"]
 
 
-class MarginRatioSerializer(ModelSerializer):
-    company = StringRelatedField(many=False)
-
-    class Meta:
+class MarginRatioSerializer(BaseStatementSerializer):
+    class Meta(BaseStatementSerializer.Meta):
         model = MarginRatio
-        exclude = ["id", "year"]
 
 
-class FreeCashFlowRatioSerializer(ModelSerializer):
-    company = StringRelatedField(many=False)
-
-    class Meta:
+class FreeCashFlowRatioSerializer(BaseStatementSerializer):
+    class Meta(BaseStatementSerializer.Meta):
         model = FreeCashFlowRatio
-        exclude = ["id", "year"]
 
 
-class PerShareValueSerializer(ModelSerializer):
-    company = StringRelatedField(many=False)
-
-    class Meta:
+class PerShareValueSerializer(BaseStatementSerializer):
+    class Meta(BaseStatementSerializer.Meta):
         model = PerShareValue
-        exclude = ["id", "year"]
 
 
-class NonGaapSerializer(ModelSerializer):
-    company = StringRelatedField(many=False)
-
-    class Meta:
+class NonGaapSerializer(BaseStatementSerializer):
+    class Meta(BaseStatementSerializer.Meta):
         model = NonGaap
-        exclude = ["id", "year"]
 
 
-class OperationRiskRatioSerializer(ModelSerializer):
-    company = StringRelatedField(many=False)
-
-    class Meta:
+class OperationRiskRatioSerializer(BaseStatementSerializer):
+    class Meta(BaseStatementSerializer.Meta):
         model = OperationRiskRatio
-        exclude = ["id", "year"]
 
 
-class EnterpriseValueRatioSerializer(ModelSerializer):
-    company = StringRelatedField(many=False)
-
-    class Meta:
+class EnterpriseValueRatioSerializer(BaseStatementSerializer):
+    class Meta(BaseStatementSerializer.Meta):
         model = EnterpriseValueRatio
-        exclude = ["id", "year"]
 
 
-class CompanyGrowthSerializer(ModelSerializer):
-    company = StringRelatedField(many=False)
-
-    class Meta:
+class CompanyGrowthSerializer(BaseStatementSerializer):
+    class Meta(BaseStatementSerializer.Meta):
         model = CompanyGrowth
-        exclude = ["id", "year"]
 
 
-class EficiencyRatioSerializer(ModelSerializer):
-    company = StringRelatedField(many=False)
-
-    class Meta:
+class EficiencyRatioSerializer(BaseStatementSerializer):
+    class Meta(BaseStatementSerializer.Meta):
         model = EficiencyRatio
-        exclude = ["id", "year"]
 
 
-class PriceToRatioSerializer(ModelSerializer):
-    company = StringRelatedField(many=False)
-
-    class Meta:
+class PriceToRatioSerializer(BaseStatementSerializer):
+    class Meta(BaseStatementSerializer.Meta):
         model = PriceToRatio
-        exclude = ["id", "year"]
 
 
 class CompanySerializer(BasicCompanySerializer):

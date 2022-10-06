@@ -11,8 +11,9 @@ class AllTermsAPIView(BaseAPIView):
     """
 
     serializer_class = AllTermsSerializer
-    queryset = (Term.objects.clean_terms, True)
+    queryset = Term.objects.clean_terms, True
     pagination_class = StandardResultPagination
+    model_to_track = "ignore"
 
 
 class TermAPIView(BaseAPIView):
@@ -23,6 +24,7 @@ class TermAPIView(BaseAPIView):
 
     serializer_class = TermSerializer
     url_parameters = ["slug", "id"]
+    model_to_track = Term
 
 
 class TermContentAPIView(BaseAPIView):
@@ -31,4 +33,5 @@ class TermContentAPIView(BaseAPIView):
     """
 
     serializer_class = TermContentSerializer
-    queryset = TermContent
+    model = TermContent, True
+    model_to_track = Term

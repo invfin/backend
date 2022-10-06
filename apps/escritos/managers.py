@@ -2,7 +2,7 @@ import random
 
 from django.db.models import Manager
 
-# from apps.general.constants import
+from apps.general.constants import BASE_ESCRITO_PUBLISHED
 
 
 class TermManager(Manager):
@@ -12,10 +12,10 @@ class TermManager(Manager):
         return random.choice(models_list)
 
     def clean_terms(self):
-        return self.filter(status = 1)
+        return self.filter(status=BASE_ESCRITO_PUBLISHED)
 
     def clean_terms_with_resume(self):
-        return self.filter(status = 1, resume__isnull=False)
+        return self.filter(status=BASE_ESCRITO_PUBLISHED, resume__isnull=False)
 
     def random_clean(self):
         return self.get_random(self.clean_terms_with_resume())

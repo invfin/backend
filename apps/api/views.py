@@ -84,7 +84,13 @@ obtain_auth_key = ObtainAuthKey.as_view()
 
 class BaseAPIView(APIView):
     """
-    A class to sharea across APIViews.
+    TODO
+    Maybe change the url_parameters to a dict
+    Example:
+        {"ticker", "company__ticker"}
+        key being the url parameter to look for and the value, the filter to apply to the queryset
+
+    A class to sharea across API views.
 
     Attributes
     ----------
@@ -130,7 +136,7 @@ class BaseAPIView(APIView):
         overrides the base get request
     """
 
-    model: Type = None
+    model: Tuple[Type, bool] = ()
     queryset: Tuple[Type, bool] = ()
     serializer_class: Type = None
     url_parameters: List[str] = []
@@ -139,12 +145,24 @@ class BaseAPIView(APIView):
     model_to_track: Union[Type, str] = None
     is_excel: bool = False
 
-    def get_model_to_track(self) -> Type:
+    def get_model_to_track(self) -> Union[Type, None]:
+        """
+        TODO maybe instead of saving the model saved we should also saved the endpoint requested
+
+        Raises:
+            NotImplementedError: model_to_track is set to None by default, if we don't want to save the request
+            we should pass "ignore" otherwise it will rise and error
+
+        Returns:
+            Union[Type, None]: It could return an actual model to be looked up and saved or None if we want to ignore it
+        """
         if self.model_to_track:
             if type(self.model_to_track) == str:
                 queryed_model = self.model_to_track
             else:
-                queryed_model = self.model_to_track.object_name
+                queryed_model = self.model_to_track.__name__
+            if queryed_model == "ignore":
+                return None
             object_name = f"{queryed_model}RequestAPI"
             return apps.get_model("api", object_name, require_ready=True)
         raise NotImplementedError('You need to set a "model_to_track"')
@@ -159,23 +177,38 @@ class BaseAPIView(APIView):
                 raise ParseError("Ha habido un problema con tu búsqueda, asegúrate de haber introducido un valor")
         return search
 
-    def save_request(self, key: Type, queryset: Union[Type, QuerySet], path: str, ip: str) -> None:
+    def save_request(self, queryset: Union[Type, QuerySet], path: str, ip: str) -> None:
         request_model = self.get_model_to_track()
-        search = self.get_object_searched(queryset)
-        if type(queryset).__name__ == "BaseStatementQuerySet":
-            search = None
-            if "ticker" in self.url_parameters and queryset and queryset[0]._meta.app_label == "empresas":
-                search = queryset[0].company
-            else:
-                raise ParseError("Ha habido un problema con tu búsqueda, asegúrate de haber introducido un valor")
-        request_model.objects.create(
-            ip=ip,
-            key=key,
-            user=key.user,
-            path=path,
-            search=search,
-            is_excel=self.is_excel,
-        )
+        if request_model:
+            search = self.get_object_searched(queryset)
+            obj_data = dict(
+                ip=ip,
+                key=self.request.auth,
+                user=self.request.user,
+                path=path,
+                search=search,
+            )
+            if hasattr(request_model, "is_excel"):
+                obj_data.update({"is_excel": self.is_excel})
+            request_model.objects.create(**obj_data)
+
+    def final_responses(self, serializer, queryset: QuerySet, path: str, ip: str) -> Response:
+        if status.is_success:
+            self.save_request(queryset, path, ip)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return APIException("Lo siento ha habido un problema, vuelve a intentarlo en un momento")
+
+    def find_query_value(self, query_dict: dict) -> Union[Tuple[str, str], Tuple[None, None]]:
+        for url_query_param, url_query_value in query_dict.items():
+            if url_query_param in self.url_parameters and url_query_value:
+                return url_query_param, url_query_value
+        return None, None
+
+    def check_limitation(self, queryset: QuerySet) -> QuerySet:
+        if self.request.auth.has_subscription is False:
+            queryset = queryset[:10]
+        return queryset
 
     def get_object(self) -> Tuple[Union[Type, QuerySet], bool]:
         """
@@ -190,29 +223,11 @@ class BaseAPIView(APIView):
             returns a tuple with the model to query or a queryset
         """
         if self.queryset:
-            return self.queryset[0], self.queryset[1]
+            return self.queryset
         elif self.model:
-            return self.model, False
+            return self.model
         elif not self.model and not self.queryset:
             return self.serializer_class.Meta.model, False
-
-    def final_responses(self, serializer, api_key: Type, queryset: QuerySet, path: str, ip: str) -> Response:
-        if status.is_success:
-            self.save_request(api_key, queryset, path, ip)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        else:
-            return APIException("Lo siento ha habido un problema, vuelve a intentarlo en un momento")
-
-    def find_query_value(self, query_dict: dict) -> Union[Tuple[str, str], Tuple[None, None]]:
-        for url_query_param, url_query_value in query_dict.items():
-            if url_query_param in self.url_parameters and url_query_value:
-                return url_query_param, url_query_value
-        return None, None
-
-    def check_limitation(self, key: Type["Key"], queryset: QuerySet) -> QuerySet:
-        if key.has_subscription is False:
-            queryset = queryset[:10]
-        return queryset
 
     def generate_queryset(
         self, model_or_callable: Union[Type, QuerySet], many: bool, url_query_param: str, url_query_value: str
@@ -232,43 +247,39 @@ class BaseAPIView(APIView):
         --------
             Improve lookup
         """
-        if self.fk_lookup_model:
-            lookup_data = {f"{self.fk_lookup_model}": url_query_value}
-        else:
-            lookup_data = {url_query_param: url_query_value}
-        if many:
+        lookup_data = dict()
+        if self.url_parameters or self.fk_lookup_model:
+            if not url_query_value:
+                raise ParseError("No has introducido ninguna búsqueda")
+            if self.fk_lookup_model:
+                lookup_data = {f"{self.fk_lookup_model}": url_query_value}
+            elif self.url_parameters:
+                lookup_data = {url_query_param: url_query_value}
+
+        if self.queryset:
             obj_or_queryset = model_or_callable(**lookup_data)
             if not obj_or_queryset:
                 raise NotFound("Tu búsqueda no ha devuelto ningún resultado")
         else:
-            if url_query_value:
-                try:
-                    obj_or_queryset = model_or_callable.objects.get(**lookup_data)
-                except model_or_callable.DoesNotExist:
-                    raise NotFound("Tu búsqueda no ha devuelto ningún resultado")
-            else:
-                raise ParseError("No has introducido ninguna búsqueda")
+            try:
+                obj_or_queryset = model_or_callable.objects.get(**lookup_data)
+            except model_or_callable.DoesNotExist:
+                raise NotFound("Tu búsqueda no ha devuelto ningún resultado")
+
         return obj_or_queryset
 
     def get(self, request) -> Response:
         model_or_callable, many = self.get_object()
         query_dict = request.query_params.dict()
-        api_key = query_dict.pop("api_key", None)
-        if not api_key:
-            raise AuthenticationFailed(
-                "Tu clave es incorrecta, asegúrate que está bien escrita depués de api_key=<clave> o pide tu clave"
-                " desde tu perfil"
-            )
-        key = Key.objects.get(key=api_key)
         url_query_param, url_query_value = self.find_query_value(query_dict)
         if url_query_param == "ticker":
             url_query_value = url_query_value.upper()
         queryset = self.generate_queryset(model_or_callable, many, url_query_param, url_query_value)
         if self.limited:
-            queryset = self.check_limitation(key, queryset)
+            queryset = self.check_limitation(queryset)
         serializer = self.serializer_class(queryset, many=many)
         return self.final_responses(
-            serializer, key, queryset, request.build_absolute_uri(), SeoInformation.get_client_ip(request)
+            serializer, queryset, request.build_absolute_uri(), SeoInformation.get_client_ip(request)
         )
 
 

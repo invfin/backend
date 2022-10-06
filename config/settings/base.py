@@ -381,8 +381,6 @@ REST_FRAMEWORK = {
     ],
     "DEFAULT_AUTHENTICATION_CLASSES": [
         "apps.api.authentication.KeyAuthentication",
-        "rest_framework.authentication.SessionAuthentication",
-        "rest_framework.authentication.BasicAuthentication",
     ],
     "DEFAULT_PERMISSION_CLASSES": ["apps.api.permissions.ReadOnly"],
     "DEFAULT_VERSIONING_CLASS": "rest_framework.versioning.NamespaceVersioning",

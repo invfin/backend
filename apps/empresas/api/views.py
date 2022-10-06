@@ -23,19 +23,22 @@ User = get_user_model()
 
 class AllExchangesAPIView(BaseAPIView):
     serializer_class = ExchangeSerializer
-    queryset = Exchange
+    model = Exchange, True
     pagination_class = StandardResultPagination
+    model_to_track = Company
 
 
 class BasicCompanyAPIView(BaseAPIView):
     serializer_class = BasicCompanySerializer
     url_parameters = ["ticker"]
+    model_to_track = Company
 
 
 class CompleteCompanyAPIView(BaseAPIView):
     serializer_class = CompanySerializer
     queryset = (Company.objects.fast_full, False)
     url_parameters = ["ticker"]
+    model_to_track = Company
 
 
 class CompanyIncomeStatementAPIView(BaseAPIView):
@@ -44,6 +47,7 @@ class CompanyIncomeStatementAPIView(BaseAPIView):
     url_parameters = ["ticker"]
     queryset = (IncomeStatement.objects.yearly, True)
     fk_lookup_model = "company__ticker"
+    model_to_track = Company
 
 
 class CompanyBalanceSheetAPIView(BaseAPIView):
@@ -52,6 +56,7 @@ class CompanyBalanceSheetAPIView(BaseAPIView):
     queryset = (BalanceSheet.objects.yearly, True)
     url_parameters = ["ticker"]
     fk_lookup_model = "company__ticker"
+    model_to_track = Company
 
 
 class CompanyCashflowStatementAPIView(BaseAPIView):
@@ -60,3 +65,4 @@ class CompanyCashflowStatementAPIView(BaseAPIView):
     queryset = (CashflowStatement.objects.yearly, True)
     url_parameters = ["ticker"]
     fk_lookup_model = "company__ticker"
+    model_to_track = Company

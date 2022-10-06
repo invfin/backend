@@ -1,23 +1,19 @@
-from rest_framework import status
 from rest_framework.authentication import BaseAuthentication
 from rest_framework.exceptions import AuthenticationFailed
 
+from .constants import WRONG_API_KEY, API_KEY_REMOVED, NO_API_KEY
 from .models import Key
 
 
 class KeyAuthentication(BaseAuthentication):
+    # TODO Should we do only one query to check if the key exists and is active?
     def authenticate(self, request):
         key = request.GET.get("api_key")
         if key:
             if Key.objects.filter(key=key).exists():
-                if Key.objects.key_is_active(key) is True:
-                    return (Key.objects.get_key(key), None)
-
-                key = Key.objects.filter(key=key).first()
-                raise AuthenticationFailed(
-                    f"Tu clave ya no es válida desde el {key.removed}, crea una nueva desde tu perfil"
-                )
-            raise AuthenticationFailed(
-                "Tu clave es incorrecta, asegúrate que está bien escrita o pide tu clave desde tu perfil"
-            )
-        raise AuthenticationFailed("Introduce tu clave en api_key, si no tienes alguna entra en tu perfil para crearla")
+                if Key.objects.key_is_active(key):
+                    key = Key.objects.get_key(key)
+                    return (key.user, key)
+                raise AuthenticationFailed(API_KEY_REMOVED)
+            raise AuthenticationFailed(WRONG_API_KEY)
+        raise AuthenticationFailed(NO_API_KEY)

@@ -9,8 +9,6 @@ class BaseStatementManager(Manager):
 
     def yearly(self, **kwargs) -> QuerySet:
         yearly_filtered = self.filter(Q(is_ttm=True) | Q(period__period=constants.PERIOD_FOR_YEAR), **kwargs)
-        print("yearly_filtered", yearly_filtered)
-        print("filter is null", self.filter(period__isnull=False))
         if yearly_filtered.exists():
             return yearly_filtered
         else:
