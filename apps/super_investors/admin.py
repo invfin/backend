@@ -2,6 +2,7 @@ from django.contrib import admin
 
 from .models import Superinvestor, SuperinvestorActivity, SuperinvestorHistory
 
+
 class SuperinvestorHistoryInline(admin.StackedInline):
     model = SuperinvestorHistory
     extra = 0
@@ -14,21 +15,41 @@ class SuperinvestorActivityInline(admin.StackedInline):
     jazzmin_tab_id = "activity"
 
 
+@admin.register(SuperinvestorActivity)
+class SuperinvestorActivityAdmin(admin.ModelAdmin):
+    list_display = [
+        "id",
+        "superinvestor_related",
+    ]
+    list_filter = [
+        "superinvestor_related",
+    ]
+
+
+@admin.register(SuperinvestorHistory)
+class SuperinvestorHistoryAdmin(admin.ModelAdmin):
+    list_display = [
+        "id",
+        "superinvestor_related",
+    ]
+    list_filter = [
+        "superinvestor_related",
+    ]
+
+
 @admin.register(Superinvestor)
 class SuperinvestorAdmin(admin.ModelAdmin):
     inlines = [SuperinvestorHistoryInline, SuperinvestorActivityInline]
     list_display = [
-        'id',
-        'name',
-        'fund_name',
-        'slug',
-        'image',
-        'last_update',
-        'has_error',
+        "id",
+        "name",
+        "fund_name",
+        "slug",
+        "image",
+        "last_update",
+        "has_error",
     ]
-    list_editable = [
-        'image'
-    ]
+    list_editable = ["image"]
     jazzmin_form_tabs = [
         ("general", "SuperInvestor"),
         ("activity", "Activity"),

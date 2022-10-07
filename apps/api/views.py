@@ -168,11 +168,19 @@ class BaseAPIView(APIView):
         raise NotImplementedError('You need to set a "model_to_track"')
 
     def get_object_searched(self, queryset: Union[Type, QuerySet]) -> Type:
+        """
+        TODO
+        Improve the way that we get the searched model (Company, superinvestor or Term)
+        """
         search = queryset
-        if type(queryset).__name__ == "BaseStatementQuerySet" or type(queryset) == list:
-            search = None
-            if "ticker" in self.url_parameters and queryset[0]._meta.app_label == "empresas":
-                search = queryset[0].company
+        if type(queryset).__name__ == "BaseStatementQuerySet" or type(queryset) == QuerySet or type(queryset) == list:
+            first_item_queryset = queryset[0]
+            if "ticker" in self.url_parameters and first_item_queryset._meta.app_label == "empresas":
+                search = first_item_queryset.company
+            elif first_item_queryset._meta.app_label == "super_investors":
+                search = first_item_queryset.superinvestor_related
+            elif first_item_queryset._meta.app_label == "escritos":
+                search = first_item_queryset.term_related
             else:
                 raise ParseError("Ha habido un problema con tu búsqueda, asegúrate de haber introducido un valor")
         return search

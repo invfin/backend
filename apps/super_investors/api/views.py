@@ -15,21 +15,24 @@ User = get_user_model()
 
 class AllSuperinvestorsAPIView(BaseAPIView):
     serializer_class = SuperinvestorSerializer
-    queryset = Superinvestor
+    queryset = Superinvestor.objects.all, True
     pagination_class = StandardResultPagination
+    model_to_track = "ignore"
 
 
 class SuperinvestorActivityAPIView(BaseAPIView):
     serializer_class = SuperinvestorActivitySerializer
-    queryset = SuperinvestorActivity
+    queryset = SuperinvestorActivity.objects.filter, True
     pagination_class = StandardResultPagination
     url_parameters = ["slug"]
     fk_lookup_model = "superinvestor_related__info_accronym"
+    model_to_track = Superinvestor
 
 
 class SuperinvestorHistoryAPIView(BaseAPIView):
     serializer_class = SuperinvestorHistorySerializer
-    queryset = SuperinvestorHistory
+    queryset = SuperinvestorHistory.objects.filter, True
     pagination_class = StandardResultPagination
     url_parameters = ["slug"]
     fk_lookup_model = "superinvestor_related__info_accronym"
+    model_to_track = Superinvestor

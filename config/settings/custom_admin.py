@@ -164,6 +164,24 @@ SIDE_MENU = [
         ),
     },
     {
+        "label": "Superinvestors",
+        "icon": "fas fa-crown",
+        "models": (
+            {
+                "model": "super_investors.Superinvestor",
+                "label": "SuperInvestors",
+            },
+            {
+                "model": "super_investors.SuperinvestorHistory",
+                "label": "SuperInvestors movements",
+            },
+            {
+                "model": "super_investors.SuperinvestorActivity",
+                "label": "SuperInvestors activity",
+            },
+        ),
+    },
+    {
         "label": "API",
         "icon": "fas fa-key",
         "models": (
@@ -194,6 +212,10 @@ SIDE_MENU = [
             {
                 "model": "escritos.Term",
                 "label": "Terms",
+            },
+            {
+                "model": "escritos.TermContent",
+                "label": "Terms content",
             },
             {
                 "model": "escritos.TermCorrection",

@@ -50,7 +50,8 @@ from apps.escritos.models import (
 # from apps.screener.models import *
 from apps.socialmedias.models import DefaultContent, DefaultTilte, Emoji
 
-# from apps.super_investors.models import *
+from apps.super_investors.models import Superinvestor
+
 # from apps.roboadvisor.models import *
 from apps.users.models import User
 from apps.general.models import (
@@ -67,6 +68,8 @@ from apps.general.models import (
 
 from tests.data import *
 from apps.general import constants as general_constants
+from tests.data import escritos_data
+from tests.data import superinvestors_data
 
 """
 function
@@ -352,7 +355,66 @@ def yearly_cashflow_statement(django_db_blocker, clean_company, period_for_year)
         return DjangoTestingModel.create(CashflowStatement, is_ttm=False, compny=clean_company, period=period_for_year)
 
 
-# Web exclusive
+# Escritos
+@pytest.fixture(scope="function")
+def term_and_content(django_db_blocker) -> Term:
+    with django_db_blocker.unblock():
+        term = DjangoTestingModel.create(
+            Term, **escritos_data.TERM, author=DjangoTestingModel.create(User, username="Lucas Montes")
+        )
+        for escrito in escritos_data.TERM_CONTENT:
+            DjangoTestingModel.create(TermContent, **escrito)
+        return term
+
+
+@pytest.fixture(scope="function")
+def various_terms(django_db_blocker) -> Term:
+    with django_db_blocker.unblock():
+        author = DjangoTestingModel.create(User, username="Lucas Montes")
+        DjangoTestingModel.create(
+            Term,
+            id=1,
+            title="Precio valor contable (P/B)",
+            slug="precio-valor-en-libros",
+            resume=(
+                "El price to book compara el precio de mercado de una empresa con su valor en libros, que muestra"
+                " esencialmente el valor dado por el mercado por cada dólar del patrimonio neto de la compañía."
+            ),
+            non_thumbnail_url="/static/general/assets/img/general/why-us.webp",
+            total_votes=0,
+            total_views=238,
+            times_shared=0,
+            author=author,
+        )
+        DjangoTestingModel.create(
+            Term,
+            id=2,
+            title="El balance sheet",
+            slug="el-balance-sheet-en-espanol",
+            resume=(
+                "El balance general es el estado financiero que muestra los activos, los pasivos y el patrimonio de los"
+                " accionistas."
+            ),
+            non_thumbnail_url=(
+                "https://cdn.wallstreetmojo.com/wp-content/uploads/2019/11/Comparative-Balance-Sheet-Example-1.1-1.png"
+            ),
+            total_votes=0,
+            total_views=180,
+            times_shared=0,
+            author=author,
+        )
+        yield
+
+
+# Superinvestors
+@pytest.fixture()
+def superinvestor(django_db_blocker) -> Superinvestor:
+    with django_db_blocker.unblock():
+        for super_data in superinvestors_data.LIST_SUPERINVESTORS:
+            DjangoTestingModel.create(Superinvestor, **super_data)
+
+
+# Web
 @pytest.fixture
 def web_filters() -> Dict[str, Union[int, str]]:
     return {"for_content": social_constants.WEB, "purpose": web_constants.CONTENT_FOR_ENGAGEMENT}
