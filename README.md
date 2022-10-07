@@ -43,6 +43,9 @@ A tag to create utm parameters for the urls. source and campaign are at the end 
 
 - {% utm content='', term='', medium='webapp', source='invfin', campaign='website-links' %}
 
+## Socialmedias
+### Facebook
+When posting with images or video on facebook, around 6 (or maybe more) lines of text shows up.
 
 # TODO
 1. [ ] Improve recommendations
