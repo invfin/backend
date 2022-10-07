@@ -1,19 +1,20 @@
 {% extends "bases/base_forms.html" %}
 {% load static crispy_forms_tags %}
+{% block header %}{% include "management/headers/inicio.html" %}{% endblock header%}
 {% block FormContent %}
 <form method="POST" action="{% url 'public_blog:create_blog' %}">
     <div class="card">
         {% csrf_token %}
         {{ form.media }}
         {% for field in form %}
-            {% if field.errors %}
-            <div class="alert alert-danger" role="alert">
+        {% if field.errors %}
+        <div class="alert alert-danger" role="alert">
             {{ field.errors|striptags }}
-            </div>
-            {% endif %}
+        </div>
+        {% endif %}
         {% endfor %}
         <div class="card-body">
-            {{ form.as_p }}
+            {% crispy form %}
             <div class="col-12 mt-4">
                 <button class="btn btn-primary col-12" type="submit">Guardar</button>
             </div>

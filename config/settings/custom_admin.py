@@ -16,8 +16,8 @@ TOP_MENU_LEFT = [
 
 TOP_MENU_RIGHT = [
     {"name": "Web", "url": FULL_DOMAIN, "new_window": True},
+    {"name": "Web management", "url": f"{FULL_DOMAIN}/manage-web/", "new_window": True},
     {"name": "API", "url": f"{FULL_DOMAIN}/api/api-documentacion", "new_window": True},
-    {"model": "users.user"},
 ]
 
 SIDE_MENU = [
@@ -85,67 +85,6 @@ SIDE_MENU = [
         ),
     },
     {
-        "label": "Empresas",
-        "icon": "fas fa-building",
-        "models": (
-            {
-                "model": "empresas.Company",
-                "label": "Company",
-            },
-            {
-                "model": "empresas.CompanyStatementsProxy",
-                "label": "Average & Ratios",
-            },
-            {
-                "model": "empresas.CompanyFinprepProxy",
-                "label": "Finprep",
-            },
-            {
-                "model": "empresas.CompanyYahooQueryProxy",
-                "label": "YahooQuery",
-            },
-            {
-                "model": "empresas.CompanyYFinanceProxy",
-                "label": "YFinance",
-            },
-            {
-                "model": "empresas.CompanyFinnhubProxy",
-                "label": "Finnhub",
-            },
-        ),
-    },
-    {
-        "label": "Company Relateds",
-        "icon": "fas fa-copy",
-        "models": (
-            {
-                "model": "empresas.ExchangeOrganisation",
-                "label": "Exchanges",
-            },
-            {
-                "model": "empresas.InstitutionalOrganization",
-                "label": "Institutions",
-            },
-            {
-                "model": "super_investors.Superinvestor",
-                "label": "SuperInvestors",
-            },
-            {
-                "model": "general.Industry",
-            },
-            {
-                "model": "general.Sector",
-            },
-            {
-                "model": "general.Period",
-            },
-            {
-                "model": "empresas.CompanyUpdateLog",
-                "label": "Company Logs",
-            },
-        ),
-    },
-    {
         "label": "General",
         "icon": "fas fa-globe",
         "models": (
@@ -164,20 +103,47 @@ SIDE_MENU = [
         ),
     },
     {
-        "label": "Superinvestors",
-        "icon": "fas fa-crown",
+        "label": "Content",
+        "icon": "fas fa-pen-nib",
         "models": (
             {
-                "model": "super_investors.Superinvestor",
-                "label": "SuperInvestors",
+                "model": "socialmedias.DefaultTilte",
             },
             {
-                "model": "super_investors.SuperinvestorHistory",
-                "label": "SuperInvestors movements",
+                "model": "socialmedias.DefaultContent",
             },
             {
-                "model": "super_investors.SuperinvestorActivity",
-                "label": "SuperInvestors activity",
+                "model": "socialmedias.Emoji",
+            },
+            {
+                "model": "socialmedias.Hashtag",
+            },
+        ),
+    },
+    {
+        "label": "Web",
+        "icon": "fas fa-sitemap",
+        "models": (
+            {
+                "model": "web.WebsiteEmailsType",
+            },
+            {
+                "model": "web.WebsiteEmail",
+            },
+            {
+                "model": "web.WebsiteEmailTrack",
+            },
+            {
+                "model": "web.PromotionCampaign",
+            },
+            {
+                "model": "web.Promotion",
+            },
+            {
+                "model": "web.UserAndVisiteurCategory",
+            },
+            {
+                "model": "web.WebsiteLegalPage",
             },
         ),
     },
@@ -239,7 +205,7 @@ SIDE_MENU = [
     },
     {
         "label": "Recsys",
-        "icon": "fas fa-globe",
+        "icon": "fas fa-microchip",
         "models": (
             {
                 "model": "recsys.VisiteurCompanyRecommended",
@@ -250,8 +216,69 @@ SIDE_MENU = [
         ),
     },
     {
+        "label": "Empresas",
+        "icon": "fas fa-building",
+        "models": (
+            {
+                "model": "empresas.Company",
+                "label": "Company",
+            },
+            {
+                "model": "empresas.CompanyStatementsProxy",
+                "label": "Average & Ratios",
+            },
+            {
+                "model": "empresas.CompanyFinprepProxy",
+                "label": "Finprep",
+            },
+            {
+                "model": "empresas.CompanyYahooQueryProxy",
+                "label": "YahooQuery",
+            },
+            {
+                "model": "empresas.CompanyYFinanceProxy",
+                "label": "YFinance",
+            },
+            {
+                "model": "empresas.CompanyFinnhubProxy",
+                "label": "Finnhub",
+            },
+        ),
+    },
+    {
+        "label": "Company Relateds",
+        "icon": "fas fa-copy",
+        "models": (
+            {
+                "model": "empresas.ExchangeOrganisation",
+                "label": "Exchanges",
+            },
+            {
+                "model": "empresas.InstitutionalOrganization",
+                "label": "Institutions",
+            },
+            {
+                "model": "super_investors.Superinvestor",
+                "label": "SuperInvestors",
+            },
+            {
+                "model": "general.Industry",
+            },
+            {
+                "model": "general.Sector",
+            },
+            {
+                "model": "general.Period",
+            },
+            {
+                "model": "empresas.CompanyUpdateLog",
+                "label": "Company Logs",
+            },
+        ),
+    },
+    {
         "label": "Raw company data",
-        "icon": "fas fa-file-excel",
+        "icon": "fas fa-database",
         "models": (
             {
                 "model": "empresas.IncomeStatement",
@@ -321,6 +348,24 @@ SIDE_MENU = [
             },
             {
                 "model": "empresas.CashflowStatementYFinance",
+            },
+        ),
+    },
+    {
+        "label": "Superinvestors",
+        "icon": "fas fa-crown",
+        "models": (
+            {
+                "model": "super_investors.Superinvestor",
+                "label": "SuperInvestors",
+            },
+            {
+                "model": "super_investors.SuperinvestorHistory",
+                "label": "SuperInvestors movements",
+            },
+            {
+                "model": "super_investors.SuperinvestorActivity",
+                "label": "SuperInvestors activity",
             },
         ),
     },

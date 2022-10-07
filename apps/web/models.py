@@ -24,11 +24,11 @@ class WebsiteLegalPage(BaseToAll):
     content = RichTextField()
 
     class Meta:
-        ordering = ['-id']
+        ordering = ["-id"]
         verbose_name = "Legal website pages"
         db_table = "website_pages_legals"
-    
-    def save(self, *args, **kwargs): # new
+
+    def save(self, *args, **kwargs):  # new
         if not self.slug:
             self.slug = self.save_unique_field("slug", self.title)
         return super().save(*args, **kwargs)
@@ -39,44 +39,39 @@ class WebsiteEmailsType(BaseToAll):
     slug = SlugField(max_length=800, null=True, blank=True)
 
     class Meta:
-        ordering = ['-id']
+        ordering = ["-id"]
         verbose_name = "Emails type by website"
         db_table = "website_emails_type"
-    
+
     def __str__(self) -> str:
         return self.name
-    
-    def save(self, *args, **kwargs): # new
+
+    def save(self, *args, **kwargs):  # new
         if not self.slug:
             self.slug = self.save_unique_field("slug", self.name)
         return super().save(*args, **kwargs)
 
 
 class WebsiteEmail(BaseNewsletter):
+    content = RichTextField()
     type_related = ForeignKey(WebsiteEmailsType, null=True, blank=True, on_delete=SET_NULL)
 
     class Meta:
-        ordering = ['-id']
+        ordering = ["-id"]
         verbose_name = "Emails by website"
         db_table = "website_emails"
 
     def __str__(self) -> str:
         return self.title
-        
+
 
 class WebsiteEmailTrack(BaseEmail):
-    email_related = ForeignKey(
-        WebsiteEmail, 
-        null=True,
-        blank=True,
-        on_delete=SET_NULL, 
-        related_name="email_related"
-    )
+    email_related = ForeignKey(WebsiteEmail, null=True, blank=True, on_delete=SET_NULL, related_name="email_related")
 
     class Meta:
         verbose_name = "Email counting"
         db_table = "website_emails_track"
-    
+
     def __str__(self) -> str:
         return self.email_related.title
 
@@ -84,8 +79,8 @@ class WebsiteEmailTrack(BaseEmail):
 class PromotionCampaign(BaseToAll):
     title = CharField(max_length=600, blank=True)
     slug = SlugField(max_length=800, null=True, blank=True)
-    categories = ManyToManyField('general.Category', blank=True)
-    tags = ManyToManyField('general.Tag', blank=True)
+    categories = ManyToManyField("general.Category", blank=True)
+    tags = ManyToManyField("general.Tag", blank=True)
     start_date = DateTimeField(blank=True, null=True)
     end_date = DateTimeField(blank=True, null=True)
     email_type_related = ForeignKey(WebsiteEmailsType, null=True, blank=True, on_delete=SET_NULL)
@@ -96,7 +91,7 @@ class PromotionCampaign(BaseToAll):
 
     def __str__(self) -> str:
         return self.title
-    
+
     def save(self, *args, **kwargs):
         self.slug = self.save_unique_field("slug", self.title)
         return super().save(*args, **kwargs)
@@ -128,24 +123,24 @@ class Promotion(BaseToAll):
     class Meta:
         verbose_name = "Promociones"
         db_table = "promotions"
-    
+
     def __str__(self) -> str:
         return self.title
-    
+
     def save(self, *args, **kwargs):
         self.slug = self.save_unique_field("slug", self.title)
         return super().save(*args, **kwargs)
-    
+
     @property
     def full_url(self):
-        source = 'invfin'
-        if self.medium != source:            
+        source = "invfin"
+        if self.medium != source:
             source = self.social_media
-        utm_source = f'utm_source={source}'
-        utm_medium = f'utm_medium={self.medium}'
-        utm_campaign = f'utm_campaign={self.campaign_related.title}'
-        utm_term = f'utm_term={self.title}'
-        return f'{self.redirect_to}?{utm_source}&{utm_medium}&{utm_campaign}&{utm_term}'
+        utm_source = f"utm_source={source}"
+        utm_medium = f"utm_medium={self.medium}"
+        utm_campaign = f"utm_campaign={self.campaign_related.title}"
+        utm_term = f"utm_term={self.title}"
+        return f"{self.redirect_to}?{utm_source}&{utm_medium}&{utm_campaign}&{utm_term}"
 
 
 class UserAndVisiteurCategory(BaseToAll):
@@ -158,14 +153,14 @@ class UserAndVisiteurCategory(BaseToAll):
     visiteurs = ManyToManyField(Visiteur, blank=True)
 
     class Meta:
-        ordering = ['-id']
+        ordering = ["-id"]
         verbose_name = "Category of users and visiteurs"
         db_table = "users_visiteurs_categories"
-    
+
     def __str__(self) -> str:
         return self.name
-    
-    def save(self, *args, **kwargs): # new
+
+    def save(self, *args, **kwargs):  # new
         if not self.slug:
             self.slug = self.save_unique_field("slug", self.name)
         return super().save(*args, **kwargs)

@@ -13,26 +13,26 @@ from django.db.models import (
     ManyToManyField,
     Model,
     PositiveIntegerField,
-    TextField
+    TextField,
+    JSONField,
 )
-from django.template.defaultfilters import slugify
 from django.utils import timezone
 
 from ckeditor.fields import RichTextField
 
-from apps.general.constants import BASE_ESCRITO_STATUS
-from apps.general.mixins import (
-    BaseEscritosMixins,
-    CommonMixin,
-    BaseToAll
-)
+from apps.general.constants import BASE_ESCRITO_STATUS, ESCRITO_STATUS_MAP, DEFAULT_EXTRA_DATA_DICT
+from apps.general.mixins import BaseEscritosMixins, CommonMixin, BaseToAll
 
 User = get_user_model()
 
 
+def default_dict():
+    return DEFAULT_EXTRA_DATA_DICT
+
+
 class BaseWrittenContent(CommonMixin):
-    title = CharField(max_length=500,null = True, blank=True)
-    slug = CharField(max_length=500,null = True, blank=True)
+    title = CharField(max_length=500, null=True, blank=True)
+    slug = CharField(max_length=500, null=True, blank=True)
     created_at = DateTimeField(auto_now_add=True)
     updated_at = DateTimeField(auto_now=True)
     total_votes = IntegerField(default=0)
@@ -41,13 +41,14 @@ class BaseWrittenContent(CommonMixin):
     category = ForeignKey("general.Category", on_delete=SET_NULL, blank=True, null=True)
     tags = ManyToManyField("general.Tag", blank=True)
     author = ForeignKey(User, on_delete=SET_NULL, null=True)
+    extra_data = JSONField(default=default_dict)
 
     class Meta:
         abstract = True
 
-    def save(self, *args, **kwargs): # new
+    def save(self, *args, **kwargs):  # new
         if not self.slug:
-            self.slug = slugify(self.title)
+            self.slug = self.save_unique_field("slug", self.name)
         return super().save(*args, **kwargs)
 
     def __str__(self):
@@ -55,30 +56,32 @@ class BaseWrittenContent(CommonMixin):
 
     def add_tags(self, tags):
         from apps.general.models import Tag
+
         for tag in tags:
-            if tag == '':
+            if tag == "":
                 continue
-            tag, created = Tag.objects.get_or_create(slug = tag.lower())
+            tag, created = Tag.objects.get_or_create(slug=tag.lower())
             if tag in self.tags.all():
                 continue
             self.tags.add(tag)
 
 
 class BaseEscrito(BaseWrittenContent, BaseEscritosMixins):
-    resume = TextField(default='')
+    resume = TextField(default="")
     published_at = DateTimeField(auto_now=True)
-    status = IntegerField(null=True, blank=True,choices=BASE_ESCRITO_STATUS)
+    status = IntegerField(null=True, blank=True, choices=BASE_ESCRITO_STATUS)
     # thumbnail = CloudinaryField('image', null=True, width_field='image_width', height_field='image_height')
-    thumbnail = ImageField('image',blank=True, null=True, width_field='image_width', height_field='image_height')
-    non_thumbnail_url = CharField(max_length=500,null=True, blank=True)
+    thumbnail = ImageField("image", blank=True, null=True, width_field="image_width", height_field="image_height")
+    non_thumbnail_url = CharField(max_length=500, null=True, blank=True)
     in_text_image = BooleanField(default=False)
     meta_information = ForeignKey("seo.MetaParametersHistorial", on_delete=SET_NULL, blank=True, null=True)
 
     class Meta:
         abstract = True
 
-    def save(self, *args, **kwargs): # new
-        return super().save(*args, **kwargs)
+    @property
+    def current_status(self):
+        return ESCRITO_STATUS_MAP[self.status]
 
     @property
     def image(self):
@@ -86,7 +89,7 @@ class BaseEscrito(BaseWrittenContent, BaseEscritosMixins):
         if self.thumbnail:
             image = self.thumbnail.url
         if not image:
-            image = '/static/general/assets/img/general/why-us.webp'
+            image = "/static/general/assets/img/general/why-us.webp"
         return image
 
 
@@ -108,7 +111,7 @@ class BaseComment(BaseToAll):
 
 class BaseNewsletter(BaseToAll):
     title = CharField(max_length=500)
-    content = RichTextField(config_name='simple')
+    content = RichTextField(config_name="simple")
     default_title = ForeignKey("socialmedias.DefaultTilte", on_delete=SET_NULL, null=True, blank=True)
     default_content = ForeignKey("socialmedias.DefaultContent", on_delete=SET_NULL, null=True, blank=True)
     title_emojis = ManyToManyField("socialmedias.Emoji", blank=True)
@@ -153,7 +156,7 @@ class BaseGenericModels(BaseToAll):
 
 
 class BaseFavoritesHistorial(Model):
-    user = ForeignKey(User,on_delete=SET_NULL,null=True, blank=True)
+    user = ForeignKey(User, on_delete=SET_NULL, null=True, blank=True)
     date = DateTimeField(auto_now_add=True)
     added = BooleanField(default=False)
     removed = BooleanField(default=False)
