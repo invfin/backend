@@ -13,7 +13,7 @@
     }
 </style>
 <div class="card">
-    <form method="POST" action="{% url 'web:email_web' %}">
+    <form method="POST" action=".">
         {% csrf_token %}
         {{form.media}}
         {% for field in form %}

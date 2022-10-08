@@ -32,8 +32,10 @@
                     </p>
                 </div>
                 <div class="col-auto">
-                    <a href="{% url 'web:update_email_engagement' %}" class="btn btn-sm btn-primary mb-1">Edit</a>
-                    <a href="{% url 'web:send_email_engagement' %}" class="btn btn-sm btn-primary mb-1">Send</a>
+                    <a href="{% url 'web:update_email_engagement' web_email.id %}"
+                        class="btn btn-sm btn-primary mb-1">Edit</a>
+                    <a href="{% url 'web:send_email_engagement' web_email.id %}"
+                        class="btn btn-sm btn-primary mb-1">Send</a>
                 </div>
             </div>
         </div>

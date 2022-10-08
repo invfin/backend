@@ -61,14 +61,14 @@ class ManageEmailEngagementListView(PrivateWebListView):
 
 class ManageEmailEngagementUpdateView(PrivateWebUpdateView):
     model = WebsiteEmail
-    template_name = "engagement/update_term.html"
+    template_name = "engagement/form_email.html"
     pk_url_kwarg = "pk"
     fields = "__all__"
 
 
 class ManageEmailEngagementCreateView(PrivateWebCreateView):
     form_class = WebEmailForm
-    template_name = "engagement/create_email.html"
+    template_name = "engagement/form_email.html"
 
     def get_success_url(self) -> str:
         return reverse("web:manage_engagement_web")
