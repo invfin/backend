@@ -2,18 +2,24 @@ from decimal import Decimal
 from typing import Dict, Union
 
 
-class CalculateCompanyFinancialRatios:
+class CalculateFinancialRatios:
     @staticmethod
     def divide_or_zero(numerator: Union[int, float], denominator: Union[int, float]):
-        """Function to make a division even if it may return zero
+        """A method to calculate a divison that returns de product or 0 if the denominator is 0
 
-        Args:
-            numerator: (Union[int, float])
-                The numerator of the division
-            denominator (Union[int, float]):
-                The denominator of the division
+        Parameters
+        ----------
+        numerator : Union[int, float]
+            The numerator of the division
+        denominator : Union[int, float]
+            The denominator of the division
 
+        Returns
+        -------
+        Union[int, float]
+            The product of the division
         """
+        return numerator / denominator if denominator != 0 else 0
 
     def generate_current_data(
         self, income_statements: list, balance_sheets: list, cashflow_statements: list

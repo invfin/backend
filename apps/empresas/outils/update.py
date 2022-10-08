@@ -5,12 +5,12 @@ from django.db.models import Q
 
 from apps.translate.google_trans_new import google_translator
 from apps.empresas.utils import log_company
-from apps.empresas.outils.ratios import CalculateCompanyFinancialRatios
+from apps.empresas.outils.ratios import CalculateFinancialRatios
 from apps.empresas.outils.average_statements import AverageStatements
 from apps.general.constants import PERIOD_FOR_YEAR
 
 
-class UpdateCompany(CalculateCompanyFinancialRatios, AverageStatements):
+class UpdateCompany(CalculateFinancialRatios, AverageStatements):
     def __init__(self, company: Type["Company"]) -> None:
         self.company: Type["Company"] = company
 

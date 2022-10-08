@@ -1,7 +1,7 @@
 {
     "makefile.extensionOutputFolder": "./.vscode",
-    "autoDocstring.docstringFormat": "numpy-notypes",
-    // "autoDocstring.customTemplatePath": "./.vscode/docstring.mustache",
+    // "autoDocstring.docstringFormat": "numpy",
+    "autoDocstring.customTemplatePath": "./.vscode/docstring.mustache",
     "editor.formatOnSave": true,
     "python.formatting.provider": "black",
     "explorer.autoReveal": false,
