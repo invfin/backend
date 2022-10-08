@@ -1,0 +1,43 @@
+{% extends "bases/base_content.html" %}
+{% load static i18n extra %}
+{% block header %}{% include "headers/inicio.html" %}{% endblock header%}
+
+{% block FirstContent %}
+{% for web_email in web_emails %}
+<div class="col-12">
+    <div class="card">
+        <!-- Card body -->
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-auto">
+                    {% if web_email.sent %}
+                    <div class="col-1">
+                        <div style="width: 100%;text-align: center;" class="pt-1 pb-1">
+                            <i class="fa fa-check-circle" style="color: green;font-size:36px;"></i>
+                        </div>
+                    </div>
+                    {% endif %}
+                </div>
+                <div class="col ml--2">
+                    <h4 class="mb-0">
+                        {{web_email.title}}
+                    </h4>
+                    <p class="text-sm text-muted mb-0">
+                        {{web_email.resume}}
+                    </p>
+                    <p class="text-sm text-muted mt-2">
+                        <span class="me-2"><i class="fas fa-eye"></i> {{ web_email.opening_rate }} </span>
+                        <span class="me-2"><i class="fas fa-star"></i> {{web_email.total_votes}}</span>
+                        <span class="me-2"><i class="fas fa-envelope-open"></i> {{web_email.date_to_send}}</span>
+                    </p>
+                </div>
+                <div class="col-auto">
+                    <a href="{% url 'web:update_email_engagement' %}" class="btn btn-sm btn-primary mb-1">Edit</a>
+                    <a href="{% url 'web:send_email_engagement' %}" class="btn btn-sm btn-primary mb-1">Send</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endblock FirstContent%}

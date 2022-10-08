@@ -1,3 +1,4 @@
+from random import choices
 from ckeditor.fields import RichTextField
 from django.db.models import (
     SET_NULL,
@@ -16,6 +17,7 @@ from apps.seo.models import Visiteur
 from apps.socialmedias.constants import SOCIAL_MEDIAS
 from apps.seo import constants
 from apps.users.models import User
+from apps.web.constants import WHOM_TO_SEND_EMAIL, WHOM_TO_SEND_EMAIL_ALL
 
 
 class WebsiteLegalPage(BaseToAll):
@@ -55,6 +57,8 @@ class WebsiteEmailsType(BaseToAll):
 class WebsiteEmail(BaseNewsletter):
     content = RichTextField()
     type_related = ForeignKey(WebsiteEmailsType, null=True, blank=True, on_delete=SET_NULL)
+    whom_to_send = CharField(max_length=800, choices=WHOM_TO_SEND_EMAIL, default=WHOM_TO_SEND_EMAIL_ALL)
+    users_selected = ManyToManyField(User, blank=True)
 
     class Meta:
         ordering = ["-id"]

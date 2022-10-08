@@ -11,13 +11,12 @@
             <a href="{% url 'web:manage_all_terms' %}" class="btn btn-outline-primary">
                 Terms
             </a>
-            <button id="btnGroupDrop1" type="button" class="btn btn-outline-primary dropdown-toggle"
-                data-bs-toggle="dropdown" aria-expanded="false">
-                Atajos
-            </button>
-            <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                {% include 'management/headers/dropdowns.html' %}
-            </ul>
+            <a href="{% url 'web:list_emails_engagement' %}" class="btn btn-outline-primary">
+                Emails
+            </a>
+            <a href="{% url 'web:create_email_engagement' %}" class="btn btn-outline-primary">
+                Create Email
+            </a>
         </div>
     </div>
 </div>

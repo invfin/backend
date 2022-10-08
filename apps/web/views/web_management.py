@@ -1,17 +1,12 @@
-from django.conf import settings
-from django.contrib import messages
-from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views.generic import CreateView, DetailView, ListView, UpdateView, TemplateView
 from django.contrib.auth.mixins import UserPassesTestMixin
+from django.http import HttpResponse
 
-from apps.general.utils import HostChecker
-from apps.public_blog.models import WritterProfile
-from apps.seo.views import SEOTemplateView
 from apps.escritos.models import Term
-
-from apps.web.models import WebsiteLegalPage, WebsiteEmail
-from apps.web.forms import ContactForm, WebEmailForm
+from apps.web.models import WebsiteEmail
+from apps.web.forms import WebEmailForm
+from apps.web.tasks import send_email_engagement_task
 
 
 class BasePrivateWebView(UserPassesTestMixin):
@@ -39,37 +34,47 @@ class PrivateWebTemplateView(BasePrivateWebView, TemplateView):
     pass
 
 
-class ManagementWebView(PrivateWebTemplateView):
+class ManageWebView(PrivateWebListView):
+    model = WebsiteEmail
     template_name = "management/inicio.html"
-
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
-    #     context["models"] =
-    #     return context
+    context_object_name = "web_emails"
 
 
-class ManagementTermListView(PrivateWebListView):
+class ManageTermListView(PrivateWebListView):
     model = Term
-    template_name = "management/inicio_term.html"
+    template_name = "management/list_terms.html"
     context_object_name = "terms"
 
 
-class ManagementTermDetailView(PrivateWebUpdateView):
+class ManageTermUpdateView(PrivateWebUpdateView):
     model = Term
-    template_name = "management/details_term.html"
+    template_name = "management/update_term.html"
     slug_field = "slug"
     fields = "__all__"
 
 
-class WebEngagementView(PrivateWebListView):
-    template_name = "engagement/email_management.html"
+class ManageEmailEngagementListView(PrivateWebListView):
+    template_name = "engagement/list_emails.html"
     model = WebsiteEmail
     context_object_name = "web_emails"
 
 
-class CreateWebEmailView(PrivateWebCreateView):
+class ManageEmailEngagementUpdateView(PrivateWebUpdateView):
+    model = WebsiteEmail
+    template_name = "engagement/update_term.html"
+    pk_url_kwarg = "pk"
+    fields = "__all__"
+
+
+class ManageEmailEngagementCreateView(PrivateWebCreateView):
     form_class = WebEmailForm
-    template_name = "engagement/mandar_emails.html"
+    template_name = "engagement/create_email.html"
 
     def get_success_url(self) -> str:
         return reverse("web:manage_engagement_web")
+
+
+def send_email_management(request, email_id):
+    if request.POST:
+        send_email_engagement_task.delay(email_id)
+        return HttpResponse(status=204, headers={"HX-Trigger": "showMessageSuccess"})

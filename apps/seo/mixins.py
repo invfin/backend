@@ -5,9 +5,6 @@ from django.conf import settings
 from apps.recsys.mixins import RecommenderMixin
 
 
-FULL_DOMAIN = settings.FULL_DOMAIN
-
-
 class SEOViewMixin(RecommenderMixin):
     """
     Mixin to populate meta information for SEO purpose
@@ -37,6 +34,8 @@ class SEOViewMixin(RecommenderMixin):
     is_article: bool = False
     open_graph_type: str = "website"
     update_visits: bool = False
+    no_index: bool = False
+    no_follow: bool = False
 
     def update_views(self, instance):
         instance.total_views += 1
@@ -104,7 +103,7 @@ class SEOViewMixin(RecommenderMixin):
                 meta_image = f"/static/general/assets/img/{selected_image}"
 
         if not meta_image.startswith("http"):
-            meta_image = f"{FULL_DOMAIN}{meta_image}"
+            meta_image = f"{settings.FULL_DOMAIN}{meta_image}"
 
         return meta_image
 
@@ -139,8 +138,19 @@ class SEOViewMixin(RecommenderMixin):
             schema_org = {}
         return schema_org
 
+    def get_meta_robots(self):
+        if not self.no_follow and not self.no_index:
+            return None
+        elif self.no_follow and not self.no_index:
+            return "nofollow"
+        elif not self.no_follow and self.no_index:
+            return "noindex"
+        else:
+            return "nofollow,noindex"
+
     def get_base_meta_information(self, instance: object = None):
         return {
+            "meta_robots": self.get_meta_robots(),
             "meta_description": self.get_meta_description(instance),
             "meta_tags": self.get_meta_tags(),
             "meta_title": self.get_meta_title(instance),

@@ -1,6 +1,6 @@
 {% extends "bases/base_forms.html" %}
 {% load static crispy_forms_tags %}
-{% block header %}{% include "management/headers/inicio.html" %}{% endblock header%}
+{% block header %}{% include "headers/inicio.html" %}{% endblock header%}
 {% block FormContent %}
 <form method="POST" action="{% url 'public_blog:create_blog' %}">
     <div class="card">
