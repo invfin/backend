@@ -72,7 +72,7 @@ class TermAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
     ]
     search_fields = ["title"]
     jazzmin_form_tabs = [
-        ("general", "Company"),
+        ("general", "Term"),
         ("content", "Term parts"),
     ]
 

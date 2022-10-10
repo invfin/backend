@@ -13,10 +13,18 @@ class TermQuerySet(QuerySet):
             "author",
         )
 
+    def prefetch_all(self):
+        return self.prefetch_related(
+            "category",
+            "tags",
+            "author",
+            "term_content_parts",
+        )
+
 
 class TermManager(Manager):
     def get_queryset(self):
-        return TermQuerySet(self.model, using=self._db).tags_category_prefetch()
+        return TermQuerySet(self.model, using=self._db).prefetch_all()
 
     def get_random(self, query=None):
         query = query if query else self.all()

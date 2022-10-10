@@ -246,7 +246,7 @@ SIDE_MENU = [
         ),
     },
     {
-        "label": "Company Relateds",
+        "label": "Empresas relateds",
         "icon": "fas fa-copy",
         "models": (
             {
@@ -256,10 +256,6 @@ SIDE_MENU = [
             {
                 "model": "empresas.InstitutionalOrganization",
                 "label": "Institutions",
-            },
-            {
-                "model": "super_investors.Superinvestor",
-                "label": "SuperInvestors",
             },
             {
                 "model": "general.Industry",
@@ -277,7 +273,7 @@ SIDE_MENU = [
         ),
     },
     {
-        "label": "Raw company data",
+        "label": "Raw empresas data",
         "icon": "fas fa-database",
         "models": (
             {

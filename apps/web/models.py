@@ -27,7 +27,7 @@ class WebsiteLegalPage(BaseToAll):
 
     class Meta:
         ordering = ["-id"]
-        verbose_name = "Legal website pages"
+        verbose_name = "Legal website page"
         db_table = "website_pages_legals"
 
     def save(self, *args, **kwargs):  # new
@@ -42,7 +42,7 @@ class WebsiteEmailsType(BaseToAll):
 
     class Meta:
         ordering = ["-id"]
-        verbose_name = "Emails type by website"
+        verbose_name = "Engagement emails type"
         db_table = "website_emails_type"
 
     def __str__(self) -> str:
@@ -56,13 +56,23 @@ class WebsiteEmailsType(BaseToAll):
 
 class WebsiteEmail(BaseNewsletter):
     content = RichTextField()
-    type_related = ForeignKey(WebsiteEmailsType, null=True, blank=True, on_delete=SET_NULL)
-    whom_to_send = CharField(max_length=800, choices=WHOM_TO_SEND_EMAIL, default=WHOM_TO_SEND_EMAIL_ALL)
+    type_related = ForeignKey(
+        WebsiteEmailsType,
+        null=True,
+        blank=True,
+        on_delete=SET_NULL,
+        related_name="emails_sent",
+    )
+    whom_to_send = CharField(
+        max_length=800,
+        choices=WHOM_TO_SEND_EMAIL,
+        default=WHOM_TO_SEND_EMAIL_ALL,
+    )
     users_selected = ManyToManyField(User, blank=True)
 
     class Meta:
         ordering = ["-id"]
-        verbose_name = "Emails by website"
+        verbose_name = "Email engagement"
         db_table = "website_emails"
 
     def __str__(self) -> str:
@@ -70,7 +80,13 @@ class WebsiteEmail(BaseNewsletter):
 
 
 class WebsiteEmailTrack(BaseEmail):
-    email_related = ForeignKey(WebsiteEmail, null=True, blank=True, on_delete=SET_NULL, related_name="email_related")
+    email_related = ForeignKey(
+        WebsiteEmail,
+        null=True,
+        blank=True,
+        on_delete=SET_NULL,
+        related_name="email_related",
+    )
 
     class Meta:
         verbose_name = "Email counting"
@@ -87,17 +103,24 @@ class PromotionCampaign(BaseToAll):
     tags = ManyToManyField("general.Tag", blank=True)
     start_date = DateTimeField(blank=True, null=True)
     end_date = DateTimeField(blank=True, null=True)
-    email_type_related = ForeignKey(WebsiteEmailsType, null=True, blank=True, on_delete=SET_NULL)
+    type_related = ForeignKey(
+        WebsiteEmailsType,
+        null=True,
+        blank=True,
+        on_delete=SET_NULL,
+        related_name="promotion_campaigns",
+    )
 
     class Meta:
-        verbose_name = "Promotions campaigns"
+        verbose_name = "Promotions campaign"
         db_table = "promotions_campaigns"
 
     def __str__(self) -> str:
         return self.title
 
     def save(self, *args, **kwargs):
-        self.slug = self.save_unique_field("slug", self.title)
+        if not self.slug:
+            self.slug = self.save_unique_field("slug", self.title)
         return super().save(*args, **kwargs)
 
 
@@ -116,7 +139,13 @@ class Promotion(BaseToAll):
     web_place = CharField(max_length=250, choices=constants.WEP_PROMOTION_PLACE, blank=True)
     social_media = CharField(max_length=250, blank=True, choices=SOCIAL_MEDIAS)
     publication_date = DateTimeField(blank=True)
-    campaign_related = ForeignKey(PromotionCampaign, on_delete=SET_NULL, null=True, blank=True)
+    campaign_related = ForeignKey(
+        PromotionCampaign,
+        on_delete=SET_NULL,
+        null=True,
+        blank=True,
+        related_name="promotions",
+    )
     reuse = BooleanField(default=False)
     times_to_reuse = PositiveBigIntegerField(default=0)
     users_clicked = ManyToManyField(User, blank=True)
@@ -125,14 +154,15 @@ class Promotion(BaseToAll):
     clicks_by_not_user = PositiveBigIntegerField(default=0)
 
     class Meta:
-        verbose_name = "Promociones"
+        verbose_name = "Promotion"
         db_table = "promotions"
 
     def __str__(self) -> str:
         return self.title
 
     def save(self, *args, **kwargs):
-        self.slug = self.save_unique_field("slug", self.title)
+        if not self.slug:
+            self.slug = self.save_unique_field("slug", self.title)
         return super().save(*args, **kwargs)
 
     @property
@@ -152,13 +182,17 @@ class UserAndVisiteurCategory(BaseToAll):
     slug = SlugField(max_length=800, null=True, blank=True)
     name_for_user = CharField(max_length=800, null=True, blank=True)
     show_to_user = BooleanField(default=False)
-    email_type_related = ManyToManyField(WebsiteEmailsType, blank=True)
+    email_type_related = ManyToManyField(
+        WebsiteEmailsType,
+        blank=True,
+        related_name="users_categories",
+    )
     users = ManyToManyField(User, blank=True)
     visiteurs = ManyToManyField(Visiteur, blank=True)
 
     class Meta:
         ordering = ["-id"]
-        verbose_name = "Category of users and visiteurs"
+        verbose_name = "Users and visiteurs category"
         db_table = "users_visiteurs_categories"
 
     def __str__(self) -> str:

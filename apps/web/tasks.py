@@ -9,6 +9,7 @@ from apps.general.constants import EMAIL_FOR_WEB
 from apps.web import constants as web_constants
 from apps.web.models import WebsiteEmail
 
+
 User = get_user_model()
 
 
@@ -16,7 +17,7 @@ def send_email_engagement(email: WebsiteEmail):
     if email.whom_to_send == web_constants.WHOM_TO_SEND_EMAIL_ALL:
         users_to_send_to = User.objects.all()
     elif email.whom_to_send == web_constants.WHOM_TO_SEND_EMAIL_TYPE_RELATED:
-        users_to_send_to = email.type_related.all()
+        users_to_send_to = email.type_related.users_categories.all()
     elif email.whom_to_send == web_constants.WHOM_TO_SEND_EMAIL_SELECTED:
         users_to_send_to = email.users_selected.all()
 
