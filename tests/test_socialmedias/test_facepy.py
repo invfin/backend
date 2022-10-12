@@ -21,7 +21,7 @@ from apps.socialmedias.models import (
 from apps.socialmedias.constants import FACEBOOK
 from apps.socialmedias.socialposter.facepy import Facebook
 
-from apps.socialmedias.poster import SocialPosting
+from apps.socialmedias.outils.poster import SocialPosting
 
 
 facebook_vcr = vcr.VCR(

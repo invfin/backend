@@ -3,12 +3,6 @@ import pytest
 
 from django.conf import settings
 
-from django.utils.html import strip_tags
-from django.utils.safestring import mark_safe
-
-from bfet import DjangoTestingModel as DTM
-
-
 from apps.socialmedias.models import (
     BlogSharedHistorial,
     CompanySharedHistorial,
@@ -17,7 +11,7 @@ from apps.socialmedias.models import (
     QuestionSharedHistorial,
     TermSharedHistorial,
 )
-from apps.socialmedias.poster import SocialPosting
+from apps.socialmedias.outils.poster import SocialPosting
 from apps.socialmedias import constants
 
 
@@ -30,26 +24,26 @@ poster_vcr = vcr.VCR(
 
 
 @pytest.mark.django_db
-class TestPoster:
-    @classmethod
-    def setup_class(cls):
-        # cls.question = Question.objects.create(**QUESTION)
-        cls.user = DTM.create(User)
-        GenerateGeneralExample.generate_all()
-        GenerateSocialmediasExample.generate_all()
-        GenerateEscritosExample.generate_all()
-        cls.escritos_examples = GenerateEscritosExample
-        # cls.public_blog = PublicBlog.objects.create(**PUBLICBLOG)
-        cls.company = AppleExample.return_example()
+@pytest.mark.usefixtures("clean_company")
+class TestSocialPosting:
+
+    def test_create_link(self):
+        company_created_link = SocialPosting().create_link(self.clean_company)
+        print(company_created_link)
+
+    @poster_vcr.use_cassette
+    def test_news_content(self):
+        news_content = SocialPosting().news_content(self.clean_company)
+        print(news_content)
 
     def test_company_content(self):
         with vcr.use_cassette("cassettes/company/retrieve/test_get_current_price.yaml"):
-            company_poster = SocialPosting().company_content(self.company)
+            company_poster = SocialPosting().company_content(self.clean_company)
         assert company_poster == {
-            "title": self.company.name,
-            "description": f"{self.company.short_introduction} {self.company.description}",
-            "link": FULL_DOMAIN + self.company.get_absolute_url(),
-            "content_shared": self.company,
+            "title": self.clean_company.name,
+            "description": f"{self.clean_company.short_introduction} {self.clean_company.description}",
+            "link": FULL_DOMAIN + self.clean_company.get_absolute_url(),
+            "content_shared": self.clean_company,
             "shared_model_historial": CompanySharedHistorial,
         }
 

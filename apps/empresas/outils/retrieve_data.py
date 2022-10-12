@@ -1,3 +1,5 @@
+from datetime import datetime
+
 from typing import Type
 
 from apps.empresas.parse import FinnhubInfo, FinprepInfo, YahooQueryInfo, YFinanceInfo
@@ -6,12 +8,18 @@ from apps.empresas.parse.yahoo_query.exceptions import TickerNotFound
 
 
 class RetrieveCompanyData:
-    def __init__(self, company: Type["Company"]) -> None:
-        self.company: Type["Company"] = company
+    def __init__(self, company: Type) -> None:
+        self.company: Type = company
         self.finprep = FinprepInfo(company)
         self.finnhub = FinnhubInfo(company)
         self.yahooquery = YahooQueryInfo(company)
         self.yfinance = YFinanceInfo(company)
+
+    def get_company_news(self):
+        day = str(int(datetime.now().strftime("%Y-%m-%d")[-2:]) - 2)
+        from_date = datetime.now().strftime(f"%Y-%m-{day}")
+        to_date = datetime.now().strftime("%Y-%m-%d")
+        return self.finnhub.company_news(self.ticker, from_date, to_date)
 
     def get_most_recent_price(self):
         yfinance_info = self.yfinance.request_info_yfinance

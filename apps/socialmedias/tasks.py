@@ -2,7 +2,7 @@ from config import celery_app
 
 from apps.socialmedias import constants
 
-from .poster import SocialPosting
+from .outils.poster import SocialPosting
 
 
 @celery_app.task()
@@ -11,8 +11,8 @@ def socialmedia_share_company():
         constants.COMPANY,
         [
             {"platform": constants.FACEBOOK, "post_type": constants.POST_TYPE_TEXT},
-            {"platform": constants.TWITTER, "post_type": constants.POST_TYPE_TEXT}
-        ]
+            {"platform": constants.TWITTER, "post_type": constants.POST_TYPE_TEXT},
+        ],
     )
 
 
@@ -22,8 +22,8 @@ def socialmedia_share_news():
         constants.NEWS,
         [
             {"platform": constants.FACEBOOK, "post_type": constants.POST_TYPE_TEXT},
-            {"platform": constants.TWITTER, "post_type": constants.POST_TYPE_TEXT}
-        ]
+            {"platform": constants.TWITTER, "post_type": constants.POST_TYPE_TEXT},
+        ],
     )
 
 
@@ -33,8 +33,8 @@ def socialmedia_share_term():
         constants.TERM,
         [
             {"platform": constants.FACEBOOK, "post_type": constants.POST_TYPE_TEXT},
-            {"platform": constants.TWITTER, "post_type": constants.POST_TYPE_TEXT}
-        ]
+            {"platform": constants.TWITTER, "post_type": constants.POST_TYPE_TEXT},
+        ],
     )
 
 
@@ -44,18 +44,17 @@ def socialmedia_share_blog():
         constants.BLOG,
         [
             {"platform": constants.FACEBOOK, "post_type": constants.POST_TYPE_TEXT_IMAGE},
-            {"platform": constants.TWITTER, "post_type": constants.POST_TYPE_TEXT_IMAGE}
-        ]
+            {"platform": constants.TWITTER, "post_type": constants.POST_TYPE_TEXT_IMAGE},
+        ],
     )
 
 
 @celery_app.task()
 def socialmedia_share_question():
-
     SocialPosting().share_content(
         constants.QUESTION,
         [
             {"platform": constants.FACEBOOK, "post_type": constants.POST_TYPE_TEXT},
-            {"platform": constants.TWITTER, "post_type": constants.POST_TYPE_TEXT}
-        ]
+            {"platform": constants.TWITTER, "post_type": constants.POST_TYPE_TEXT},
+        ],
     )

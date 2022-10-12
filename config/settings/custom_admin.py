@@ -103,7 +103,7 @@ SIDE_MENU = [
         ),
     },
     {
-        "label": "Content",
+        "label": "Socialmedia",
         "icon": "fas fa-pen-nib",
         "models": (
             {

@@ -1,7 +1,7 @@
 import pytest
 import datetime
 
-from typing import Dict, Union, List
+from typing import Dict, Union
 from bfet import DjangoTestingModel
 
 from apps.socialmedias import constants as social_constants
@@ -99,127 +99,164 @@ TODO
 Check if all fixtures are required to be used in session, class or maybe function is enought
 """
 
+
 # General
 @pytest.fixture(scope="session", autouse=True)
 def currency(django_db_blocker) -> Currency:
     with django_db_blocker.unblock():
-        return DjangoTestingModel.create(Currency)
+        currency = DjangoTestingModel.create(Currency)
+        yield currency
+        currency.delete()
 
 
 # Users
 @pytest.fixture(scope="session", autouse=True)
 def user_key_sub(django_db_blocker) -> User:
     with django_db_blocker.unblock():
-        return DjangoTestingModel.create(User)
+        user_key_sub = DjangoTestingModel.create(User)
+        yield user_key_sub
+        user_key_sub.delete()
 
 
 @pytest.fixture(scope="session", autouse=True)
 def user_key(django_db_blocker) -> User:
     with django_db_blocker.unblock():
-        return DjangoTestingModel.create(User)
+        user_key = DjangoTestingModel.create(User)
+        yield user_key
+        user_key.delete()
 
 
 @pytest.fixture(scope="session", autouse=True)
 def user_key_removed(django_db_blocker) -> User:
     with django_db_blocker.unblock():
-        return DjangoTestingModel.create(User)
+        user_key_removed = DjangoTestingModel.create(User)
+        yield user_key_removed
+        user_key_removed.delete()
 
 
 # Business
 @pytest.fixture(scope="session", autouse=True)
 def customer(django_db_blocker, user_key_sub) -> Customer:
     with django_db_blocker.unblock():
-        return DjangoTestingModel.create(Customer, user=user_key_sub)
+        customer = DjangoTestingModel.create(Customer, user=user_key_sub)
+        yield customer
+        customer.delete()
 
 
 @pytest.fixture(scope="session", autouse=True)
 def product(django_db_blocker) -> Product:
     with django_db_blocker.unblock():
-        return DjangoTestingModel.create(Product, title="Excel", slug="excel", is_active=True)
+        product = DjangoTestingModel.create(Product, title="Excel", slug="excel", is_active=True)
+        yield product
+        product.delete()
 
 
 @pytest.fixture(scope="session", autouse=True)
 def product_complementary(django_db_blocker, product, currency) -> ProductComplementary:
     with django_db_blocker.unblock():
-        return DjangoTestingModel.create(
+        product_complementary = DjangoTestingModel.create(
             ProductComplementary, title="Subscripción excel", product=product, is_active=True, currency=currency
         )
+        yield product_complementary
+        product_complementary.delete()
 
 
 @pytest.fixture(scope="session", autouse=True)
 def product_subscriber(django_db_blocker, product, product_complementary, user_key_sub) -> ProductSubscriber:
     with django_db_blocker.unblock():
-        return DjangoTestingModel.create(
+        product_subscriber = DjangoTestingModel.create(
             ProductSubscriber,
             product=product,
             product_complementary=product_complementary,
             subscriber=user_key_sub,
             is_active=True,
         )
+        yield product_subscriber
+        product_subscriber.delete()
 
 
 # Api
 @pytest.fixture(scope="session", autouse=True)
 def key(django_db_blocker, user_key) -> Key:
     with django_db_blocker.unblock():
-        return DjangoTestingModel.create(Key, user=user_key, in_use=True, removed=None)
+        key = DjangoTestingModel.create(Key, user=user_key, in_use=True, removed=None)
+        yield key
+        key.delete()
 
 
 @pytest.fixture(scope="session", autouse=True)
 def subscription_key(django_db_blocker, user_key_sub, product_subscriber) -> Key:
     with django_db_blocker.unblock():
-        return DjangoTestingModel.create(
+        subscription_key = DjangoTestingModel.create(
             Key, user=user_key_sub, in_use=True, removed=None, subscription=product_subscriber
         )
+        yield subscription_key
+        subscription_key.delete()
 
 
 @pytest.fixture(scope="session", autouse=True)
 def removed_key(django_db_blocker, user_key_removed) -> Key:
     with django_db_blocker.unblock():
-        return DjangoTestingModel.create(Key, user=user_key_removed, in_use=False, removed=datetime.datetime.utcnow())
+        removed_key = DjangoTestingModel.create(
+            Key, user=user_key_removed, in_use=False, removed=datetime.datetime.utcnow()
+        )
+        yield removed_key
+        removed_key.delete()
 
 
 # Empresas
 @pytest.fixture(scope="class")
 def sector(django_db_blocker) -> Sector:
     with django_db_blocker.unblock():
-        return DjangoTestingModel.create(Sector)
+        sector = DjangoTestingModel.create(Sector)
+        yield sector
+        sector.delete()
 
 
 @pytest.fixture(scope="class")
 def industry(django_db_blocker) -> Industry:
     with django_db_blocker.unblock():
-        return DjangoTestingModel.create(Industry)
+        industry = DjangoTestingModel.create(Industry)
+        yield industry
+        industry.delete()
 
 
 @pytest.fixture(scope="class")
 def exchange_org_fr(django_db_blocker) -> ExchangeOrganisation:
     with django_db_blocker.unblock():
-        return DjangoTestingModel.create(ExchangeOrganisation, name="France")
+        exchange_org_fr = DjangoTestingModel.create(ExchangeOrganisation, name="France")
+        yield exchange_org_fr
+        exchange_org_fr.delete()
 
 
 @pytest.fixture(scope="class")
 def exchange_org_usa(django_db_blocker) -> ExchangeOrganisation:
     with django_db_blocker.unblock():
-        return DjangoTestingModel.create(ExchangeOrganisation, name="Estados Unidos")
+        exchange_org_usa = DjangoTestingModel.create(ExchangeOrganisation, name="Estados Unidos")
+        yield exchange_org_usa
+        exchange_org_usa.delete()
 
 
 @pytest.fixture(scope="class")
 def exchange_nyse(django_db_blocker, exchange_org_usa) -> Exchange:
     with django_db_blocker.unblock():
-        return DjangoTestingModel.create(Exchange, exchange_ticker="NYSE", main_org=exchange_org_usa)
+        exchange_nyse = DjangoTestingModel.create(Exchange, exchange_ticker="NYSE", main_org=exchange_org_usa)
+        yield exchange_nyse
+        exchange_nyse.delete()
 
 
 @pytest.fixture(scope="class")
 def exchange_euro(django_db_blocker, exchange_org_fr) -> Exchange:
     with django_db_blocker.unblock():
-        return DjangoTestingModel.create(Exchange, exchange_ticker="EURO", main_org=exchange_org_fr)
+        exchange_euro = DjangoTestingModel.create(Exchange, exchange_ticker="EURO", main_org=exchange_org_fr)
+        yield exchange_euro
+        exchange_euro.delete()
 
 
 @pytest.fixture(scope="class")
 def apple(django_db_blocker, sector, industry, exchange_nyse) -> Company:
     with django_db_blocker.unblock():
-        return DjangoTestingModel.create(
+        apple = DjangoTestingModel.create(
             Company,
             ticker="AAPL",
             no_incs=False,
@@ -233,12 +270,14 @@ def apple(django_db_blocker, sector, industry, exchange_nyse) -> Company:
             exchange=exchange_nyse,
             checkings={"has_institutionals": {"state": "no", "time": ""}},
         )
+        yield apple
+        apple.delete()
 
 
 @pytest.fixture(scope="class")
 def zinga(django_db_blocker, sector, industry, exchange_nyse) -> Company:
     with django_db_blocker.unblock():
-        return DjangoTestingModel.create(
+        zinga = DjangoTestingModel.create(
             Company,
             ticker="ZNGA",
             no_incs=False,
@@ -252,12 +291,14 @@ def zinga(django_db_blocker, sector, industry, exchange_nyse) -> Company:
             exchange=exchange_nyse,
             checkings={"has_institutionals": {"state": "yes", "time": ""}},
         )
+        yield zinga
+        zinga.delete()
 
 
 @pytest.fixture(scope="class")
 def louis(django_db_blocker, industry, exchange_euro) -> Company:
     with django_db_blocker.unblock():
-        return DjangoTestingModel.create(
+        louis = DjangoTestingModel.create(
             Company,
             ticker="LVMH",
             no_incs=True,
@@ -270,12 +311,14 @@ def louis(django_db_blocker, industry, exchange_euro) -> Company:
             has_error=False,
             checkings={"has_institutionals": {"state": "no", "time": ""}},
         )
+        yield louis
+        louis.delete()
 
 
 @pytest.fixture(scope="class")
 def google(django_db_blocker, sector, industry, exchange_nyse) -> Company:
     with django_db_blocker.unblock():
-        return DjangoTestingModel.create(
+        google = DjangoTestingModel.create(
             Company,
             ticker="GOOGL",
             no_incs=False,
@@ -289,6 +332,8 @@ def google(django_db_blocker, sector, industry, exchange_nyse) -> Company:
             has_error=False,
             checkings={"has_institutionals": {"state": "no", "time": ""}},
         )
+        yield google
+        google.delete()
 
 
 @pytest.fixture(scope="class")
@@ -303,10 +348,10 @@ def empresas_manager_companies(django_db_blocker, request, google, apple, zinga,
         yield
 
 
-@pytest.fixture()
+@pytest.fixture(scope="class", autouse=True)
 def clean_company(django_db_blocker) -> Company:
     with django_db_blocker.unblock():
-        return DjangoTestingModel.create(
+        clean_company = DjangoTestingModel.create(
             Company,
             name="Intel",
             ticker="INTC",
@@ -317,12 +362,21 @@ def clean_company(django_db_blocker) -> Company:
             has_logo=True,
             has_error=False,
         )
+        yield clean_company
+        clean_company.delete()
+
+
+@pytest.fixture(scope="class")
+def poster_clean_company(request, clean_company) -> Company:
+    request.cls.clean_company = clean_company
 
 
 @pytest.fixture()
 def period_for_year(django_db_blocker) -> Period:
     with django_db_blocker.unblock():
-        return DjangoTestingModel.create(Period, year=2022, period=general_constants.PERIOD_FOR_YEAR)
+        period_for_year = DjangoTestingModel.create(Period, year=2022, period=general_constants.PERIOD_FOR_YEAR)
+        yield period_for_year
+        period_for_year.delete()
 
 
 @pytest.fixture(scope="session")
@@ -332,7 +386,11 @@ def yearly_income_statement(django_db_blocker, clean_company, period_for_year) -
     Period: For year (2022)
     """
     with django_db_blocker.unblock():
-        return DjangoTestingModel.create(IncomeStatement, is_ttm=False, compny=clean_company, period=period_for_year)
+        yearly_income_statement = DjangoTestingModel.create(
+            IncomeStatement, is_ttm=False, compny=clean_company, period=period_for_year
+        )
+        yield yearly_income_statement
+        yearly_income_statement.delete()
 
 
 @pytest.fixture(scope="session")
@@ -342,7 +400,11 @@ def yearly_balance_sheet(django_db_blocker, clean_company, period_for_year) -> B
     Period: For year (2022)
     """
     with django_db_blocker.unblock():
-        return DjangoTestingModel.create(BalanceSheet, is_ttm=False, compny=clean_company, period=period_for_year)
+        yearly_balance_sheet = DjangoTestingModel.create(
+            BalanceSheet, is_ttm=False, compny=clean_company, period=period_for_year
+        )
+        yield yearly_balance_sheet
+        yearly_balance_sheet.delete()
 
 
 @pytest.fixture(scope="session")
@@ -352,7 +414,11 @@ def yearly_cashflow_statement(django_db_blocker, clean_company, period_for_year)
     Period: For year (2022)
     """
     with django_db_blocker.unblock():
-        return DjangoTestingModel.create(CashflowStatement, is_ttm=False, compny=clean_company, period=period_for_year)
+        yearly_cashflow_statement = DjangoTestingModel.create(
+            CashflowStatement, is_ttm=False, compny=clean_company, period=period_for_year
+        )
+        yield yearly_cashflow_statement
+        yearly_cashflow_statement.delete()
 
 
 # Escritos
@@ -364,14 +430,15 @@ def term_and_content(django_db_blocker) -> Term:
         )
         for escrito in escritos_data.TERM_CONTENT:
             DjangoTestingModel.create(TermContent, **escrito)
-        return term
+        yield term
+        term.delete()
 
 
 @pytest.fixture(scope="function")
 def various_terms(django_db_blocker) -> Term:
     with django_db_blocker.unblock():
         author = DjangoTestingModel.create(User, username="Lucas Montes")
-        DjangoTestingModel.create(
+        term_1 = DjangoTestingModel.create(
             Term,
             id=1,
             title="Precio valor contable (P/B)",
@@ -386,7 +453,7 @@ def various_terms(django_db_blocker) -> Term:
             times_shared=0,
             author=author,
         )
-        DjangoTestingModel.create(
+        term_2 = DjangoTestingModel.create(
             Term,
             id=2,
             title="El balance sheet",
@@ -403,7 +470,12 @@ def various_terms(django_db_blocker) -> Term:
             times_shared=0,
             author=author,
         )
-        yield
+        yield author
+        yield term_1
+        yield term_2
+        author.delete()
+        term_1.delete()
+        term_2.delete()
 
 
 # Superinvestors
