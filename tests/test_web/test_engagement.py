@@ -11,7 +11,7 @@ from apps.web.models import (
     Promotion,
     PromotionCampaign,
 )
-from apps.web.outils.content_creation import WebsiteContentCreation
+from apps.web.outils.content_creation import ContentCreation
 from apps.web.outils.engagement import EngagementMachine
 
 

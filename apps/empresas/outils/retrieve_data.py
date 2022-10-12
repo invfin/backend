@@ -19,7 +19,7 @@ class RetrieveCompanyData:
         day = str(int(datetime.now().strftime("%Y-%m-%d")[-2:]) - 2)
         from_date = datetime.now().strftime(f"%Y-%m-{day}")
         to_date = datetime.now().strftime("%Y-%m-%d")
-        return self.finnhub.company_news(self.ticker, from_date, to_date)
+        return self.finnhub.company_news(self.company.ticker, from_date, to_date)
 
     def get_most_recent_price(self):
         yfinance_info = self.yfinance.request_info_yfinance

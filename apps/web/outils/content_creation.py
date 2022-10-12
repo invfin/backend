@@ -4,14 +4,14 @@ from apps.socialmedias.models import DefaultContent, DefaultTilte, Emoji
 from apps.socialmedias import constants as social_constants
 
 
-class WebsiteContentCreation:
+class ContentCreation:
     @classmethod
     def create_title(cls, title: str = None, filter: Dict = {}) -> Dict:
         title_dict = {"title": title}
         if not title:
             title = DefaultTilte.objects.random_title(filter)
-            title_dict['default_title'] = title
-            title_dict['title'] = title.title
+            title_dict["default_title"] = title
+            title_dict["title"] = title.title
         return title_dict
 
     @classmethod
@@ -19,8 +19,8 @@ class WebsiteContentCreation:
         content_dict = {"content": content}
         if not content:
             content = DefaultContent.objects.random_content(filter)
-            content_dict['default_content'] = content
-            content_dict['content'] = content.content
+            content_dict["default_content"] = content
+            content_dict["content"] = content.content
         return content_dict
 
     @classmethod
@@ -37,12 +37,9 @@ class WebsiteContentCreation:
         title: str = None,
         content: str = None,
         title_filter: Dict = {},
-        content_filter: Dict = {}
+        content_filter: Dict = {},
     ) -> WebsiteEmail:
-        base_filters = {
-            "for_content": social_constants.WEB,
-            "purpose": web_email_type
-        }
+        base_filters = {"for_content": social_constants.WEB, "purpose": web_email_type}
         title_filter.update(base_filters)
         content_filter.update(base_filters)
 
