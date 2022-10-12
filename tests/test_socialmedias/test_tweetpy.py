@@ -1,5 +1,6 @@
 import vcr
-import pytest
+
+from django.test import TestCase
 
 from apps.empresas.models import Company
 from apps.escritos.models import Term
@@ -22,9 +23,6 @@ twitter_vcr = vcr.VCR(
     cassette_library_dir="cassettes/twitter/",
     path_transformer=vcr.VCR.ensure_suffix(".yaml"),
 )
-
-
-from django.test import TestCase
 
 
 class TestPoster(TestCase):

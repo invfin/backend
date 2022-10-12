@@ -1,8 +1,10 @@
 import vcr
-import pytest
 
 from unittest import skip
-from bfet import DjangoTestingModel as DTM
+
+from bfet import DjangoTestingModel
+
+from django.test import TestCase
 
 from apps.empresas.parse.finnhub import ParseFinnhub
 
@@ -14,9 +16,6 @@ parse_vcr = vcr.VCR(
 
 
 @skip("Skipping")
-from django.test import TestCase
-
-
 class TestParseFinprep(TestCase):
     @classmethod
     def setUpTestData(cls) -> None:

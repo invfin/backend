@@ -1,7 +1,7 @@
 import vcr
 import pytest
 
-from bfet import DjangoTestingModel as DTM
+from bfet import DjangoTestingModel
 
 from apps.preguntas_respuestas.forms import (
     CreateAnswerForm,

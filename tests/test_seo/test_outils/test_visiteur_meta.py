@@ -1,14 +1,8 @@
-import pytest
-
-from django.test import RequestFactory
-
+from django.test import TestCase, RequestFactory
 from django.contrib.sessions.middleware import SessionMiddleware
 
 from apps.seo.models import Visiteur
 from apps.seo.outils.visiteur_meta import SeoInformation
-
-
-from django.test import TestCase
 
 
 class TestSeoInformation(TestCase):

@@ -1,12 +1,12 @@
 import vcr
-import pytest
 
+from django.test import TestCase
 from django.conf import settings
 
 from django.utils.html import strip_tags
 from django.utils.safestring import mark_safe
 
-from bfet import DjangoTestingModel as DTM
+from bfet import DjangoTestingModel
 
 
 from apps.socialmedias.models import (
@@ -29,14 +29,11 @@ poster_vcr = vcr.VCR(
 )
 
 
-from django.test import TestCase
-
-
 class TestPoster(TestCase):
     @classmethod
     def setUpTestData(cls):
         # cls.question = Question.objects.create(**QUESTION)
-        cls.user = DTM.create(User)
+        cls.user = DjangoTestingModel.create(User)
         GenerateGeneralExample.generate_all()
         GenerateSocialmediasExample.generate_all()
         GenerateEscritosExample.generate_all()

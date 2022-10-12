@@ -1,10 +1,7 @@
 import vcr
 
 from django.conf import settings
-import pytest
-
 from django.test import TestCase
-
 
 from apps.empresas.models import Company
 
@@ -29,9 +26,6 @@ facebook_vcr = vcr.VCR(
     path_transformer=vcr.VCR.ensure_suffix(".yaml"),
     filter_post_data_parameters=["access_token"],
 )
-
-
-from django.test import TestCase
 
 
 class TestFacePoster(TestCase):

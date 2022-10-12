@@ -1,5 +1,6 @@
 import vcr
-import pytest
+
+from django.test import TestCase
 
 from bfet import DjangoTestingModel as DTM
 
@@ -14,9 +15,6 @@ parse_vcr = vcr.VCR(
     cassette_library_dir="cassettes/company/parse/finprep/",
     path_transformer=vcr.VCR.ensure_suffix(".yaml"),
 )
-
-
-from django.test import TestCase
 
 
 class TestParseFinprep(TestCase):
@@ -43,9 +41,6 @@ class TestParseFinprep(TestCase):
     def test_request_financials_finprep(self):
         comp_data = self.parser.request_financials_finprep("AAPL")
         assert finprep_data.DICT_STATEMENTS == comp_data
-
-
-from django.test import TestCase
 
 
 class TestNormalizeFinprep(TestCase):
@@ -191,9 +186,6 @@ class TestNormalizeFinprep(TestCase):
         assert ("purchases_of_investments" in comp_data) is True
         assert ("sales_maturities_of_investments" in comp_data) is True
         assert ("stock_based_compensation" in comp_data) is True
-
-
-from django.test import TestCase
 
 
 class TestFinprepInfo(TestCase):

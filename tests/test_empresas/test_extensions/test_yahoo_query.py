@@ -1,4 +1,4 @@
-import pytest
+from django.test import TestCase
 
 from bfet import DjangoTestingModel as DTM
 
@@ -10,9 +10,6 @@ from apps.empresas.models import (
     BalanceSheetYahooQuery,
     CashflowStatementYahooQuery,
 )
-
-
-from django.test import TestCase
 
 
 class TestAverageStatementsYahooQuery(TestCase):
