@@ -12,10 +12,12 @@ from apps.empresas.models import (
 )
 
 
-@pytest.mark.django_db
-class TestAverageStatementsFinprep:
+from django.test import TestCase
+
+
+class TestAverageStatementsFinprep(TestCase):
     @classmethod
-    def setup_class(cls):
+    def setUpTestData(cls):
         cls.company = DTM.create(Company)
         cls.period = DTM.create(Period, year=2021, period=PERIOD_FOR_YEAR)
         cls.inc_st_finprep = DTM.create(IncomeStatementFinprep, company=cls.company, period=cls.period)

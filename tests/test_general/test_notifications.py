@@ -15,10 +15,12 @@ from apps.users.models import Profile
 User = get_user_model()
 
 
-@pytest.mark.django_db
-class TestNotificationSystem:
+from django.test import TestCase
+
+
+class TestNotificationSystem(TestCase):
     @classmethod
-    def setup_class(cls) -> None:
+    def setUpTestData(cls) -> None:
         cls.writter = DTM.create(User, is_writter=True)
         cls.user_1 = DTM.create(User)
         cls.user_2 = DTM.create(User)

@@ -20,20 +20,24 @@ from apps.escritos.models import (
 FULL_DOMAIN = settings.FULL_DOMAIN
 
 
-@pytest.mark.django_db
-class TestTerm:
+from django.test import TestCase
+
+
+class TestTerm(TestCase):
     @classmethod
-    def setup_class(cls):
+    def setUpTestData(cls):
         cls.term = DTM.create(Term, title="test contenido", slug="test-contenido")
 
     def test_link(self):
         assert f"{FULL_DOMAIN}/definicion/test-contenido/" == self.term.link()
 
 
-@pytest.mark.django_db
-class TestTermContent:
+from django.test import TestCase
+
+
+class TestTermContent(TestCase):
     @classmethod
-    def setup_class(cls):
+    def setUpTestData(cls):
         cls.term_contet = DTM.create(
             TermContent, title="test contenido", term_related=DTM.create(Term, slug="test-main-contenido")
         )

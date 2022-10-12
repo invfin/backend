@@ -15,8 +15,10 @@ parse_vcr = vcr.VCR(
 
 
 @skip("Don't wnat to test")
-@pytest.mark.django_db
-class TestParseFinprep:
+from django.test import TestCase
+
+
+class TestParseFinprep(TestCase):
     @classmethod
-    def setup_class(cls) -> None:
+    def setUpTestData(cls) -> None:
         cls.parser = ParseFinprep()

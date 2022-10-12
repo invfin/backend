@@ -23,10 +23,12 @@ parse_vcr = vcr.VCR(
 )
 
 
-@pytest.mark.django_db
-class TestYahooQueryInfo:
+from django.test import TestCase
+
+
+class TestYahooQueryInfo(TestCase):
     @classmethod
-    def setup_class(cls) -> None:
+    def setUpTestData(cls) -> None:
         cls.company = DTM.create(Company, ticker="AAPL")
         cls.parser = YahooQueryInfo(cls.company)
         cls.current_year = datetime.now().year

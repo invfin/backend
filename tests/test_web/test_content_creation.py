@@ -7,8 +7,10 @@ from apps.web import constants as web_constants
 from apps.web.models import WebsiteEmail, WebsiteEmailsType
 
 
-@pytest.mark.django_db
-class TestWebsiteContentCreation:
+from django.test import TestCase
+
+
+class TestWebsiteContentCreation(TestCase):
     def test_create_title(self, web_title, web_filters):
         custom_title = "Custom title"
         custom_dict = WebsiteContentCreation.create_title(custom_title)

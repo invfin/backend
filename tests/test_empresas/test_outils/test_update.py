@@ -22,10 +22,12 @@ from apps.empresas.models import (
 )
 
 
-@pytest.mark.django_db
-class TestUpdateCompany:
+from django.test import TestCase
+
+
+class TestUpdateCompany(TestCase):
     @classmethod
-    def setup_class(cls):
+    def setUpTestData(cls):
         cls.company = DTM.create(Company, ticker="INTC", name="Intel")
         cls.period = DTM.create(Period, year=2021, period=constants.PERIOD_FOR_YEAR)
         cls.currency = DTM.create(Currency)

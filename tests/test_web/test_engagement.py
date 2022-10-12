@@ -15,8 +15,12 @@ from apps.web.outils.content_creation import WebsiteContentCreation
 from apps.web.outils.engagement import EngagementMachine
 
 
-@pytest.mark.django_db
-@pytest.mark.django_db
-class TestEngagementMachine:
+from django.test import TestCase
+
+
+from django.test import TestCase
+
+
+class TestEngagementMachine(TestCase):
     def test_send_website_email_engagement(self):
         pass

@@ -22,10 +22,12 @@ class MockRequest:
     is_visiteur = False
 
 
-@pytest.mark.django_db
-class TestJourneyClassifier:
+from django.test import TestCase
+
+
+class TestJourneyClassifier(TestCase):
     @classmethod
-    def setup_class(cls):
+    def setUpTestData(cls):
         cls.request = MockRequest
         cls.user = DTM.create(User)
         cls.visiteur = DTM.create(Visiteur)

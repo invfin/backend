@@ -4,8 +4,10 @@ from django.urls import reverse
 from apps.users.models import User
 
 
-@pytest.mark.django_db
-class TestUserAdmin:
+from django.test import TestCase
+
+
+class TestUserAdmin(TestCase):
     def test_changelist(self, admin_client):
         url = reverse("admin:users_user_changelist")
         response = admin_client.get(url)

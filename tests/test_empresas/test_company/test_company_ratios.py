@@ -17,10 +17,12 @@ company_vcr = vcr.VCR(
 
 
 @skip("Don't want to test")
-@pytest.mark.django_db
-class TestScrapCompanyInfo:
+from django.test import TestCase
+
+
+class TestScrapCompanyInfo(TestCase):
     @classmethod
-    def setup_class(cls) -> None:
+    def setUpTestData(cls) -> None:
         cls.company = DTM.create(Company)
         cls.company_update = UpdateCompany(cls.company)
         cls.company.inc_statements.create(date=2018)

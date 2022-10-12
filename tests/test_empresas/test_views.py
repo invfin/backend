@@ -8,7 +8,9 @@ from django.test.utils import CaptureQueriesContext
 from apps.api.mixins import BaseAPIViewTest
 
 
-@pytest.mark.django_db
+from django.test import TestCase
+
+
 class TestExcelAPIIncome(BaseAPIViewTest):
     path_name = "empresas:ExcelAPIIncome"
     url_path = "/company-information/excel-api/income"
@@ -48,7 +50,9 @@ class TestExcelAPIIncome(BaseAPIViewTest):
         assert json.loads(json.dumps(response.data))[0] == expected_data
 
 
-@pytest.mark.django_db
+from django.test import TestCase
+
+
 class TestExcelAPIBalance(BaseAPIViewTest):
     path_name = "empresas:ExcelAPIBalance"
     url_path = "/company-information/excel-api/balance"
@@ -102,7 +106,9 @@ class TestExcelAPIBalance(BaseAPIViewTest):
         assert json.loads(json.dumps(response.data))[0] == expected_data
 
 
-@pytest.mark.django_db
+from django.test import TestCase
+
+
 class TestExcelAPICashflow(BaseAPIViewTest):
     path_name = "empresas:ExcelAPICashflow"
     url_path = "/company-information/excel-api/cashflow"

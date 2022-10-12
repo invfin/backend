@@ -19,10 +19,12 @@ from apps.empresas.models import (
 )
 
 
-@pytest.mark.django_db
-class TestAverageStatements:
+from django.test import TestCase
+
+
+class TestAverageStatements(TestCase):
     @classmethod
-    def setup_class(cls):
+    def setUpTestData(cls):
         cls.company = DTM.create(Company)
         cls.period = DTM.create(Period, year=2021, period=PERIOD_FOR_YEAR)
         cls.currency = DTM.create(Currency)

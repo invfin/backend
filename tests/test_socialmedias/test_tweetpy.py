@@ -24,10 +24,12 @@ twitter_vcr = vcr.VCR(
 )
 
 
-@pytest.mark.django_db
-class TestPoster:
+from django.test import TestCase
+
+
+class TestPoster(TestCase):
     @classmethod
-    def setup_class(cls) -> None:
+    def setUpTestData(cls) -> None:
         cls.term = Term.objects.create(
             title="term",
             resume="resumen",

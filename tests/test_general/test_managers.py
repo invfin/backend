@@ -5,10 +5,12 @@ from apps.general.models import Period
 from apps.general import constants
 
 
-@pytest.mark.django_db
-class TestPeriodManager:
+from django.test import TestCase
+
+
+class TestPeriodManager(TestCase):
     @classmethod
-    def setup_class(cls) -> None:
+    def setUpTestData(cls) -> None:
         for index in range(5):
             for period in constants.PERIODS:
                 DTM.create(Period, year=(2020 + index), period=period[0])

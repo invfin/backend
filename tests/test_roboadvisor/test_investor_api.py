@@ -21,7 +21,9 @@ from apps.roboadvisor.views import RoboAdvisorResultView
 User = get_user_model()
 
 
-@pytest.mark.django_db
+from django.test import TestCase
+
+
 class TestInvoicesAllAPI(APITestCase):
     def setUp(self):
         self.user = DTM.create(User)

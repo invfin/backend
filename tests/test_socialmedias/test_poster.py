@@ -29,10 +29,12 @@ poster_vcr = vcr.VCR(
 )
 
 
-@pytest.mark.django_db
-class TestPoster:
+from django.test import TestCase
+
+
+class TestPoster(TestCase):
     @classmethod
-    def setup_class(cls):
+    def setUpTestData(cls):
         # cls.question = Question.objects.create(**QUESTION)
         cls.user = DTM.create(User)
         GenerateGeneralExample.generate_all()

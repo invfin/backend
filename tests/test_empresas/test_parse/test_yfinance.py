@@ -14,10 +14,12 @@ parse_vcr = vcr.VCR(
 )
 
 
-@pytest.mark.django_db
-class TestYFinanceInfo:
+from django.test import TestCase
+
+
+class TestYFinanceInfo(TestCase):
     @classmethod
-    def setup_class(cls) -> None:
+    def setUpTestData(cls) -> None:
         cls.company = DTM.create(Company, ticker="AAPL")
         cls.parser = YFinanceInfo(cls.company)
 

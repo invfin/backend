@@ -14,10 +14,12 @@ parse_vcr = vcr.VCR(
 
 
 @skip("Skipping")
-@pytest.mark.django_db
-class TestParseFinprep:
+from django.test import TestCase
+
+
+class TestParseFinprep(TestCase):
     @classmethod
-    def setup_class(cls) -> None:
+    def setUpTestData(cls) -> None:
         cls.parser = ParseFinnhub()
 
     @parse_vcr.use_cassette(filter_query_parameters=["token"])

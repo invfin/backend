@@ -3,9 +3,11 @@ import pytest
 from apps.empresas.models import Company
 
 
-@pytest.mark.django_db
+from django.test import TestCase
+
+
 @pytest.mark.usefixtures("empresas_manager_companies")
-class TestCompanyManagers:
+class TestCompanyManagers(TestCase):
     def test_filter_checkings(self):
         assert [self.zinga] == list(Company.objects.filter_checkings("institutionals", True))
         assert [self.apple, self.google, self.louis] == list(Company.objects.filter_checkings("institutionals", False))
