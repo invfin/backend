@@ -13,7 +13,7 @@ from apps.public_blog.models import PublicBlog
 from apps.socialmedias import constants
 from apps.socialmedias.socialposter.facepy import Facebook
 from apps.socialmedias.socialposter.tweetpy import Twitter
-from apps.web.outils.content_creation import ContentCreation
+from apps.socialmedias.outils.content_creation import ContentCreation
 from ..models import (
     BlogSharedHistorial,
     CompanySharedHistorial,
