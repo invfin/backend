@@ -34,10 +34,7 @@ class ResizeImageMixin:
         imageField.save(random_name, file, save=False)
 
 
-class BaseToAll(Model):
-    class Meta:
-        abstract = True
-
+class BaseToAllMixin:
     @property
     def model_to_json(self):
         class ModelSerializerInside(ModelSerializer):
@@ -125,10 +122,7 @@ class BaseToAll(Model):
         return url
 
 
-class CommonMixin(BaseToAll):
-    class Meta:
-        abstract = True
-
+class CommonMixin(BaseToAllMixin):
     @property
     def related_comments(self):
         return self.comments_related.all()
@@ -233,10 +227,7 @@ class CommonMixin(BaseToAll):
         return meta_info
 
 
-class BaseEscritosMixins(Model):
-    class Meta:
-        abstract = True
-
+class BaseEscritosMixins:
     def search_image(self, content):
         soup = bs(content, "html.parser")
         images = [img for img in soup.find_all("img")]

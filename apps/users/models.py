@@ -20,7 +20,7 @@ from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from django_countries.fields import CountryField
 
-from apps.general.mixins import BaseToAll, ResizeImageMixin
+from apps.general.mixins import BaseToAllMixin, ResizeImageMixin
 
 from apps.users.user_extension import UserExtended
 from apps.users.constants import MOVE_SOURCES, MOVEMENTS
@@ -40,7 +40,7 @@ class User(AbstractUser, UserExtended):
 
     class Meta:
         db_table = "users"
-        ordering = ['-date_joined']
+        ordering = ["-date_joined"]
 
     def __str__(self) -> str:
         return self.full_name
@@ -49,8 +49,8 @@ class User(AbstractUser, UserExtended):
         return reverse("users:user_public_profile", kwargs={"username": self.username})
 
 
-class MetaProfileInfo(BaseToAll):
-    user = ForeignKey(User, on_delete=SET_NULL, null=True, related_name='meta_info')
+class MetaProfileInfo(Model, BaseToAllMixin):
+    user = ForeignKey(User, on_delete=SET_NULL, null=True, related_name="meta_info")
     date = DateTimeField(auto_now_add=True)
     ip = CharField(max_length=50, null=True, blank=True)
     country_code = CharField(max_length=10000, null=True, blank=True)
@@ -72,7 +72,7 @@ class MetaProfileInfo(BaseToAll):
         db_table = "user_meta_profile_information"
 
 
-class MetaProfile(BaseToAll):
+class MetaProfile(Model, BaseToAllMixin):
     ip = CharField(max_length=50, null=True, blank=True)
     country_code = CharField(max_length=10000, null=True, blank=True)
     country_name = CharField(max_length=10000, null=True, blank=True)
@@ -94,7 +94,7 @@ class MetaProfile(BaseToAll):
 
 
 class MetaProfileHistorial(Model):
-    user = ForeignKey(User, on_delete=SET_NULL, null=True, related_name='meta_profile')
+    user = ForeignKey(User, on_delete=SET_NULL, null=True, related_name="meta_profile")
     date = DateTimeField(auto_now_add=True)
     meta_info = ForeignKey(MetaProfile, blank=True, on_delete=SET_NULL, null=True)
 
@@ -103,17 +103,17 @@ class MetaProfileHistorial(Model):
         db_table = "meta_profile_historial"
 
 
-class Profile(BaseToAll, ResizeImageMixin):
-    user = OneToOneField(User, on_delete=CASCADE, null=True, related_name='user_profile')
+class Profile(Model, BaseToAllMixin, ResizeImageMixin):
+    user = OneToOneField(User, on_delete=CASCADE, null=True, related_name="user_profile")
     reputation_score = IntegerField(default=0)
     creditos = IntegerField(default=0)
     edad = DateField("Fecha de nacimiento (DD/MM/AAAA)", null=True, blank=True)
-    pais = CountryField("País de origen", null=True, blank=True, blank_label='(select country)')
-    ciudad = CharField("Ciudad de origen", max_length=150,null=True, blank=True)
+    pais = CountryField("País de origen", null=True, blank=True, blank_label="(select country)")
+    ciudad = CharField("Ciudad de origen", max_length=150, null=True, blank=True)
     # foto_perfil = CloudinaryField("Foto de perfil", 'image', null=True, width_field='image_width', height_field='image_height', default="inversorinteligente.png")
-    foto_perfil = ImageField("Foto de perfil", upload_to='avatar/', default="inversorinteligente.WebP")
+    foto_perfil = ImageField("Foto de perfil", upload_to="avatar/", default="inversorinteligente.WebP")
     bio = TextField("Descripción", null=True, blank=True)
-    recommended_by = ForeignKey(User, on_delete=SET_NULL, null=True, blank=True, related_name='invited_by')
+    recommended_by = ForeignKey(User, on_delete=SET_NULL, null=True, blank=True, related_name="invited_by")
     ref_code = CharField(max_length=1000, blank=True, unique=True)
     objects = ProfileManager()
 
@@ -135,7 +135,7 @@ class Profile(BaseToAll, ResizeImageMixin):
 
 
 class CreditUsageHistorial(Model):
-    user = ForeignKey(User, on_delete=SET_NULL, null=True, related_name='credits_historial')
+    user = ForeignKey(User, on_delete=SET_NULL, null=True, related_name="credits_historial")
     content_type = ForeignKey(ContentType, on_delete=CASCADE)
     object_id = PositiveBigIntegerField(null=True, blank=True)
     object = GenericForeignKey("content_type", "object_id")

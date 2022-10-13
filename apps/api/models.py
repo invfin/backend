@@ -25,7 +25,7 @@ from django.utils.translation import gettext_lazy as _
 from apps.business.models import ProductSubscriber
 from apps.empresas.models import Company
 from apps.escritos.models import Term
-from apps.general.mixins import BaseToAll
+from apps.general.mixins import BaseToAllMixin
 from apps.general.utils import UniqueCreator
 from apps.super_investors.models import Superinvestor
 
@@ -34,9 +34,10 @@ from .managers import KeyManager
 FULL_DOMAIN = settings.FULL_DOMAIN
 
 User = get_user_model()
-API_version = settings.API_VERSION['CURRENT_VERSION']
+API_version = settings.API_VERSION["CURRENT_VERSION"]
 
-class Key(BaseToAll):
+
+class Key(Model, BaseToAllMixin):
     user = ForeignKey(User, on_delete=CASCADE, related_name="api_key")
     ip = CharField(max_length=50, null=True, blank=True)
     key = CharField(_("Key"), max_length=40, primary_key=True)
@@ -46,26 +47,18 @@ class Key(BaseToAll):
     limit = PositiveIntegerField(default=0)
     objects = KeyManager()
     subscription = ForeignKey(
-        ProductSubscriber,
-        on_delete=CASCADE,
-        related_name="subscription_related",
-        null=True,
-        blank=True
+        ProductSubscriber, on_delete=CASCADE, related_name="subscription_related", null=True, blank=True
     )
 
     class Meta:
         verbose_name = "Key"
         verbose_name_plural = "Keys"
         db_table = "api_keys"
-        ordering = ['-created']
+        ordering = ["-created"]
 
     def save(self, *args, **kwargs):
         if not self.key:
-            key = UniqueCreator.create_unique_field(
-                self,
-                UniqueCreator.generate_key(),
-                'key'
-            )
+            key = UniqueCreator.create_unique_field(self, UniqueCreator.generate_key(), "key")
             self.key = key
         return super().save(*args, **kwargs)
 
@@ -77,7 +70,7 @@ class Key(BaseToAll):
         return bool(self.subscription)
 
 
-class ReasonKeyRequested(BaseToAll):
+class ReasonKeyRequested(Model, BaseToAllMixin):
     user = ForeignKey(User, on_delete=CASCADE)
     created = DateTimeField(_("Created"), auto_now_add=True)
     description = TextField()
@@ -88,10 +81,10 @@ class ReasonKeyRequested(BaseToAll):
         db_table = "api_reason_key"
 
     def __str__(self) -> str:
-        return f'{self.user}'
+        return f"{self.user}"
 
 
-class BaseRequestAPI(BaseToAll):
+class BaseRequestAPI(Model, BaseToAllMixin):
     ip = CharField(max_length=50)
     key = ForeignKey(Key, on_delete=CASCADE)
     user = ForeignKey(User, on_delete=CASCADE)
@@ -102,7 +95,7 @@ class BaseRequestAPI(BaseToAll):
         abstract = True
 
     def __str__(self):
-        return f'{self.user} - {self.search}'
+        return f"{self.user} - {self.search}"
 
     @property
     def count_use_today(self):
@@ -150,21 +143,21 @@ class EndpointsCategory(Model):
         verbose_name = "Endpoints category"
         verbose_name_plural = "Endpoints categories"
         db_table = "api_endpoints_categories"
-        ordering = ['order']
+        ordering = ["order"]
 
     def __str__(self) -> str:
         return self.title
 
 
 class Endpoint(Model):
-    title_related = ForeignKey(EndpointsCategory, on_delete=SET_NULL, null=True, blank=True, related_name='endpoints')
+    title_related = ForeignKey(EndpointsCategory, on_delete=SET_NULL, null=True, blank=True, related_name="endpoints")
     title = CharField(max_length=250, blank=True)
     slug = CharField(max_length=250, blank=True)
     url = CharField(max_length=250, blank=True)
     order = IntegerField(default=0)
-    description = TextField(blank=True, default='')
+    description = TextField(blank=True, default="")
     url_example = CharField(max_length=250, blank=True)
-    response_example = RichTextField(default='', blank=True)
+    response_example = RichTextField(default="", blank=True)
     date_created = DateTimeField(auto_now_add=True)
     is_premium = BooleanField(default=False)
     is_available = BooleanField(default=True)
@@ -178,29 +171,24 @@ class Endpoint(Model):
         verbose_name = "Endpoint"
         verbose_name_plural = "Endpoints"
         db_table = "api_endpoints"
-        ordering = ['order']
+        ordering = ["order"]
 
     def __str__(self) -> str:
         return self.title
 
-    def save(self, *args, **kwargs): # new
+    def save(self, *args, **kwargs):  # new
         if not self.slug:
-            slug = UniqueCreator.create_unique_field(
-                self,
-                slugify(self.title),
-                'slug',
-                self.title
-            )
+            slug = UniqueCreator.create_unique_field(self, slugify(self.title), "slug", self.title)
             self.slug = slug
         return super().save(*args, **kwargs)
 
     @property
     def final_url(self):
-        return f'{FULL_DOMAIN}/api/{self.version}/{self.url}/'
+        return f"{FULL_DOMAIN}/api/{self.version}/{self.url}/"
 
     @property
     def continuation_url(self):
-        return f'&{self.url_example}' if self.url_example else ''
+        return f"&{self.url_example}" if self.url_example else ""
 
     @property
     def is_new(self):
@@ -208,4 +196,4 @@ class Endpoint(Model):
 
     @property
     def example(self):
-        return json.dumps(self.response_example_json ,indent=4, sort_keys=True, ensure_ascii=False)
+        return json.dumps(self.response_example_json, indent=4, sort_keys=True, ensure_ascii=False)

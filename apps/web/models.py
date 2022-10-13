@@ -9,9 +9,10 @@ from django.db.models import (
     ManyToManyField,
     PositiveBigIntegerField,
     SlugField,
+    Model,
 )
 
-from apps.general.mixins import BaseToAll
+from apps.general.mixins import BaseToAllMixin
 from apps.general.bases import BaseEmail, BaseNewsletter
 from apps.seo.models import Visiteur
 from apps.socialmedias.constants import SOCIAL_MEDIAS
@@ -20,7 +21,7 @@ from apps.users.models import User
 from apps.web.constants import WHOM_TO_SEND_EMAIL, WHOM_TO_SEND_EMAIL_ALL
 
 
-class WebsiteLegalPage(BaseToAll):
+class WebsiteLegalPage(Model, BaseToAllMixin):
     title = CharField(max_length=800)
     slug = SlugField(max_length=800, null=True, blank=True)
     content = RichTextField()
@@ -36,7 +37,7 @@ class WebsiteLegalPage(BaseToAll):
         return super().save(*args, **kwargs)
 
 
-class WebsiteEmailsType(BaseToAll):
+class WebsiteEmailsType(Model, BaseToAllMixin):
     name = CharField(max_length=800)
     slug = SlugField(max_length=800, null=True, blank=True)
 
@@ -96,7 +97,7 @@ class WebsiteEmailTrack(BaseEmail):
         return self.email_related.title
 
 
-class PromotionCampaign(BaseToAll):
+class PromotionCampaign(Model, BaseToAllMixin):
     title = CharField(max_length=600, blank=True)
     slug = SlugField(max_length=800, null=True, blank=True)
     categories = ManyToManyField("general.Category", blank=True)
@@ -124,7 +125,7 @@ class PromotionCampaign(BaseToAll):
         return super().save(*args, **kwargs)
 
 
-class Promotion(BaseToAll):
+class Promotion(Model, BaseToAllMixin):
     title = CharField(max_length=600, blank=True)
     content = RichTextField()
     thumbnail = CharField(max_length=600, blank=True)
@@ -177,7 +178,7 @@ class Promotion(BaseToAll):
         return f"{self.redirect_to}?{utm_source}&{utm_medium}&{utm_campaign}&{utm_term}"
 
 
-class UserAndVisiteurCategory(BaseToAll):
+class UserAndVisiteurCategory(Model, BaseToAllMixin):
     name = CharField(max_length=800)
     slug = SlugField(max_length=800, null=True, blank=True)
     name_for_user = CharField(max_length=800, null=True, blank=True)

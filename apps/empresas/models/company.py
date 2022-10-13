@@ -16,7 +16,7 @@ from django.db.models import (
 )
 from django.urls import reverse
 
-from apps.general.mixins import BaseToAll
+from apps.general.mixins import BaseToAllMixin
 from apps.general.constants import PERIOD_FOR_YEAR
 
 from apps.empresas import constants
@@ -29,7 +29,7 @@ def default_dict():
         return json.load(checks_json)
 
 
-class Company(BaseToAll, CompanyExtended):
+class Company(Model, BaseToAllMixin, CompanyExtended):
     ticker = CharField(max_length=30, unique=True, db_index=True)
     name = CharField(max_length=700, null=True, blank=True)
     currency = ForeignKey("general.Currency", on_delete=SET_NULL, null=True, blank=True)

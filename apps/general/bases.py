@@ -20,8 +20,8 @@ from django.utils import timezone
 
 from ckeditor.fields import RichTextField
 
-from apps.general.constants import BASE_ESCRITO_STATUS, ESCRITO_STATUS_MAP, DEFAULT_EXTRA_DATA_DICT
-from apps.general.mixins import BaseEscritosMixins, CommonMixin, BaseToAll
+from apps.general.constants import BASE_ESCRITO_STATUS, ESCRITO_STATUS_MAP, DEFAULT_EXTRA_DATA_DICT, BASE_ESCRITO_DRAFT
+from apps.general.mixins import BaseEscritosMixins, CommonMixin, BaseToAllMixin
 
 User = get_user_model()
 
@@ -30,7 +30,7 @@ def default_dict():
     return DEFAULT_EXTRA_DATA_DICT
 
 
-class BaseWrittenContent(CommonMixin):
+class BaseWrittenContent(Model, CommonMixin):
     title = CharField(max_length=500, null=True, blank=True)
     slug = CharField(max_length=500, null=True, blank=True)
     created_at = DateTimeField(auto_now_add=True)
@@ -48,7 +48,7 @@ class BaseWrittenContent(CommonMixin):
 
     def save(self, *args, **kwargs):  # new
         if not self.slug:
-            self.slug = self.save_unique_field("slug", self.name)
+            self.slug = self.save_unique_field("slug", self.title)
         return super().save(*args, **kwargs)
 
     def __str__(self):
@@ -69,7 +69,7 @@ class BaseWrittenContent(CommonMixin):
 class BaseEscrito(BaseWrittenContent, BaseEscritosMixins):
     resume = TextField(default="")
     published_at = DateTimeField(auto_now=True)
-    status = IntegerField(null=True, blank=True, choices=BASE_ESCRITO_STATUS)
+    status = IntegerField(blank=True, default=BASE_ESCRITO_DRAFT, choices=BASE_ESCRITO_STATUS)
     # thumbnail = CloudinaryField('image', null=True, width_field='image_width', height_field='image_height')
     thumbnail = ImageField("image", blank=True, null=True, width_field="image_width", height_field="image_height")
     non_thumbnail_url = CharField(max_length=500, null=True, blank=True)
@@ -93,7 +93,7 @@ class BaseEscrito(BaseWrittenContent, BaseEscritosMixins):
         return image
 
 
-class BaseComment(BaseToAll):
+class BaseComment(Model, BaseToAllMixin):
     author = ForeignKey(User, on_delete=SET_NULL, null=True)
     content = TextField()
     created_at = DateTimeField(auto_now_add=True)
@@ -109,7 +109,7 @@ class BaseComment(BaseToAll):
         return self.content_related.title
 
 
-class BaseNewsletter(BaseToAll):
+class BaseNewsletter(Model, BaseToAllMixin):
     title = CharField(max_length=500)
     content = RichTextField(config_name="simple")
     default_title = ForeignKey("socialmedias.DefaultTilte", on_delete=SET_NULL, null=True, blank=True)
@@ -129,7 +129,7 @@ class BaseNewsletter(BaseToAll):
         return round(rate, 2)
 
 
-class BaseEmail(BaseToAll):
+class BaseEmail(Model, BaseToAllMixin):
     sent_to = ForeignKey(User, on_delete=CASCADE)
     date_sent = DateTimeField(auto_now_add=True)
     opened = BooleanField(default=False)
@@ -139,7 +139,7 @@ class BaseEmail(BaseToAll):
         abstract = True
 
 
-class BaseGenericModels(BaseToAll):
+class BaseGenericModels(Model, BaseToAllMixin):
     content_type = ForeignKey(ContentType, on_delete=CASCADE)
     object_id = PositiveIntegerField()
     object = GenericForeignKey("content_type", "object_id")

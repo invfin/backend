@@ -13,7 +13,8 @@ from django.db.models import (
 )
 from django.utils import timezone
 
-from apps.general.mixins import BaseToAll
+from apps.general.mixins import BaseToAllMixin
+
 # from apps.empresas.models import Company
 from apps.escritos.models import Term
 from apps.preguntas_respuestas.models import Question
@@ -24,7 +25,7 @@ from apps.seo.managers import VisiteurManager
 User = get_user_model()
 
 
-class Visiteur(BaseToAll):
+class Visiteur(Model, BaseToAllMixin):
     ip = CharField(max_length=50, null=True, blank=True)
     session_id = CharField(max_length=1000, null=True, blank=True)
     http_user_agent = CharField(max_length=1000, null=True, blank=True)
@@ -53,10 +54,10 @@ class Visiteur(BaseToAll):
 
 
 class MetaParameters(Model):
-    meta_title = CharField(max_length=999,null=True, blank=True)
+    meta_title = CharField(max_length=999, null=True, blank=True)
     meta_description = TextField(null=True, blank=True)
-    meta_img = CharField(max_length=999,null=True, blank=True)
-    meta_url = CharField(max_length=999,null=True, blank=True)
+    meta_img = CharField(max_length=999, null=True, blank=True)
+    meta_url = CharField(max_length=999, null=True, blank=True)
     meta_keywords = TextField()
     meta_author = ForeignKey(User, on_delete=SET_NULL, null=True)
     published_time = DateTimeField(auto_now=True)
@@ -74,7 +75,7 @@ class MetaParameters(Model):
 
 
 class MetaParametersHistorial(Model):
-    parameter_settings = ForeignKey(MetaParameters, on_delete= CASCADE, null=True)
+    parameter_settings = ForeignKey(MetaParameters, on_delete=CASCADE, null=True)
     in_use = BooleanField(default=True)
 
     class Meta:
@@ -93,12 +94,12 @@ class Journey(Model):
 
     class Meta:
         abstract = True
-        ordering = ['-date']
+        ordering = ["-date"]
         get_latest_by = "-date"
 
 
 class VisiteurJourney(Journey):
-    user = ForeignKey(Visiteur, null = True, blank=True, on_delete=CASCADE, related_name="journeys")
+    user = ForeignKey(Visiteur, null=True, blank=True, on_delete=CASCADE, related_name="journeys")
 
     class Meta:
         verbose_name = "Historial visitas anónimos"
@@ -106,7 +107,7 @@ class VisiteurJourney(Journey):
 
 
 class UserJourney(Journey):
-    user = ForeignKey(User, null = True, blank=True, on_delete=CASCADE, related_name="journeys")
+    user = ForeignKey(User, null=True, blank=True, on_delete=CASCADE, related_name="journeys")
 
     class Meta:
         verbose_name = "Historial visitas usuarios"
@@ -114,8 +115,8 @@ class UserJourney(Journey):
 
 
 class VisiteurUserRelation(Model):
-    user = ForeignKey(User, null = True, blank=True, on_delete=SET_NULL)
-    visiteur = ForeignKey(Visiteur, null = True, blank=True, on_delete=SET_NULL)
+    user = ForeignKey(User, null=True, blank=True, on_delete=SET_NULL)
+    visiteur = ForeignKey(Visiteur, null=True, blank=True, on_delete=SET_NULL)
     date = DateTimeField(auto_now_add=True)
 
     class Meta:
@@ -133,7 +134,7 @@ class BaseModelVisited(Model):
         try:
             response = self.user.username
         except:
-            response = f'Visiteur - {self.user.id}'
+            response = f"Visiteur - {self.user.id}"
         return response
 
 

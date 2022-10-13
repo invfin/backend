@@ -13,12 +13,12 @@ from django.db.models import (
 
 User = get_user_model()
 
-from apps.general.bases import BaseEmail, BaseGenericModels, BaseToAll
+from apps.general.bases import BaseEmail, BaseGenericModels, BaseToAllMixin
 from apps.general.managers import PeriodManager, CurrencyManager
 from apps.general import constants
 
 
-class EscritosClassification(BaseToAll):
+class EscritosClassification(Model, BaseToAllMixin):
     name = CharField(
         max_length=500,
         null=True,

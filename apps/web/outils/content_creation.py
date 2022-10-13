@@ -1,4 +1,4 @@
-from typing import Dict, Tuple
+from typing import Dict, List
 from apps.web.models import WebsiteEmail, WebsiteEmailsType
 from apps.socialmedias.models import DefaultContent, DefaultTilte, Emoji
 from apps.socialmedias import constants as social_constants
@@ -6,16 +6,19 @@ from apps.socialmedias import constants as social_constants
 
 class ContentCreation:
     @classmethod
-    def create_title(cls, title: str = None, filter: Dict = {}) -> Dict:
+    def create_title(
+        cls, title: str = "", customize_title: bool = True, use_emojis: bool = True, default_title_filter: Dict = {}
+    ) -> Dict:
         title_dict = {"title": title}
-        if not title:
-            title = DefaultTilte.objects.random_title(filter)
-            title_dict["default_title"] = title
+        if customize_title:
+            default_title = DefaultTilte.objects.random_title(default_title_filter)
+            title_dict["default_title"] = default_title
+        if use_emojis:
             title_dict["title"] = title.title
         return title_dict
 
     @classmethod
-    def create_content(cls, content: str = None, filter: Dict = {}) -> Dict:
+    def create_content(cls, content: str = "", filter: Dict = {}) -> Dict:
         content_dict = {"content": content}
         if not content:
             content = DefaultContent.objects.random_content(filter)
@@ -24,18 +27,15 @@ class ContentCreation:
         return content_dict
 
     @classmethod
-    def create_emojis(cls) -> Tuple[Emoji, Emoji]:
-        emojis = Emoji.objects.random_emojis(2)
-        first_emoji = emojis[0]
-        last_emoji = emojis[1]
-        return first_emoji, last_emoji
+    def create_emojis(cls, number_emojis: int = 2) -> List[Emoji]:
+        return Emoji.objects.random_emojis(number_emojis)
 
     @classmethod
     def create_save_email(
         cls,
         web_email_type: str,
-        title: str = None,
-        content: str = None,
+        title: str = "",
+        content: str = "",
         title_filter: Dict = {},
         content_filter: Dict = {},
     ) -> WebsiteEmail:
@@ -45,7 +45,8 @@ class ContentCreation:
 
         title_dict = cls.create_title(title, title_filter)
         content_dict = cls.create_content(content, content_filter)
-        first_emoji, last_emoji = cls.create_emojis()
+        emojis = cls.create_emojis()
+        first_emoji, last_emoji = emojis[0], emojis[1]
 
         title = title_dict["title"]
         title_dict["title"] = f"{first_emoji}{title}{last_emoji}"

@@ -1,4 +1,4 @@
-from typing import List, Dict, Callable, Type
+from typing import List, Dict, Callable, Type, Union
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -13,7 +13,7 @@ from apps.public_blog.models import PublicBlog
 from apps.socialmedias import constants
 from apps.socialmedias.socialposter.facepy import Facebook
 from apps.socialmedias.socialposter.tweetpy import Twitter
-
+from apps.web.outils.content_creation import ContentCreation
 from ..models import (
     BlogSharedHistorial,
     CompanySharedHistorial,
@@ -48,6 +48,9 @@ class SocialPosting:
             return FULL_DOMAIN + content.get_absolute_url()
         return content.custom_url
 
+    def create_title(self, title):
+        pass
+
     def news_content(self, content: Company = None, **kwargs):
         if not content:
             content = Company.objects.get_random_most_visited_clean_company(kwargs)
@@ -69,7 +72,7 @@ class SocialPosting:
             "shared_model_historial": shared_model_historial,
         }
 
-    def company_content(self, content: Company = None):
+    def company_content(self, content: Company = None) -> Dict[str, Union[str, Type]]:
         if not content:
             content = Company.objects.get_random_most_visited_clean_company()
         title = content.name
@@ -83,7 +86,7 @@ class SocialPosting:
             "shared_model_historial": shared_model_historial,
         }
 
-    def question_content(self, content: Question = None):
+    def question_content(self, content: Question = None) -> Dict[str, Union[str, Type]]:
         if not content:
             content = Question.objects.get_random()
         description = content.content
@@ -99,7 +102,7 @@ class SocialPosting:
             "shared_model_historial": shared_model_historial,
         }
 
-    def term_content(self, content: Term = None):
+    def term_content(self, content: Term = None) -> Dict[str, Union[str, Type]]:
         if not content:
             content = Term.objects.random_clean()
         title = content.title
@@ -118,7 +121,7 @@ class SocialPosting:
             "shared_model_historial": shared_model_historial,
         }
 
-    def publicblog_content(self, content: PublicBlog = None):
+    def publicblog_content(self, content: PublicBlog = None) -> Dict[str, Union[str, Type]]:
         if not content:
             content = PublicBlog.objects.get_random()
         title = content.title
@@ -169,7 +172,9 @@ class SocialPosting:
         default_manager = shared_model_historial._default_manager
         default_manager.bulk_create([shared_model_historial(**post) for post in data])
 
-    def share_content(self, model_for_social_medias_content: int, social_medias: List, specific_model: Model = None):
+    def share_content(
+        self, model_for_social_medias_content: int, social_medias: List, specific_model: Model = None
+    ) -> Dict[str, Union[str, Type]]:
         social_media_content = {
             constants.QUESTION: self.question_content,
             constants.NEWS: self.news_content,
