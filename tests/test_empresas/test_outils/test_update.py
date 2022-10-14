@@ -105,7 +105,7 @@ class TestUpdateCompany(TestCase):
                 CashflowStatement, company=self.company, period=period, date=period.year, is_ttm=False
             )
 
-        UpdateCompany(self.company).create_ttm()
+        UpdateCompany(self.company).create_or_update_ttm()
         assert 1 == IncomeStatement.objects.filter(is_ttm=True).count()
         assert 1 == BalanceSheet.objects.filter(is_ttm=True).count()
         assert 1 == CashflowStatement.objects.filter(is_ttm=True).count()

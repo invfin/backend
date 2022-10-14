@@ -1,9 +1,6 @@
-import pytest
+from django.test import TestCase
 
 from apps.general.outils.parser_client import ParserClient
-
-
-from django.test import TestCase
 
 
 class TestParserClient(TestCase):

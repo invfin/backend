@@ -1,20 +1,11 @@
-import vcr
-
-from unittest.mock import patch
-
 from bfet import DjangoTestingModel
 
 from django.test import TestCase
-from django.contrib.auth import get_user_model
+
 
 from apps.socialmedias.outils.content_creation import ContentCreation
 from apps.socialmedias import constants as social_constants
 from apps.socialmedias.models import Emoji, DefaultTilte, DefaultContent
-from apps.web import constants as web_constants
-from apps.empresas.models import Company
-from apps.escritos.models import Term
-from apps.public_blog.models import PublicBlog, WritterProfile
-from apps.preguntas_respuestas.models import Question
 
 
 class TestContentCreation(TestCase):
@@ -191,7 +182,7 @@ class TestContentCreation(TestCase):
         )
         assert expected_data == result_data
 
-    def test_create_content(self, web_content, web_filters):
+    def test_create_content(self):
         custom_content = "Custom custom_content"
         custom_dict = ContentCreation.create_content(custom_content)
         custom_expected_result = {"content": custom_content}

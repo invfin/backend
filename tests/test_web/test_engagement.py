@@ -1,5 +1,7 @@
 from django.test import TestCase
+from django.contrib.auth import get_user_model
 
+from unittest.mock import patch
 from bfet import DjangoTestingModel
 
 from apps.web import constants
@@ -11,6 +13,10 @@ from apps.web.models import (
     Promotion,
     PromotionCampaign,
 )
+from apps.empresas.models import Company
+from apps.escritos.models import Term
+from apps.public_blog.models import PublicBlog, WritterProfile
+from apps.preguntas_respuestas.models import Question
 from apps.socialmedias.outils.content_creation import ContentCreation
 from apps.web.outils.engagement import EngagementMachine
 from apps.web.models import WebsiteEmail, WebsiteEmailsType
@@ -18,7 +24,8 @@ from apps.socialmedias import constants as social_constants
 
 
 class TestEngagementMachine(TestCase):
-    def setu():
+    @classmethod
+    def setUpTestData(cls) -> None:
         cls.clean_company = DjangoTestingModel.create(
             Company, name="Apple", ticker="AAPL", description="long ass description"
         )

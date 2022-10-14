@@ -1,4 +1,4 @@
-import pytest
+from django.test import TestCase
 
 from bfet import DjangoTestingModel
 
@@ -13,9 +13,6 @@ from apps.users.models import Profile
 
 
 User = get_user_model()
-
-
-from django.test import TestCase
 
 
 class TestNotificationSystem(TestCase):

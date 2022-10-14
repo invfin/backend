@@ -1,11 +1,7 @@
 from datetime import datetime, timedelta
 
-import pytest
 
 from apps.web.utils import more_than_month
-
-
-from django.test import TestCase
 
 
 class TestUtils:

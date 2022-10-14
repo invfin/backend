@@ -1,10 +1,6 @@
-import pytest
 import json
 
 from apps.api.mixins import BaseAPIViewTest
-
-
-from django.test import TestCase
 
 
 class TestAllTermsAPIView(BaseAPIViewTest):

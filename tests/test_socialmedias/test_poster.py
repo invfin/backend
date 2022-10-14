@@ -17,7 +17,7 @@ from apps.socialmedias.models import (
     QuestionSharedHistorial,
     TermSharedHistorial,
 )
-from apps.socialmedias.poster import SocialPosting
+from apps.socialmedias.outils.poster import SocialPosting
 from apps.socialmedias import constants
 
 

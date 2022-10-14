@@ -1,4 +1,4 @@
-import pytest
+from unittest import skip
 
 from django.contrib.auth import get_user_model
 from django.test import RequestFactory
@@ -21,9 +21,7 @@ from apps.roboadvisor.views import RoboAdvisorResultView
 User = get_user_model()
 
 
-from django.test import TestCase
-
-
+@skip("Need to be better")
 class TestInvoicesAllAPI(APITestCase):
     def setUp(self):
         self.user = DjangoTestingModel.create(User)

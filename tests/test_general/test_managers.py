@@ -1,11 +1,8 @@
-import pytest
+from django.test import TestCase
 
 from bfet import DjangoTestingModel
 from apps.general.models import Period
 from apps.general import constants
-
-
-from django.test import TestCase
 
 
 class TestPeriodManager(TestCase):
