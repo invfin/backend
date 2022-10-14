@@ -1,14 +1,33 @@
-import pytest
+import vcr
 
+from unittest.mock import patch
+
+from bfet import DjangoTestingModel
+
+from django.test import TestCase
+from django.contrib.auth import get_user_model
 
 from apps.socialmedias.outils.content_creation import ContentCreation
 from apps.socialmedias import constants as social_constants
 from apps.web import constants as web_constants
-from apps.web.models import WebsiteEmail, WebsiteEmailsType
+from apps.empresas.models import Company
+from apps.escritos.models import Term
+from apps.public_blog.models import PublicBlog, WritterProfile
+from apps.preguntas_respuestas.models import Question
+from apps.
 
+class TestContentCreation(TestCase):
+    @classmethod
+    def setUpTestData(cls):
+        cls.clean_company = DjangoTestingModel.create(
+            Company, name="Apple", ticker="AAPL", description="long ass description"
+        )
+        user = DjangoTestingModel.create(get_user_model(), username="lucas")
+        writter_profile = DjangoTestingModel.create(WritterProfile, user=user, host_name="lucas", long_description="long ass description for writter")
+        cls.term = DjangoTestingModel.create(Term, title="term title", resume="term resume")
+        cls.blog = DjangoTestingModel.create(PublicBlog, title="blog title", resume="blog resume", author=user)
+        cls.question = DjangoTestingModel.create(Question, title="question title", author=user)
 
-@pytest.mark.django_db
-class TestContentCreation:
     def test_create_title(self, web_title, web_filters):
         custom_title = "Custom title"
         custom_dict = ContentCreation.create_title(custom_title)
