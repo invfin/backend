@@ -20,16 +20,6 @@ from apps.preguntas_respuestas.models import Question
 class TestContentCreation(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.clean_company = DjangoTestingModel.create(
-            Company, name="Apple", ticker="AAPL", description="long ass description"
-        )
-        user = DjangoTestingModel.create(get_user_model(), username="lucas")
-        writter_profile = DjangoTestingModel.create(
-            WritterProfile, user=user, host_name="lucas", long_description="long ass description for writter"
-        )
-        cls.term = DjangoTestingModel.create(Term, title="term title", resume="term resume")
-        cls.blog = DjangoTestingModel.create(PublicBlog, title="blog title", resume="blog resume", author=user)
-        cls.question = DjangoTestingModel.create(Question, title="question title", author=user)
         cls.emoji_1 = DjangoTestingModel.create(Emoji)
         cls.default_title = DjangoTestingModel.create(DefaultTilte, title="Default title")
         cls.default_content = DjangoTestingModel.create(DefaultContent)
