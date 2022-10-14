@@ -47,8 +47,3 @@ class TestContentCreation(TestCase):
         default_dict = ContentCreation.create_content(filter=web_filters)
         default_expected_result = {"content": web_content.content, "default_content": web_content}
         assert default_dict == default_expected_result
-
-    def test_create_emojis(self, web_emojis):
-        emoji_1, emoji_2 = ContentCreation.create_emojis()
-        assert emoji_1 in web_emojis
-        assert emoji_2 in web_emojis
