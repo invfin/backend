@@ -1,9 +1,10 @@
 import time
 import vcr
-import pytest
 
 from unittest import skip
 from bfet import DjangoTestingModel as DTM
+
+from django.test import TestCase
 
 from apps.empresas.outils.update import UpdateCompany
 from apps.empresas.models import Company
@@ -17,10 +18,9 @@ company_vcr = vcr.VCR(
 
 
 @skip("Don't want to test")
-@pytest.mark.django_db
-class TestScrapCompanyInfo:
+class TestScrapCompanyInfo(TestCase):
     @classmethod
-    def setup_class(cls) -> None:
+    def setUpTestData(cls) -> None:
         cls.company = DTM.create(Company)
         cls.company_update = UpdateCompany(cls.company)
         cls.company.inc_statements.create(date=2018)

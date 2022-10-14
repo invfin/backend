@@ -1,5 +1,6 @@
 import vcr
-import pytest
+
+from django.test import TestCase
 
 from bfet import DjangoTestingModel as DTM
 
@@ -16,10 +17,9 @@ parse_vcr = vcr.VCR(
 )
 
 
-@pytest.mark.django_db
-class TestParseFinprep:
+class TestParseFinprep(TestCase):
     @classmethod
-    def setup_class(cls) -> None:
+    def setUpTestData(cls) -> None:
         cls.parser = ParseFinprep()
 
     @parse_vcr.use_cassette(filter_query_parameters=["apikey"])
@@ -43,10 +43,8 @@ class TestParseFinprep:
         assert finprep_data.DICT_STATEMENTS == comp_data
 
 
-@pytest.mark.django_db
-class TestNormalizeFinprep:
-    @classmethod
-    def setup_class(cls) -> None:
+class TestNormalizeFinprep(TestCase):
+    def setUpTestData(cls) -> None:
         cls.parser = NormalizeFinprep()
         cls.company = DTM.create(Company, ticker="AAPL")
         cls.parser.company = cls.company
@@ -190,10 +188,9 @@ class TestNormalizeFinprep:
         assert ("stock_based_compensation" in comp_data) is True
 
 
-@pytest.mark.django_db
-class TestFinprepInfo:
+class TestFinprepInfo(TestCase):
     @classmethod
-    def setup_class(cls) -> None:
+    def setUpTestData(cls) -> None:
         cls.company = DTM.create(Company, ticker="AAPL")
         cls.parser = FinprepInfo(cls.company)
         cls.normalizer = NormalizeFinprep()

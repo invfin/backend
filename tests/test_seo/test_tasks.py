@@ -5,10 +5,12 @@ from apps.seo.outils.visiteur_meta import SeoInformation
 from apps.seo.tasks import clean_journeys, loop_over_journeys
 
 
-@pytest.mark.django_db
-class TestTasks:
+from django.test import TestCase
+
+
+class TestTasks(TestCase):
     @classmethod
-    def setup_class(cls):
+    def setUpTestData(cls):
         pass
 
     def test_clean_journeys(self):

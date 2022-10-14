@@ -1,7 +1,7 @@
 import vcr
 import pytest
 
-from bfet import DjangoTestingModel as DTM
+from bfet import DjangoTestingModel
 
 from apps.preguntas_respuestas.forms import (
     CreateAnswerForm,
@@ -17,10 +17,12 @@ preguntas_respuestas_vcr = vcr.VCR(
 )
 
 
-@pytest.mark.django_db
-class TestCreateAnswerForm:
+from django.test import TestCase
+
+
+class TestCreateAnswerForm(TestCase):
     @classmethod
-    def setup_class(cls):
+    def setUpTestData(cls):
         pass
 
     def test_form(self):
@@ -30,10 +32,12 @@ class TestCreateAnswerForm:
         form.save()
 
 
-@pytest.mark.django_db
-class TestCreateQuestionForm:
+from django.test import TestCase
+
+
+class TestCreateQuestionForm(TestCase):
     @classmethod
-    def setup_class(cls):
+    def setUpTestData(cls):
         pass
 
     def test_clean_content(self):

@@ -3,10 +3,12 @@ import pytest
 from apps.general.outils.parser_client import ParserClient
 
 
-@pytest.mark.django_db
-class TestParserClient:
+from django.test import TestCase
+
+
+class TestParserClient(TestCase):
     @classmethod
-    def setup_class(cls) -> None:
+    def setUpTestData(cls) -> None:
         cls.parser_client = ParserClient()
         cls.parser_client.base_path = "https://www.google.com/"
         cls.parser_client.api_version = None

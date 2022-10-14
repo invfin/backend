@@ -4,8 +4,10 @@ from apps.seo.models import Visiteur
 from apps.seo.outils.visiteur_meta import SeoInformation
 
 
-@pytest.mark.django_db
-class TestUtils:
+from django.test import TestCase
+
+
+class TestUtils(TestCase):
     @classmethod
-    def setup_class(cls):
+    def setUpTestData(cls):
         pass
