@@ -18,10 +18,12 @@ business_vcr = vcr.VCR(
 )
 
 
-@pytest.mark.django_db
-class TestBusinessSignal:
+from django.test import TestCase
+
+
+class TestBusinessSignal(TestCase):
     @classmethod
-    def setup_class(cls):
+    def setUpTestData(cls):
         cls.currency = Currency.objects.create(
             currency="eur",
             symbol="€",

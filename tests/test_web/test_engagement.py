@@ -1,6 +1,6 @@
-import pytest
+from django.test import TestCase
 
-from bfet import DjangoTestingModel as DTM
+from bfet import DjangoTestingModel
 
 from apps.web import constants
 from apps.web.models import (
@@ -17,9 +17,7 @@ from apps.web.models import WebsiteEmail, WebsiteEmailsType
 from apps.socialmedias import constants as social_constants
 
 
-@pytest.mark.django_db
-@pytest.mark.django_db
-class TestEngagementMachine:
+class TestEngagementMachine(TestCase):
     def setu():
         cls.clean_company = DjangoTestingModel.create(
             Company, name="Apple", ticker="AAPL", description="long ass description"

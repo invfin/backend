@@ -18,10 +18,12 @@ users_vcr = vcr.VCR(
 )
 
 
-@pytest.mark.django_db
-class TestCreditHistorialManager:
+from django.test import TestCase
+
+
+class TestCreditHistorialManager(TestCase):
     @classmethod
-    def setup_class(cls):
+    def setUpTestData(cls):
         pass
 
     def test_check_enought_credits(self):
@@ -31,20 +33,24 @@ class TestCreditHistorialManager:
         pass
 
 
-@pytest.mark.django_db
-class TestProfileManager:
+from django.test import TestCase
+
+
+class TestProfileManager(TestCase):
     @classmethod
-    def setup_class(cls):
+    def setUpTestData(cls):
         pass
 
     def test_create_ref_code(self):
         pass
 
 
-@pytest.mark.django_db
-class TestUserExtraManager:
+from django.test import TestCase
+
+
+class TestUserExtraManager(TestCase):
     @classmethod
-    def setup_class(cls):
+    def setUpTestData(cls):
         pass
 
     def test_get_or_create_quick_user(self):

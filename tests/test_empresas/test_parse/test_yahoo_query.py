@@ -1,10 +1,10 @@
 import vcr
-import pytest
 
-from unittest import skip
+from django.test import TestCase
+
 from datetime import datetime
 
-from bfet import DjangoTestingModel as DTM
+from bfet import DjangoTestingModel
 from apps.general.models import Period
 from apps.empresas.models import (
     Company,
@@ -14,7 +14,7 @@ from apps.empresas.models import (
     InstitutionalOrganization,
     TopInstitutionalOwnership,
 )
-from apps.empresas.parse.yahoo_query import ParseYahooQuery, YahooQueryInfo
+from apps.empresas.parse.yahoo_query import YahooQueryInfo
 
 
 parse_vcr = vcr.VCR(
@@ -23,11 +23,10 @@ parse_vcr = vcr.VCR(
 )
 
 
-@pytest.mark.django_db
-class TestYahooQueryInfo:
+class TestYahooQueryInfo(TestCase):
     @classmethod
-    def setup_class(cls) -> None:
-        cls.company = DTM.create(Company, ticker="AAPL")
+    def setUpTestData(cls) -> None:
+        cls.company = DjangoTestingModel.create(Company, ticker="AAPL")
         cls.parser = YahooQueryInfo(cls.company)
         cls.current_year = datetime.now().year
 

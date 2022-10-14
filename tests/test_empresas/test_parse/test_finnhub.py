@@ -1,8 +1,10 @@
 import vcr
-import pytest
 
 from unittest import skip
-from bfet import DjangoTestingModel as DTM
+
+from bfet import DjangoTestingModel
+
+from django.test import TestCase
 
 from apps.empresas.parse.finnhub import ParseFinnhub
 
@@ -14,10 +16,9 @@ parse_vcr = vcr.VCR(
 
 
 @skip("Skipping")
-@pytest.mark.django_db
-class TestParseFinprep:
+class TestParseFinprep(TestCase):
     @classmethod
-    def setup_class(cls) -> None:
+    def setUpTestData(cls) -> None:
         cls.parser = ParseFinnhub()
 
     @parse_vcr.use_cassette(filter_query_parameters=["token"])

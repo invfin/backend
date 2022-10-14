@@ -5,7 +5,9 @@ from apps.api.models import CompanyRequestAPI
 from apps.empresas.models import Company
 
 
-@pytest.mark.django_db
+from django.test import TestCase
+
+
 class TestBaseAPIView:
     def test_get_model_to_track(self):
         view = BaseAPIView()

@@ -1,5 +1,6 @@
 import vcr
-import pytest
+
+from django.test import TestCase
 
 from apps.empresas.models import Company
 from apps.escritos.models import Term
@@ -24,10 +25,9 @@ twitter_vcr = vcr.VCR(
 )
 
 
-@pytest.mark.django_db
-class TestPoster:
+class TestPoster(TestCase):
     @classmethod
-    def setup_class(cls) -> None:
+    def setUpTestData(cls) -> None:
         cls.term = Term.objects.create(
             title="term",
             resume="resumen",
