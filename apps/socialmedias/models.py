@@ -21,7 +21,7 @@ from apps.preguntas_respuestas.models import Question
 from apps.public_blog.models import PublicBlog, WritterProfile
 from apps.web import constants as web_constants
 
-from .constants import FOR_CONTENT, POST_TYPE, SOCIAL_MEDIAS
+from .constants import FOR_CONTENT, POST_TYPE, SOCIAL_MEDIAS, ALL
 from .managers import EmojisManager, HashtagsManager, TitlesManager, DefaultContentManager
 
 User = get_user_model()
@@ -55,7 +55,7 @@ class Emoji(Model):
 
 class DefaultTilte(Model):
     title = TextField(default="")
-    for_content = PositiveIntegerField(choices=FOR_CONTENT, blank=True, default=0)
+    for_content = PositiveIntegerField(choices=FOR_CONTENT, blank=True, default=ALL)
     purpose = CharField(max_length=500, choices=web_constants.CONTENT_PURPOSES, null=True, blank=True)
     objects = TitlesManager()
 
@@ -69,7 +69,7 @@ class DefaultTilte(Model):
 
 class DefaultContent(Model):
     title = CharField(max_length=500)
-    for_content = PositiveIntegerField(choices=FOR_CONTENT, blank=True, default=0)
+    for_content = PositiveIntegerField(choices=FOR_CONTENT, blank=True, default=ALL)
     purpose = CharField(max_length=500, choices=web_constants.CONTENT_PURPOSES, null=True, blank=True)
     content = RichTextField()
     objects = DefaultContentManager()

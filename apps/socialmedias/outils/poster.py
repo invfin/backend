@@ -1,3 +1,4 @@
+import random
 from typing import List, Dict, Callable, Type, Union
 
 from django.conf import settings
@@ -48,8 +49,17 @@ class SocialPosting:
             return FULL_DOMAIN + content.get_absolute_url()
         return content.custom_url
 
-    def create_title(self, title):
-        pass
+    def create_title(self, title: str, default_title_filter: Dict) -> Dict:
+        emojis_info = {
+            "emoji_1_position": "Beginning",
+            "emoji_3_position": "Middle",
+            "emoji_2_position": "End",
+        }
+        custom_title_info = {
+            "default_title_position": random.choice(["Beginning", "End"]),
+            "default_title_filter": default_title_filter,
+        }
+        return ContentCreation.create_title(title, custom_title_info=custom_title_info, emojis_info=emojis_info)
 
     def news_content(self, content: Company = None, **kwargs):
         if not content:
@@ -63,72 +73,66 @@ class SocialPosting:
         description = news["summary"]
         description = google_translator().translate(description, lang_src="en", lang_tgt="es")
         title = google_translator().translate(title, lang_src="en", lang_tgt="es")
-        shared_model_historial = NewsSharedHistorial
         return {
-            "title": title,
+            "title": self.create_title(title, {"for_content": constants.NEWS}),
             "description": description,
             "link": self.create_link(content),
             "company_related": content,
-            "shared_model_historial": shared_model_historial,
+            "shared_model_historial": NewsSharedHistorial,
         }
 
     def company_content(self, content: Company = None) -> Dict[str, Union[str, Type]]:
         if not content:
             content = Company.objects.get_random_most_visited_clean_company()
-        title = content.name
         description = f"{content.short_introduction} {content.description}"
-        shared_model_historial = CompanySharedHistorial
         return {
-            "title": title,
+            "title": self.create_title(content.title, {"for_content": constants.COMPANY}),
             "description": description,
             "link": self.create_link(content),
             "content_shared": content,
-            "shared_model_historial": shared_model_historial,
+            "shared_model_historial": CompanySharedHistorial,
         }
 
     def question_content(self, content: Question = None) -> Dict[str, Union[str, Type]]:
         if not content:
             content = Question.objects.get_random()
-        description = content.content
-        title = content.title
-        description = strip_tags(format_html(description))
-        title = strip_tags(format_html(title))
-        shared_model_historial = QuestionSharedHistorial
+        description = strip_tags(format_html(content.description))
+        title = strip_tags(format_html(content.title))
         return {
-            "title": title,
+            "title": self.create_title(title, {"for_content": constants.QUESTION}),
             "description": description,
             "link": self.create_link(content),
             "content_shared": content,
-            "shared_model_historial": shared_model_historial,
+            "shared_model_historial": QuestionSharedHistorial,
         }
 
     def term_content(self, content: Term = None) -> Dict[str, Union[str, Type]]:
         if not content:
             content = Term.objects.random_clean()
-        title = content.title
         resume = content.resume
-        description = resume if resume else f"{title} "
+        description = resume if resume else None
+        if not description:
+            # TODO Add a function to force to create a resume and correct the term
+            raise Exception
         for index, term_content in enumerate(content.term_content_parts.all()):
             description = f"""{description}
             {index}.-{term_content.title}
             """
-        shared_model_historial = TermSharedHistorial
         return {
-            "title": title,
+            "title": self.create_title(content.title, {"for_content": constants.TERM}),
             "description": description,
             "link": self.create_link(content),
             "content_shared": content,
-            "shared_model_historial": shared_model_historial,
+            "shared_model_historial": TermSharedHistorial,
         }
 
     def publicblog_content(self, content: PublicBlog = None) -> Dict[str, Union[str, Type]]:
         if not content:
             content = PublicBlog.objects.get_random()
-        title = content.title
         description = content.resume
         shared_model_historial = BlogSharedHistorial
         return {
-            "title": title,
+            "title": self.create_title(content.title, {"for_content": constants.BLOG}),
             "description": description,
             "link": self.create_link(content, False),
             "content_shared": content,

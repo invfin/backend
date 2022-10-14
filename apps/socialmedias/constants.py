@@ -29,7 +29,7 @@ COMPANY = 5
 WEB = 6
 
 
-FOR_CONTENT= (
+FOR_CONTENT = (
     (ALL, 'All'),
     (QUESTION, 'Question'),
     (NEWS, 'News'),

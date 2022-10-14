@@ -13,7 +13,7 @@ PROD_FACEBOOK_ACCESS_TOKEN = settings.OLD_FB_PAGE_ACCESS_TOKEN
 PROD_FACEBOOK_PAGE_ID = settings.OLD_FACEBOOK_ID
 
 
-class Facebook():
+class Facebook:
     facebook_url = 'https://graph.facebook.com/'
     facebook_video_url = "https://graph-video.facebook.com/"
 
@@ -22,18 +22,18 @@ class Facebook():
         self.facebook_page_name = 'InversionesyFinanzas'
         self.app_secret = settings.FACEBOOK_APP_SECRET
         self.long_lived_user_token = settings.FB_USER_ACCESS_TOKEN
-        self.page_access_token = page_access_token        
-        self.post_facebook_url = self.facebook_url + self.page_id
-        self.post_facebook_video_url = self.facebook_video_url + self.page_id
-        
+        self.page_access_token = page_access_token
+        self.post_facebook_url = f"{self.facebook_url}{self.page_id}"
+        self.post_facebook_video_url = f"{self.facebook_video_url}{self.page_id}"
+
     def get_long_live_user_token(self, app_id, user_token):
         url = f'{self.facebook_url}oauth/access_token'
 
         parameters = {
-            'grant_type':'fb_exchange_token',
-            'client_id' : app_id,
-            'client_secret' : self.app_secret,
-            'fb_exchange_token' : user_token
+            'grant_type': 'fb_exchange_token',
+            'client_id': app_id,
+            'client_secret': self.app_secret,
+            'fb_exchange_token': user_token
         }
 
         re = requests.get(url, params=parameters)
@@ -42,16 +42,15 @@ class Facebook():
         #     token = str(re.json()['access_token'])
         #     FB_USER_ACCESS_TOKEN
         #     return token
-    
+
     def get_long_live_page_token(self, old=False):
-        url = f'{self.facebook_url}{self.page_id}'
 
         parameters = {
             'fields':'access_token',
             'access_token' : self.long_lived_user_token
         }
 
-        re = requests.get(url, params=parameters)
+        re = requests.get(self.post_facebook_url, params=parameters)
 
         # if re.status_code == 200:
         #     token = str(re.json()['access_token'])
@@ -60,7 +59,7 @@ class Facebook():
         #     else:
         #         OLD_FB_PAGE_ACCESS_TOKEN
         #     return token
-    
+
     def post_fb_video(self, video_url= "", description= "" , title= "", post_time=datetime.datetime.now(), post_now = False):
         """
         Post_now is False if the post has to be scheduled, True to post it now
@@ -83,18 +82,18 @@ class Facebook():
             )
 
         return self._send_content('video', data, files)
-  
+
     def post_text(self, text= "", post_time=datetime.datetime.now(), post_now=True, link=None, title=''):
 
         if post_now is False:
             pass
         else:
-            data ={
+            data = {
                 'access_token': self.page_access_token,
                 'message': text,
                 'title': title
             }
-        
+
         if link:
             data['link'] = link
 
@@ -106,15 +105,15 @@ class Facebook():
             'url': photo_url
         }
         return self._send_content('image', data)
-        
-    def _send_content(self, content_type:str, content, files = None):        
+
+    def _send_content(self, content_type:str, content, files = None):
         if content_type == 'video':
             re = requests.post(f'{self.post_facebook_video_url}/videos',files=files, data = content)
         elif content_type == 'text':
             re = requests.post(f'{self.post_facebook_url}/feed', data = content)
         elif content_type == 'image':
-            re = requests.post(f'{self.post_facebook_url}/photos', data = content)        
-        
+            re = requests.post(f'{self.post_facebook_url}/photos', data = content)
+
         response = {}
         json_re = re.json()
         if re.status_code == 200:
@@ -122,7 +121,7 @@ class Facebook():
             response['extra'] = str(json_re['id'])
 
         elif json_re['error']['code'] == 190:
-            # logger.error(f'{json_re}, Need new user token')            
+            # logger.error(f'{json_re}, Need new user token')
             response['result'] = 'error'
             response['where'] = 'send content facebook'
             response['message'] = 'Need new user token'
@@ -132,9 +131,9 @@ class Facebook():
             response['result'] = 'error'
             response['where'] = 'send content facebook'
             response['message'] = f'{json_re}'
-        
+
         return response
-    
+
     def post_on_facebook(
         self,
         title:str,
@@ -148,7 +147,7 @@ class Facebook():
         platform = 'facebook'
         emojis = Emoji.objects.random_emojis(num_emojis)
         hashtags = Hashtag.objects.random_hashtags(platform)
-        
+
         link_extra = f"más en {link}" if link else ""
         custom_title = f'{emojis[0].emoji} {title} {link_extra}'
 
@@ -159,7 +158,7 @@ class Facebook():
         link = f'{link}?{utm_source}&{utm_medium}&{utm_campaign}&{utm_term}'
 
         description = self.create_fb_description(description=description, link=link, hashtags=[hashtag.title for hashtag in hashtags])
-        
+
         if post_type == 1 or post_type == 5 or post_type == 7:
             content_type = 'video'
             video_url = ''
@@ -192,7 +191,7 @@ class Facebook():
                 link,
                 media_url
             )
-    
+
     def share_facebook_post(self, post_id, yb_title):
         default_title = DefaultTilte.objects.random_title()
         url_to_share = f'https://www.facebook.com/{self.facebook_page_name}/posts/{post_id}&show_text=true'
@@ -201,7 +200,7 @@ class Facebook():
             default_title = default_title,
             has_default_title = True,
             description=f'{default_title.title} {yb_title}',
-            link = url_to_share)  
+            link = url_to_share)
 
     def create_fb_description(self, description:str, link:str = None, hashtags:list = None):
         hashtags = '#'.join(hashtags)
@@ -212,7 +211,7 @@ class Facebook():
         face_description = f"""{description}
 
         {link}
-        
+
         Visita nuestras redes sociales:
         Facebook: https://www.facebook.com/InversionesyFinanzas/
         Instagram: https://www.instagram.com/inversiones.finanzas/
@@ -238,7 +237,7 @@ class Facebook():
 
 
 
-            
+
 
 
 

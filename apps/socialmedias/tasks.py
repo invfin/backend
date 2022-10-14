@@ -1,11 +1,11 @@
-from config import celery_app
+from celery import shared_task
 
 from apps.socialmedias import constants
 
 from .outils.poster import SocialPosting
 
 
-@celery_app.task()
+@shared_task(autoretry_for=(Exception,), max_retries=3)
 def socialmedia_share_company():
     SocialPosting().share_content(
         constants.COMPANY,
@@ -16,7 +16,7 @@ def socialmedia_share_company():
     )
 
 
-@celery_app.task()
+@shared_task(autoretry_for=(Exception,), max_retries=3)
 def socialmedia_share_news():
     SocialPosting().share_content(
         constants.NEWS,
@@ -27,7 +27,7 @@ def socialmedia_share_news():
     )
 
 
-@celery_app.task()
+@shared_task(autoretry_for=(Exception,), max_retries=3)
 def socialmedia_share_term():
     SocialPosting().share_content(
         constants.TERM,
@@ -38,7 +38,7 @@ def socialmedia_share_term():
     )
 
 
-@celery_app.task()
+@shared_task(autoretry_for=(Exception,), max_retries=3)
 def socialmedia_share_blog():
     SocialPosting().share_content(
         constants.BLOG,
@@ -49,7 +49,7 @@ def socialmedia_share_blog():
     )
 
 
-@celery_app.task()
+@shared_task(autoretry_for=(Exception,), max_retries=3)
 def socialmedia_share_question():
     SocialPosting().share_content(
         constants.QUESTION,
