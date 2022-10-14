@@ -70,7 +70,7 @@ def arrange_quarters(company):
     ]
     for statement_obj in statements_models:
         company_statements = statement_obj.all().order_by("year")
-        if company_statements:
+        if company_statements and company_statements.filter(period_period=constants.PERIOD_FOR_YEAR).exists():
             for statement in company_statements:
                 try:
                     if statement.period.period == constants.PERIOD_FOR_YEAR:
