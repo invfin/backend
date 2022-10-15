@@ -15,14 +15,15 @@ from django.utils import timezone
 
 from apps.general.mixins import BaseToAllMixin
 
-# from apps.empresas.models import Company
 from apps.escritos.models import Term
 from apps.preguntas_respuestas.models import Question
 from apps.public_blog.models import PublicBlog
-from apps.socialmedias.constants import SOCIAL_MEDIAS
 from apps.seo.managers import VisiteurManager
 
 User = get_user_model()
+
+
+# class UrlShorter(Model, BaseToAllMixin):
 
 
 class Visiteur(Model, BaseToAllMixin):

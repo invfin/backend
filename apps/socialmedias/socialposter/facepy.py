@@ -1,9 +1,10 @@
 import datetime
+from typing import Dict
 
 import requests
 from django.conf import settings
 
-from apps.socialmedias.constants import FACEBOOK_GRAPH_URL, FACEBOOK_GRAPH_VIDEO_URL
+from apps.socialmedias import constants
 
 
 class Facebook:
@@ -13,11 +14,27 @@ class Facebook:
         self.app_secret = settings.FACEBOOK_APP_SECRET
         self.long_lived_user_token = settings.FB_USER_ACCESS_TOKEN
         self.page_access_token = page_access_token
-        self.post_facebook_url = f"{FACEBOOK_GRAPH_URL}{self.page_id}"
-        self.post_facebook_video_url = f"{FACEBOOK_GRAPH_VIDEO_URL}{self.page_id}"
+        self.post_facebook_url = f"{constants.FACEBOOK_GRAPH_URL}{self.page_id}"
+        self.post_facebook_video_url = f"{constants.FACEBOOK_GRAPH_VIDEO_URL}{self.page_id}"
 
     def get_long_live_user_token(self, app_id, user_token):
-        url = f"{FACEBOOK_GRAPH_URL}oauth/access_token"
+        """method to get a token if a response is 403
+
+        Parameters
+        ----------
+            app_id : _type_
+                _description_
+
+            user_token : _type_
+                _description_
+
+        Returns
+        -------
+            str
+                returns a FB_USER_ACCESS_TOKEN
+        """
+
+        url = f"{constants.FACEBOOK_GRAPH_URL}oauth/access_token"
 
         parameters = {
             "grant_type": "fb_exchange_token",
@@ -28,59 +45,51 @@ class Facebook:
 
         re = requests.get(url, params=parameters)
 
-        # if re.status_code == 200:
-        #     token = str(re.json()['access_token'])
-        #     FB_USER_ACCESS_TOKEN
-        #     return token
+        if re.status_code == 200:
+            return str(re.json()["access_token"])
 
-    def get_long_live_page_token(self, old=False):
+    def get_long_live_page_token(self):
+        """Method to get a NEW_FB_PAGE_ACCESS_TOKEN
+
+        Returns
+        -------
+            str
+                NEW_FB_PAGE_ACCESS_TOKEN
+        """
         parameters = {"fields": "access_token", "access_token": self.long_lived_user_token}
 
         re = requests.get(self.post_facebook_url, params=parameters)
 
-        # if re.status_code == 200:
-        #     token = str(re.json()['access_token'])
-        #     if old is False:
-        #         NEW_FB_PAGE_ACCESS_TOKEN
-        #     else:
-        #         OLD_FB_PAGE_ACCESS_TOKEN
-        #     return token
+        if re.status_code == 200:
+            return str(re.json()["access_token"])
 
-    def post_fb_video(self, video_url="", description="", title="", post_time=datetime.datetime.now(), post_now=False):
+    def post_content(self, content_type: str, content: Dict, **kwargs):
+        """Method to post to the Facebook API
+
+        Parameters
+        ----------
+            content_type : str
+                Specify if you are going to post a text alone, an image with a text or a video with a text
+
+            content : Dict
+                The basic data that it's used accross the 3 types of content (title, description/message)
+
+        Returns
+        -------
+            _type_
+                The facebook response inside a dict with and error message if any or success
         """
-        Post_now is False if the post has to be scheduled, True to post it now
-        """
-        files = {"source": open(video_url, "rb")}
-        access_token = self.page_access_token
-
-        data = {"access_token": access_token, "title": title, "description": description}
-
-        if post_now is False:
-            data.update({"published": False, "scheduled_publish_time": post_time})
-
-        return self._send_content("video", data, files)
-
-    def post_text(self, text="", post_time=datetime.datetime.now(), post_now=True, link=None, title=""):
-        if post_now is False:
-            pass
-        else:
-            data = {"access_token": self.page_access_token, "message": text, "title": title}
-
-        if link:
-            data["link"] = link
-
-        return self._send_content("text", data)
-
-    def post_image(self, description="", photo_url="", title="", post_time=datetime.datetime.now(), post_now=False):
-        data = {"access_token": self.page_access_token, "url": photo_url}
-        return self._send_content("image", data)
-
-    def _send_content(self, content_type: str, content, files=None):
+        if not kwargs["post_now"]:
+            content.update({"published": False, "scheduled_publish_time": kwargs["post_time"]})
+        content.update({"access_token": self.page_access_token})
         if content_type == "video":
-            re = requests.post(f"{self.post_facebook_video_url}/videos", files=files, data=content)
+            files = {"source": open(kwargs["media_url"], "rb")}
+            re = requests.post(f"{self.post_facebook_video_url}/videos", data=content, files=files)
         elif content_type == "text":
+            content.update({"link": kwargs["link"]})
             re = requests.post(f"{self.post_facebook_url}/feed", data=content)
         elif content_type == "image":
+            content.update({"url": kwargs["media_url"]})
             re = requests.post(f"{self.post_facebook_url}/photos", data=content)
 
         response = {}
@@ -103,42 +112,29 @@ class Facebook:
 
         return response
 
-    def post_on_facebook(
-        self, title: str, description: str = None, post_type: int = 3, link: str = None, media_url: str = None, **kwargs
-    ):
-        platform = "facebook"
+    def post(self, **kwargs):
+        media_url = kwargs.get("media", "")
+        post_type = kwargs["post_type"]
+        post_now = kwargs.get("post_now", True)
 
-        description = self.create_fb_description(
-            description=description, link=link, hashtags=[hashtag.title for hashtag in hashtags]
-        )
+        content = self.create_fb_description(kwargs["content"], kwargs["hashtags"])
+        data = {"title": kwargs["title"], "description": content}
 
-        if post_type == 1 or post_type == 5 or post_type == 7:
-            content_type = "video"
-            video_url = ""
-            post_response = self.post_fb_video(
-                video_url=video_url, description=description, title=custom_title, post_now=True
-            )
+        content_type = "video"
 
-        elif post_type == 2 or post_type == 6:
+        if post_type == constants.POST_TYPE_IMAGE or post_type == constants.POST_TYPE_TEXT_IMAGE:
             content_type = "image"
-            post_response = self.post_image()
 
-        elif post_type == 3 or post_type == 4:
+        elif post_type == constants.POST_TYPE_TEXT or post_type == constants.POST_TYPE_REPOST:
             content_type = "text"
-            description = f"{description}"
+            data["message"] = data.pop("description")
 
-            post_response = self.post_text(text=description, link=link, title=title)
+        post_response = self.post_content(content_type, data)
 
         if post_response["result"] == "success":
-            return {
-                "post_type": post_type,
-                "social_id": post_response["extra"],
-                "title": custom_title,
-                "description": description,
-                "platform_shared": platform,
-            }
+            return {"social_id": post_response["extra"], "multiple_posts": False}
         else:
-            return self.post_on_facebook(title, description, num_emojis, post_type, link, media_url)
+            return self.post(**kwargs)
 
     # def share_facebook_post(self, post_id, yb_title):
     #     default_title = DefaultTilte.objects.random_title()
@@ -151,8 +147,8 @@ class Facebook:
     #         link=url_to_share,
     #     )
 
-    def create_fb_description(self, description: str, link: str = "", hashtags: str = ""):
-        return f"""{description}
+    def create_fb_description(self, content: str, hashtags: str):
+        return f"""{content}
 
         Prueba las herramientas que todo inversor inteligente necesita: https://inversionesyfinanzas.xyz
 

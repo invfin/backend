@@ -10,8 +10,8 @@ def socialmedia_share_company():
     SocialPosting().share_content(
         constants.COMPANY,
         [
-            {"platform": constants.FACEBOOK, "post_type": constants.POST_TYPE_TEXT},
-            {"platform": constants.TWITTER, "post_type": constants.POST_TYPE_TEXT},
+            {"platform": constants.FACEBOOK},
+            {"platform": constants.TWITTER},
         ],
     )
 
@@ -21,8 +21,8 @@ def socialmedia_share_news():
     SocialPosting().share_content(
         constants.NEWS,
         [
-            {"platform": constants.FACEBOOK, "post_type": constants.POST_TYPE_TEXT},
-            {"platform": constants.TWITTER, "post_type": constants.POST_TYPE_TEXT},
+            {"platform": constants.FACEBOOK},
+            {"platform": constants.TWITTER},
         ],
     )
 
@@ -32,8 +32,8 @@ def socialmedia_share_term():
     SocialPosting().share_content(
         constants.TERM,
         [
-            {"platform": constants.FACEBOOK, "post_type": constants.POST_TYPE_TEXT},
-            {"platform": constants.TWITTER, "post_type": constants.POST_TYPE_TEXT},
+            {"platform": constants.FACEBOOK},
+            {"platform": constants.TWITTER},
         ],
     )
 
@@ -41,10 +41,10 @@ def socialmedia_share_term():
 @shared_task(autoretry_for=(Exception,), max_retries=3)
 def socialmedia_share_blog():
     SocialPosting().share_content(
-        constants.BLOG,
+        constants.PUBLIC_BLOG,
         [
-            {"platform": constants.FACEBOOK, "post_type": constants.POST_TYPE_TEXT_IMAGE},
-            {"platform": constants.TWITTER, "post_type": constants.POST_TYPE_TEXT_IMAGE},
+            {"platform": constants.FACEBOOK},
+            {"platform": constants.TWITTER},
         ],
     )
 
@@ -54,7 +54,7 @@ def socialmedia_share_question():
     SocialPosting().share_content(
         constants.QUESTION,
         [
-            {"platform": constants.FACEBOOK, "post_type": constants.POST_TYPE_TEXT},
-            {"platform": constants.TWITTER, "post_type": constants.POST_TYPE_TEXT},
+            {"platform": constants.FACEBOOK},
+            {"platform": constants.TWITTER},
         ],
     )

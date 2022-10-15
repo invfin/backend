@@ -1,6 +1,7 @@
 from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect
+from django.urls import reverse
 from django.views.generic import (
     DetailView,
     FormView,
@@ -18,6 +19,13 @@ from .mixins import SEOViewMixin
 from apps.web.models import Promotion
 
 
+class UrlShorterRedirectView(RedirectView):
+    def get_redirect_url(self, *args, **kwargs):
+        print(*args)
+        print(**kwargs)
+        # return reverse("business:product", kwargs={"slug": "excel-inteligente"})
+
+
 def redirect_old_urls(request, ques_slug=False, term_slug=False, publs_slug=False):
     if ques_slug == False and term_slug == False:
         model = PublicBlog.objects
@@ -26,7 +34,7 @@ def redirect_old_urls(request, ques_slug=False, term_slug=False, publs_slug=Fals
     elif term_slug == False and publs_slug == False:
         model = Question.objects
         slug = ques_slug
-        
+
     elif publs_slug == False and ques_slug == False:
         model = Term.objects
         slug = term_slug
@@ -43,20 +51,19 @@ def redirect_old_urls(request, ques_slug=False, term_slug=False, publs_slug=Fals
             if old_url.exists():
                 redirect_to = old_url[0].get_absolute_url()
             else:
-                redirect_to = 'escritos:glosario'
+                redirect_to = "escritos:glosario"
     return redirect(redirect_to)
-        
+
 
 class PromotionRedirectView(RedirectView):
-
     permanent = False
 
     def save_promotion_data(self, slug):
-        model = Promotion.objects.get(slug = slug)
+        model = Promotion.objects.get(slug=slug)
         return model.full_url
 
     def get(self, request, *args, **kwargs):
-        slug = request.GET.kwargs['slug']
+        slug = request.GET.kwargs["slug"]
         url = self.save_promotion_data(slug)
         return HttpResponseRedirect(url)
 
@@ -88,4 +95,3 @@ class SEOFormView(SEOViewMixin, FormView):
 
 class SEOTemplateView(SEOViewMixin, TemplateView):
     pass
-

@@ -3,9 +3,7 @@ import random
 from typing import Dict, List, Type, Any, Tuple
 
 from django.apps import apps
-from django.template.defaultfilters import slugify
 from django.conf import settings
-from django.contrib.auth import get_user_model
 from django.utils.html import format_html, strip_tags
 
 from apps.escritos.models import Term
@@ -18,6 +16,7 @@ from apps.socialmedias.models import (
     QuestionSharedHistorial,
     TermSharedHistorial,
 )
+from apps.seo.utils import generate_url_with_utm
 
 FULL_DOMAIN = settings.FULL_DOMAIN
 
@@ -27,8 +26,9 @@ class ContentCreation:
     shared_model_historial: Type = None
     for_content: int = 0
 
-    def __init__(self) -> None:
+    def __init__(self, platform: str) -> None:
         self.object: Type = self.get_object()
+        self.platform: str = platform
 
     def get_object(self) -> Type:
         """Overrite this method to return the obj of the model wanted according to the random method defined
@@ -83,25 +83,8 @@ class ContentCreation:
         return hashtags_list, hashtags
 
     @classmethod
-    def create_utm_url(
-        cls,
-        utm_source: str,
-        utm_medium: str,
-        utm_campaign: str,
-        utm_term: str,
-        slugify_term: bool = True,
-        link: str = "",
-    ) -> str:
-        utm_source = f"utm_source={utm_source}"
-        utm_medium = f"utm_medium={utm_medium}"
-        utm_campaign = f"utm_campaign={utm_campaign}"
-        if slugify_term:
-            utm_term = slugify(utm_term)
-        utm_term = f"utm_term={utm_term}"
-        utm_params = f"{utm_source}&{utm_medium}&{utm_campaign}&{utm_term}"
-        if link:
-            return f"{link}?{utm_params}"
-        return utm_params
+    def create_utm_url(cls, *args, **kwargs) -> str:
+        return generate_url_with_utm(*args, **kwargs)
 
     @classmethod
     def create_title(
@@ -202,6 +185,9 @@ class ContentCreation:
         title_dict["title"] = final_title
         return title_dict
 
+    def create_url(self):
+        return self.object.shareable_link
+
     @classmethod
     def create_content(cls, content: Type, filter: Dict = {}) -> Dict:
         content_dict = {"content": content}
@@ -215,13 +201,17 @@ class ContentCreation:
         content = self.object
         title = self.get_object_title()
         content = self.get_object_content()
+        need_slice = bool(self.platform == socialmedias_constants.TWITTER)
+        hashtags_list, hashtags = self.create_hashtags(self.platform, need_slice)
         return {
             "title": self.create_random_title(title=title, default_title_filter={"for_content": self.for_content}),
-            "description": self.create_content(content),
-            "link": self.object.shareable_link,
+            "content": self.create_content(content),
+            "link": self.create_url(),
             "media": self.get_object_media(),
             "content_shared": self.object,
             "shared_model_historial": self.shared_model_historial,
+            "hashtags_list": hashtags_list,
+            "hashtags": hashtags,
         }
 
     @classmethod
@@ -266,10 +256,11 @@ class TermContentCreation(ContentCreation):
         return Term.objects.random_clean()
 
     def create_content(self):
-        description = self.object.resume if self.object.resume else None
-        if not description:
-            # TODO Add a function to force to create a resume and correct the term
-            raise Exception
+        link = self.create_url()
+        description = (
+            f"{self.object.resume} \nSi quieres conocer más a fondo puedes leer la definición entera {link}. \nEstos"
+            " son los puntos claves que encontrarás:"
+        )
         for index, term_content in enumerate(self.object.term_content_parts.all()):
             description = f"""{description}
             {index}.-{term_content.title}

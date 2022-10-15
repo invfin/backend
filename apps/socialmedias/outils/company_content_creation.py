@@ -21,15 +21,16 @@ class CompanyContentCreation(ContentCreation):
 
     def get_object(self, object_filter) -> Type:
         return Company.objects.get_random_most_visited_clean_company(object_filter)
-    
+
     def create_content(self) -> Dict:
         content = f"{self.object.short_introduction} {self.object.description}"
         content_dict = {"content": content}
         return content_dict
-    
-    def get_object_title(self) -> str:
-        return f"{}"
 
+    def get_object_title(self) -> str:
+        if self.platform == socialmedias_constants.TWITTER:
+            return f"{self.object.name} ${self.object.ticker}"
+        return self.object.full_name
 
 
 class CompanyNewsContentCreation(CompanyContentCreation):
@@ -43,26 +44,33 @@ class CompanyNewsContentCreation(CompanyContentCreation):
             object_filter = {"exclude": {"id__in": [self.object.id]}}
         self.object = self.get_object(object_filter)
         return self.create_social_media_content_from_object(object_filter)
-        
+
     def create_social_media_content_from_object(self, object_filter):
         news_list = RetrieveCompanyData(self.object).get_company_news()
         if not news_list:
             return self.get_new_object(object_filter)
         news: Dict = news_list[0]
         title = news["headline"]
-        description = news["summary"]
+        content = news["summary"]
         media = news.get("image")
         if not media:
             media = self.object.image
-        description = google_translator().translate(description, lang_src="en", lang_tgt="es")
+
+        content = google_translator().translate(content, lang_src="en", lang_tgt="es")
         title = google_translator().translate(title, lang_src="en", lang_tgt="es")
+
+        need_slice = bool(self.platform == socialmedias_constants.TWITTER)
+        hashtags_list, hashtags = self.create_hashtags(self.platform, need_slice)
         return {
-            "title": self.create_random_title(title=title, default_title_filter={"for_content": self.for_content}),
-            "description": description,
-            "link": self.object.shareable_link,
-            "media": media,
-            "company_related": self.object,
-            "shared_model_historial": NewsSharedHistorial,
+            "title": self.create_random_title(
+                title=title,
+                default_title_filter={"for_content": self.for_content},
+            ),
+            "description": content,
+            "link": self.create_url(),
+            "media": self.get_object_media(),
+            "content_shared": self.object,
+            "shared_model_historial": self.shared_model_historial,
+            "hashtags_list": hashtags_list,
+            "hashtags": hashtags,
         }
-
-
