@@ -41,7 +41,7 @@ class BaseWrittenContent(Model, CommonMixin):
     category = ForeignKey("general.Category", on_delete=SET_NULL, blank=True, null=True)
     tags = ManyToManyField("general.Tag", blank=True)
     author = ForeignKey(User, on_delete=SET_NULL, null=True)
-    extra_data = JSONField(default=default_dict)
+    checkings = JSONField(default=default_dict)
 
     class Meta:
         abstract = True

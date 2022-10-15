@@ -67,7 +67,7 @@ class SEOViewMixin(RecommenderMixin):
         meta_title = self.meta_title
         if not meta_title:
             meta_title = self.get_possible_meta_attribute(
-                instance, ["meta_title", "regularised_title", "name", "title"], "Invierte correctamente"
+                instance, ["meta_title", "name", "title"], "Invierte correctamente"
             )
         return meta_title
 
@@ -76,7 +76,7 @@ class SEOViewMixin(RecommenderMixin):
         if not meta_description:
             meta_description = self.get_possible_meta_attribute(
                 instance,
-                ["meta_description", "regularised_description", "resume", "description"],
+                ["meta_description", "resume", "description", "content"],
                 "Todo lo que necesitas para ser un mejor inversor",
             )
         return meta_description
@@ -85,7 +85,7 @@ class SEOViewMixin(RecommenderMixin):
         meta_image = self.meta_image
         if not meta_image:
             meta_image = self.get_possible_meta_attribute(
-                instance, ["meta_image", "regularised_image", "image", "thumbnail"], None
+                instance, ["meta_image", "regularised_image", "image", "thumbnail"], ""
             )
         if not meta_image:
             author = getattr(instance, "author", None)

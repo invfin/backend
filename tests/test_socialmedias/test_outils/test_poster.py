@@ -8,9 +8,9 @@ from django.contrib.auth import get_user_model
 from django.conf import settings
 from django.test import TestCase
 
-from apps.empresas.models import Company
+from apps.empresas.models import Company, IncomeStatement
 from apps.escritos.models import Term
-from apps.public_blog.models import PublicBlog
+from apps.public_blog.models import PublicBlog, WritterProfile
 from apps.preguntas_respuestas.models import Question
 from apps.socialmedias.models import (
     BlogSharedHistorial,
@@ -21,6 +21,7 @@ from apps.socialmedias.models import (
 )
 from apps.socialmedias.outils.poster import SocialPosting
 from apps.socialmedias import constants
+from apps.socialmedias.models import Emoji, DefaultTilte
 
 FULL_DOMAIN = settings.FULL_DOMAIN
 
@@ -34,23 +35,33 @@ class TestSocialPosting(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.clean_company = DjangoTestingModel.create(
-            Company,
-            name="Apple",
-            ticker="AAPL",
-            no_incs=False,
-            no_bs=False,
-            no_cfs=False,
-            description_translated=True,
-            has_logo=True,
-            has_error=False,
+            Company, name="Apple", ticker="AAPL", description="long ass description"
         )
-        user = DjangoTestingModel.create(get_user_model())
+        DjangoTestingModel.create(IncomeStatement, company=cls.clean_company)
+        user = DjangoTestingModel.create(get_user_model(), username="lucas")
+        writter_profile = DjangoTestingModel.create(
+            WritterProfile, user=user, host_name="lucas", long_description="long ass description for writter"
+        )
         cls.term = DjangoTestingModel.create(Term, title="term title", resume="term resume")
-        cls.blog = DjangoTestingModel.create(PublicBlog, author=user)
-        cls.question = DjangoTestingModel.create(Question, author=user)
+        cls.blog = DjangoTestingModel.create(PublicBlog, title="blog title", resume="blog resume", author=user)
+        cls.question = DjangoTestingModel.create(Question, title="question title", author=user)
+        cls.emoji = DjangoTestingModel.create(Emoji)
+        cls.default_title = DjangoTestingModel.create(DefaultTilte, title="Default title")
 
     def test_create_link(self):
         assert "http://example.com:8000/screener/analisis-de/AAPL/" == SocialPosting().create_link(self.clean_company)
+
+    def test_create_title(self):
+        emojis = DjangoTestingModel.create(Emoji, 3)
+        default_title = DjangoTestingModel.create(DefaultTilte, title="Default title")
+        result_data = SocialPosting().create_title("Test title")
+        for emoji in emojis:
+            assert (emoji.emoji in result_data["title"]) is True
+            assert (emoji in result_data["emojis"]) is True
+        assert ("Test title" in result_data["title"]) is True
+        assert ("Default title" in result_data["title"]) is True
+        assert default_title == result_data["default_title"]
+        assert list(result_data.keys()) == ["default_title", "emojis", "title"]
 
     @poster_vcr.use_cassette(filter_query_parameters=["token"])
     @patch("apps.translate.google_trans_new.google_translator.translate")

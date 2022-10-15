@@ -57,8 +57,6 @@ class ParserClient:
             time.sleep(attempt * REQUESTS_MAX_RETRIES)
         response.raise_for_status()
 
-    def request(
-        self, path: str, different_api_version: str = None, str_params: str = None, **dict_params: dict
-    ) -> Union[Dict[str, Any], str, str, requests.Response]:
+    def request(self, path: str, different_api_version: str = "", str_params: str = "", **dict_params: Dict) -> Any:
         full_path = self._build_full_path(path, different_api_version, str_params, **dict_params)
         return self._request_content(full_path)

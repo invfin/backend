@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from typing import Type
+from typing import List, Type
 
 from apps.empresas.parse import FinnhubInfo, FinprepInfo, YahooQueryInfo, YFinanceInfo
 from apps.empresas.utils import log_company
@@ -15,7 +15,7 @@ class RetrieveCompanyData:
         self.yahooquery = YahooQueryInfo(company)
         self.yfinance = YFinanceInfo(company)
 
-    def get_company_news(self):
+    def get_company_news(self) -> List:
         day = str(int(datetime.now().strftime("%Y-%m-%d")[-2:]) - 2)
         from_date = datetime.now().strftime(f"%Y-%m-{day}")
         to_date = datetime.now().strftime("%Y-%m-%d")

@@ -1,4 +1,5 @@
 import uuid
+from datetime import datetime
 
 from io import BytesIO
 
@@ -9,7 +10,7 @@ from rest_framework.serializers import ModelSerializer
 from django.conf import settings
 from django.core.files import File
 from django.core.files.base import ContentFile
-from django.db.models import ImageField, Model
+from django.db.models import ImageField
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 from django.template.defaultfilters import slugify
@@ -53,45 +54,12 @@ class BaseToAllMixin:
         return self._meta.object_name
 
     @property
-    def regularised_description(self):
-        if self.object_name == "Question":
-            regularised_description = self.content
-
-        elif self.object_name == "Company":
-            regularised_description = self.description
-
-        else:
-            regularised_description = self.resume
-
-        return regularised_description
-
-    @property
-    def regularised_title(self):
-        if self.object_name == "Company":
-            regularised_title = self.name
-        else:
-            regularised_title = self.title
-
-        return regularised_title
-
-    @property
     def dict_for_task(self):
         return {
             "app_label": self.app_label,
             "object_name": self.object_name,
             "id": self.pk,
         }
-
-    @property
-    def dict_for_email(self):
-        dict_task = self.dict_for_task
-        dict_task.update(
-            {
-                "subject": self.regularised_title,
-                "content": self.regularised_description,
-            }
-        )
-        return dict_task
 
     @property
     def base_url_to_encode(self):
@@ -228,6 +196,16 @@ class CommonMixin(BaseToAllMixin):
 
 
 class BaseEscritosMixins:
+    def check_checkings(self, main_dict: str) -> bool:
+        return self.checkings[f"has_{main_dict}"]["state"] == "yes"
+
+    def modify_checkings(self, main_dict: str, has_it: bool):
+        dt = datetime.now()
+        ts = datetime.timestamp(dt)
+        state = "yes" if has_it else "no"
+        self.checkings.update({f"has_{main_dict}": {"state": state, "time": ts}})
+        self.save(update_fields=["checkings"])
+
     def search_image(self, content):
         soup = bs(content, "html.parser")
         images = [img for img in soup.find_all("img")]

@@ -11,6 +11,7 @@ from django.db.models import (
     JSONField,
     ManyToManyField,
     Model,
+    URLField,
     PositiveIntegerField,
     TextField,
 )
@@ -20,6 +21,7 @@ from apps.escritos.models import Term
 from apps.preguntas_respuestas.models import Question
 from apps.public_blog.models import PublicBlog, WritterProfile
 from apps.web import constants as web_constants
+from apps.general.mixins import BaseToAllMixin
 
 from .constants import FOR_CONTENT, POST_TYPE, SOCIAL_MEDIAS, ALL
 from .managers import EmojisManager, HashtagsManager, TitlesManager, DefaultContentManager
@@ -27,7 +29,7 @@ from .managers import EmojisManager, HashtagsManager, TitlesManager, DefaultCont
 User = get_user_model()
 
 
-class Hashtag(Model):
+class Hashtag(Model, BaseToAllMixin):
     title = TextField(default="")
     platform = CharField(max_length=500, choices=SOCIAL_MEDIAS)
     is_trending = BooleanField(default=False)
@@ -41,7 +43,7 @@ class Hashtag(Model):
         return str(self.title)
 
 
-class Emoji(Model):
+class Emoji(Model, BaseToAllMixin):
     emoji = CharField(max_length=500)
     objects = EmojisManager()
 
@@ -53,7 +55,7 @@ class Emoji(Model):
         return str(self.emoji)
 
 
-class DefaultTilte(Model):
+class DefaultTilte(Model, BaseToAllMixin):
     title = TextField(default="")
     for_content = PositiveIntegerField(choices=FOR_CONTENT, blank=True, default=ALL)
     purpose = CharField(max_length=500, choices=web_constants.CONTENT_PURPOSES, null=True, blank=True)
@@ -67,7 +69,7 @@ class DefaultTilte(Model):
         return str(self.title)
 
 
-class DefaultContent(Model):
+class DefaultContent(Model, BaseToAllMixin):
     title = CharField(max_length=500)
     for_content = PositiveIntegerField(choices=FOR_CONTENT, blank=True, default=ALL)
     purpose = CharField(max_length=500, choices=web_constants.CONTENT_PURPOSES, null=True, blank=True)
@@ -82,10 +84,11 @@ class DefaultContent(Model):
         return str(self.title)
 
 
-class BaseContentShared(Model):
+class BaseContentShared(Model, BaseToAllMixin):
     user = ForeignKey(User, on_delete=SET_NULL, null=True, blank=True)
     date_shared = DateTimeField(auto_now_add=True)
     post_type = PositiveIntegerField(choices=POST_TYPE)
+    post_content_type = PositiveIntegerField(choices=POST_TYPE, null=True)
     platform_shared = CharField(max_length=500, choices=SOCIAL_MEDIAS)
     social_id = CharField(max_length=500)
     title = RichTextField(blank=True)
@@ -93,6 +96,7 @@ class BaseContentShared(Model):
     default_title = ForeignKey(DefaultTilte, on_delete=SET_NULL, null=True, blank=True)
     default_content = ForeignKey(DefaultContent, on_delete=SET_NULL, null=True, blank=True)
     title_emojis = ManyToManyField(Emoji, blank=True)
+    hashtags = ManyToManyField(Hashtag, blank=True)
     extra_description = RichTextField(blank=True)
     metadata = JSONField(default=dict)
 
