@@ -49,5 +49,5 @@ def send_periodically_email_engagement_task():
 
 
 @shared_task(autoretry_for=(Exception,), max_retries=3)
-def send_email_engagement_task(email_id: int = None):
+def send_email_engagement_task(email_id: int):
     send_email_engagement(WebsiteEmail.objects.get(pk=email_id))

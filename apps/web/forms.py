@@ -7,6 +7,8 @@ from django.forms import (
     ModelForm,
     Textarea,
 )
+from django.contrib.admin import site
+from django.contrib.admin.widgets import ForeignKeyRawIdWidget, RelatedFieldWidgetWrapper
 
 from apps.general.outils.emailing import EmailingSystem
 
@@ -28,9 +30,25 @@ class ContactForm(Form):
 class WebEmailForm(ModelForm):
     date_to_send = DateTimeField(
         input_formats=["%d/%m/%Y %H:%M"],
-        widget=DateTimeInput(attrs={"class": "form-control datetimepicker-input", "id": "datetimepicker1"}),
+        widget=DateTimeInput(attrs={"class": "form-control datetimepicker-input"}),
+        required=False,
     )
 
     class Meta:
         model = WebsiteEmail
-        fields = "__all__"
+        fields = [
+            "title",
+            "date_to_send",
+            "content",
+            "type_related",
+            "whom_to_send",
+            "users_selected",
+        ]
+
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.fields["type_related"].widget = RelatedFieldWidgetWrapper(
+            self.fields["type_related"].widget,
+            self.instance._meta.get_field("type_related").remote_field,
+            site,
+        )

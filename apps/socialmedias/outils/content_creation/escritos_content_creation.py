@@ -26,7 +26,7 @@ class TermContentCreation(ContentCreation):
     def get_object(self) -> Type:
         return Term.objects.random_clean()
 
-    def create_content(self):
+    def get_object_content(self, **kwargs):
         link = self.create_url()
         description = (
             f"{self.object.resume} \nSi quieres conocer más a fondo puedes leer la definición entera {link}. \nEstos"
@@ -52,5 +52,5 @@ class QuestionContentCreation(ContentCreation):
     def get_object_title(self) -> str:
         return strip_tags(format_html(self.object.title))
 
-    def create_content(self):
+    def get_object_content(self, **kwargs):
         return strip_tags(format_html(self.object.content))

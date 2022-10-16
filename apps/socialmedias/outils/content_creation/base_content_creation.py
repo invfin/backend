@@ -185,44 +185,42 @@ class ContentCreation:
 
     @classmethod
     def create_content(cls, **kwargs) -> Dict:
+        content = kwargs.get("content")
+        default_content_filter = kwargs.get("default_content_filter", {})
         content_dict = {"content": content}
         if not content:
-            content = DefaultContent.objects.random_content(filter)
+            content = DefaultContent.objects.random_content(default_content_filter)
             content_dict["default_content"] = content
             content_dict["content"] = content.content
-        return {}
+        return content_dict
 
     def create_default_title_filter(self, **kwargs) -> Dict[str, List[int]]:
         return {"for_content__in": self.for_content}
 
+    def create_default_content_filter(self, **kwargs) -> Dict[str, List[int]]:
+        return {"for_content__in": self.for_content}
+
     def prepare_inital_data(self) -> Dict[str, Union[str, Type]]:
-        content = self.object
         title = self.get_object_title()
         content = self.get_object_content()
         default_title_filter = self.create_default_title_filter()
+        default_content_filter = self.create_default_content_filter()
         return {
-            "title": self.create_random_title(title=title, default_title_filter=default_title_filter),
-            "content": self.create_content(),
+            **self.create_random_title(title=title, default_title_filter=default_title_filter),
+            **self.create_content(content=content, default_content_filter=default_content_filter),
             "link": self.create_url(),
             "content_shared": self.object,
         }
 
-    def create_newslett_content_from_object(self):
+    def create_newsletter_content_from_object(self):
         return self.prepare_inital_data()
 
     def create_social_media_content_from_object(self):
-        content = self.object
-        title = self.get_object_title()
-        content = self.get_object_content()
         need_slice = bool(self.platform == socialmedias_constants.TWITTER)
         hashtags_list, hashtags = self.create_hashtags(self.platform, need_slice)
-        default_title_filter = self.create_default_title_filter()
         return {
-            "title": self.create_random_title(title=title, default_title_filter=default_title_filter),
-            "content": self.create_content(),
-            "link": self.create_url(),
+            **self.prepare_inital_data(),
             "media": self.get_object_media(),
-            "content_shared": self.object,
             "shared_model_historial": self.shared_model_historial,
             "hashtags_list": hashtags_list,
             "hashtags": hashtags,
@@ -238,7 +236,7 @@ class ContentCreation:
         elif number_emojis == 1:
             emojis_info = {"emoji_1_position": random.choice(["Beginning", "End"])}
         else:
-            for index in range(number_emojis):
+            for index in range(1, number_emojis):
                 emojis_info[f"emoji_{index}_position"] = ["Beginning", "End", "Middle"][index - 1]
 
         custom_title_info = {

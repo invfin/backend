@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Type
 
 from apps.seo.models import Visiteur
 from apps.socialmedias.outils.content_creation import (
@@ -28,23 +28,35 @@ class EngagementMachine:
     def get_creator(self, content_object: int) -> Type:
         return self.content_creators_map[content_object]
 
-    def create_save_newsletter(
-        self,
-        web_email_type: str,
-    ) -> WebsiteEmail:
-        base_filters = {"for_content": social_constants.WEB, "purpose": web_email_type}
+    def save_newsletter(self, **kwargs) -> WebsiteEmail:
+        title_emojis = kwargs.pop("title_emojis", [])
+        users_selected = kwargs.pop("users_selected", [])
+        web_email_newsletter_obj = WebsiteEmail.objects.create(**kwargs)
+        if title_emojis:
+            web_email_newsletter_obj.title_emojis.add(*title_emojis)
+        if users_selected:
+            web_email_newsletter_obj.users_selected.add(*users_selected)
+        return web_email_newsletter_obj
 
-        TermContentCreation()
+    def create_newsletter(self, web_email_type: str, content_object: int, whom_to_send: str) -> WebsiteEmail:
+        content_creator = self.get_creator(content_object)
+        content_creator.for_content = [social_constants.WEB]
+        newsletter_content_from_object = content_creator().create_newsletter_content_from_object()
 
         type_related, created = WebsiteEmailsType.objects.get_or_create(slug=web_email_type)
-
-        web_email = WebsiteEmail.objects.create(
-            type_related=type_related,
-            **title_dict,
-            **content_dict,
+        link = newsletter_content_from_object.pop("link")
+        newsletter_content_from_object.update(
+            {
+                "object": newsletter_content_from_object.pop("content_shared"),
+                "type_related": type_related,
+                "whom_to_send": whom_to_send,
+            }
         )
-        web_email.title_emojis.add(first_emoji, last_emoji)
-        return web_email
+
+        return self.save_newsletter(
+            **newsletter_content_from_object,
+            users_selected="",
+        )
 
     def periodic_engagement(self):
         for user in User.objects.all():

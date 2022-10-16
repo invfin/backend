@@ -182,6 +182,9 @@ class TestContentCreation(TestCase):
         )
         assert expected_data == result_data
 
+    def test_create_random_title(self):
+        ContentCreation.create_random_title(custom_content)
+
     def test_create_content(self):
         custom_content = "Custom custom_content"
         custom_dict = ContentCreation.create_content(custom_content)

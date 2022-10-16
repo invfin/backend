@@ -10,12 +10,10 @@
     <div class="card-body">
       <div class="row align-items-center">
         <div class="col-auto">
-          {% if web_email.sent %}
           <div class="col-1">
-            <div style="width: 100%;text-align: center;" class="pt-1 pb-1"><i class="fa fa-check-circle"
-                style="color: green;font-size:36px;"></i></div>
+            <div style="width: 100%;text-align: center;" class="pt-1 pb-1"><i class="fa fa-{{ web_email.status.icon }}"
+                style="color: {{ web_email.status.color }};font-size:36px;"></i></div>
           </div>
-          {% endif %}
         </div>
         <div class="col ml--2">
           <h4 class="mb-0">

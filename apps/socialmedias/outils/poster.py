@@ -76,13 +76,13 @@ class SocialPosting:
         if socialmedia_post_response["use_hashtags"]:
             response_dict["link"] = socialmedia_content["hashtags_list"]
         if socialmedia_post_response["use_emojis"]:
-            response_dict["title_emojis"] = socialmedia_content["title"].get("title_emojis", [])
+            response_dict["title_emojis"] = socialmedia_content.get("title_emojis", [])
         if socialmedia_post_response["use_link"]:
             response_dict["link"] = link
         if socialmedia_post_response["use_default_title"]:
-            response_dict["default_title"] = socialmedia_content["title"].get("default_title")
+            response_dict["default_title"] = socialmedia_content.get("default_title", None)
         if socialmedia_post_response["use_default_content"]:
-            response_dict["default_content"] = socialmedia_content["content"].get("default_content")
+            response_dict["default_content"] = socialmedia_content.get("default_content", None)
         return response_dict
 
     def save_content_posted(self, **kwargs):
@@ -92,15 +92,16 @@ class SocialPosting:
 
         shared_model_historial_obj = shared_model_historial._default_manager.create(
             user=User.objects.get(id=1),
-            post_type=kwargs["post_type"],
-            platform_shared=kwargs["platform_shared"],
-            social_id=kwargs["social_id"],
-            title=kwargs["title"],
-            content=kwargs["content"],
-            default_title=kwargs.get("default_title"),
-            default_content=kwargs.get("default_content"),
-            extra_description=kwargs.get("extra_description"),
-            metadata=kwargs.get("metadata"),
+            **kwargs
+            # post_type=kwargs["post_type"],
+            # platform_shared=kwargs["platform_shared"],
+            # social_id=kwargs["social_id"],
+            # title=kwargs["title"],
+            # content=kwargs["content"],
+            # default_title=kwargs.get("default_title"),
+            # default_content=kwargs.get("default_content"),
+            # extra_description=kwargs.get("extra_description"),
+            # metadata=kwargs.get("metadata"),
         )
 
         if title_emojis:
@@ -111,9 +112,6 @@ class SocialPosting:
     def share_content(self, content_object: int, socialmedia_list: List[Dict]):
         socialmedia_content_creator = self.get_creator(content_object)
         socialmedia_content = socialmedia_content_creator().create_social_media_content_from_object()
-
-        title = socialmedia_content["title"]["title"]
-        content = socialmedia_content["content"]["content"]
         link = socialmedia_content["link"]
         media = socialmedia_content.get("media", "")
 
@@ -125,8 +123,8 @@ class SocialPosting:
 
             socialmedia_obj = self.get_socialmedia(platform_shared)
             socialmedia_obj_response = socialmedia_obj().post(
-                title=title,
-                content=content,
+                title=socialmedia_content["title"],
+                content=socialmedia_content["content"],
                 media=media,
                 hashtags=socialmedia_content["hashtags"],
                 link=link,

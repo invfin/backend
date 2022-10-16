@@ -85,6 +85,26 @@ class WebsiteEmail(BaseNewsletter):
     def __str__(self) -> str:
         return self.title
 
+    @property
+    def status(self):
+        if not self.date_to_send:
+            status = "draft"
+            color = "red"
+            icon = "minus-circle"
+            bs_color = "danger"
+        else:
+            if self.sent:
+                status = "sent"
+                color = "green"
+                icon = "check-circle"
+                bs_color = "success"
+            else:
+                status = "waiting"
+                color = "orange"
+                icon = "eye"
+                bs_color = "warning"
+        return {"status": status, "color": color, "icon": icon, "bs_color": bs_color}
+
 
 class WebsiteEmailTrack(BaseEmail):
     email_related = ForeignKey(
