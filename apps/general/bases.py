@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model
-from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import (
     CASCADE,
@@ -42,6 +42,7 @@ class BaseWrittenContent(Model, CommonMixin):
     tags = ManyToManyField("general.Tag", blank=True)
     author = ForeignKey(User, on_delete=SET_NULL, null=True)
     checkings = JSONField(default=default_dict)
+    GenericRelation("web.WebsiteEmail", related_query_name="website_email")
 
     class Meta:
         abstract = True

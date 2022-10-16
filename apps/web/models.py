@@ -1,5 +1,5 @@
-from random import choices
-from ckeditor.fields import RichTextField
+from django.contrib.contenttypes.fields import GenericForeignKey
+from django.contrib.contenttypes.models import ContentType
 from django.db.models import (
     SET_NULL,
     BooleanField,
@@ -10,7 +10,10 @@ from django.db.models import (
     PositiveBigIntegerField,
     SlugField,
     Model,
+    CASCADE,
 )
+
+from ckeditor.fields import RichTextField
 
 from apps.general.mixins import BaseToAllMixin
 from apps.general.bases import BaseEmail, BaseNewsletter
@@ -43,7 +46,7 @@ class WebsiteEmailsType(Model, BaseToAllMixin):
 
     class Meta:
         ordering = ["-id"]
-        verbose_name = "Engagement emails type"
+        verbose_name = "Website emails type"
         db_table = "website_emails_type"
 
     def __str__(self) -> str:
@@ -70,10 +73,13 @@ class WebsiteEmail(BaseNewsletter):
         default=WHOM_TO_SEND_EMAIL_ALL,
     )
     users_selected = ManyToManyField(User, blank=True)
+    content_type = ForeignKey(ContentType, on_delete=CASCADE)
+    object_id = PositiveBigIntegerField()
+    object = GenericForeignKey("content_type", "object_id")
 
     class Meta:
         ordering = ["-id"]
-        verbose_name = "Email engagement"
+        verbose_name = "Website emails"
         db_table = "website_emails"
 
     def __str__(self) -> str:

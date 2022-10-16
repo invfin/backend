@@ -1,8 +1,10 @@
 import random
+from typing import Type
 
-from django.db.models import Manager, QuerySet
+from django.db.models import QuerySet, Count, F
 
 from apps.general.constants import BASE_ESCRITO_PUBLISHED
+from apps.general.managers import BaseManager
 
 
 class TermQuerySet(QuerySet):
@@ -22,7 +24,7 @@ class TermQuerySet(QuerySet):
         )
 
 
-class TermManager(Manager):
+class TermManager(BaseManager):
     def get_queryset(self):
         return TermQuerySet(self.model, using=self._db).prefetch_all()
 
@@ -30,6 +32,16 @@ class TermManager(Manager):
         query = query if query else self.all()
         models_list = list(query)
         return random.choice(models_list)
+
+    def term_ready_newsletter(self) -> Type:
+        return (
+            self.filter_checkings("information_clean", True)
+            .annotate(
+                times_sent_email=Count("website_email"),
+            )
+            .order_by("-times_sent_email")
+            .first()
+        )
 
     def clean_terms(self):
         return self.filter(status=BASE_ESCRITO_PUBLISHED)

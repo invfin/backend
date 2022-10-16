@@ -7,7 +7,7 @@ from dateutil.relativedelta import relativedelta
 
 from apps.general import constants
 from apps.general.models import Period
-from apps.empresas.constants import DEFAULT_JSON_CHECKS_FILE
+
 from apps.empresas.models import Company, CompanyUpdateLog
 
 
@@ -110,11 +110,3 @@ def company_searched(search, request):
         redirect_path = request.META.get("HTTP_REFERER")
     finally:
         return redirect_path
-
-
-def add_new_default_check(checking):
-    with open(DEFAULT_JSON_CHECKS_FILE, "r") as read_checks_json:
-        checks_json = json.load(read_checks_json)
-    checks_json.update({f"has_{checking}": {"state": "no", "time": ""}})
-    with open(DEFAULT_JSON_CHECKS_FILE, "w") as writte_checks_json:
-        json.dump(checks_json, writte_checks_json, indent=2, separators=(",", ": "))

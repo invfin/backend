@@ -80,14 +80,16 @@ class Facebook:
                 The facebook response inside a dict with and error message if any or success
         """
         if not kwargs["post_now"]:
-            content.update({"published": False, "scheduled_publish_time": kwargs["post_time"]})
+            content.update({"published": False, "scheduled_publish_time": kwargs["scheduled_publish_time"]})
         content.update({"access_token": self.page_access_token})
         if content_type == "video":
             files = {"source": open(kwargs["media_url"], "rb")}
             re = requests.post(f"{self.post_facebook_video_url}/videos", data=content, files=files)
+
         elif content_type == "text":
             content.update({"link": kwargs["link"]})
             re = requests.post(f"{self.post_facebook_url}/feed", data=content)
+
         elif content_type == "image":
             content.update({"url": kwargs["media_url"]})
             re = requests.post(f"{self.post_facebook_url}/photos", data=content)
@@ -114,25 +116,47 @@ class Facebook:
 
     def post(self, **kwargs):
         media_url = kwargs.get("media", "")
+        scheduled_publish_time = kwargs.get("scheduled_publish_time", "")
         post_type = kwargs["post_type"]
         post_now = kwargs.get("post_now", True)
+        title = kwargs["title"]
 
-        content = self.create_fb_description(kwargs["content"], kwargs["hashtags"])
-        data = {"title": kwargs["title"], "description": content}
+        content = self.create_fb_description(kwargs["content"], kwargs["hashtags"], kwargs["link"])
+        data = {"title": title, "description": content}
 
-        content_type = "video"
-
-        if post_type == constants.POST_TYPE_IMAGE or post_type == constants.POST_TYPE_TEXT_IMAGE:
-            content_type = "image"
-
-        elif post_type == constants.POST_TYPE_TEXT or post_type == constants.POST_TYPE_REPOST:
+        if post_type != constants.POST_TYPE_TEXT or post_type != constants.POST_TYPE_REPOST:
+            if post_type == constants.POST_TYPE_IMAGE or post_type == constants.POST_TYPE_TEXT_IMAGE:
+                content_type = "image"
+            else:
+                content_type = "video"
+        else:
             content_type = "text"
             data["message"] = data.pop("description")
 
-        post_response = self.post_content(content_type, data)
+        post_response = self.post_content(
+            content_type,
+            data,
+            media_url=media_url,
+            post_now=post_now,
+            scheduled_publish_time=scheduled_publish_time,
+        )
 
         if post_response["result"] == "success":
-            return {"social_id": post_response["extra"], "multiple_posts": False}
+            return {
+                "post_response": [
+                    {
+                        "social_id": post_response["extra"],
+                        "title": title,
+                        "content": content,
+                        "post_type": post_type,
+                        "use_hashtags": True,
+                        "use_emojis": True,
+                        "use_link": True,
+                        "use_default_title": True,
+                        "use_default_content": True,
+                    }
+                ]
+            }
         else:
             return self.post(**kwargs)
 
@@ -147,9 +171,10 @@ class Facebook:
     #         link=url_to_share,
     #     )
 
-    def create_fb_description(self, content: str, hashtags: str):
+    def create_fb_description(self, content: str, hashtags: str, link: str):
         return f"""{content}
 
+        Descubre el resto en: {link}
         Prueba las herramientas que todo inversor inteligente necesita: https://inversionesyfinanzas.xyz
 
         Visita nuestras redes sociales:

@@ -158,7 +158,7 @@ class ContentCreation:
 
         if use_emojis:
             emojis = Emoji.objects.random_emojis(len(emojis_info.keys()))
-            title_dict["emojis"] = emojis
+            title_dict["title_emojis"] = emojis
             for index, emoji in enumerate(emojis):
                 index += 1
                 emoji = emoji.emoji
