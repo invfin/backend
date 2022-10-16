@@ -49,6 +49,8 @@ CONTENT_PURPOSES = (
     (CONTENT_FOR_NEWSLETTER_COMPANY_REPORT, "Newsletter for company report"),
 )
 
+CONTENT_PURPOSES_MAP = {key: value for key, value in CONTENT_PURPOSES}
+
 WHOM_TO_SEND_EMAIL_ALL = "all"
 WHOM_TO_SEND_EMAIL_TYPE_RELATED = "type_related"
 WHOM_TO_SEND_EMAIL_SELECTED = "selected"

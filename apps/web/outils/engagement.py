@@ -42,8 +42,9 @@ class EngagementMachine:
         content_creator = self.get_creator(content_object)
         content_creator.for_content = [social_constants.WEB]
         newsletter_content_from_object = content_creator().create_newsletter_content_from_object()
-
-        type_related, created = WebsiteEmailsType.objects.get_or_create(slug=web_email_type)
+        type_related, created = WebsiteEmailsType.objects.get_or_create(
+            slug=web_email_type, defaults={"name": constants.CONTENT_PURPOSES_MAP[web_email_type]}
+        )
         link = newsletter_content_from_object.pop("link")
         newsletter_content_from_object.update(
             {
