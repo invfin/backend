@@ -73,8 +73,8 @@ class WebsiteEmail(BaseNewsletter):
         default=WHOM_TO_SEND_EMAIL_ALL,
     )
     users_selected = ManyToManyField(User, blank=True)
-    content_type = ForeignKey(ContentType, on_delete=CASCADE)
-    object_id = PositiveBigIntegerField()
+    content_type = ForeignKey(ContentType, on_delete=CASCADE, null=True)
+    object_id = PositiveBigIntegerField(null=True)
     object = GenericForeignKey("content_type", "object_id")
 
     class Meta:

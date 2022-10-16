@@ -8,14 +8,11 @@ from django.contrib.auth import get_user_model
 from apps.socialmedias.socialposter.facepy import Facebook
 from apps.socialmedias.socialposter.tweetpy import Twitter
 from apps.socialmedias.outils.content_creation import (
-    ContentCreation,
+    CompanyContentCreation,
+    CompanyNewsContentCreation,
     TermContentCreation,
     QuestionContentCreation,
     PublicBlogContentCreation,
-)
-from apps.socialmedias.outils.company_content_creation import (
-    CompanyContentCreation,
-    CompanyNewsContentCreation,
 )
 from apps.socialmedias import constants
 
@@ -48,7 +45,7 @@ class SocialPosting:
         constants.PINTEREST: "",
         constants.TUMBLR: "",
     }
-    socialmedia_creators_map: Dict = {
+    content_creators_map: Dict = {
         constants.QUESTION: QuestionContentCreation,
         constants.NEWS: CompanyNewsContentCreation,
         constants.TERM: TermContentCreation,
@@ -57,7 +54,7 @@ class SocialPosting:
     }
 
     def get_creator(self, content_object: int) -> Type:
-        return self.socialmedia_creators_map[content_object]
+        return self.content_creators_map[content_object]
 
     def get_socialmedia(self, socialmedia: str) -> Type:
         return self.socialmedias_map[socialmedia]

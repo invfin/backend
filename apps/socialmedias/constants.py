@@ -8,6 +8,7 @@ LINKEDIN = "linkedin"
 PINTEREST = "pinterest"
 TUMBLR = "tumblr"
 
+
 SOCIAL_MEDIAS = [
     (FACEBOOK, "Facebook"),
     (TWITTER, "Twitter"),
@@ -19,6 +20,8 @@ SOCIAL_MEDIAS = [
     (YOUTUBE, "Youtube"),
     (INSTAGRAM, "Instagram"),
 ]
+
+PLATFORM_WEB = "web"
 
 ALL = 0
 QUESTION = 1

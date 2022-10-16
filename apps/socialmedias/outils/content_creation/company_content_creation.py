@@ -11,7 +11,7 @@ from apps.socialmedias import constants as socialmedias_constants
 
 class CompanyContentCreation(ContentCreation):
     model_class = Company
-    for_content = socialmedias_constants.COMPANY
+    for_content = [socialmedias_constants.COMPANY]
     """
     crear section para reports
     crear section para company itself
@@ -35,7 +35,7 @@ class CompanyContentCreation(ContentCreation):
 
 class CompanyNewsContentCreation(CompanyContentCreation):
     shared_model_historial = NewsSharedHistorial
-    for_content = socialmedias_constants.NEWS
+    for_content = [socialmedias_constants.NEWS]
 
     def get_new_object(self, object_filter):
         if object_filter and "exclude" in object_filter:

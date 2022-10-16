@@ -1,7 +1,13 @@
 from typing import Dict
 
 from apps.seo.models import Visiteur
-from apps.socialmedias.outils.content_creation import ContentCreation
+from apps.socialmedias.outils.content_creation import (
+    QuestionContentCreation,
+    CompanyNewsContentCreation,
+    TermContentCreation,
+    PublicBlogContentCreation,
+    CompanyContentCreation,
+)
 from apps.web.models import WebsiteEmailTrack
 from apps.web.utils import more_than_month
 from apps.web import constants
@@ -11,25 +17,25 @@ from apps.users.models import User
 
 
 class EngagementMachine:
-    def create_save_email(
+    content_creators_map: Dict = {
+        social_constants.QUESTION: QuestionContentCreation,
+        social_constants.NEWS: CompanyNewsContentCreation,
+        social_constants.TERM: TermContentCreation,
+        social_constants.PUBLIC_BLOG: PublicBlogContentCreation,
+        social_constants.COMPANY: CompanyContentCreation,
+    }
+
+    def get_creator(self, content_object: int) -> Type:
+        return self.content_creators_map[content_object]
+
+    def create_save_newsletter(
         self,
         web_email_type: str,
-        title: str = "",
-        content: str = "",
-        title_filter: Dict = {},
-        content_filter: Dict = {},
     ) -> WebsiteEmail:
         base_filters = {"for_content": social_constants.WEB, "purpose": web_email_type}
-        title_filter.update(base_filters)
-        content_filter.update(base_filters)
 
-        title_dict = ContentCreation.create_title(title, title_filter)  # TODO move to the correct args
-        content_dict = ContentCreation.create_content(content, content_filter)
-        emojis = ContentCreation.create_emojis()
-        first_emoji, last_emoji = emojis[0], emojis[1]
+        TermContentCreation()
 
-        title = title_dict["title"]
-        title_dict["title"] = f"{first_emoji}{title}{last_emoji}"
         type_related, created = WebsiteEmailsType.objects.get_or_create(slug=web_email_type)
 
         web_email = WebsiteEmail.objects.create(

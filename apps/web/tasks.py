@@ -43,9 +43,9 @@ def prepare_term_newsletter():
 
 @shared_task(autoretry_for=(Exception,), max_retries=3)
 def send_periodically_email_engagement_task():
-    for email_to_send in WebsiteEmail.objects.filter(sent=False):
-        if email_to_send.date_to_send <= timezone.now():
-            send_email_engagement(email_to_send)
+    email_to_send = WebsiteEmail.objects.filter(sent=False, date_to_send__isnull=False).first()
+    if email_to_send and email_to_send.date_to_send <= timezone.now():
+        send_email_engagement(email_to_send)
 
 
 @shared_task(autoretry_for=(Exception,), max_retries=3)

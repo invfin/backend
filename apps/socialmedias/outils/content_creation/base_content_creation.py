@@ -1,22 +1,14 @@
 import random
 
-from typing import Dict, List, Type, Any, Tuple
+from typing import Dict, List, Type, Any, Tuple, Union
 
 from django.apps import apps
 from django.conf import settings
-from django.utils.html import format_html, strip_tags
 
-from apps.escritos.models import Term
-from apps.preguntas_respuestas.models import Question
-from apps.public_blog.models import PublicBlog
 from apps.socialmedias.models import DefaultContent, DefaultTilte, Emoji, Hashtag
 from apps.socialmedias import constants as socialmedias_constants
-from apps.socialmedias.models import (
-    BlogSharedHistorial,
-    QuestionSharedHistorial,
-    TermSharedHistorial,
-)
 from apps.seo.utils import generate_url_with_utm
+
 
 FULL_DOMAIN = settings.FULL_DOMAIN
 
@@ -24,11 +16,14 @@ FULL_DOMAIN = settings.FULL_DOMAIN
 class ContentCreation:
     model_class: Type = None
     shared_model_historial: Type = None
-    for_content: int = 0
+    for_content: List[int] = []
 
-    def __init__(self, platform: str) -> None:
+    def __init__(self, platform: str = "") -> None:
         self.object: Type = self.get_object()
         self.platform: str = platform
+        self.for_content.append(socialmedias_constants.ALL)
+        if platform == socialmedias_constants.PLATFORM_WEB:
+            self.for_content.append(socialmedias_constants.WEB)
 
     def get_object(self) -> Type:
         """Overrite this method to return the obj of the model wanted according to the random method defined
@@ -189,13 +184,31 @@ class ContentCreation:
         return self.object.shareable_link
 
     @classmethod
-    def create_content(cls, content: Type, filter: Dict = {}) -> Dict:
+    def create_content(cls, **kwargs) -> Dict:
         content_dict = {"content": content}
         if not content:
             content = DefaultContent.objects.random_content(filter)
             content_dict["default_content"] = content
             content_dict["content"] = content.content
-        return content_dict
+        return {}
+
+    def create_default_title_filter(self, **kwargs) -> Dict[str, List[int]]:
+        return {"for_content__in": self.for_content}
+
+    def prepare_inital_data(self) -> Dict[str, Union[str, Type]]:
+        content = self.object
+        title = self.get_object_title()
+        content = self.get_object_content()
+        default_title_filter = self.create_default_title_filter()
+        return {
+            "title": self.create_random_title(title=title, default_title_filter=default_title_filter),
+            "content": self.create_content(),
+            "link": self.create_url(),
+            "content_shared": self.object,
+        }
+
+    def create_newslett_content_from_object(self):
+        return self.prepare_inital_data()
 
     def create_social_media_content_from_object(self):
         content = self.object
@@ -203,9 +216,10 @@ class ContentCreation:
         content = self.get_object_content()
         need_slice = bool(self.platform == socialmedias_constants.TWITTER)
         hashtags_list, hashtags = self.create_hashtags(self.platform, need_slice)
+        default_title_filter = self.create_default_title_filter()
         return {
-            "title": self.create_random_title(title=title, default_title_filter={"for_content": self.for_content}),
-            "content": self.create_content(content),
+            "title": self.create_random_title(title=title, default_title_filter=default_title_filter),
+            "content": self.create_content(),
             "link": self.create_url(),
             "media": self.get_object_media(),
             "content_shared": self.object,
@@ -237,49 +251,3 @@ class ContentCreation:
             emojis_info=emojis_info,
             use_emojis=use_emojis,
         )
-
-
-class PublicBlogContentCreation(ContentCreation):
-    model_class = PublicBlog
-    shared_model_historial = BlogSharedHistorial
-    for_content = socialmedias_constants.PUBLIC_BLOG
-
-    def create_content(self):
-        return strip_tags(format_html(self.object.resume))
-
-
-class TermContentCreation(ContentCreation):
-    model_class = Term
-    for_content = socialmedias_constants.TERM
-
-    def get_object(self) -> Type:
-        return Term.objects.random_clean()
-
-    def create_content(self):
-        link = self.create_url()
-        description = (
-            f"{self.object.resume} \nSi quieres conocer más a fondo puedes leer la definición entera {link}. \nEstos"
-            " son los puntos claves que encontrarás:"
-        )
-        for index, term_content in enumerate(self.object.term_content_parts.all()):
-            description = f"""{description}
-            {index}.-{term_content.title}
-            """
-        return description
-
-
-class QuestionContentCreation(ContentCreation):
-    model_class = Question
-    for_content = socialmedias_constants.QUESTION
-    """
-    Preparar algo del estilo:
-        title: la pregunta
-        description: pregunta completa si hay + "las mejores respuestas por el momento son:" self.answers_set si hay
-            "han aportado las siguientes"
-    """
-
-    def get_object_title(self) -> str:
-        return strip_tags(format_html(self.object.title))
-
-    def create_content(self):
-        return strip_tags(format_html(self.object.content))
