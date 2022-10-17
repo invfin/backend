@@ -31,6 +31,19 @@ PUBLIC_BLOG = 4
 COMPANY = 5
 WEB = 6
 
+QUESTION_FOR_CONTENT = "question"
+NEWS_FOR_CONTENT = "news"
+TERM_FOR_CONTENT = "term"
+PUBLIC_BLOG_FOR_CONTENT = "public_blog"
+COMPANY_FOR_CONTENT = "company"
+
+MODELS_FOR_CONTENT = (
+    (QUESTION_FOR_CONTENT, "Question"),
+    (NEWS_FOR_CONTENT, "News"),
+    (TERM_FOR_CONTENT, "Term"),
+    (PUBLIC_BLOG_FOR_CONTENT, "Public Blog"),
+    (COMPANY_FOR_CONTENT, "Company"),
+)
 
 FOR_CONTENT = (
     (ALL, "All"),
@@ -62,10 +75,12 @@ POST_TYPE = (
     (POST_TYPE_THREAD, "Thread"),
 )
 
-FACEBOOK_GRAPH_URL = "https://graph.facebook.com/"
+FACEBOOK_GRAPH_API_VERSION = "v15.0/"
 
-FACEBOOK_GRAPH_VIDEO_URL = "https://graph-video.facebook.com/"
+FACEBOOK_GRAPH_URL = f"https://graph.facebook.com/{FACEBOOK_GRAPH_API_VERSION}"
 
-INSTAGRAM_GRAPH_URL = "https://graph.instagram.com/"
+FACEBOOK_GRAPH_VIDEO_URL = f"https://graph-video.facebook.com/"
+
+INSTAGRAM_GRAPH_URL = f"https://graph.instagram.com/"
 
 TWEET_MAX_LENGTH = 174

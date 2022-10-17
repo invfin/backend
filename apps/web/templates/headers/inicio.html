@@ -11,12 +11,20 @@
             <a href="{% url 'web:manage_all_terms' %}" class="btn btn-outline-primary">
                 Terms
             </a>
-            <a href="{% url 'web:list_emails_engagement' %}" class="btn btn-outline-primary">
-                Emails
-            </a>
-            <a href="{% url 'web:create_email_engagement' %}" class="btn btn-outline-primary">
+            <button id="btnGroupDrop1" type="button" class="btn btn-outline-primary dropdown-toggle"
+                data-bs-toggle="dropdown" aria-expanded="false">
                 Create Email
-            </a>
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                <li>
+                    <a href="{% url 'web:create_email_engagement' %}" class="dropdown-item">
+                        Manually
+                    </a>
+                </li>
+                <li>
+                    {% open_modal "web:automatic_creation_newsletter" "Automatically" %}
+                </li>
+            </ul>
         </div>
     </div>
 </div>

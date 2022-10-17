@@ -27,15 +27,22 @@ class TermContentCreation(ContentCreation):
         return Term.objects.random_clean()
 
     def get_object_content(self, **kwargs):
+        """Creates a basic content for a term's newsletter or post.
+        The content will be used for both newsletters and socialmedia posts
+
+        Returns
+        -------
+            _type_
+                The content created
+        """
         link = self.create_url()
+        line_break = "\n" if self.platform == socialmedias_constants.PLATFORM_WEB else "<br>"
         description = (
-            f"{self.object.resume} \nSi quieres conocer más a fondo puedes leer la definición entera {link}. \nEstos"
-            " son los puntos claves que encontrarás:"
+            f"{self.object.resume} {line_break}Si quieres conocer más a fondo puedes leer la definición entera {link}."
+            f" {line_break}Estos son los puntos claves que encontrarás:"
         )
         for index, term_content in enumerate(self.object.term_content_parts.all()):
-            description = f"""{description}
-            {index}.-{term_content.title}
-            """
+            description = f"{description}{index}.-{term_content.title}{line_break}"
         return description
 
 

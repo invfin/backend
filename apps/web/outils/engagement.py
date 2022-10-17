@@ -18,14 +18,14 @@ from apps.users.models import User
 
 class EngagementMachine:
     content_creators_map: Dict = {
-        social_constants.QUESTION: QuestionContentCreation,
-        social_constants.NEWS: CompanyNewsContentCreation,
-        social_constants.TERM: TermContentCreation,
-        social_constants.PUBLIC_BLOG: PublicBlogContentCreation,
-        social_constants.COMPANY: CompanyContentCreation,
+        social_constants.QUESTION_FOR_CONTENT: QuestionContentCreation,
+        social_constants.NEWS_FOR_CONTENT: CompanyNewsContentCreation,
+        social_constants.TERM_FOR_CONTENT: TermContentCreation,
+        social_constants.PUBLIC_BLOG_FOR_CONTENT: PublicBlogContentCreation,
+        social_constants.COMPANY_FOR_CONTENT: CompanyContentCreation,
     }
 
-    def get_creator(self, content_object: int) -> Type:
+    def get_creator(self, content_object: str) -> Type:
         return self.content_creators_map[content_object]
 
     def save_newsletter(self, **kwargs) -> WebsiteEmail:
@@ -38,7 +38,7 @@ class EngagementMachine:
             web_email_newsletter_obj.users_selected.add(*users_selected)
         return web_email_newsletter_obj
 
-    def create_newsletter(self, web_email_type: str, content_object: int, whom_to_send: str) -> WebsiteEmail:
+    def create_newsletter(self, web_email_type: str, content_object: str, whom_to_send: str) -> WebsiteEmail:
         content_creator = self.get_creator(content_object)
         content_creator.for_content = [social_constants.WEB]
         newsletter_content_from_object = content_creator().create_newsletter_content_from_object()

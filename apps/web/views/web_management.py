@@ -1,19 +1,17 @@
 from django.urls import reverse
-from django.views.generic import CreateView, DetailView, ListView, UpdateView, TemplateView
-from django.contrib.auth.mixins import UserPassesTestMixin
+from django.views.generic import CreateView, DetailView, ListView, UpdateView, TemplateView, FormView
+from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
 from django.http import HttpResponse
+from django.contrib import messages
 
 from apps.escritos.models import Term
 from apps.web.models import WebsiteEmail
-from apps.web.forms import WebEmailForm
+from apps.web.forms import WebEmailForm, AutomaticNewsletterForm
 from apps.web.tasks import send_email_engagement_task
 from apps.seo.views import SEOViewMixin
-from apps.web.outils.engagement import EngagementMachine
-from apps.web import constants
-from apps.socialmedias import constants as socialmedias_constants
 
 
-class BasePrivateWebView(UserPassesTestMixin, SEOViewMixin):
+class BasePrivateWebView(LoginRequiredMixin, UserPassesTestMixin, SEOViewMixin):
     no_index = True
     no_follow = True
 
@@ -41,10 +39,12 @@ class PrivateWebTemplateView(BasePrivateWebView, TemplateView):
     pass
 
 
-class ManageWebView(PrivateWebListView):
-    model = WebsiteEmail
+class PrivateWebFormView(BasePrivateWebView, FormView):
+    pass
+
+
+class ManageWebView(PrivateWebTemplateView):
     template_name = "management/inicio.html"
-    context_object_name = "web_emails"
 
 
 class ManageEmailEngagementListView(PrivateWebListView):
@@ -52,13 +52,20 @@ class ManageEmailEngagementListView(PrivateWebListView):
     model = WebsiteEmail
     context_object_name = "web_emails"
 
-    def get_context_data(self, **kwargs):
-        EngagementMachine().create_newsletter(
-            constants.CONTENT_FOR_NEWSLETTER,
-            socialmedias_constants.TERM,
-            constants.WHOM_TO_SEND_EMAIL_ALL,
-        )
-        return super().get_context_data(**kwargs)
+
+class AutomaticEmailNewsletterView(PrivateWebFormView):
+    success_message = "Guardado correctamente"
+    template_name = "modals/auto_newsletter.html"
+    form_class = AutomaticNewsletterForm
+
+    def successful_return(self):
+        if self.success_message:
+            messages.success(self.request, self.success_message)
+        return HttpResponse(status=204, headers={"HX-Trigger": "refreshNewsletterList"})
+
+    def form_valid(self, form):
+        form.create_newsletter()
+        return self.successful_return()
 
 
 class ManageEmailEngagementUpdateView(PrivateWebUpdateView):

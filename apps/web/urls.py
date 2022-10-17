@@ -12,6 +12,7 @@ from .views import (
     ManageTermListView,
     ManageTermUpdateView,
     send_email_management,
+    AutomaticEmailNewsletterView,
 )
 
 app_name = "web"
@@ -29,4 +30,5 @@ urlpatterns = [
     path("manage-start-send-email-engagement/<pk>", send_email_management, name="send_email_engagement"),
     path("manage-terms/", ManageTermListView.as_view(), name="manage_all_terms"),
     path("manage-term/<slug>/", ManageTermUpdateView.as_view(), name="manage_single_term"),
+    path("automatic-newsletter-creation", AutomaticEmailNewsletterView.as_view(), name="automatic_creation_newsletter"),
 ]

@@ -22,8 +22,8 @@ User = get_user_model()
 
 class SocialPosting:
     facebook: Facebook = Facebook(
-        settings.NEW_FACEBOOK_ID,
-        settings.NEW_FB_PAGE_ACCESS_TOKEN,
+        settings.OLD_FACEBOOK_ID,
+        settings.OLD_FB_PAGE_ACCESS_TOKEN,
         "InversionesyFinanzas",
     )
     twitter: Twitter = Twitter(
@@ -46,14 +46,14 @@ class SocialPosting:
         constants.TUMBLR: "",
     }
     content_creators_map: Dict = {
-        constants.QUESTION: QuestionContentCreation,
-        constants.NEWS: CompanyNewsContentCreation,
-        constants.TERM: TermContentCreation,
-        constants.PUBLIC_BLOG: PublicBlogContentCreation,
-        constants.COMPANY: CompanyContentCreation,
+        constants.QUESTION_FOR_CONTENT: QuestionContentCreation,
+        constants.NEWS_FOR_CONTENT: CompanyNewsContentCreation,
+        constants.TERM_FOR_CONTENT: TermContentCreation,
+        constants.PUBLIC_BLOG_FOR_CONTENT: PublicBlogContentCreation,
+        constants.COMPANY_FOR_CONTENT: CompanyContentCreation,
     }
 
-    def get_creator(self, content_object: int) -> Type:
+    def get_creator(self, content_object: str) -> Type:
         return self.content_creators_map[content_object]
 
     def get_socialmedia(self, socialmedia: str) -> Type:
@@ -109,7 +109,7 @@ class SocialPosting:
         if hashtags_list:
             shared_model_historial_obj.hashtags.add(*hashtags_list)
 
-    def share_content(self, content_object: int, socialmedia_list: List[Dict]):
+    def share_content(self, content_object: str, socialmedia_list: List[Dict]):
         socialmedia_content_creator = self.get_creator(content_object)
         socialmedia_content = socialmedia_content_creator().create_social_media_content_from_object()
         link = socialmedia_content["link"]

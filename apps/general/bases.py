@@ -30,11 +30,17 @@ def default_dict():
     return DEFAULT_EXTRA_DATA_DICT
 
 
-class BaseWrittenContent(Model, CommonMixin):
+class BaseCreateUpdateTimeModel(Model):
+    created_at = DateTimeField(auto_now_add=True, null=True)
+    updated_at = DateTimeField(auto_now=True, null=True)
+
+    class Meta:
+        abstract = True
+
+
+class BaseWrittenContent(BaseCreateUpdateTimeModel, CommonMixin):
     title = CharField(max_length=500, null=True, blank=True)
     slug = CharField(max_length=500, null=True, blank=True)
-    created_at = DateTimeField(auto_now_add=True)
-    updated_at = DateTimeField(auto_now=True)
     total_votes = IntegerField(default=0)
     total_views = PositiveIntegerField(default=0)
     times_shared = PositiveIntegerField(default=0)
@@ -42,7 +48,7 @@ class BaseWrittenContent(Model, CommonMixin):
     tags = ManyToManyField("general.Tag", blank=True)
     author = ForeignKey(User, on_delete=SET_NULL, null=True)
     checkings = JSONField(default=default_dict)
-    GenericRelation("web.WebsiteEmail", related_query_name="website_email")
+    website_email = GenericRelation("web.WebsiteEmail", related_query_name="website_email")
 
     class Meta:
         abstract = True
@@ -94,10 +100,9 @@ class BaseEscrito(BaseWrittenContent, BaseEscritosMixins):
         return image
 
 
-class BaseComment(Model, BaseToAllMixin):
+class BaseComment(BaseCreateUpdateTimeModel, BaseToAllMixin):
     author = ForeignKey(User, on_delete=SET_NULL, null=True)
     content = TextField()
-    created_at = DateTimeField(auto_now_add=True)
 
     class Meta:
         abstract = True
@@ -110,7 +115,7 @@ class BaseComment(Model, BaseToAllMixin):
         return self.content_related.title
 
 
-class BaseNewsletter(Model, BaseToAllMixin):
+class BaseNewsletter(BaseCreateUpdateTimeModel, BaseToAllMixin):
     title = CharField(max_length=500)
     content = RichTextField(config_name="simple")
     default_title = ForeignKey("socialmedias.DefaultTilte", on_delete=SET_NULL, null=True, blank=True)
@@ -130,7 +135,7 @@ class BaseNewsletter(Model, BaseToAllMixin):
         return round(rate, 2)
 
 
-class BaseEmail(Model, BaseToAllMixin):
+class BaseEmail(BaseCreateUpdateTimeModel, BaseToAllMixin):
     sent_to = ForeignKey(User, on_delete=CASCADE)
     date_sent = DateTimeField(auto_now_add=True)
     opened = BooleanField(default=False)
@@ -140,7 +145,7 @@ class BaseEmail(Model, BaseToAllMixin):
         abstract = True
 
 
-class BaseGenericModels(Model, BaseToAllMixin):
+class BaseGenericModels(BaseCreateUpdateTimeModel, BaseToAllMixin):
     content_type = ForeignKey(ContentType, on_delete=CASCADE)
     object_id = PositiveIntegerField()
     object = GenericForeignKey("content_type", "object_id")
@@ -156,7 +161,7 @@ class BaseGenericModels(Model, BaseToAllMixin):
         return self.object.get_absolute_url()
 
 
-class BaseFavoritesHistorial(Model):
+class BaseFavoritesHistorial(BaseCreateUpdateTimeModel):
     user = ForeignKey(User, on_delete=SET_NULL, null=True, blank=True)
     date = DateTimeField(auto_now_add=True)
     added = BooleanField(default=False)

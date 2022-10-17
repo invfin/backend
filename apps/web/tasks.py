@@ -7,6 +7,7 @@ from celery import shared_task
 
 from apps.general.tasks import send_email_task
 from apps.general.constants import EMAIL_FOR_WEB
+from apps.general.outils.emailing import EmailingSystem
 from apps.escritos.models import Term
 from apps.web import constants as web_constants
 from apps.web.models import WebsiteEmail
@@ -15,7 +16,9 @@ from apps.web.models import WebsiteEmail
 User = get_user_model()
 
 
-def send_email_engagement(email: WebsiteEmail):
+@shared_task(autoretry_for=(Exception,), max_retries=3)
+def send_email_engagement_task(email_id: int):
+    email = WebsiteEmail.objects.get(pk=email_id)
     if email.whom_to_send == web_constants.WHOM_TO_SEND_EMAIL_ALL:
         users_to_send_to = User.objects.all()
     elif email.whom_to_send == web_constants.WHOM_TO_SEND_EMAIL_TYPE_RELATED:
@@ -32,22 +35,24 @@ def send_email_engagement(email: WebsiteEmail):
 @shared_task(autoretry_for=(Exception,), max_retries=3)
 def prepare_term_newsletter():
     terms_for_newsletter = Term.objects.term_ready_newsletter()
-    return send_mail(
-        f"{terms_for_newsletter} is ready to be sent as a newsletter",
-        f"You need to update {terms_for_newsletter} to be ready to be sent as a newsletter"
-        f" {terms_for_newsletter.shareable_link}",
-        settings.EMAIL_DEFAULT,
-        [settings.EMAIL_DEFAULT],
-    )
+    if terms_for_newsletter:
+        subject = f"{terms_for_newsletter} is ready to be sent as a newsletter"
+        message = (
+            f"You need to update {terms_for_newsletter} to be ready to be sent as a newsletter"
+            f" {terms_for_newsletter.shareable_link}"
+        )
+    else:
+        subject = "There are no terms ready for newsletters"
+        message = "Create newsletters"
+
+    return EmailingSystem.simple_email(subject, message)
 
 
 @shared_task(autoretry_for=(Exception,), max_retries=3)
 def send_periodically_email_engagement_task():
     email_to_send = WebsiteEmail.objects.filter(sent=False, date_to_send__isnull=False).first()
-    if email_to_send and email_to_send.date_to_send <= timezone.now():
-        send_email_engagement(email_to_send)
-
-
-@shared_task(autoretry_for=(Exception,), max_retries=3)
-def send_email_engagement_task(email_id: int):
-    send_email_engagement(WebsiteEmail.objects.get(pk=email_id))
+    if email_to_send:
+        if email_to_send.date_to_send <= timezone.now():
+            return send_email_engagement_task.delay(email_to_send.id)
+        return None
+    return EmailingSystem.simple_email("There are no website emails ready", "Create newsletters")
