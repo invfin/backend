@@ -5,12 +5,12 @@ from django.db.models import Manager
 
 
 class DefaultContentManager(Manager):
-    def random_content(self, filter:Dict):
+    def random_content(self, filter: Dict):
         return random.choice(list(self.filter(**filter)))
 
 
 class TitlesManager(Manager):
-    def random_title(self, filter:Dict):
+    def random_title(self, filter: Dict):
         return random.choice(list(self.filter(**filter)))
 
 
@@ -21,4 +21,4 @@ class EmojisManager(Manager):
 
 class HashtagsManager(Manager):
     def random_hashtags(self, platform) -> List:
-        return list(self.filter(platform = platform))
+        return list(self.filter(platform=platform))

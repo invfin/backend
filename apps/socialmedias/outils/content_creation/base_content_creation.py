@@ -24,6 +24,7 @@ class ContentCreation:
         self.for_content.append(socialmedias_constants.ALL)
         if platform == socialmedias_constants.PLATFORM_WEB:
             self.for_content.append(socialmedias_constants.WEB)
+        self.for_content = list(set(self.for_content))
 
     def get_object(self) -> Type:
         """Overrite this method to return the obj of the model wanted according to the random method defined
@@ -73,8 +74,9 @@ class ContentCreation:
         hashtags_list = Hashtag.objects.random_hashtags(platform)
         if need_slice:
             hashtags_list = random.choices(hashtags_list, k=max_slice)
-
-        hashtags = "#" + " #".join([hashtag.title for hashtag in hashtags_list])
+        hashtags = ""
+        if hashtags_list:
+            hashtags = "#" + " #".join([hashtag.title for hashtag in hashtags_list])
         return hashtags_list, hashtags
 
     @classmethod

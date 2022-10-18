@@ -5,71 +5,61 @@ from unittest.mock import patch
 from bfet import DjangoTestingModel
 
 from apps.web import constants
-from apps.web.models import (
-    WebsiteEmail,
-    WebsiteEmailsType,
-    WebsiteEmailTrack,
-    WebsiteLegalPage,
-    Promotion,
-    PromotionCampaign,
+from apps.socialmedias.outils.content_creation import (
+    QuestionContentCreation,
+    CompanyNewsContentCreation,
+    TermContentCreation,
+    PublicBlogContentCreation,
+    CompanyContentCreation,
 )
-from apps.empresas.models import Company
 from apps.escritos.models import Term
-from apps.public_blog.models import PublicBlog, WritterProfile
-from apps.preguntas_respuestas.models import Question
-from apps.socialmedias.outils.content_creation import ContentCreation
 from apps.web.outils.engagement import EngagementMachine
-from apps.web.models import WebsiteEmail, WebsiteEmailsType
+from apps.web.models import WebsiteEmail
 from apps.socialmedias import constants as social_constants
+from apps.socialmedias.models import Emoji, DefaultTilte
 
 
 class TestEngagementMachine(TestCase):
     @classmethod
     def setUpTestData(cls) -> None:
-        cls.clean_company = DjangoTestingModel.create(
-            Company, name="Apple", ticker="AAPL", description="long ass description"
+        cls.defualt_title = DjangoTestingModel.create(
+            DefaultTilte,
+            title="Default title",
+            for_content=social_constants.WEB,
         )
-        user = DjangoTestingModel.create(get_user_model(), username="lucas")
-        writter_profile = DjangoTestingModel.create(
-            WritterProfile, user=user, host_name="lucas", long_description="long ass description for writter"
-        )
-        cls.term = DjangoTestingModel.create(Term, title="term title", resume="term resume")
-        cls.blog = DjangoTestingModel.create(PublicBlog, title="blog title", resume="blog resume", author=user)
-        cls.question = DjangoTestingModel.create(Question, title="question title", author=user)
+        cls.title_emojis = DjangoTestingModel.create(Emoji, emoji="emoji")
+        cls.term = DjangoTestingModel.create(Term, title="term default")
+
+    def test_get_creator(self):
+        assert EngagementMachine().get_creator(social_constants.QUESTION_FOR_CONTENT) == QuestionContentCreation
+        assert EngagementMachine().get_creator(social_constants.NEWS_FOR_CONTENT) == CompanyNewsContentCreation
+        assert EngagementMachine().get_creator(social_constants.TERM_FOR_CONTENT) == TermContentCreation
+        assert EngagementMachine().get_creator(social_constants.PUBLIC_BLOG_FOR_CONTENT) == PublicBlogContentCreation
+        assert EngagementMachine().get_creator(social_constants.COMPANY_FOR_CONTENT) == CompanyContentCreation
 
     def test_send_website_email_engagement(self):
-        pass
+        title = "Default title"
+        content = "Insider content"
+        whom_to_send = constants.WHOM_TO_SEND_EMAIL_ALL
+        newsletter_data = {
+            "title": title,
+            "content": content,
+            "title_emojis": [self.title_emojis],
+            "content": content,
+            "whom_to_send": whom_to_send,
+        }
+        result_data = EngagementMachine().save_newsletter(**newsletter_data)
+        assert isinstance(result_data, WebsiteEmail)
+        assert title == result_data.title
+        assert content == result_data.content
+        assert (self.title_emojis in result_data.title_emojis.all()) is True
+        assert whom_to_send == result_data.whom_to_send
 
-    def test_create_save_email(self):
+    def test_create_newsletter(self):
         web_email_type = constants.CONTENT_FOR_ENGAGEMENT
-        base_filters = {"for_content": social_constants.WEB, "purpose": web_email_type}
+        content_object = social_constants.TERM_FOR_CONTENT
+        whom_to_send = constants.WHOM_TO_SEND_EMAIL_ALL
 
-        title_filter = {}
-        content_filter = {}
-        title_filter.update(base_filters)
-        content_filter.update(base_filters)
+        web_email = EngagementMachine().create_newsletter(web_email_type, content_object, whom_to_send)
 
-        title_dict = ContentCreation.create_title(None, title_filter)  # TODO fix
-        content_dict = ContentCreation.create_content(None, content_filter)
-        first_emoji, last_emoji = ContentCreation.create_emojis()
-
-        title = title_dict["title"]
-        title_dict["title"] = f"{first_emoji}{title}{last_emoji}"
-        type_related, created = WebsiteEmailsType.objects.get_or_create(slug=web_email_type)
-
-        expected_web_email = WebsiteEmail.objects.create(
-            type_related=type_related,
-            **title_dict,
-            **content_dict,
-        )
-        expected_web_email.title_emojis.add(first_emoji, last_emoji)
-
-        web_email = EngagementMachine.create_save_email(web_email_type)
-
-        assert expected_web_email.title == web_email.title
-        assert expected_web_email.content == web_email.content
-        assert expected_web_email.default_title == web_email.default_title
-        assert expected_web_email.default_content == web_email.default_content
-        assert expected_web_email.title_emojis == web_email.title_emojis
-        assert expected_web_email.sent == web_email.sent
-        assert expected_web_email.date_to_send == web_email.date_to_send
+        print(web_email)
