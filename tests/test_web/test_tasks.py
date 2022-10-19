@@ -1,6 +1,7 @@
 from unittest.mock import patch
 from datetime import timedelta
 
+from django.core import mail
 from django.utils import timezone
 from django.test import TestCase
 
@@ -68,6 +69,7 @@ class TestTask(TestCase):
         send_email_engagement_task(email.id)
         mock_send_email_task.called_with(email.dict_for_task, user_1.id, EMAIL_FOR_WEB)
         assert email.sent is True
+        assert len(mail.outbox) == 1
 
         email.whom_to_send = web_constants.WHOM_TO_SEND_EMAIL_SELECTED
         email.sent = False
@@ -75,6 +77,7 @@ class TestTask(TestCase):
         send_email_engagement_task(email.id)
         mock_send_email_task.called_with(email.dict_for_task, user_2.id, EMAIL_FOR_WEB)
         assert email.sent is True
+        assert len(mail.outbox) == 1
 
         email.whom_to_send = web_constants.WHOM_TO_SEND_EMAIL_ALL
         email.sent = False
@@ -84,16 +87,6 @@ class TestTask(TestCase):
         mock_send_email_task.called_with(email.dict_for_task, user_2.id, EMAIL_FOR_WEB)
         assert email.sent is True
 
+        sent_email = mail.outbox[0]
+        assert len(mail.outbox) == 2
 
-
-        if email.whom_to_send == web_constants.WHOM_TO_SEND_EMAIL_ALL:
-            users_to_send_to = User.objects.all()
-        elif email.whom_to_send == web_constants.WHOM_TO_SEND_EMAIL_TYPE_RELATED:
-            users_to_send_to = email.type_related.users_categories.all()
-        elif email.whom_to_send == web_constants.WHOM_TO_SEND_EMAIL_SELECTED:
-            users_to_send_to = email.users_selected.all()
-
-        for user in users_to_send_to:
-            send_email_task.delay(email.dict_for_task, user.id, EMAIL_FOR_WEB)
-            email.sent = True
-            email.save(update_fields=["sent"])

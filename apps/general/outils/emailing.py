@@ -6,9 +6,9 @@ from django.contrib.auth import get_user_model
 from django.core.mail import EmailMessage, send_mail
 from django.template.loader import render_to_string
 
-User = get_user_model()
-
 from apps.general import constants
+
+User = get_user_model()
 
 
 class EmailingSystem:
@@ -48,10 +48,9 @@ class EmailingSystem:
         # email_track is a Model inhertitaded from BaseEmail
         return email_track.encoded_url
 
-    def _prepare_email(self, email: Dict[str, str], receiver: User) -> Tuple[str, str]:
-        sender = self._prepare_sender(email.pop("sender", None))
-        message = self.prepare_message(email, receiver)
-        return message, sender
+    def prepare_message(self, email: Dict[str, str], receiver: User) -> str:
+        base_message = {**email, "user": receiver, "image_tag": self._prepare_email_track(email, receiver)}
+        return render_to_string(self.email_template, base_message)
 
     def _prepare_sender(self, sender: str = None) -> str:
         if self.is_for == constants.EMAIL_FOR_PUBLIC_BLOG:
@@ -65,9 +64,11 @@ class EmailingSystem:
 
         return f"{sender} <{email}>"
 
-    def prepare_message(self, email: Dict[str, str], receiver: User) -> str:
-        base_message = {**email, "user": receiver, "image_tag": self._prepare_email_track(email, receiver)}
-        return render_to_string(self.email_template, base_message)
+    def _prepare_email(self, email: Dict[str, str], receiver: User) -> Tuple[str, str]:
+        sender = self._prepare_sender(email.pop("sender", None))
+        message = self.prepare_message(email, receiver)
+        return message, sender
+
 
     def enviar_email(self, email: Dict, receiver_id: int):
         receiver = User.objects.get(id=receiver_id)
