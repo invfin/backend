@@ -1,9 +1,9 @@
-import time
 import vcr
-import pytest
+
+from django.test import TestCase
 
 from unittest import skip
-from bfet import DjangoTestingModel as DTM
+from bfet import DjangoTestingModel
 
 from apps.empresas.parse.others.yahoo_finance import ParseYahooFinance
 
@@ -15,8 +15,7 @@ parse_vcr = vcr.VCR(
 
 
 @skip("Don't wnat to test")
-@pytest.mark.django_db
-class TestParseFinprep:
+class TestParseFinprep(TestCase):
     @classmethod
-    def setup_class(cls) -> None:
+    def setUpTestData(cls) -> None:
         cls.parser = ParseFinprep()

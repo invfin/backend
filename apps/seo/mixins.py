@@ -5,9 +5,6 @@ from django.conf import settings
 from apps.recsys.mixins import RecommenderMixin
 
 
-FULL_DOMAIN = settings.FULL_DOMAIN
-
-
 class SEOViewMixin(RecommenderMixin):
     """
     Mixin to populate meta information for SEO purpose
@@ -37,6 +34,8 @@ class SEOViewMixin(RecommenderMixin):
     is_article: bool = False
     open_graph_type: str = "website"
     update_visits: bool = False
+    no_index: bool = False
+    no_follow: bool = False
 
     def update_views(self, instance):
         instance.total_views += 1
@@ -67,9 +66,12 @@ class SEOViewMixin(RecommenderMixin):
     def get_meta_title(self, instance: object = None):
         meta_title = self.meta_title
         if not meta_title:
-            meta_title = self.get_possible_meta_attribute(
-                instance, ["meta_title", "regularised_title", "name", "title"], "Invierte correctamente"
-            )
+            if instance:
+                meta_title = self.get_possible_meta_attribute(
+                    instance, ["meta_title", "name", "title"], "Invierte correctamente"
+                )
+            else:
+                meta_title = self.__class__.__name__
         return meta_title
 
     def get_meta_description(self, instance: object = None):
@@ -77,7 +79,7 @@ class SEOViewMixin(RecommenderMixin):
         if not meta_description:
             meta_description = self.get_possible_meta_attribute(
                 instance,
-                ["meta_description", "regularised_description", "resume", "description"],
+                ["meta_description", "resume", "description", "content"],
                 "Todo lo que necesitas para ser un mejor inversor",
             )
         return meta_description
@@ -85,13 +87,14 @@ class SEOViewMixin(RecommenderMixin):
     def get_meta_image(self, instance: object = None):
         meta_image = self.meta_image
         if not meta_image:
-            meta_image = self.get_possible_meta_attribute(
-                instance, ["meta_image", "regularised_image", "image", "thumbnail"], None
-            )
-        if not meta_image:
-            author = getattr(instance, "author", None)
-            if author:
-                meta_image = author.foto
+            if instance:
+                meta_image = self.get_possible_meta_attribute(
+                    instance, ["meta_image", "regularised_image", "image", "thumbnail"], ""
+                )
+                if not meta_image:
+                    author = getattr(instance, "author", None)
+                    if author:
+                        meta_image = author.foto
             else:
                 selected_image = random.choice(
                     [
@@ -104,7 +107,7 @@ class SEOViewMixin(RecommenderMixin):
                 meta_image = f"/static/general/assets/img/{selected_image}"
 
         if not meta_image.startswith("http"):
-            meta_image = f"{FULL_DOMAIN}{meta_image}"
+            meta_image = f"{settings.FULL_DOMAIN}{meta_image}"
 
         return meta_image
 
@@ -139,8 +142,19 @@ class SEOViewMixin(RecommenderMixin):
             schema_org = {}
         return schema_org
 
+    def get_meta_robots(self):
+        if not self.no_follow and not self.no_index:
+            return None
+        elif self.no_follow and not self.no_index:
+            return "nofollow"
+        elif not self.no_follow and self.no_index:
+            return "noindex"
+        else:
+            return "nofollow,noindex"
+
     def get_base_meta_information(self, instance: object = None):
         return {
+            "meta_robots": self.get_meta_robots(),
             "meta_description": self.get_meta_description(instance),
             "meta_tags": self.get_meta_tags(),
             "meta_title": self.get_meta_title(instance),

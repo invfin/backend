@@ -1,19 +1,19 @@
-{% extends 'modals/base_modal.html' %}
+{% extends 'bases/base_form_modal.html' %}
 {% load static extra humanize crispy_forms_tags %}
 
 {% block mainForm %}
 <form method="POST" hx-post="{% url 'cartera:save_new_asset_movement' %}"
     hx-headers='{"X-CSRFToken":"{{ csrf_token }}"}' class="modal-content">
-{% endblock mainForm %}
+    {% endblock mainForm %}
 
-{% block formTitle %}Añade un nuevo activo{% endblock formTitle %}
+    {% block formTitle %}Añade un nuevo activo{% endblock formTitle %}
 
-{% block formContent %}
-<div class="col-12 mb-1">
-    <label class="form-label">
-        Selecciona la empresa que quieras
+    {% block formContent %}
+    <div class="col-12 mb-1">
+        <label class="form-label">
+            Selecciona la empresa que quieras
         </label>
-    {% include "search/search-companies.html" %}
-</div>                        
-{{ form|crispy }}
-{% endblock formContent %}
+        {% include "search/search-companies.html" %}
+    </div>
+    {{ form|crispy }}
+    {% endblock formContent %}

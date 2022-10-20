@@ -1,25 +1,25 @@
-import logging
 import math
+import time
 import textwrap
-import random
+from typing import Dict
 
 import tweepy
-from django.conf import settings
-
-from django.template.defaultfilters import slugify
-site = 'https://inversionesyfinanzas.xyz'
-
-# logger = logging.getLogger('longs')
 
 from apps.socialmedias import constants
-from apps.socialmedias.models import DefaultTilte, Emoji, Hashtag
 
 
 class Twitter:
-    consumer_key = settings.TWITTER_CONSUMER_KEY
-    consumer_secret = settings.TWITTER_CONSUMER_SECRET
-    access_token = settings.TWITTER_ACCESS_TOKEN
-    access_token_secret = settings.TWITTER_ACCESS_TOKEN_SECRET
+    def __init__(
+        self,
+        consumer_key: str,
+        consumer_secret: str,
+        access_token: str,
+        access_token_secret: str,
+    ) -> None:
+        self.consumer_key = consumer_key
+        self.consumer_secret = consumer_secret
+        self.access_token = access_token
+        self.access_token_secret = access_token_secret
 
     def do_authenticate(self):
         auth = tweepy.OAuthHandler(self.consumer_key, self.consumer_secret)
@@ -27,102 +27,107 @@ class Twitter:
         twitter_api = tweepy.API(auth)
         return twitter_api
 
-    def tweet_text(self, status):
-        twitter_api = self.do_authenticate()
-        response = twitter_api.update_status(status)
+    def tweet_text(self, twitter_api, status, **kwargs):
+        response = twitter_api.update_status(status=status, **kwargs)
         json_response = response._json
-        return json_response['id']
+        return json_response["id"]
 
-    def tweet_with_media(self, media_url, status):
-        twitter_api = self.do_authenticate()
+    def tweet_with_media(self, twitter_api, status, media_url):
         post_id = twitter_api.media_upload(media_url)
         response = twitter_api.update_status(status=status, media_ids=[post_id.media_id_string])
         json_response = response._json
-        return json_response['id']
+        return json_response["id"]
 
-    def create_thread(self, title, link, description, hashtags):
+    def create_thread(
+        self,
+        title: str,
+        content: str,
+        hashtags: str,
+        link: str,
+        media_url: str,
+        post_type: str,
+    ):
         twitter_api = self.do_authenticate()
-        total_number_parts = int(math.ceil(len(description) / constants.TWEET_MAX_LENGTH))
+        total_number_parts = int(math.ceil(len(content) / constants.TWEET_MAX_LENGTH))
 
-        initial_tweet = f"{title} Más en {link} {hashtags} [0/{total_number_parts}]"
-        initial_tweet_response = twitter_api.update_status(initial_tweet)
-        list_tweets = [{
-            'post_type': constants.POST_TYPE_THREAD,
-            'social_id': initial_tweet_response.id,
-            'description': initial_tweet,
-            'platform_shared': constants.TWITTER
-        }]
-        for index, part in enumerate(textwrap.wrap(description, constants.TWEET_MAX_LENGTH)):
+        initial_tweet = f"{title} [0/{total_number_parts}]"
+
+        if post_type != constants.POST_TYPE_TEXT:
+            initial_tweet_response = self.tweet_with_media(twitter_api, initial_tweet, media_url)
+        else:
+            initial_tweet_response = self.tweet_text(twitter_api, initial_tweet)
+
+        list_tweets = {
+            "post_response": [
+                {
+                    "social_id": initial_tweet_response,
+                    "content": title,
+                    "post_type": post_type,
+                    "use_hashtags": False,
+                    "use_emojis": True,
+                    "use_link": False,
+                    "use_default_title": True,
+                    "use_default_content": False,
+                }
+            ]
+        }
+
+        for index, part in enumerate(textwrap.wrap(content, constants.TWEET_MAX_LENGTH)):
             if index == 0:
                 response = initial_tweet_response
             index += 1
             tweet = f"{part} [{index}/{total_number_parts}]"
-            response = twitter_api.update_status(
-                status=tweet,
-                in_reply_to_status_id=response.id,
-                auto_populate_reply_metadata=True
+            time.sleep(5)
+            response = self.tweet_text(
+                twitter_api, status=tweet, in_reply_to_status_id=response, auto_populate_reply_metadata=True
             )
-            list_tweets.append({
-                'post_type': constants.POST_TYPE_THREAD ,
-                'social_id': response.id,
-                'description': tweet,
-                'platform_shared': constants.TWITTER
-            })
+            list_tweets["post_response"].append(
+                {
+                    "social_id": initial_tweet_response,
+                    "content": tweet,
+                    "post_type": constants.POST_TYPE_THREAD,
+                    "use_hashtags": False,
+                    "use_emojis": False,
+                    "use_link": False,
+                    "use_default_title": False,
+                    "use_default_content": True,
+                }
+            )
+
+        last_tweet = f"Si este thread te ha gustado no te pierdas el resto en: {link} {hashtags}"
+        last_tweet_response = self.tweet_text(twitter_api, last_tweet)
+        list_tweets["post_response"].append(
+            {
+                "social_id": last_tweet_response,
+                "content": last_tweet,
+                "post_type": constants.POST_TYPE_THREAD,
+                "use_hashtags": True,
+                "use_link": True,
+                "use_emojis": False,
+                "use_default_title": False,
+                "use_default_content": False,
+            }
+        )
 
         return list_tweets
 
-    def tweet(
-        self,
-        description:str,
-        num_emojis:int=1,
-        post_type:int=constants.POST_TYPE_TEXT,
-        media_url:str=None,
-        link:str=None,
-        title:str=None,
-        **kwargs,
-        ):
-            emojis = Emoji.objects.random_emojis(num_emojis)
-            hashtags_objs = random.choices(Hashtag.objects.random_hashtags(constants.TWITTER), k=3)
-            hashtags = "#"+" #".join([hashtag.title for hashtag in hashtags_objs])
+    def post(self, **kwargs) -> Dict:
+        title = kwargs["title"]
+        content = kwargs["content"]
+        hashtags = kwargs["hashtags"]
+        link = kwargs["link"]
+        media_url = kwargs.get("media", "")
+        post_type = kwargs["post_type"]
 
-            tweet = f'{emojis[0].emoji} {description} Más en {link} {hashtags}'
+        post_response = self.create_thread(
+            title,
+            content,
+            hashtags,
+            link,
+            media_url,
+            post_type,
+        )
 
-            if (
-                    post_type == constants.POST_TYPE_TEXT or
-                    post_type == constants.POST_TYPE_REPOST
-                ):
-                    if len(tweet) > 186:
-                        post_response = self.create_thread(title, link, description, hashtags)
-                    else:
-                        post_response = self.tweet_text(tweet)
+        twitter_post = {"social_id": post_response}
 
-            else:
-                if (
-                    post_type == constants.POST_TYPE_VIDEO or
-                    post_type == constants.POST_TYPE_TEXT_VIDEO
-                ):
-                    content_type = 'video'
-
-                if (
-                    post_type == constants.POST_TYPE_IMAGE or
-                    post_type == constants.POST_TYPE_TEXT_IMAGE
-                ):
-                    content_type = 'image'
-
-                post_response = self.tweet_with_media(media_url, description)
-
-            #Create the posibility of returning a list with all the posts in case of a thread
-            if type(post_response) == list:
-                twitter_post = {
-                    'multiple_posts': True,
-                    'posts': post_response
-                }
-            else:
-                twitter_post = {
-                    'post_type': post_type,
-                    'social_id': post_response,
-                    'description': description,
-                    'platform_shared': constants.TWITTER
-                }
-
-            return twitter_post
+        return twitter_post

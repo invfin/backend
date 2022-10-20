@@ -1,17 +1,13 @@
-import pytest
-
-from django.test import RequestFactory
-
+from django.test import TestCase, RequestFactory
 from django.contrib.sessions.middleware import SessionMiddleware
 
 from apps.seo.models import Visiteur
 from apps.seo.outils.visiteur_meta import SeoInformation
 
 
-@pytest.mark.django_db
-class TestSeoInformation:
+class TestSeoInformation(TestCase):
     @classmethod
-    def setup_class(cls):
+    def setUpTestData(cls):
         cls.request = RequestFactory().request()
         cls.request.META = {
             "HTTP_X_FORWARDED_FOR": "203.0.113.195, 70.41.3.18, 150.172.238.178",

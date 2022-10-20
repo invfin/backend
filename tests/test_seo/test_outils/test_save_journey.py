@@ -1,8 +1,8 @@
-import pytest
+from django.test import TestCase
 
 from django.contrib.auth import get_user_model
 
-from bfet import DjangoTestingModel as DTM
+from bfet import DjangoTestingModel
 
 from apps.empresas.models import Company
 from apps.escritos.models import Term
@@ -22,17 +22,16 @@ class MockRequest:
     is_visiteur = False
 
 
-@pytest.mark.django_db
-class TestJourneyClassifier:
+class TestJourneyClassifier(TestCase):
     @classmethod
-    def setup_class(cls):
+    def setUpTestData(cls):
         cls.request = MockRequest
-        cls.user = DTM.create(User)
-        cls.visiteur = DTM.create(Visiteur)
-        cls.company = DTM.create(Company)
-        cls.term = DTM.create(Term, author=cls.user)
-        cls.question = DTM.create(Question, author=cls.user)
-        cls.blog = DTM.create(PublicBlog, author=cls.user)
+        cls.user = DjangoTestingModel.create(User)
+        cls.visiteur = DjangoTestingModel.create(Visiteur)
+        cls.company = DjangoTestingModel.create(Company)
+        cls.term = DjangoTestingModel.create(Term, author=cls.user)
+        cls.question = DjangoTestingModel.create(Question, author=cls.user)
+        cls.blog = DjangoTestingModel.create(PublicBlog, author=cls.user)
 
     def test_get_user_or_visiteur(self):
         self.client.force_login(self.user)

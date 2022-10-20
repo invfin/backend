@@ -1,12 +1,9 @@
 from datetime import datetime, timedelta
 
-import pytest
 
 from apps.web.utils import more_than_month
 
 
-@pytest.mark.django_db
-@pytest.mark.django_db
 class TestUtils:
     def test_more_than_month(self):
         now_less_ten = datetime.now() - timedelta(10)

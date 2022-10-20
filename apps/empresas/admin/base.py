@@ -3,12 +3,10 @@ from django.db import models
 
 from django_json_widget.widgets import JSONEditorWidget
 
-from apps.empresas.parse.yahoo_query import YahooQueryInfo
 from apps.empresas.utils import arrange_quarters
 from apps.empresas.outils.retrieve_data import RetrieveCompanyData
 from apps.empresas.admin.filters.base import (
     NewCompanyToParseFilter,
-    HasQuarterFilter,
 )
 
 

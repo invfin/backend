@@ -1,10 +1,8 @@
-import pytest
 import json
 
 from apps.api.mixins import BaseAPIViewTest
 
 
-@pytest.mark.django_db
 class TestAllSuperinvestorsAPIView(BaseAPIViewTest):
     path_name = "api:superinvestors_lista_superinversores"
     url_path = "/lista-superinversores/"
@@ -31,7 +29,9 @@ class TestAllSuperinvestorsAPIView(BaseAPIViewTest):
         assert json.loads(json.dumps(response.data))[0] == expected_data
 
 
-@pytest.mark.django_db
+from django.test import TestCase
+
+
 class TestSuperinvestorActivityAPIView(BaseAPIViewTest):
     path_name = "api:superinvestors_lista_movimientos"
     url_path = "/lista-movimientos/"
@@ -43,7 +43,9 @@ class TestSuperinvestorActivityAPIView(BaseAPIViewTest):
         assert json.loads(json.dumps(response.data))[0] == expected_data
 
 
-@pytest.mark.django_db
+from django.test import TestCase
+
+
 class TestSuperinvestorHistoryAPIView(BaseAPIViewTest):
     path_name = "api:superinvestors_lista_historial"
     url_path = "/lista-historial/"

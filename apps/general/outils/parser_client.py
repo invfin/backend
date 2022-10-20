@@ -12,11 +12,7 @@ class ParserClient:
     auth: Dict[str, str] = None
 
     def _build_full_path(
-        self,
-        path: str,
-        different_api_version: str = None,
-        str_params: str = None,
-        **dict_params: dict
+        self, path: str, different_api_version: str = None, str_params: str = None, **dict_params: dict
     ) -> str:
         """
         It receives the path from path to make the get requests. It accepts url depending on
@@ -33,41 +29,34 @@ class ParserClient:
             full_path = f"{full_path}/{str_params}"
         if self.auth:
             auth_dict = urllib.parse.urlencode(self.auth)
-            full_path = f'{full_path}?{auth_dict}'
+            full_path = f"{full_path}?{auth_dict}"
             dict_params_separator = "&"
         if dict_params:
+            if "dict_params" in dict_params:
+                dict_params = dict_params["dict_params"]
             dict_params = urllib.parse.urlencode(dict_params)
-            full_path = f'{full_path}{dict_params_separator}{dict_params}'
+            full_path = f"{full_path}{dict_params_separator}{dict_params}"
         return full_path
 
-    def _request_content(
-        self,
-        full_url: str
-    ) -> Union[Dict[str, Any], str, str, requests.Response]:
+    def _request_content(self, full_url: str) -> Union[Dict[str, Any], str, str, requests.Response]:
         """
         It performs a get request. full_url comes from _build_full_path.
         """
         for attempt in range(1, REQUESTS_MAX_RETRIES):
             response = requests.get(full_url, headers=HEADERS)
             if response.status_code == requests.codes.ok:
-                content_type = response.headers.get('Content-Type', '')
-                if 'application/json' in content_type:
+                content_type = response.headers.get("Content-Type", "")
+                if "application/json" in content_type:
                     return response.json()
-                if 'text/csv' in content_type:
+                if "text/csv" in content_type:
                     return response.text
-                if 'text/plain' in content_type:
+                if "text/plain" in content_type:
                     return response.text
                 else:
                     return response
             time.sleep(attempt * REQUESTS_MAX_RETRIES)
         response.raise_for_status()
 
-    def request(
-        self,
-        path: str,
-        different_api_version: str = None,
-        str_params: str = None,
-        **dict_params: dict
-    ) -> Union[Dict[str, Any], str, str, requests.Response]:
+    def request(self, path: str, different_api_version: str = "", str_params: str = "", **dict_params: Dict) -> Any:
         full_path = self._build_full_path(path, different_api_version, str_params, **dict_params)
         return self._request_content(full_path)

@@ -1,10 +1,11 @@
 import vcr
-import pytest
 
-from bfet import DjangoTestingModel as DTM
+from django.test import TestCase
+
+from bfet import DjangoTestingModel
 from apps.general.models import Period
 from apps.empresas.models import Company
-from apps.empresas.parse.y_finance import YFinanceInfo, NormalizeYFinance
+from apps.empresas.parse.y_finance import YFinanceInfo
 from apps.empresas.models import BalanceSheetYFinance, CashflowStatementYFinance, IncomeStatementYFinance
 
 
@@ -14,11 +15,10 @@ parse_vcr = vcr.VCR(
 )
 
 
-@pytest.mark.django_db
-class TestYFinanceInfo:
+class TestYFinanceInfo(TestCase):
     @classmethod
-    def setup_class(cls) -> None:
-        cls.company = DTM.create(Company, ticker="AAPL")
+    def setUpTestData(cls) -> None:
+        cls.company = DjangoTestingModel.create(Company, ticker="AAPL")
         cls.parser = YFinanceInfo(cls.company)
 
     @parse_vcr.use_cassette

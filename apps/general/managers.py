@@ -1,6 +1,16 @@
-from django.db.models import Manager, Q
+from django.db.models import Manager, QuerySet
 
 from apps.general import constants
+
+
+class BaseManager(Manager):
+    def filter_checkings(self, check: str, has_it: bool) -> QuerySet:
+        checking = f"has_{check}"
+        state = "yes" if has_it else "no"
+        return self.filter(**{f"checkings__{checking}__state": state})
+
+    def filter_checkings_not_seen(self, check: str) -> QuerySet:
+        return self.filter(**{f"checkings__has_{check}__state": "no", f"checkings__has_{check}__time": ""})
 
 
 class CurrencyManager(Manager):

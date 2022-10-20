@@ -1,0 +1,9 @@
+{% extends 'bases/base_form_modal.html' %}
+{% load static extra humanize crispy_forms_tags %}
+
+{% block mainForm %}
+<form method="POST" hx-post="{% url 'web:automatic_creation_newsletter' %}"
+    hx-headers='{"X-CSRFToken":"{{ csrf_token }}"}' class="modal-content">
+    {% endblock mainForm %}
+
+    {% block formTitle %}Create a newsletter{% endblock formTitle %}

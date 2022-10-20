@@ -11,5 +11,32 @@
         "--tb=long",
         "-rAf"
     ],
-    "python.analysis.typeCheckingMode": "basic"
+    "python.analysis.typeCheckingMode": "basic",
+    "python.analysis.autoImportCompletions": true,
+    "python.linting.enabled": true,
+    "python.testing.autoTestDiscoverOnSaveEnabled": true,
+    "python.linting.pycodestyleEnabled": true,
+    "editor.tokenColorCustomizations": {
+        "textMateRules": [
+            {
+                "scope": [
+                    "variable.language.special.self.python",
+                    "variable.parameter.function.language.special.self.python",
+                    "variable.language.special.cls.python",
+                    "variable.parameter.function.language.special.cls.python"
+                ],
+                "settings": {
+                    "fontStyle": "italic",
+                    "foreground": "#58d406",
+                }
+            }
+        ]
+    },
+    "editor.autoClosingBrackets": "languageDefined",
+    "[python]": {
+        "editor.wordBasedSuggestions": false,
+        "editor.bracketPairColorization.enabled": true,
+        "editor.autoIndent": "advanced",
+        "editor.wordWrapColumn": 110,
+    }
 }

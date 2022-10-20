@@ -1,16 +1,14 @@
 {% extends "bases/base_content.html" %}
 {% load static i18n extra %}
-{% block header %}{% include "management/headers/inicio.html" %}{% endblock header%}
+{% block header %}{% include "headers/inicio.html" %}{% endblock header%}
 
 {% block FirstContent %}
-<div class="card">
-  <div class="card-header clearfix">
-    <div class="float-start">
-      {{now}}
+<div class="row" hx-trigger="load, refreshNewsletterList from:body" hx-get="{% url 'web:list_emails_engagement' %}"
+  hx-target="this">
+  <div class="text-center">
+    <div class="spinner-border" role="status">
     </div>
-    <div class="float-end">
-      <a href="{% url "web:manage_all_terms" %}">Terms</a>
-    </div>
+    Cargando...
   </div>
 </div>
 {% endblock FirstContent%}

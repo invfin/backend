@@ -287,3 +287,4 @@ Notes
 checkout-single-subscription
 
 .idea
+*.sqlite3

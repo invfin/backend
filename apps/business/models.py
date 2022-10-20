@@ -12,13 +12,14 @@ from django.db.models import (
     JSONField,
     OneToOneField,
     SlugField,
+    Model,
 )
 from django.urls import reverse
 
 from apps.business import constants
 from apps.general.bases import BaseComment
 from apps.general.models import Currency
-from apps.general.mixins import BaseToAll
+from apps.general.mixins import BaseToAllMixin
 from apps.web.models import Promotion
 
 from apps.business.managers import ProductManager
@@ -30,23 +31,14 @@ def default_dict():
     return dict(
         title="¿Qué incluye?",
         include=[
-            {
-                "icon":"<i class='fas fa-infinity'></i>",
-                "text":"Acceso de por vida"
-            },
-            {
-                "icon":"<i class='fas fa-file-archive'></i>",
-                "text":"Actualizaciones constantes"
-            },
-            {
-                "icon":"<i class='fas fa-book'></i>",
-                "text":"Ebook de regalo"
-            }
-        ]
+            {"icon": "<i class='fas fa-infinity'></i>", "text": "Acceso de por vida"},
+            {"icon": "<i class='fas fa-file-archive'></i>", "text": "Actualizaciones constantes"},
+            {"icon": "<i class='fas fa-book'></i>", "text": "Ebook de regalo"},
+        ],
     )
 
 
-class StripeFields(BaseToAll):
+class StripeFields(Model, BaseToAllMixin):
     stripe_id = CharField(max_length=500, null=True, blank=True)
     for_testing = BooleanField(default=False)
 
@@ -59,9 +51,9 @@ class Customer(StripeFields):
     created_at = DateTimeField(auto_now_add=True)
 
     class Meta:
-        verbose_name = 'Customer'
-        verbose_name_plural = 'Customers'
-        db_table = 'business_customers'
+        verbose_name = "Customer"
+        verbose_name_plural = "Customers"
+        db_table = "business_customers"
 
     def __str__(self):
         return self.user.username
@@ -80,22 +72,19 @@ class Product(StripeFields):
     objects = ProductManager()
 
     class Meta:
-        verbose_name = 'Product'
-        verbose_name_plural = 'Products'
-        db_table = 'business_products'
+        verbose_name = "Product"
+        verbose_name_plural = "Products"
+        db_table = "business_products"
 
     def __str__(self):
-        return f'{self.title} {self.id}'
+        return f"{self.title} {self.id}"
 
     def get_absolute_url(self):
         return reverse("business:product", kwargs={"slug": self.slug})
 
 
 class ProductComplementary(StripeFields):
-    product = ForeignKey(Product,
-        on_delete=CASCADE,
-        null=True,
-        related_name = "complementary")
+    product = ForeignKey(Product, on_delete=CASCADE, null=True, related_name="complementary")
     image = CharField(max_length=500, null=True, blank=True)
     video = CharField(max_length=500, null=True, blank=True)
     title = CharField(max_length=300, blank=True)
@@ -111,63 +100,56 @@ class ProductComplementary(StripeFields):
     updated_at = DateTimeField(null=True, blank=True)
     extras = JSONField(default=default_dict)
     purchase_result = CharField(max_length=300, blank=True, choices=constants.PURCHASE_RESULT)
-    product_result = CharField(max_length=300, blank=True, default='')
+    product_result = CharField(max_length=300, blank=True, default="")
 
     class Meta:
-        verbose_name = 'Product complementary'
-        verbose_name_plural = 'Products complementary'
-        db_table = 'business_products_complementary'
+        verbose_name = "Product complementary"
+        verbose_name_plural = "Products complementary"
+        db_table = "business_products_complementary"
 
     def __str__(self):
         return self.product.title
 
     @property
     def final_price(self):
-        return f'{self.price} {self.currency}'
+        return f"{self.price} {self.currency}"
 
     @property
     def subscription_type(self):
-        period = 'Mensual'
+        period = "Mensual"
         if constants.PERIOD_MONTHLY == self.subscription_period:
             if self.subscription_interval == 6:
-                period = 'Bianual'
+                period = "Bianual"
         if constants.PERIOD_YEARLY == self.subscription_period:
-            period = 'Anual'
+            period = "Anual"
         return period
 
     @property
     def payment(self):
         payment = constants.PAYMENT_TYPE[1][1]
         if self.payment_type == constants.TYPE_SUBSCRIPTION:
-            payment = f'{constants.PAYMENT_TYPE[0][1]} {self.subscription_type}'
+            payment = f"{constants.PAYMENT_TYPE[0][1]} {self.subscription_type}"
         return payment
 
     @property
     def payment_link(self):
-        return reverse('business:create_checkout', kwargs={"pk": self.pk})
+        return reverse("business:create_checkout", kwargs={"pk": self.pk})
 
 
-class ProductSubscriber(BaseToAll):
-    product = ForeignKey(Product,
-        on_delete=CASCADE,
-        null=True,
-        related_name = "subscribers")
-    product_complementary = ForeignKey(ProductComplementary,
-        on_delete=CASCADE,
-        null=True,
-        related_name = "complementary_subs")
-    subscriber = ForeignKey(User,
-        on_delete=CASCADE,
-        null=True,
-        related_name = "subscriptions")
+class ProductSubscriber(Model, BaseToAllMixin):
+    product = ForeignKey(Product, on_delete=CASCADE, null=True, related_name="subscribers")
+    product_complementary = ForeignKey(
+        ProductComplementary, on_delete=CASCADE, null=True, related_name="complementary_subs"
+    )
+    subscriber = ForeignKey(User, on_delete=CASCADE, null=True, related_name="subscriptions")
     created_at = DateTimeField(auto_now_add=True)
     updated_at = DateTimeField(null=True, blank=True)
     is_active = BooleanField(default=True)
 
     class Meta:
-        verbose_name = 'Product subscriber'
-        verbose_name_plural = 'Products subscribers'
-        db_table = 'business_products_subscribers'
+        verbose_name = "Product subscriber"
+        verbose_name_plural = "Products subscribers"
+        db_table = "business_products_subscribers"
 
     def __str__(self):
         return self.product.title
@@ -175,40 +157,21 @@ class ProductSubscriber(BaseToAll):
 
 class ProductComment(BaseComment):
     rating = IntegerField(null=True, blank=True)
-    content_related = ForeignKey(Product,
-        on_delete=CASCADE,
-        null=True,
-        related_name = "comments_related")
+    content_related = ForeignKey(Product, on_delete=CASCADE, null=True, related_name="comments_related")
 
     class Meta:
-        verbose_name = 'Product'
-        verbose_name_plural = 'Products comments'
-        db_table = 'business_products_comments'
+        verbose_name = "Product"
+        verbose_name_plural = "Products comments"
+        db_table = "business_products_comments"
 
     def __str__(self):
         return self.content_related.title
 
 
 class ProductDiscount(StripeFields):
-    product = ForeignKey(
-        Product,
-        on_delete=SET_NULL,
-        null=True,
-        blank=True
-    )
-    product_complementary = ForeignKey(
-        ProductComplementary,
-        on_delete=SET_NULL,
-        null=True,
-        blank=True
-    )
-    promotion = ForeignKey(
-        Promotion,
-        on_delete=SET_NULL,
-        null=True,
-        blank=True,
-        related_name="promotion_discount"
-    )
+    product = ForeignKey(Product, on_delete=SET_NULL, null=True, blank=True)
+    product_complementary = ForeignKey(ProductComplementary, on_delete=SET_NULL, null=True, blank=True)
+    promotion = ForeignKey(Promotion, on_delete=SET_NULL, null=True, blank=True, related_name="promotion_discount")
     start_date = DateTimeField(null=True, blank=True)
     end_date = DateTimeField(null=True, blank=True)
     discount = FloatField(null=True, blank=True)
@@ -216,26 +179,17 @@ class ProductDiscount(StripeFields):
     is_active = BooleanField(default=True)
 
     class Meta:
-        verbose_name = 'Product discount'
-        verbose_name_plural = 'Products discounts'
-        db_table = 'business_products_discounts'
+        verbose_name = "Product discount"
+        verbose_name_plural = "Products discounts"
+        db_table = "business_products_discounts"
 
     def __str__(self):
         return self.product.title
 
 
 class ProductComplementaryPaymentLink(StripeFields):
-    product_complementary = ForeignKey(ProductComplementary,
-        on_delete=CASCADE,
-        null=True,
-        related_name = "payment_links")
-    promotion = ForeignKey(
-        Promotion,
-        on_delete=SET_NULL,
-        null=True,
-        blank=True,
-        related_name="promotion_link_payment"
-    )
+    product_complementary = ForeignKey(ProductComplementary, on_delete=CASCADE, null=True, related_name="payment_links")
+    promotion = ForeignKey(Promotion, on_delete=SET_NULL, null=True, blank=True, related_name="promotion_link_payment")
     title = CharField(max_length=500, null=True, blank=True)
     link = CharField(max_length=500, null=True, blank=True)
     created_at = DateTimeField(auto_now_add=True)
@@ -243,32 +197,18 @@ class ProductComplementaryPaymentLink(StripeFields):
     for_website = BooleanField(default=False)
 
     class Meta:
-        verbose_name = 'Product complementary payment link'
-        verbose_name_plural = 'Products complementary payment link'
-        db_table = 'business_products_complementary_payment_link'
+        verbose_name = "Product complementary payment link"
+        verbose_name_plural = "Products complementary payment link"
+        db_table = "business_products_complementary_payment_link"
 
     def __str__(self):
         return self.product_complementary.product.title
 
 
-class TransactionHistorial(BaseToAll):
-    product = ForeignKey(
-        Product,
-        on_delete=SET_NULL,
-        null=True
-    )
-    product_complementary = ForeignKey(
-        ProductComplementary,
-        on_delete=SET_NULL,
-        null=True,
-        blank=True
-    )
-    product_comment = ForeignKey(
-        ProductComment,
-        on_delete=SET_NULL,
-        null=True,
-        blank=True
-    )
+class TransactionHistorial(Model, BaseToAllMixin):
+    product = ForeignKey(Product, on_delete=SET_NULL, null=True)
+    product_complementary = ForeignKey(ProductComplementary, on_delete=SET_NULL, null=True, blank=True)
+    product_comment = ForeignKey(ProductComment, on_delete=SET_NULL, null=True, blank=True)
     customer = ForeignKey(Customer, on_delete=SET_NULL, null=True)
     created_at = DateTimeField(auto_now_add=True)
     payment_method = CharField(max_length=300, blank=True, choices=constants.PAYMENT_METHOD)
@@ -280,37 +220,23 @@ class TransactionHistorial(BaseToAll):
     class Meta:
         verbose_name = "Transaction"
         verbose_name_plural = "Transactions"
-        db_table = 'business_transactions'
+        db_table = "business_transactions"
 
     def __str__(self):
         return self.product.title
 
 
 class StripeWebhookResponse(StripeFields):
-    product = ForeignKey(
-        Product,
-        on_delete=SET_NULL,
-        null=True
-    )
-    product_complementary = ForeignKey(
-        ProductComplementary,
-        on_delete=SET_NULL,
-        null=True,
-        blank=True
-    )
-    customer = ForeignKey(
-        Customer,
-        on_delete=SET_NULL,
-        null=True,
-        blank=True
-    )
+    product = ForeignKey(Product, on_delete=SET_NULL, null=True)
+    product_complementary = ForeignKey(ProductComplementary, on_delete=SET_NULL, null=True, blank=True)
+    customer = ForeignKey(Customer, on_delete=SET_NULL, null=True, blank=True)
     full_response = JSONField(default=dict)
     created_at = DateTimeField(auto_now_add=True)
 
     class Meta:
         verbose_name = "Stripe webhook response"
         verbose_name_plural = "Stripe webhook responses"
-        db_table = 'business_stripe_webhook_responses'
+        db_table = "business_stripe_webhook_responses"
 
     def __str__(self):
         return str(self.created_at)

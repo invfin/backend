@@ -5,8 +5,10 @@ from apps.users.api.views import UserViewSet
 from apps.users.models import User
 
 
-@pytest.mark.django_db
-class TestUserViewSet:
+from django.test import TestCase
+
+
+class TestUserViewSet(TestCase):
     def test_get_queryset(self, user: User, rf: RequestFactory):
         view = UserViewSet()
         request = rf.get("/fake-url/")

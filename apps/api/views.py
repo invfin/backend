@@ -13,7 +13,7 @@ from rest_framework.response import Response
 from rest_framework.schemas import ManualSchema
 from rest_framework.schemas import coreapi as coreapi_schema
 from rest_framework.views import APIView
-from rest_framework.exceptions import AuthenticationFailed, ParseError, APIException, NotFound
+from rest_framework.exceptions import ParseError, APIException, NotFound
 
 from apps.seo.outils.visiteur_meta import SeoInformation
 from apps.seo.views import SEOListView

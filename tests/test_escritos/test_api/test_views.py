@@ -1,10 +1,8 @@
-import pytest
 import json
 
 from apps.api.mixins import BaseAPIViewTest
 
 
-@pytest.mark.django_db
 class TestAllTermsAPIView(BaseAPIViewTest):
     path_name = "api:all_terms_api"
     url_path = "/lista-terminos/"
@@ -48,7 +46,9 @@ class TestAllTermsAPIView(BaseAPIViewTest):
         assert json.loads(json.dumps(response.data))[0] == expected_data
 
 
-@pytest.mark.django_db
+from django.test import TestCase
+
+
 class TestTermAPIView(BaseAPIViewTest):
     path_name = "api:term_api"
     url_path = "/termino/"

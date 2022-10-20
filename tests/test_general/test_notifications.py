@@ -1,4 +1,6 @@
-import pytest
+from django.test import TestCase
+
+from bfet import DjangoTestingModel
 
 from django.contrib.auth import get_user_model
 
@@ -9,9 +11,35 @@ from apps.general.models import Notification
 User = get_user_model()
 
 
-@pytest.mark.django_db
-@pytest.mark.usefixtures("notification_system")
-class TestNotificationSystem:
+class TestNotificationSystem(TestCase):
+    @classmethod
+    def setUpTestData(cls) -> None:
+        cls.writter = DjangoTestingModel.create(User, is_writter=True)
+        cls.user_1 = DjangoTestingModel.create(User)
+        cls.user_2 = DjangoTestingModel.create(User)
+        DjangoTestingModel.create(Profile, user=cls.writter)
+        DjangoTestingModel.create(Profile, user=cls.user_1)
+        DjangoTestingModel.create(Profile, user=cls.user_2)
+        cls.question = DjangoTestingModel.create(Question, author=cls.user_1)
+        cls.question_comment = DjangoTestingModel.create(
+            QuesitonComment, content_related=DjangoTestingModel.create(Question), author=DjangoTestingModel.create(User)
+        )
+        cls.answer = DjangoTestingModel.create(
+            Answer, author=DjangoTestingModel.create(User), question_related=cls.question
+        )
+        cls.answer_comment = DjangoTestingModel.create(
+            AnswerComment,
+            author=DjangoTestingModel.create(User),
+            content_related=DjangoTestingModel.create(
+                Answer,
+                author=DjangoTestingModel.create(User),
+                question_related=DjangoTestingModel.create(Question, author=DjangoTestingModel.create(User)),
+            ),
+        )
+        cls.followers = DjangoTestingModel.create(NewsletterFollowers, user=cls.writter)
+        cls.blog = DjangoTestingModel.create(PublicBlog, author=cls.writter)
+        cls.followers.followers.add(cls.user_1)
+
     def test_save_notif(self):
         assert 0 == Notification.objects.all().count()
         notif_question = NotificationSystem().save_notif(

@@ -1,7 +1,7 @@
 import random
-from typing import Type
+from typing import Type, Dict, Any
 
-from django.db.models import Count, F, Manager, Q, Subquery, OuterRef, QuerySet, Prefetch
+from django.db.models import Count, F, Manager, Q, QuerySet, Prefetch
 
 
 class CompanyManager(Manager):
@@ -33,13 +33,13 @@ class CompanyManager(Manager):
             "ipoDate",
         )
 
-    def prefetch_yearly_historical_data(self, **kwargs) -> Type["Company"]:
+    def prefetch_yearly_historical_data(self, **kwargs) -> Type:
         """
         TODO
         Maybe create 3 different methods for prefetching data (or only 2 and one do the filter part on the statements side)
         """
-        if "ticker" in kwargs:
-            lookup_filter = {"company__ticker": kwargs["ticker"]}
+        lookup_filter = {"company__ticker": kwargs["ticker"]} if "ticker" in kwargs else {}
+
         return self.prefetch_related(
             Prefetch(
                 "inc_statements", queryset=self.model.inc_statements.rel.related_model.objects.yearly(**lookup_filter)
@@ -103,7 +103,7 @@ class CompanyManager(Manager):
             "price_to_ratios",
         )
 
-    def fast_full(self, **kwargs) -> QuerySet:
+    def fast_full(self, **kwargs) -> Type:
         return (
             self.prefetch_historical_data()
             .only(
@@ -128,7 +128,7 @@ class CompanyManager(Manager):
             .get(**kwargs)
         )
 
-    def get_random(self, query=None) -> QuerySet:
+    def get_random(self, query=None) -> Type:
         query = query if query else self.all()
         return random.choice(list(query))
 
@@ -158,13 +158,13 @@ class CompanyManager(Manager):
             industry_id=industry_id,
         ).exclude(name__contains="Need-parsing")
 
-    def random_clean_company(self) -> QuerySet:
+    def random_clean_company(self) -> Type:
         return self.get_random(self.clean_companies())
 
-    def random_clean_company_by_main_exchange(self, name=None) -> QuerySet:
+    def random_clean_company_by_main_exchange(self, name=None) -> Type:
         return self.get_random(self.clean_companies_by_main_exchange(name))
 
-    def random_complete_companies_by_main_exchange(self, name=None) -> QuerySet:
+    def random_complete_companies_by_main_exchange(self, name=None) -> Type:
         return self.get_random(self.complete_companies_by_main_exchange(name))
 
     def clean_companies_to_update(self, name=None) -> QuerySet:
@@ -172,10 +172,12 @@ class CompanyManager(Manager):
             no_incs=False, no_bs=False, no_cfs=False, exchange__main_org__name=name, updated=False, has_error=False
         )
 
-    def get_random_most_visited_clean_company(self) -> QuerySet:
+    def get_random_most_visited_clean_company(self, exclude: Dict[str, Any] = {}, filter: Dict[str, Any] = {}) -> Type:
         return self.get_random(
-            self.filter(no_incs=False, no_bs=False, no_cfs=False, has_error=False, description_translated=True)
-            .exclude(name__contains="Need-parsing")
+            self.filter(
+                no_incs=False, no_bs=False, no_cfs=False, has_error=False, description_translated=True, **filter
+            )
+            .exclude(name__contains="Need-parsing", **exclude)
             .annotate(
                 visited_by_user=Count("usercompanyvisited"),
                 visited_by_visiteur=Count("visiteurcompanyvisited"),
