@@ -1,4 +1,4 @@
-from typing import Dict, Tuple
+from typing import Dict, Tuple, Type, Any
 
 from django.apps import apps
 from django.conf import settings
@@ -16,11 +16,15 @@ class EmailingSystem:
     Emailingsystem recieve information most of the times from celery, so all the data will be serialized.
     """
 
-    # settings.EMAIL_CONTACT
-    # settings.MAIN_EMAIL
-    # settings.EMAIL_ACCOUNTS
-    # settings.EMAIL_SUGGESTIONS
-    # settings.EMAIL_DEFAULT
+    # EMAIL_CONTACT = env("EMAIL_CONTACT", default=f"EMAIL_CONTACT@{CURRENT_DOMAIN}")
+    # EMAIL_SUBJECT_PREFIX = env("EMAIL_SUBJECT_PREFIX",
+    #                            default=f"EMAIL_SUBJECT_PREFIX@{CURRENT_DOMAIN}")
+    # DEFAULT_EMAIL = env("DEFAULT_EMAIL", default=f"DEFAULT_EMAIL@{CURRENT_DOMAIN}")
+    # EMAIL_NEWSLETTER = env("EMAIL_NEWSLETTER", default=f"EMAIL_NEWSLETTER@{CURRENT_DOMAIN}")
+    # MAIN_EMAIL = env("MAIN_EMAIL", default=f"MAIN_EMAIL@{CURRENT_DOMAIN}")
+    # EMAIL_ACCOUNTS = env("EMAIL_ACCOUNTS", default=f"EMAIL_ACCOUNTS@{CURRENT_DOMAIN}")
+    # EMAIL_DEFAULT = env("EMAIL_DEFAULT", default=f"EMAIL_DEFAULT@{CURRENT_DOMAIN}")
+    # EMAIL_SUGGESTIONS = env("EMAIL_SUGGESTIONS", default=f"EMAIL_SUGGESTIONS@{CURRENT_DOMAIN}")
 
     def __init__(self, is_for: str = None, web_objective: str = None) -> None:
         """
@@ -34,7 +38,7 @@ class EmailingSystem:
         template = f"{is_for}/{web_objective}" if web_objective else is_for
         self.email_template = f"emailing/{template}.html"
 
-    def _prepare_email_track(self, email_specifications: Dict[str, str], receiver: User) -> str:
+    def _prepare_email_track(self, email_specifications: Dict[str, Any], receiver: Type) -> str:
         """
         email_specifications is a dict usually created from the model's property for_task
         receiver is an instance of User model queryed
@@ -48,9 +52,8 @@ class EmailingSystem:
         # email_track is a Model inhertitaded from BaseEmail
         return email_track.encoded_url
 
-    def prepare_message(self, email: Dict[str, str], receiver: User) -> str:
-        base_message = {**email, "user": receiver, "image_tag": self._prepare_email_track(email, receiver)}
-        return render_to_string(self.email_template, base_message)
+    def _prepare_body(self, email: Dict[str, Any], receiver: Type) -> Dict:
+        return {**email, "user": receiver, "image_tag": self._prepare_email_track(email, receiver)}
 
     def _prepare_sender(self, sender: str = None) -> str:
         if self.is_for == constants.EMAIL_FOR_PUBLIC_BLOG:
@@ -64,18 +67,19 @@ class EmailingSystem:
 
         return f"{sender} <{email}>"
 
-    def _prepare_email(self, email: Dict[str, str], receiver: User) -> Tuple[str, str]:
+    def _prepare_email(self, email: Dict[str, str], receiver: Type) -> Tuple[str, str]:
         sender = self._prepare_sender(email.pop("sender", None))
-        message = self.prepare_message(email, receiver)
-        return message, sender
+        base_body = self._prepare_body(email, receiver)
+        return sender, base_body
 
 
     def enviar_email(self, email: Dict, receiver_id: int):
+        # Needs to be defined what email expects
         receiver = User.objects.get(id=receiver_id)
         subject = email.pop("subject")
-        message, sender = self._prepare_email(email, receiver)
-
-        email_message = EmailMessage(subject, message, sender, [receiver.email])
+        sender, base_body = self._prepare_email(email, receiver)
+        body = render_to_string(self.email_template, base_body)
+        email_message = EmailMessage(subject, body, sender, [receiver.email])
 
         email_message.content_subtype = "html"
         email_message.send()

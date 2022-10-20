@@ -11,7 +11,7 @@ SECRET_KEY = env(
     default="BifHoqHjJrgBr1ZDzCf3sCeE9fa1BZSIBvoIClZcYuBUgEPWVVCkvAsz2vWlJ10B",
 )
 
-USE_DOCKER = env("USE_DOCKER") == "yes"
+USE_DOCKER = env("USE_DOCKER", default="no") == "yes"
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = ["localhost", "0.0.0.0", "127.0.0.1", ".example.com"]
 
