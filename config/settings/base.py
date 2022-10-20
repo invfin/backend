@@ -293,14 +293,14 @@ EMAIL_BACKEND = env(
 # https://docs.djangoproject.com/en/dev/ref/settings/#email-timeout
 EMAIL_TIMEOUT = 5
 
-EMAIL_CONTACT = env("EMAIL_CONTACT", default="EMAIL_CONTACT@inversionesyfinanzas.xyz")
-EMAIL_SUBJECT_PREFIX = env("EMAIL_SUBJECT_PREFIX", default="EMAIL_SUBJECT_PREFIX@inversionesyfinanzas.xyz")
-DEFAULT_EMAIL = env("DEFAULT_EMAIL", default="DEFAULT_EMAIL@inversionesyfinanzas.xyz")
-EMAIL_NEWSLETTER = env("EMAIL_NEWSLETTER", default="EMAIL_NEWSLETTER@inversionesyfinanzas.xyz")
-MAIN_EMAIL = env("MAIN_EMAIL", default="MAIN_EMAIL@inversionesyfinanzas.xyz")
-EMAIL_ACCOUNTS = env("EMAIL_ACCOUNTS", default="EMAIL_ACCOUNTS@inversionesyfinanzas.xyz")
-EMAIL_DEFAULT = env("EMAIL_DEFAULT", default="EMAIL_DEFAULT@inversionesyfinanzas.xyz")
-EMAIL_SUGGESTIONS = env("EMAIL_SUGGESTIONS", default="EMAIL_SUGGESTIONS@inversionesyfinanzas.xyz")
+EMAIL_CONTACT = env("EMAIL_CONTACT", default=f"EMAIL_CONTACT@{CURRENT_DOMAIN}")
+EMAIL_SUBJECT_PREFIX = env("EMAIL_SUBJECT_PREFIX", default=f"EMAIL_SUBJECT_PREFIX@{CURRENT_DOMAIN}")
+DEFAULT_EMAIL = env("DEFAULT_EMAIL", default=f"DEFAULT_EMAIL@{CURRENT_DOMAIN}")
+EMAIL_NEWSLETTER = env("EMAIL_NEWSLETTER", default=f"EMAIL_NEWSLETTER@{CURRENT_DOMAIN}")
+MAIN_EMAIL = env("MAIN_EMAIL", default=f"MAIN_EMAIL@{CURRENT_DOMAIN}")
+EMAIL_ACCOUNTS = env("EMAIL_ACCOUNTS", default=f"EMAIL_ACCOUNTS@{CURRENT_DOMAIN}")
+EMAIL_DEFAULT = env("EMAIL_DEFAULT", default=f"EMAIL_DEFAULT@{CURRENT_DOMAIN}")
+EMAIL_SUGGESTIONS = env("EMAIL_SUGGESTIONS", default=f"EMAIL_SUGGESTIONS@{CURRENT_DOMAIN}")
 
 # ADMIN
 # ------------------------------------------------------------------------------
