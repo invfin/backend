@@ -61,5 +61,4 @@ class TestEngagementMachine(TestCase):
         whom_to_send = constants.WHOM_TO_SEND_EMAIL_ALL
 
         web_email = EngagementMachine().create_newsletter(web_email_type, content_object, whom_to_send)
-
-        print(web_email)
+        assert isinstance(web_email, WebsiteEmail)

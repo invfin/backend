@@ -73,7 +73,8 @@ class ContentCreation:
         """
         hashtags_list = Hashtag.objects.random_hashtags(platform)
         if need_slice:
-            hashtags_list = random.choices(hashtags_list, k=max_slice)
+            # To avoid having hashtags duplicated we pass it through a set
+            hashtags_list = list(set(random.choices(hashtags_list, k=max_slice)))
         hashtags = ""
         if hashtags_list:
             hashtags = "#" + " #".join([hashtag.title for hashtag in hashtags_list])

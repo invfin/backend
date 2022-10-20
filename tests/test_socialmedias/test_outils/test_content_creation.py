@@ -281,8 +281,8 @@ class TestContentCreation(TestCase):
             assert content_creator_all().create_default_title_filter() == {"for_content__in": [social_constants.ALL]}
         with self.subTest("content Term"):
             content_creator_term = ContentCreation
-            content_creator_term.for_content = [social_constants.TERM]
             content_creator_term.for_content = []
+            content_creator_term.for_content = [social_constants.TERM]
             assert content_creator_term().create_default_title_filter() == {
                 "for_content__in": [social_constants.ALL, social_constants.TERM]
             }
@@ -352,7 +352,8 @@ class TestContentCreation(TestCase):
             title="Default title",
             for_content=social_constants.ALL,
         )
-        hashtag = DjangoTestingModel.create(Hashtag, platform=social_constants.TWITTER)
+
+        hashtag = DjangoTestingModel.create(Hashtag, title="hashtag", platform=social_constants.TWITTER)
         result_data = content_creator(social_constants.TWITTER).create_social_media_content_from_object()
         assert default_title_all == result_data["default_title"]
         if "title_emojis" in result_data:
@@ -406,7 +407,7 @@ class TestContentCreation(TestCase):
         if "title_emojis" in result_data:
             assert (emoji_1 in result_data["title_emojis"]) is True
             assert (emoji_1.emoji in result_data["title"]) is True
-        elif "default_title" in result_data:
+        if "default_title" in result_data:
             assert default_title_news == result_data["default_title"]
         else:
             expected_data = {"title": "Custom title"}
