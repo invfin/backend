@@ -7,7 +7,6 @@ from django.contrib import messages
 from apps.escritos.models import Term
 from apps.web.models import WebsiteEmail
 from apps.web.forms import WebEmailForm, AutomaticNewsletterForm
-from apps.web.tasks import send_email_engagement_task
 from apps.seo.views import SEOViewMixin
 
 
@@ -75,7 +74,7 @@ class ManageEmailEngagementUpdateView(PrivateWebUpdateView):
     pk_url_kwarg = "pk"
 
     def get_success_url(self) -> str:
-        return reverse("web:list_emails_engagement")
+        return reverse("web:manage_web")
 
 
 class ManageEmailEngagementCreateView(PrivateWebCreateView):
@@ -83,13 +82,7 @@ class ManageEmailEngagementCreateView(PrivateWebCreateView):
     template_name = "engagement/form_email.html"
 
     def get_success_url(self) -> str:
-        return reverse("web:list_emails_engagement")
-
-
-def send_email_management(request, email_id: int):
-    if request.POST:
-        send_email_engagement_task.delay(email_id)
-        return HttpResponse(status=204, headers={"HX-Trigger": "showMessageSuccess"})
+        return reverse("web:manage_web")
 
 
 class ManageTermListView(PrivateWebListView):

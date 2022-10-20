@@ -27,11 +27,13 @@
                     </p>
                 </div>
                 <div class="col-auto">
-                    {% if not web_email.sent %}
+                    {% if web_email.status_waiting or web_email.status_draft %}
                     <a href="{% url 'web:update_email_engagement' web_email.id %}"
                         class="btn btn-sm btn-primary mb-1">Edit</a>
-                    <a href="{% url 'web:send_email_engagement' web_email.id %}"
-                        class="btn btn-sm btn-primary mb-1">Send</a>
+                    {% endif %}
+                    {% if web_email.status_waiting %}
+                    <button hx-get="{% url 'web:send_email_engagement' web_email.id %}"
+                        class="btn btn-sm btn-primary mb-1">Send</button>
                     {% endif %}
                 </div>
             </div>

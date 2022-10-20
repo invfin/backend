@@ -86,6 +86,18 @@ class WebsiteEmail(BaseNewsletter):
         return self.title
 
     @property
+    def status_draft(self):
+        return not self.date_to_send
+
+    @property
+    def status_sent(self):
+        return self.sent
+
+    @property
+    def status_waiting(self):
+        return self.date_to_send and not self.sent
+
+    @property
     def status(self):
         if not self.date_to_send:
             status = "draft"

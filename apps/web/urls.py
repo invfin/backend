@@ -1,6 +1,7 @@
 from django.urls import path
 
-from .views import (
+from apps.web.api.urls import urlpatterns as api_urlpatterns
+from apps.web.views import (
     ExcelRedirectView,
     HomePage,
     LegalPages,
@@ -11,7 +12,6 @@ from .views import (
     ManageEmailEngagementListView,
     ManageTermListView,
     ManageTermUpdateView,
-    send_email_management,
     AutomaticEmailNewsletterView,
 )
 
@@ -27,8 +27,7 @@ urlpatterns = [
     path(
         "manage-update-email-engament/<pk>", ManageEmailEngagementUpdateView.as_view(), name="update_email_engagement"
     ),
-    path("manage-start-send-email-engagement/<pk>", send_email_management, name="send_email_engagement"),
     path("manage-terms/", ManageTermListView.as_view(), name="manage_all_terms"),
     path("manage-term/<slug>/", ManageTermUpdateView.as_view(), name="manage_single_term"),
     path("automatic-newsletter-creation", AutomaticEmailNewsletterView.as_view(), name="automatic_creation_newsletter"),
-]
+] + api_urlpatterns
