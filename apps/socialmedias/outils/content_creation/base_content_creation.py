@@ -223,7 +223,7 @@ class ContentCreation:
         return {
             **self.prepare_inital_data(),
             "media": self.get_object_media(),
-            "shared_model_historial": self.shared_model_historial,
+            "shared_model_historial": self.get_shared_model_historial(),
             "hashtags_list": hashtags_list,
             "hashtags": hashtags,
         }
