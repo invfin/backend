@@ -12,7 +12,7 @@ class SendNewsletterView(GenericAPIView):
     permission_classes = [IsAdminUser]
 
     def get(self, *args, **kwargs):
-        # send_email_engagement_task.delay(self.kwargs["pk"])
+        send_email_engagement_task.delay(self.kwargs["pk"])
         return Response(
             status=status.HTTP_202_ACCEPTED,
             headers={"HX-Trigger": "refreshNewsletterList"},
