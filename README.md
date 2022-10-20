@@ -41,7 +41,13 @@ The website is deployed on a single core CPU so multithreading is limited. For e
 ### UTM
 A tag to create utm parameters for the urls. source and campaign are at the end as usually medium, content and term are usually changed accross the web.
 
-- {% utm content='', term='', medium='webapp', source='invfin', campaign='website-links' %}
+#### {% utm content='', term='', medium='webapp', source='invfin', campaign='website-links' %}
+
+- content: Identifies what specifically was clicked to bring the user to the site, such as a banner ad or a text link
+- term: Identifies search terms
+- medium: Identifies what type of link was used Default = webapp
+- source:  	Identifies which site sent the traffic, and is a required parameter Default = invfin
+- campaign: Identifies a specific product promotion or strategic campaign Default = website-links
 
 ## Socialmedias
 ### Facebook
