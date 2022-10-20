@@ -57,8 +57,7 @@ class EmailTest(TestCase):
         assert "InvFin <EMAIL_DEFAULT@example.com>" == notif_sender
         assert "Lucas - InvFin <MAIN_EMAIL@example.com>" == web_sender
 
-    @patch("from django.template.loader.render_to_string")
-    def test_prepare_message(self, mock_render_to_string):
+    def test__prepare_body(self):
         email_machine = EmailingSystem(constants.EMAIL_FOR_NOTIFICATION)
         web_email = DjangoTestingModel.create(WebsiteEmail, id=1)
         email_info_image_tag_tracker = {
@@ -71,11 +70,14 @@ class EmailTest(TestCase):
             "sender": 'EMAIL_DEFAULT@example.com',  # Not always necessary
             **email_info_image_tag_tracker
         }
-        email_machine_response = email_machine.prepare_message(email_dict, self.user)
+        email_machine_response = email_machine._prepare_body(email_dict, self.user)
         web_email_track = WebsiteEmailTrack.objects.get(email_related=web_email)
-
-        {**email, "user": receiver, "image_tag": self._prepare_email_track(email, receiver)}
-        mock_render_to_string.assert_called_with(**opts)
+        expected_result = {
+            **email_dict,
+            "user": self.user,
+            "image_tag": web_email_track.encoded_url
+        }
+        assert expected_result == email_machine_response
 
     def test_enviar_email(self):
         web_email = DjangoTestingModel.create(WebsiteEmail, id=1)
