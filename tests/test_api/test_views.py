@@ -11,7 +11,7 @@ from apps.empresas.models import Company
 class TestBaseAPIView(TestCase):
     def test_get_model_to_track(self):
         view = BaseAPIView()
-        with pytest.raises(NotImplementedError, match='You need to set a "model_to_track"'):
+        with self.assertRaises(NotImplementedError, match='You need to set a "model_to_track"'):
             view.get_model_to_track()
         view.model_to_track = "Company"
         model_to_track_str = view.get_model_to_track()

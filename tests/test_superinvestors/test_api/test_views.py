@@ -1,14 +1,19 @@
 import json
 
+from bfet import DjangoTestingModel
+
+from django.contrib.auth import get_user_model
+
 from apps.api.mixins import BaseAPIViewTest
 
+User = get_user_model()
 
 class TestAllSuperinvestorsAPIView(BaseAPIViewTest):
     path_name = "api:superinvestors_lista_superinversores"
     url_path = "/lista-superinversores/"
 
-    def test_success_response(self, client, various_terms):
-        response = client.get(self.full_endpoint, format="json")
+    def test_success_response(self):
+        response = self.client.get(self.full_endpoint, format="json")
         expected_data = [
             {
                 "name": "Bryan Lawrence - Oakcliff Capital",
@@ -29,21 +34,15 @@ class TestAllSuperinvestorsAPIView(BaseAPIViewTest):
         assert json.loads(json.dumps(response.data))[0] == expected_data
 
 
-from django.test import TestCase
-
-
 class TestSuperinvestorActivityAPIView(BaseAPIViewTest):
     path_name = "api:superinvestors_lista_movimientos"
     url_path = "/lista-movimientos/"
     params = {"slug": ""}
 
-    def test_success_response(self, client, various_terms):
-        response = client.get(self.full_endpoint, format="json")
+    def test_success_response(self):
+        response = self.client.get(self.full_endpoint, format="json")
         expected_data = []
         assert json.loads(json.dumps(response.data))[0] == expected_data
-
-
-from django.test import TestCase
 
 
 class TestSuperinvestorHistoryAPIView(BaseAPIViewTest):
@@ -51,7 +50,7 @@ class TestSuperinvestorHistoryAPIView(BaseAPIViewTest):
     url_path = "/lista-historial/"
     params = {"slug": ""}
 
-    def test_success_response(self, client, various_terms):
-        response = client.get(self.full_endpoint, format="json")
+    def test_success_response(self):
+        response = self.client.get(self.full_endpoint, format="json")
         expected_data = []
         assert json.loads(json.dumps(response.data))[0] == expected_data
