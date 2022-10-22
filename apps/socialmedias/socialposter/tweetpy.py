@@ -68,6 +68,7 @@ class Twitter:
                     "use_link": False,
                     "use_default_title": True,
                     "use_default_content": False,
+                    "platform_shared": constants.TWITTER,
                 }
             ]
         }
@@ -91,6 +92,7 @@ class Twitter:
                     "use_link": False,
                     "use_default_title": False,
                     "use_default_content": True,
+                    "platform_shared": constants.TWITTER,
                 }
             )
 
@@ -106,6 +108,7 @@ class Twitter:
                 "use_emojis": False,
                 "use_default_title": False,
                 "use_default_content": False,
+                "platform_shared": constants.TWITTER,
             }
         )
 

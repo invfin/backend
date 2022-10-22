@@ -153,6 +153,7 @@ class Facebook:
                         "use_link": True,
                         "use_default_title": True,
                         "use_default_content": True,
+                        "platform_shared": constants.FACEBOOK,
                     }
                 ]
             }

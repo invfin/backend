@@ -62,22 +62,21 @@ class SocialPosting:
     def prepare_data_to_be_saved(
         self,
         socialmedia_post_response: Dict,
-        platform_shared: str,
         socialmedia_content: Dict,
     ) -> Dict:
         response_dict = dict(
             post_type=socialmedia_post_response["post_type"],
-            platform_shared=platform_shared,
+            platform_shared=socialmedia_post_response["platform_shared"],
             social_id=socialmedia_post_response["social_id"],
             title=socialmedia_post_response.get("title", ""),
             content=socialmedia_post_response["content"],
         )
         if socialmedia_post_response["use_hashtags"]:
-            response_dict["link"] = socialmedia_content["hashtags_list"]
+            response_dict["hashtags_list"] = socialmedia_content["hashtags_list"]
         if socialmedia_post_response["use_emojis"]:
             response_dict["title_emojis"] = socialmedia_content.get("title_emojis", [])
-        if socialmedia_post_response["use_link"]:
-            response_dict["link"] = socialmedia_content["link"]
+        # if socialmedia_post_response["use_link"]:
+        #     response_dict["link"] = socialmedia_content["link"]
         if socialmedia_post_response["use_default_title"]:
             response_dict["default_title"] = socialmedia_content.get("default_title", None)
         if socialmedia_post_response["use_default_content"]:
@@ -90,17 +89,7 @@ class SocialPosting:
         hashtags_list = kwargs.pop("hashtags_list", [])
 
         shared_model_historial_obj = shared_model_historial._default_manager.create(
-            user=User.objects.get(id=1),
-            **kwargs
-            # post_type=kwargs["post_type"],
-            # platform_shared=kwargs["platform_shared"],
-            # social_id=kwargs["social_id"],
-            # title=kwargs["title"],
-            # content=kwargs["content"],
-            # default_title=kwargs.get("default_title"),
-            # default_content=kwargs.get("default_content"),
-            # extra_description=kwargs.get("extra_description"),
-            # metadata=kwargs.get("metadata"),
+            user=User.objects.get(id=1), **kwargs
         )
 
         if title_emojis:
@@ -137,12 +126,10 @@ class SocialPosting:
                 **socialmedia_content,
                 post_type=post_type,
             )
-            print(socialmedia_content)
             # Here we get the response and save it
             for socialmedia_post_response in socialmedia_obj_response["post_response"]:
                 response_dict = self.prepare_data_to_be_saved(
                     socialmedia_post_response,
-                    platform_shared,
                     socialmedia_content,
                 )
                 self.save_content_posted(

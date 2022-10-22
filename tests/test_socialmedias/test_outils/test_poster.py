@@ -15,6 +15,7 @@ from apps.preguntas_respuestas.models import Question
 from apps.socialmedias.models import (
     BlogSharedHistorial,
     CompanySharedHistorial,
+    Hashtag,
     NewsSharedHistorial,
     QuestionSharedHistorial,
     TermSharedHistorial,
@@ -72,21 +73,15 @@ class TestSocialPosting(TestCase):
         assert isinstance(SocialPosting().get_socialmedia(constants.FACEBOOK), Facebook)
         assert isinstance(SocialPosting().get_socialmedia(constants.TWITTER), Twitter)
 
-    @patch("apps.socialmedias.socialposter.facepy.Facebook.post")
     @patch("apps.socialmedias.socialposter.tweetpy.Twitter.post")
+    @patch("apps.socialmedias.socialposter.facepy.Facebook.post")
     def test_share_content(self, mock_facepy, mock_tweetpy):
-        SocialPosting().share_content(
-            constants.TERM_FOR_CONTENT,
-            [
-                {"platform_shared": constants.FACEBOOK, "post_type": constants.POST_TYPE_TEXT_IMAGE},
-                {"platform_shared": constants.TWITTER, "post_type": constants.POST_TYPE_TEXT_IMAGE},
-            ],
-        )
+        assert 0 == TermSharedHistorial.objects.all().count()
         mock_facepy.return_value = {
             "post_response": [
                 {
                     "social_id": "64dsf8g4dfg45dfh",
-                    "title": title,
+                    "title": "handmade fb title",
                     "content": "face content",
                     "post_type": constants.POST_TYPE_TEXT_IMAGE,
                     "use_hashtags": True,
@@ -94,6 +89,7 @@ class TestSocialPosting(TestCase):
                     "use_link": True,
                     "use_default_title": True,
                     "use_default_content": True,
+                    "platform_shared": constants.FACEBOOK,
                 }
             ]
         }
@@ -101,28 +97,68 @@ class TestSocialPosting(TestCase):
             "post_response": [
                 {
                     "social_id": "1dfg1661dh4fg",
-                    "content": title,
+                    "content": "handmade tw title",
                     "post_type": constants.POST_TYPE_TEXT_IMAGE,
                     "use_hashtags": False,
                     "use_emojis": True,
                     "use_link": False,
                     "use_default_title": True,
                     "use_default_content": False,
+                    "platform_shared": constants.TWITTER,
                 },
                 {
                     "social_id": "dg5h71fghfgh",
-                    "content": last_tweet,
+                    "content": "handmade tw title",
                     "post_type": constants.POST_TYPE_THREAD,
                     "use_hashtags": True,
                     "use_link": True,
                     "use_emojis": False,
                     "use_default_title": False,
                     "use_default_content": False,
+                    "platform_shared": constants.TWITTER,
                 },
             ]
         }
+        SocialPosting().share_content(
+            constants.TERM_FOR_CONTENT,
+            [
+                {"platform_shared": constants.FACEBOOK, "post_type": constants.POST_TYPE_TEXT_IMAGE},
+                {"platform_shared": constants.TWITTER, "post_type": constants.POST_TYPE_TEXT_IMAGE},
+            ],
+        )
+        assert 3 == TermSharedHistorial.objects.all().count()
+        assert 1 == TermSharedHistorial.objects.filter(platform_shared=constants.FACEBOOK).count()
+        assert 2 == TermSharedHistorial.objects.filter(platform_shared=constants.TWITTER).count()
+        assert 2 == TermSharedHistorial.objects.filter(post_type=constants.POST_TYPE_TEXT_IMAGE).count()
+        assert (
+            1
+            == TermSharedHistorial.objects.filter(
+                platform_shared=constants.TWITTER,
+                post_type=constants.POST_TYPE_TEXT_IMAGE,
+            ).count()
+        )
+        assert (
+            1
+            == TermSharedHistorial.objects.filter(
+                platform_shared=constants.TWITTER,
+                post_type=constants.POST_TYPE_THREAD,
+            ).count()
+        )
 
     def test_prepare_data_to_be_saved(self):
+        hashtag = DjangoTestingModel.create(Hashtag)
+        socialmedia_post_response = {
+            "social_id": "64dsf8g4dfg45dfh",
+            "title": "handmade fb title",
+            "content": "face content",
+            "post_type": constants.POST_TYPE_TEXT_IMAGE,
+            "use_hashtags": True,
+            "use_emojis": True,
+            "use_link": True,
+            "use_default_title": True,
+            "use_default_content": True,
+            "platform_shared": constants.FACEBOOK,
+        }
         socialmedia_content = {
             "default_title": self.default_title,
             "title": "term title Default title",
@@ -134,15 +170,45 @@ class TestSocialPosting(TestCase):
             "content_shared": self.term,
             "media": self.term.image,
             "shared_model_historial": TermSharedHistorial,
-            "hashtags_list": [],
+            "hashtags_list": [hashtag],
             "hashtags": "",
         }
-        SocialPosting().prepare_data_to_be_saved(
-            # socialmedia_post_response,
-            # platform_shared,
-            # link,
+        data_to_be_saved = SocialPosting().prepare_data_to_be_saved(
+            socialmedia_post_response,
             socialmedia_content,
         )
+        expected_data = {
+            "post_type": constants.POST_TYPE_TEXT_IMAGE,
+            "platform_shared": constants.FACEBOOK,
+            "social_id": "64dsf8g4dfg45dfh",
+            "title": "handmade fb title",
+            "content": "face content",
+            "hashtags_list": [hashtag],
+            "title_emojis": [],
+            "default_title": self.default_title,
+            "default_content": None,
+        }
+        assert expected_data == data_to_be_saved
 
     def test_save_content_posted(self):
-        pass
+        assert 0 == TermSharedHistorial.objects.all().count()
+        hashtag = DjangoTestingModel.create(Hashtag)
+        expected_data = {
+            "post_type": constants.POST_TYPE_TEXT_IMAGE,
+            "platform_shared": constants.FACEBOOK,
+            "social_id": "64dsf8g4dfg45dfh",
+            "title": "handmade fb title",
+            "content": "face content",
+            "hashtags_list": [hashtag],
+            "title_emojis": [],
+            "default_title": self.default_title,
+            "default_content": None,
+        }
+        SocialPosting().save_content_posted(
+            content_shared=self.term,
+            shared_model_historial=TermSharedHistorial,
+            **expected_data,
+        )
+
+        assert 1 == TermSharedHistorial.objects.all().count()
+        assert 1 == TermSharedHistorial.objects.filter(platform_shared=constants.FACEBOOK).count()
