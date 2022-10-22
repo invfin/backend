@@ -1,4 +1,6 @@
 from django.contrib.auth import get_user_model
+from django.contrib import messages
+from django.urls import reverse
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import (
@@ -49,6 +51,7 @@ class BaseWrittenContent(BaseCreateUpdateTimeModel, CommonMixin):
     author = ForeignKey(User, on_delete=SET_NULL, null=True)
     checkings = JSONField(default=default_dict)
     website_email = GenericRelation("web.WebsiteEmail", related_query_name="website_email")
+    # notifications = GenericRelation("general.Notification")
 
     class Meta:
         abstract = True
@@ -158,7 +161,10 @@ class BaseGenericModels(BaseCreateUpdateTimeModel, BaseToAllMixin):
         return str(self.id)
 
     def get_absolute_url(self):
-        return self.object.get_absolute_url()
+        if self.object:
+            return self.object.get_absolute_url()
+        else:
+            return reverse("users:user_inicio")
 
 
 class BaseFavoritesHistorial(BaseCreateUpdateTimeModel):

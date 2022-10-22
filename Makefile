@@ -44,9 +44,6 @@ shell:
 up-d:
 	docker-compose -f local.yml up invfin
 
-dbshell:
-	docker-compose -f local.yml run --rm invfin python -u manage.py dbshell --settings=config.settings.final
-
 log:
 	docker-compose -f local.yml logs -f invfin
 
@@ -59,9 +56,6 @@ migrate:
 allmig:
 	docker-compose -f local.yml run --rm invfin python -u manage.py makemigrations $(ar) --settings=config.settings.final
 	docker-compose -f local.yml run --rm invfin python -u manage.py migrate $(ar) --settings=config.settings.final
-
-shell_plus:
-	docker-compose -f local.yml run --rm invfin ./manage.py shell_plus --settings=config.settings.final
 
 manage:
 	docker-compose -f local.yml run --rm invfin ./manage.py $(ar) --settings=config.settings.final
@@ -79,14 +73,6 @@ run:
 
 pip:
 	docker exec -ti invfin_local_invfin pip install $(ar)
-
-pdb:
-	docker-compose -f local.yml stop invfin
-	docker-compose -f local.yml run --rm --service-ports invfin
-
-pdb_manage:
-	docker-compose -f local.yml stop invfin
-	docker-compose -f local.yml run --rm --service-ports invfin  ./manage.py $(ar) --settings=config.settings.final
 
 requirements:
 	docker-compose -f local.yml run invfin /requirements.sh "temp_venv/bin/pip"
@@ -116,9 +102,6 @@ restore:
 	docker-compose -f local.yml up -d postgres
 	docker-compose -f local.yml exec postgres restore $(ar)
 
-auto_restore:
-	auto_backup_import
-
 # Documentation
 docs_check:
 	docker-compose -f local.yml run --rm invfin ./manage.py generate_swagger --settings=config.settings.final
@@ -142,44 +125,23 @@ pycov:
 	docker-compose -f local.yml run --rm invfin coverage report
 
 # Style
-local/flake8:
-	flake8
-
-local/isort:
-	isort .
-
-local/mypy:
-	mypy ${MYPY_FOLDERS}
-
-local/isort_check:
-	isort --df -c .
-
-local/black:
-	black ${BLACK_FOLDERS}
-
-local/black_check:
-	black ${BLACK_FOLDERS} --check
-
-local/format:
-	local/isort local/black local/flake8 local/mypy
-
 format:
-	docker-compose -f local.yml run --rm invfin make local/format
+	isort . black ${BLACK_FOLDERS} flake8 mypy ${MYPY_FOLDERS}
 
 isort_check:
-	docker-compose -f local.yml run --rm invfin make local/isort_check
+	docker-compose -f local.yml run --rm invfin make isort --df -c .
 
 black_check:
-	docker-compose -f local.yml run --rm invfin black local/black_check
+	docker-compose -f local.yml run --rm invfin make black ${BLACK_FOLDERS} --check
 
 flake8:
-	docker-compose -f local.yml run --rm invfin make local/flake8
+	docker-compose -f local.yml run --rm invfin make flake8
 
 isort:
-	docker-compose -f local.yml run --rm invfin make local/isort
+	docker-compose -f local.yml run --rm invfin make isort .
 
 black:
-	docker-compose -f local.yml run --rm invfin local/black
+	docker-compose -f local.yml run --rm invfin make black ${BLACK_FOLDERS}
 
 mypy:
-	docker-compose -f local.yml run --rm invfin local/mypy
+	docker-compose -f local.yml run --rm invfin make mypy ${MYPY_FOLDERS}

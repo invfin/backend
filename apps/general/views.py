@@ -106,10 +106,10 @@ def suggest_list_search(request):
 
 
 def search_results(request):
+    redirect_to = request.META.get("HTTP_REFERER")
     if request.POST:
         term = request.POST["term"]
         query = term[:7]
-        redirect_to = request.META.get("HTTP_REFERER")
         if query == "Empresa":
             empresa_ticker = term.split(" [")[1]
             ticker = empresa_ticker[:-1]

@@ -71,8 +71,9 @@ class BaseToAllMixin:
 
     def save_unique_field(self, field, value, extra: int = None):
         max_length = self._meta.get_field(field).max_length
+        value = slugify(value)
         if extra:
-            value = slugify(f"{value}-{extra}")
+            value = f"{value}-{extra}"
         if len(value) > max_length:
             value = value[: max_length + 1]
         if self.__class__.objects.filter(**{field: value}).exists():

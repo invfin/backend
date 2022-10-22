@@ -100,6 +100,9 @@ SIDE_MENU = [
             {
                 "model": "general.Country",
             },
+            {
+                "model": "general.Notification",
+            },
         ),
     },
     {

@@ -70,7 +70,7 @@ class Question(BaseWrittenContent):
 
     @property
     def related_answers(self):
-        return self.question_answers.all()
+        return self.answers.all()
 
     @property
     def related_comments(self):
@@ -78,7 +78,7 @@ class Question(BaseWrittenContent):
 
     @property
     def accepted_answer(self):
-        return self.question_answers.filter(is_accepted=True).first()
+        return self.answers.filter(is_accepted=True).first()
 
     def add_answer(self, author: User, answer_content: str, is_accepted: bool = False):
         answer = Answer.objects.create(
@@ -153,7 +153,7 @@ class Answer(Model, CommonMixin):
         Question,
         on_delete=CASCADE,
         blank=False,
-        related_name="question_answers",
+        related_name="answers",
     )
     is_accepted = BooleanField(
         default=False,
