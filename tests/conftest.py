@@ -387,7 +387,7 @@
 #     """
 #     with django_db_blocker.unblock():
 #         yearly_income_statement = DjangoTestingModel.create(
-#             IncomeStatement, is_ttm=False, compny=clean_company, period=period_for_year
+#             IncomeStatement, is_ttm=False, company=clean_company, period=period_for_year
 #         )
 #         yield yearly_income_statement
 #         yearly_income_statement.delete()
@@ -401,7 +401,7 @@
 #     """
 #     with django_db_blocker.unblock():
 #         yearly_balance_sheet = DjangoTestingModel.create(
-#             BalanceSheet, is_ttm=False, compny=clean_company, period=period_for_year
+#             BalanceSheet, is_ttm=False, company=clean_company, period=period_for_year
 #         )
 #         yield yearly_balance_sheet
 #         yearly_balance_sheet.delete()
@@ -415,7 +415,7 @@
 #     """
 #     with django_db_blocker.unblock():
 #         yearly_cashflow_statement = DjangoTestingModel.create(
-#             CashflowStatement, is_ttm=False, compny=clean_company, period=period_for_year
+#             CashflowStatement, is_ttm=False, company=clean_company, period=period_for_year
 #         )
 #         yield yearly_cashflow_statement
 #         yearly_cashflow_statement.delete()

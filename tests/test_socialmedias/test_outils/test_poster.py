@@ -13,11 +13,7 @@ from apps.escritos.models import Term
 from apps.public_blog.models import PublicBlog, WritterProfile
 from apps.preguntas_respuestas.models import Question
 from apps.socialmedias.models import (
-    BlogSharedHistorial,
-    CompanySharedHistorial,
     Hashtag,
-    NewsSharedHistorial,
-    QuestionSharedHistorial,
     TermSharedHistorial,
 )
 from apps.socialmedias.socialposter.facepy import Facebook
@@ -48,7 +44,7 @@ class TestSocialPosting(TestCase):
             Company, name="Apple", ticker="AAPL", description="long ass description"
         )
         DjangoTestingModel.create(IncomeStatement, company=cls.clean_company)
-        user = DjangoTestingModel.create(get_user_model(), username="lucas")
+        user = DjangoTestingModel.create(get_user_model(), id=1, username="lucas")
         writter_profile = DjangoTestingModel.create(
             WritterProfile, user=user, host_name="lucas", long_description="long ass description for writter"
         )

@@ -6,8 +6,10 @@ from django.urls import reverse
 from django.db import connection
 from django.test.utils import CaptureQueriesContext
 
+from rest_framework.test import APITestCase
+
 from apps.general import constants as general_constants
-from apps.api.mixins import BaseAPIViewTest
+from tests.utils import BaseAPIViewTest
 from apps.empresas.models import (
     Company,
     IncomeStatement,
@@ -24,6 +26,7 @@ class TestExcelAPIIncome(BaseAPIViewTest):
 
     @classmethod
     def setUpTestData(cls):
+        super().setUpTestData()
         cls.clean_company = DjangoTestingModel.create(
             Company,
             name="Intel",
@@ -37,7 +40,7 @@ class TestExcelAPIIncome(BaseAPIViewTest):
         )
         cls.period_for_year = DjangoTestingModel.create(Period, year=2022, period=general_constants.PERIOD_FOR_YEAR)
         cls.yearly_income_statement = DjangoTestingModel.create(
-            IncomeStatement, is_ttm=False, compny=cls.clean_company, period=cls.period_for_year
+            IncomeStatement, is_ttm=False, company=cls.clean_company, period=cls.period_for_year
         )
 
     # def test_number_of_queries(self):
@@ -84,6 +87,7 @@ class TestExcelAPIBalance(BaseAPIViewTest):
 
     @classmethod
     def setUpTestData(cls):
+        super().setUpTestData()
         cls.clean_company = DjangoTestingModel.create(
             Company,
             name="Intel",
@@ -97,7 +101,7 @@ class TestExcelAPIBalance(BaseAPIViewTest):
         )
         cls.period_for_year = DjangoTestingModel.create(Period, year=2022, period=general_constants.PERIOD_FOR_YEAR)
         cls.yearly_balance_sheet = DjangoTestingModel.create(
-            BalanceSheet, is_ttm=False, compny=cls.clean_company, period=cls.period_for_year
+            BalanceSheet, is_ttm=False, company=cls.clean_company, period=cls.period_for_year
         )
 
     def test_success_response(self):
@@ -158,6 +162,7 @@ class TestExcelAPICashflow(BaseAPIViewTest):
 
     @classmethod
     def setUpTestData(cls):
+        super().setUpTestData()
         cls.clean_company = DjangoTestingModel.create(
             Company,
             name="Intel",
@@ -171,7 +176,7 @@ class TestExcelAPICashflow(BaseAPIViewTest):
         )
         cls.period_for_year = DjangoTestingModel.create(Period, year=2022, period=general_constants.PERIOD_FOR_YEAR)
         cls.yearly_cashflow_statement = DjangoTestingModel.create(
-            CashflowStatement, is_ttm=False, compny=cls.clean_company, period=cls.period_for_year
+            CashflowStatement, is_ttm=False, company=cls.clean_company, period=cls.period_for_year
         )
 
     def test_success_response(self):

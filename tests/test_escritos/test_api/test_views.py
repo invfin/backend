@@ -1,14 +1,20 @@
 import json
 
-from apps.api.mixins import BaseAPIViewTest
+from rest_framework.test import APITestCase
+
+from tests.utils import BaseAPIViewTest
 
 
 class TestAllTermsAPIView(BaseAPIViewTest):
     path_name = "api:all_terms_api"
     url_path = "/lista-terminos/"
 
-    def test_success_response(self, client, various_terms):
-        response = client.get(self.full_endpoint, format="json")
+    @classmethod
+    def setUpTestData(cls) -> None:
+        super().setUpTestData()
+
+    def test_success_response(self):
+        response = self.client.get(self.full_endpoint, format="json")
         expected_data = [
             {
                 "id": 1,
@@ -46,16 +52,17 @@ class TestAllTermsAPIView(BaseAPIViewTest):
         assert json.loads(json.dumps(response.data))[0] == expected_data
 
 
-from django.test import TestCase
-
-
 class TestTermAPIView(BaseAPIViewTest):
     path_name = "api:term_api"
     url_path = "/termino/"
     params = {"id": 1}
 
-    def test_success_response(self, client, term_and_content):
-        response = client.get(self.full_endpoint, format="json")
+    @classmethod
+    def setUpTestData(cls) -> None:
+        super().setUpTestData()
+
+    def test_success_response(self):
+        response = self.client.get(self.full_endpoint, format="json")
         expected_data = {
             "id": 1,
             "titulo": "Precio valor contable (P/B)",
@@ -123,7 +130,7 @@ class TestTermAPIView(BaseAPIViewTest):
         assert json.loads(json.dumps(response.data))[0] == expected_data
 
         self.params = {"slug": "precio-valor-en-libros"}
-        response = client.get(self.full_endpoint, format="json")
+        response = self.client.get(self.full_endpoint, format="json")
         expected_data = {
             "id": 1,
             "titulo": "Precio valor contable (P/B)",

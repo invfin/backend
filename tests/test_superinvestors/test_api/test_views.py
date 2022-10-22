@@ -2,9 +2,10 @@ import json
 
 from bfet import DjangoTestingModel
 
+from rest_framework.test import APITestCase
 from django.contrib.auth import get_user_model
 
-from apps.api.mixins import BaseAPIViewTest
+from tests.utils import BaseAPIViewTest
 from apps.super_investors.models import Superinvestor
 from tests.data.superinvestors_data import LIST_SUPERINVESTORS, SINGLE_SUPERINVESTOR
 
