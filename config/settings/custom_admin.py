@@ -103,7 +103,31 @@ SIDE_MENU = [
         ),
     },
     {
-        "label": "Socialmedia",
+        "label": "Socialmedia shared",
+        "icon": "fas fa-pen-nib",
+        "models": (
+            {
+                "model": "socialmedias.CompanySharedHistorial",
+            },
+            {
+                "model": "socialmedias.BlogSharedHistorial",
+            },
+            {
+                "model": "socialmedias.NewsSharedHistorial",
+            },
+            {
+                "model": "socialmedias.TermSharedHistorial",
+            },
+            {
+                "model": "socialmedias.ProfileSharedHistorial",
+            },
+            {
+                "model": "socialmedias.QuestionSharedHistorial",
+            },
+        ),
+    },
+    {
+        "label": "Content",
         "icon": "fas fa-pen-nib",
         "models": (
             {

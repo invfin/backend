@@ -5,12 +5,21 @@ from bfet import DjangoTestingModel
 from django.contrib.auth import get_user_model
 
 from apps.api.mixins import BaseAPIViewTest
+from apps.super_investors.models import Superinvestor
+from tests.data.superinvestors_data import LIST_SUPERINVESTORS, SINGLE_SUPERINVESTOR
 
 User = get_user_model()
+
 
 class TestAllSuperinvestorsAPIView(BaseAPIViewTest):
     path_name = "api:superinvestors_lista_superinversores"
     url_path = "/lista-superinversores/"
+
+    @classmethod
+    def setUpTestData(cls) -> None:
+        super().setUpTestData()
+        for investor in LIST_SUPERINVESTORS:
+            DjangoTestingModel.create(Superinvestor, **investor)
 
     def test_success_response(self):
         response = self.client.get(self.full_endpoint, format="json")
@@ -31,13 +40,18 @@ class TestAllSuperinvestorsAPIView(BaseAPIViewTest):
                 "slug": "dennis-hong-shawspring-partners",
             },
         ]
-        assert json.loads(json.dumps(response.data))[0] == expected_data
+        assert json.loads(json.dumps(response.data)) == expected_data
 
 
 class TestSuperinvestorActivityAPIView(BaseAPIViewTest):
     path_name = "api:superinvestors_lista_movimientos"
     url_path = "/lista-movimientos/"
     params = {"slug": ""}
+
+    @classmethod
+    def setUpTestData(cls) -> None:
+        super().setUpTestData()
+        DjangoTestingModel.create(Superinvestor, **SINGLE_SUPERINVESTOR)
 
     def test_success_response(self):
         response = self.client.get(self.full_endpoint, format="json")
@@ -49,6 +63,10 @@ class TestSuperinvestorHistoryAPIView(BaseAPIViewTest):
     path_name = "api:superinvestors_lista_historial"
     url_path = "/lista-historial/"
     params = {"slug": ""}
+
+    @classmethod
+    def setUpTestData(cls) -> None:
+        super().setUpTestData()
 
     def test_success_response(self):
         response = self.client.get(self.full_endpoint, format="json")

@@ -72,7 +72,7 @@ class ContentCreation:
                 The list of hashtag fetched for the socialmedia and a string returning the hashtags with # ready to publish
         """
         hashtags_list = Hashtag.objects.random_hashtags(platform)
-        if need_slice:
+        if need_slice and hashtags_list:
             # To avoid having hashtags duplicated we pass it through a set
             hashtags_list = list(set(random.choices(hashtags_list, k=max_slice)))
         hashtags = ""

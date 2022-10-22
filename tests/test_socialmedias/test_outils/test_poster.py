@@ -19,6 +19,15 @@ from apps.socialmedias.models import (
     QuestionSharedHistorial,
     TermSharedHistorial,
 )
+from apps.socialmedias.socialposter.facepy import Facebook
+from apps.socialmedias.socialposter.tweetpy import Twitter
+from apps.socialmedias.outils.content_creation import (
+    CompanyContentCreation,
+    CompanyNewsContentCreation,
+    TermContentCreation,
+    QuestionContentCreation,
+    PublicBlogContentCreation,
+)
 from apps.socialmedias.outils.poster import SocialPosting
 from apps.socialmedias import constants
 from apps.socialmedias.models import Emoji, DefaultTilte
@@ -45,99 +54,95 @@ class TestSocialPosting(TestCase):
         cls.term = DjangoTestingModel.create(Term, title="term title", resume="term resume")
         cls.blog = DjangoTestingModel.create(PublicBlog, title="blog title", resume="blog resume", author=user)
         cls.question = DjangoTestingModel.create(Question, title="question title", author=user)
-        cls.emoji = DjangoTestingModel.create(Emoji)
-        cls.default_title = DjangoTestingModel.create(DefaultTilte, title="Default title")
+        cls.fb_emoji = DjangoTestingModel.create(Emoji)
+        cls.default_title = DjangoTestingModel.create(DefaultTilte, title="Default title", for_content=constants.ALL)
 
-    def test_create_link(self):
-        assert "http://example.com:8000/screener/analisis-de/AAPL/" == SocialPosting().create_link(self.clean_company)
+    def test_get_creator(self):
+        for content, content_creator in [
+            (constants.QUESTION_FOR_CONTENT, QuestionContentCreation),
+            (constants.NEWS_FOR_CONTENT, CompanyNewsContentCreation),
+            (constants.TERM_FOR_CONTENT, TermContentCreation),
+            (constants.PUBLIC_BLOG_FOR_CONTENT, PublicBlogContentCreation),
+            (constants.COMPANY_FOR_CONTENT, CompanyContentCreation),
+        ]:
+            with self.subTest(content):
+                assert content_creator == SocialPosting().get_creator(content)
 
-    def test_create_title(self):
-        emojis = DjangoTestingModel.create(Emoji, 3)
-        default_title = DjangoTestingModel.create(DefaultTilte, title="Default title")
-        result_data = SocialPosting().create_title("Test title")
-        for emoji in emojis:
-            assert (emoji.emoji in result_data["title"]) is True
-            assert (emoji in result_data["emojis"]) is True
-        assert ("Test title" in result_data["title"]) is True
-        assert ("Default title" in result_data["title"]) is True
-        assert default_title == result_data["default_title"]
-        assert list(result_data.keys()) == ["default_title", "emojis", "title"]
+    def test_get_socialmedia(self):
+        assert isinstance(SocialPosting().get_socialmedia(constants.FACEBOOK), Facebook)
+        assert isinstance(SocialPosting().get_socialmedia(constants.TWITTER), Twitter)
 
-    @poster_vcr.use_cassette(filter_query_parameters=["token"])
-    @patch("apps.translate.google_trans_new.google_translator.translate")
-    def test_news_content(self, translated_data):
-        translated_data.return_value = "noticia traducida"
-        news_content = SocialPosting().news_content(self.clean_company)
-        assert news_content == {
-            "title": "noticia traducida",
-            "description": "noticia traducida",
-            "link": "http://example.com:8000/screener/analisis-de/AAPL/",
-            "company_related": self.clean_company,
-            "shared_model_historial": NewsSharedHistorial,
+    @patch("apps.socialmedias.socialposter.facepy.Facebook.post")
+    @patch("apps.socialmedias.socialposter.tweetpy.Twitter.post")
+    def test_share_content(self, mock_facepy, mock_tweetpy):
+        SocialPosting().share_content(
+            constants.TERM_FOR_CONTENT,
+            [
+                {"platform_shared": constants.FACEBOOK, "post_type": constants.POST_TYPE_TEXT_IMAGE},
+                {"platform_shared": constants.TWITTER, "post_type": constants.POST_TYPE_TEXT_IMAGE},
+            ],
+        )
+        mock_facepy.return_value = {
+            "post_response": [
+                {
+                    "social_id": "64dsf8g4dfg45dfh",
+                    "title": title,
+                    "content": "face content",
+                    "post_type": constants.POST_TYPE_TEXT_IMAGE,
+                    "use_hashtags": True,
+                    "use_emojis": True,
+                    "use_link": True,
+                    "use_default_title": True,
+                    "use_default_content": True,
+                }
+            ]
+        }
+        mock_tweetpy.return_value = {
+            "post_response": [
+                {
+                    "social_id": "1dfg1661dh4fg",
+                    "content": title,
+                    "post_type": constants.POST_TYPE_TEXT_IMAGE,
+                    "use_hashtags": False,
+                    "use_emojis": True,
+                    "use_link": False,
+                    "use_default_title": True,
+                    "use_default_content": False,
+                },
+                {
+                    "social_id": "dg5h71fghfgh",
+                    "content": last_tweet,
+                    "post_type": constants.POST_TYPE_THREAD,
+                    "use_hashtags": True,
+                    "use_link": True,
+                    "use_emojis": False,
+                    "use_default_title": False,
+                    "use_default_content": False,
+                },
+            ]
         }
 
-    def test_company_content(self):
-        with vcr.use_cassette("cassettes/company/retrieve/test_get_current_price.yaml"):
-            company_poster = SocialPosting().company_content(self.clean_company)
-        assert company_poster == {
-            "title": "Apple",
-            "description": f"{self.clean_company.short_introduction} {self.clean_company.description}",
-            "link": "http://example.com:8000/screener/analisis-de/AAPL/",
-            "content_shared": self.clean_company,
-            "shared_model_historial": CompanySharedHistorial,
-        }
-
-    def test_question_content(self):
-        term_poster = SocialPosting().question_content(self.question)
-        assert term_poster == {
-            "title": self.question.title,
-            "description": self.question.description,
-            "link": FULL_DOMAIN + self.question.get_absolute_url(),
-            "content_shared": self.question,
-            "shared_model_historial": QuestionSharedHistorial,
-        }
-
-    def test_term_content(self):
-        term_poster = SocialPosting().term_content(self.term)
-        assert term_poster == {
-            "title": self.term.title,
-            "description": self.term.resume,
-            "link": FULL_DOMAIN + self.term.get_absolute_url(),
+    def test_prepare_data_to_be_saved(self):
+        socialmedia_content = {
+            "default_title": self.default_title,
+            "title": "term title Default title",
+            "content": (
+                f"{self.term.resume} <br>Si quieres conocer más a fondo puedes leer la definición entera"
+                f" http://example.com:8000/{self.term.slug}. <br>Estos son los puntos claves que encontrarás:"
+            ),
+            f"link": "http://example.com:8000/{self.term.slug}",
             "content_shared": self.term,
+            "media": self.term.image,
             "shared_model_historial": TermSharedHistorial,
+            "hashtags_list": [],
+            "hashtags": "",
         }
+        SocialPosting().prepare_data_to_be_saved(
+            # socialmedia_post_response,
+            # platform_shared,
+            # link,
+            socialmedia_content,
+        )
 
-    def test_publicblog_content(self):
-        term_poster = SocialPosting().publicblog_content(self.blog)
-        assert term_poster == {
-            "title": self.blog.title,
-            "description": self.blog.resume,
-            "link": self.blog.custom_url,
-            "content_shared": self.blog,
-            "shared_model_historial": BlogSharedHistorial,
-        }
-
-    # @poster_vcr.use_cassette(filter_post_data_parameters=["access_token"])
-    # def test_posting_specific_term_on_facebook(self):
-    #     SocialPosting().share_content(
-    #         constants.TERM,
-    #         [
-    #             {"platform": constants.FACEBOOK, "post_type": constants.POST_TYPE_TEXT},
-    #         ],
-    #         self.escrito.term,
-    #     )
-
-    # @poster_vcr.use_cassette(filter_post_data_parameters=["access_token"])
-    # def test_posting_specific_term_no_resume_on_facebook(self):
-    #     SocialPosting().share_content(
-    #         constants.TERM,
-    #         [
-    #             {"platform": constants.FACEBOOK, "post_type": constants.POST_TYPE_TEXT},
-    #         ],
-    #         self.escrito.empty_term,
-    #     )
-
-    # def test_clean_description(self):
-    #     title, link, description = SocialPosting(QuestionSharedHistorial, self.question).generate_content()
-    #     description = strip_tags(description)
-    #     assert description == 'masidf sdbf sdf sfg fdïfdsf  hbsdf ónjbfds ds ds sdfjhfb  fusd fvgsvd fsvd '
+    def test_save_content_posted(self):
+        pass

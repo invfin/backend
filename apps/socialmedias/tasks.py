@@ -8,7 +8,7 @@ from .outils.poster import SocialPosting
 @shared_task(autoretry_for=(Exception,), max_retries=3)
 def socialmedia_share_company():
     SocialPosting().share_content(
-        constants.COMPANY,
+        constants.COMPANY_FOR_CONTENT,
         [
             {"platform_shared": constants.FACEBOOK, "post_type": constants.POST_TYPE_TEXT_IMAGE},
             {"platform_shared": constants.TWITTER, "post_type": constants.POST_TYPE_TEXT_IMAGE},
@@ -19,7 +19,7 @@ def socialmedia_share_company():
 @shared_task(autoretry_for=(Exception,), max_retries=3)
 def socialmedia_share_news():
     SocialPosting().share_content(
-        constants.NEWS,
+        constants.NEWS_FOR_CONTENT,
         [
             {"platform_shared": constants.FACEBOOK, "post_type": constants.POST_TYPE_TEXT_IMAGE},
             {"platform_shared": constants.TWITTER, "post_type": constants.POST_TYPE_TEXT_IMAGE},
@@ -30,7 +30,7 @@ def socialmedia_share_news():
 @shared_task(autoretry_for=(Exception,), max_retries=3)
 def socialmedia_share_term():
     SocialPosting().share_content(
-        constants.TERM,
+        constants.TERM_FOR_CONTENT,
         [
             {"platform_shared": constants.FACEBOOK, "post_type": constants.POST_TYPE_TEXT_IMAGE},
             {"platform_shared": constants.TWITTER, "post_type": constants.POST_TYPE_TEXT_IMAGE},
@@ -41,7 +41,7 @@ def socialmedia_share_term():
 @shared_task(autoretry_for=(Exception,), max_retries=3)
 def socialmedia_share_blog():
     SocialPosting().share_content(
-        constants.PUBLIC_BLOG,
+        constants.PUBLIC_BLOG_FOR_CONTENT,
         [
             {"platform_shared": constants.FACEBOOK, "post_type": constants.POST_TYPE_TEXT_IMAGE},
             {"platform_shared": constants.TWITTER, "post_type": constants.POST_TYPE_TEXT_IMAGE},
@@ -52,7 +52,7 @@ def socialmedia_share_blog():
 @shared_task(autoretry_for=(Exception,), max_retries=3)
 def socialmedia_share_question():
     SocialPosting().share_content(
-        constants.QUESTION,
+        constants.QUESTION_FOR_CONTENT,
         [
             {"platform_shared": constants.FACEBOOK, "post_type": constants.POST_TYPE_TEXT_IMAGE},
             {"platform_shared": constants.TWITTER, "post_type": constants.POST_TYPE_TEXT_IMAGE},

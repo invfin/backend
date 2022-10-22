@@ -19,13 +19,11 @@ class CompanyContentCreation(ContentCreation):
     If for twitter use $ in front of the ticker
     """
 
-    def get_object(self, object_filter) -> Type:
+    def get_object(self, object_filter: Dict = {}) -> Type:
         return Company.objects.get_random_most_visited_clean_company(object_filter)
 
-    def create_content(self, **kwargs) -> Dict:
-        content = f"{self.object.short_introduction} {self.object.description}"
-        content_dict = {"content": content}
-        return content_dict
+    def get_object_content(self, **kwargs) -> str:
+        return f"{self.object.short_introduction} {self.object.description}"
 
     def get_object_title(self) -> str:
         if self.platform == socialmedias_constants.TWITTER:
@@ -37,7 +35,7 @@ class CompanyNewsContentCreation(CompanyContentCreation):
     shared_model_historial = NewsSharedHistorial
     for_content = [socialmedias_constants.NEWS]
 
-    def get_new_object(self, object_filter):
+    def get_new_object(self, object_filter: Dict = {}):
         if object_filter and "exclude" in object_filter:
             object_filter["exclude"]["id__in"].append(self.object.id)
         else:
