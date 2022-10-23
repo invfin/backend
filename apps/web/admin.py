@@ -1,24 +1,32 @@
 from django.contrib import admin
 
-from .models import (
+from apps.web.models import (
     WebsiteEmail,
     WebsiteEmailsType,
     WebsiteEmailTrack,
     WebsiteLegalPage,
     Promotion,
     PromotionCampaign,
-    UserAndVisiteurCategory,
+    UsersCategory,
 )
 
 
-@admin.register(UserAndVisiteurCategory)
-class UserAndVisiteurCategoryAdmin(admin.ModelAdmin):
+@admin.register(UsersCategory)
+class UsersCategoryAdmin(admin.ModelAdmin):
     list_display = [
         "id",
         "name",
         "slug",
         "name_for_user",
         "show_to_user",
+    ]
+    list_editable = [
+        "name_for_user",
+        "show_to_user",
+    ]
+    filter_horizontal = [
+        "email_type_related",
+        "users",
     ]
 
 

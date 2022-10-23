@@ -12,6 +12,6 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         checking = options["checking"]
         add_new_default_check(checking, DEFAULT_JSON_CHECKS_FILE)
-        for company in Term.objects.all():
-            company.checkings.update({f"has_{checking}": {"state": "no", "time": ""}})
-            company.save(update_fields=["checkings"])
+        for term in Term.objects.all():
+            term.checkings.update({f"has_{checking}": {"state": "no", "time": ""}})
+            term.save(update_fields=["checkings"])

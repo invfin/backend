@@ -13,6 +13,7 @@ from apps.escritos.models import Term
 from apps.general import constants
 from apps.web.models import WebsiteEmail, WebsiteEmailTrack
 from apps.web import constants as web_constants
+
 User = get_user_model()
 
 
@@ -20,6 +21,12 @@ class EmailTest(TestCase):
     @classmethod
     def setUpTestData(cls) -> None:
         cls.user = DjangoTestingModel.create(User, email="test@user.com")
+
+    def test_html_link(self):
+        assert '<a href="link" target="_blank">Text</a>' == EmailingSystem.html_link("link", "Text")
+        assert '<a href="http:example.com:8000link" target="_blank">Text</a>' == EmailingSystem.html_link(
+            "link", "Text", True
+        )
 
     def test__prepare_email_track(self):
         web_email = DjangoTestingModel.create(WebsiteEmail, id=1)
@@ -41,9 +48,9 @@ class EmailTest(TestCase):
             "id": 1,
         }
         email_dict = {
-            "subject": 'Subject here',
-            "sender": 'EMAIL_DEFAULT@example.com',  # Not always necessary
-            **email_info_image_tag_tracker
+            "subject": "Subject here",
+            "sender": "EMAIL_DEFAULT@example.com",  # Not always necessary
+            **email_info_image_tag_tracker,
         }
         message, sender = EmailingSystem(constants.EMAIL_FOR_NOTIFICATION)._prepare_email(email_dict, self.user)
         assert "InvFin <EMAIL_DEFAULT@example.com>" == sender
@@ -66,17 +73,13 @@ class EmailTest(TestCase):
             "id": 1,
         }
         email_dict = {
-            "subject": 'Subject here',
-            "sender": 'EMAIL_DEFAULT@example.com',  # Not always necessary
-            **email_info_image_tag_tracker
+            "subject": "Subject here",
+            "sender": "EMAIL_DEFAULT@example.com",  # Not always necessary
+            **email_info_image_tag_tracker,
         }
         email_machine_response = email_machine._prepare_body(email_dict, self.user)
         web_email_track = WebsiteEmailTrack.objects.get(email_related=web_email)
-        expected_result = {
-            **email_dict,
-            "user": self.user,
-            "image_tag": web_email_track.encoded_url
-        }
+        expected_result = {**email_dict, "user": self.user, "image_tag": web_email_track.encoded_url}
         assert expected_result == email_machine_response
 
     def test_enviar_email(self):
@@ -87,24 +90,24 @@ class EmailTest(TestCase):
             "id": 1,
         }
         email_dict = {
-            "subject": 'Subject here',
-            "message": 'Message there',
-            "sender": 'EMAIL_DEFAULT@example.com',  # Not always necessary
-            **email_info_image_tag_tracker
+            "subject": "Subject here",
+            "message": "Message there",
+            "sender": "EMAIL_DEFAULT@example.com",  # Not always necessary
+            **email_info_image_tag_tracker,
         }
         # Need to check all the posibilities for EMAIL_FOR and purpose
         EmailingSystem(constants.EMAIL_FOR_NOTIFICATION).enviar_email(email_dict, self.user.id)
         assert len(mail.outbox) == 1
-        assert mail.outbox[0].subject == 'Subject here'
+        assert mail.outbox[0].subject == "Subject here"
         # assert mail.outbox[0].body == 'Message there' Improve the parsing of the body to test it
-        assert mail.outbox[0].from_email == 'InvFin <EMAIL_DEFAULT@example.com>'
+        assert mail.outbox[0].from_email == "InvFin <EMAIL_DEFAULT@example.com>"
         assert mail.outbox[0].to == ["test@user.com"]
 
     def test_simple_email(self):
         subject, message = "Subject here", "Message there"
         EmailingSystem.simple_email(subject, message)
         assert len(mail.outbox) == 1
-        assert mail.outbox[0].subject == 'Subject here'
-        assert mail.outbox[0].body == 'Message there'
-        assert mail.outbox[0].from_email == 'EMAIL_DEFAULT@example.com'
+        assert mail.outbox[0].subject == "Subject here"
+        assert mail.outbox[0].body == "Message there"
+        assert mail.outbox[0].from_email == "EMAIL_DEFAULT@example.com"
         assert mail.outbox[0].to == ["EMAIL_DEFAULT@example.com"]

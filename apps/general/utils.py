@@ -27,7 +27,7 @@ def add_new_default_check(checking, json_file):
 
 
 class ChartSerializer:
-    def generate_json(self, comparing_json: dict, items: list = None, chart_type: str = "line") -> dict:
+    def generate_json(self, comparing_json: dict, items: list = [], chart_type: str = "line") -> dict:
         labels = comparing_json["labels"]
         chartData = {"labels": labels, "fields": []}
         if not items:

@@ -11,7 +11,7 @@ from apps.general.constants import EMAIL_FOR_WEB
 from apps.escritos.models import Term
 from apps.users.models import User
 from apps.web.tasks import prepare_term_newsletter, send_periodically_email_engagement_task, send_email_engagement_task
-from apps.web.models import WebsiteEmail, WebsiteEmailsType, UserAndVisiteurCategory
+from apps.web.models import WebsiteEmail, WebsiteEmailsType, UsersCategory
 from apps.web import constants as web_constants
 
 
@@ -60,7 +60,7 @@ class TestTask(TestCase):
                 type_related=email_type,
                 whom_to_send=web_constants.WHOM_TO_SEND_EMAIL_TYPE_RELATED,
             )
-            users_category = DjangoTestingModel.create(UserAndVisiteurCategory)
+            users_category = DjangoTestingModel.create(UsersCategory)
             user_1 = DjangoTestingModel.create(User)
 
             users_category.users.add(user_1)

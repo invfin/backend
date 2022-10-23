@@ -12,6 +12,7 @@ from django.db.models import (
     Model,
     CASCADE,
 )
+from django.urls import reverse
 
 from ckeditor.fields import RichTextField
 
@@ -84,6 +85,10 @@ class WebsiteEmail(BaseNewsletter):
 
     def __str__(self) -> str:
         return self.title
+
+    @property
+    def edit_url(self):
+        return reverse("web:update_email_engagement", args=[self.id])
 
     @property
     def status_draft(self):
@@ -216,7 +221,7 @@ class Promotion(Model, BaseToAllMixin):
         return f"{self.redirect_to}?{utm_source}&{utm_medium}&{utm_campaign}&{utm_term}"
 
 
-class UserAndVisiteurCategory(Model, BaseToAllMixin):
+class UsersCategory(Model, BaseToAllMixin):
     name = CharField(max_length=800)
     slug = SlugField(max_length=800, null=True, blank=True)
     name_for_user = CharField(max_length=800, null=True, blank=True)
@@ -227,12 +232,11 @@ class UserAndVisiteurCategory(Model, BaseToAllMixin):
         related_name="users_categories",
     )
     users = ManyToManyField(User, blank=True)
-    visiteurs = ManyToManyField(Visiteur, blank=True)
 
     class Meta:
         ordering = ["-id"]
-        verbose_name = "Users and visiteurs category"
-        db_table = "users_visiteurs_categories"
+        verbose_name = "Users category"
+        db_table = "users_categories"
 
     def __str__(self) -> str:
         return self.name

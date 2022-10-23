@@ -167,7 +167,7 @@ SIDE_MENU = [
                 "model": "web.Promotion",
             },
             {
-                "model": "web.UserAndVisiteurCategory",
+                "model": "web.UsersCategory",
             },
             {
                 "model": "web.WebsiteLegalPage",

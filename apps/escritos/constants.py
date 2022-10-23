@@ -1,1 +1,1 @@
-DEFAULT_JSON_CHECKS_FILE = "apps/empresas/term-checks.json"
+DEFAULT_JSON_CHECKS_FILE = "apps/escritos/term-checks.json"

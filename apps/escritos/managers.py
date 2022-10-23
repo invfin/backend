@@ -33,15 +33,17 @@ class TermManager(BaseManager):
         models_list = list(query)
         return random.choice(models_list)
 
-    def term_ready_newsletter(self) -> Type:
+    def all_terms_ready_newsletter(self) -> QuerySet:
         return (
             self.filter_checkings("information_clean", True)
             .annotate(
                 times_sent_email=Count("website_email"),
             )
             .order_by("-times_sent_email")
-            .first()
         )
+
+    def term_ready_newsletter(self) -> Type:
+        return self.all_terms_ready_newsletter().first()
 
     def clean_terms(self):
         return self.filter(status=BASE_ESCRITO_PUBLISHED)

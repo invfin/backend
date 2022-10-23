@@ -5,6 +5,7 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.core.mail import EmailMessage, send_mail
 from django.template.loader import render_to_string
+from django.utils.safestring import mark_safe
 
 from apps.general import constants
 
@@ -72,7 +73,6 @@ class EmailingSystem:
         base_body = self._prepare_body(email, receiver)
         return sender, base_body
 
-
     def enviar_email(self, email: Dict, receiver_id: int):
         # Needs to be defined what email expects
         receiver = User.objects.get(id=receiver_id)
@@ -85,5 +85,11 @@ class EmailingSystem:
         email_message.send()
 
     @classmethod
-    def simple_email(cls, subject: str, message: str):
-        return send_mail(subject, message, settings.EMAIL_DEFAULT, [settings.EMAIL_DEFAULT])
+    def simple_email(cls, subject: str, message: str, sent_by: str = "Web-automation"):
+        return send_mail(subject, mark_safe(message), f"{sent_by} <{settings.EMAIL_DEFAULT}>", [settings.EMAIL_DEFAULT])
+
+    @classmethod
+    def html_link(cls, link: str, text: str, autocomplete_url: bool = False) -> str:
+        if autocomplete_url:
+            link = f"{settings.FULL_DOMAIN}{link}"
+        return f'<a href="{link}" target="_blank">{text}</a>'

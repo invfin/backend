@@ -90,6 +90,9 @@ class ManageTermListView(PrivateWebListView):
     template_name = "management/list_terms.html"
     context_object_name = "terms"
 
+    def get_queryset(self):
+        return self.model._default_manager.all_terms_ready_newsletter()
+
 
 class ManageTermUpdateView(PrivateWebUpdateView):
     model = Term

@@ -28,6 +28,13 @@ up-b:
 up:
 	docker-compose -f local.yml up $(ar)
 
+changepassword:
+	docker-compose -f local.yml run --rm invfin ./manage.py changepassword $(ar)
+
+admin-pass:
+	docker-compose -f local.yml run --rm invfin ./manage.py changepassword Lucas
+	docker-compose -f local.yml run --rm invfin ./manage.py changepassword Lluc
+
 buildsemi:
 	docker-compose -f semiprod.yml build
 
@@ -48,24 +55,24 @@ log:
 	docker-compose -f local.yml logs -f invfin
 
 migrations:
-	docker-compose -f local.yml run --rm invfin python -u manage.py makemigrations $(ar) --settings=config.settings.final
+	docker-compose -f local.yml run --rm invfin python -u manage.py makemigrations $(ar)
 
 migrate:
-	docker-compose -f local.yml run --rm invfin python -u manage.py migrate $(ar) --settings=config.settings.final
+	docker-compose -f local.yml run --rm invfin python -u manage.py migrate $(ar)
 
 allmig:
-	docker-compose -f local.yml run --rm invfin python -u manage.py makemigrations $(ar) --settings=config.settings.final
-	docker-compose -f local.yml run --rm invfin python -u manage.py migrate $(ar) --settings=config.settings.final
+	docker-compose -f local.yml run --rm invfin python -u manage.py makemigrations $(ar)
+	docker-compose -f local.yml run --rm invfin python -u manage.py migrate $(ar)
 
 manage:
-	docker-compose -f local.yml run --rm invfin ./manage.py $(ar) --settings=config.settings.final
+	docker-compose -f local.yml run --rm invfin ./manage.py $(ar)
 
 collectstatic:
-	docker-compose -f local.yml run --rm invfin ./manage.py collectstatic --noinput --settings=config.settings.final
+	docker-compose -f local.yml run --rm invfin ./manage.py collectstatic --noinput
 	make build ar="invfin"
 
 col-share-static:
-	docker-compose -f local.yml run --rm invfin ./manage.py collectstatic --noinput --settings=config.settings.final
+	docker-compose -f local.yml run --rm invfin ./manage.py collectstatic --noinput
 	docker-compose -f local.yml build
 
 run:
@@ -104,7 +111,7 @@ restore:
 
 # Documentation
 docs_check:
-	docker-compose -f local.yml run --rm invfin ./manage.py generate_swagger --settings=config.settings.final
+	docker-compose -f local.yml run --rm invfin ./manage.py generate_swagger
 
 # Testing
 new-test:

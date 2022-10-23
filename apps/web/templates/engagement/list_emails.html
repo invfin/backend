@@ -13,7 +13,11 @@
                 </div>
                 <div class="col ml--2">
                     <h4 class="mb-0">
-                        <a href="">{{web_email.title}}</a>
+                        {% if web_email.status_waiting or web_email.status_draft %}
+                        <a href="{% url 'web:update_email_engagement' web_email.id %}">{{web_email.title}}</a>
+                        {% else %}
+                        {{web_email.title}}
+                        {% endif %}
                         <span class="badge badge-pill badge-xs bg-{{ web_email.status.bs_color }}">
                             {{ web_email.status.status }}</span>
                     </h4>

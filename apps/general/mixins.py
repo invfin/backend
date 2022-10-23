@@ -1,3 +1,4 @@
+from typing import Any, Dict
 import uuid
 from datetime import datetime
 
@@ -7,6 +8,8 @@ from PIL import Image
 from bs4 import BeautifulSoup as bs
 from rest_framework.serializers import ModelSerializer
 
+from django.contrib.contenttypes.models import ContentType
+from django.urls import reverse
 from django.conf import settings
 from django.core.files import File
 from django.core.files.base import ContentFile
@@ -54,7 +57,28 @@ class BaseToAllMixin:
         return self._meta.object_name
 
     @property
-    def dict_for_task(self):
+    def content_type(self):
+        return ContentType.objects.get_for_model(self)
+
+    def build_admin_url(self, action: str, use_full_path: bool = True) -> str:
+        kwargs = {"object_id": self.id} if action not in ["changelist", "add"] else {}
+        path = reverse(f"admin:{self.app_label}_{self.object_name.lower()}_{action}", kwargs=kwargs)
+        if use_full_path:
+            return f"{FULL_DOMAIN}{path}"
+        return path
+
+    @property
+    def admin_urls(self) -> Dict:
+        return {
+            "changelist": self.build_admin_url("changelist"),
+            "add": self.build_admin_url("add"),
+            "history": self.build_admin_url("history"),
+            "delete": self.build_admin_url("delete"),
+            "change": self.build_admin_url("change"),
+        }
+
+    @property
+    def dict_for_task(self) -> Dict:
         return {
             "app_label": self.app_label,
             "object_name": self.object_name,
@@ -62,24 +86,29 @@ class BaseToAllMixin:
         }
 
     @property
-    def base_url_to_encode(self):
+    def base_url_to_encode(self) -> str:
         return f"{self.id}-{self.app_label}-{self.object_name}"
 
     @property
-    def encoded_url(self):
+    def encoded_url(self) -> str:
         return urlsafe_base64_encode(force_bytes(self.base_url_to_encode))
 
-    def save_unique_field(self, field, value, extra: int = None):
+    def save_unique_field(self, field, value, extra: Any = None):
         max_length = self._meta.get_field(field).max_length
-        value = slugify(value)
+        value_to_ckeck = value
         if extra:
-            value = f"{value}-{extra}"
-        if len(value) > max_length:
-            value = value[: max_length + 1]
-        if self.__class__.objects.filter(**{field: value}).exists():
-            extra += 1
+            value_to_ckeck = f"{value}-{extra}"
+        if len(value_to_ckeck) > max_length:
+            value_to_ckeck = value_to_ckeck[: max_length + 1]
+        if self.__class__.objects.filter(**{field: value_to_ckeck}).exists():
+            if extra and type(extra) == int:
+                extra += 1
+            else:
+                extra = 1
             return self.save_unique_field(field, value, extra)
-        return value
+        if field == "slug":
+            value_to_ckeck = slugify(value_to_ckeck)
+        return value_to_ckeck
 
     @property
     def shareable_link(self):
