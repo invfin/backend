@@ -8,7 +8,7 @@ from rest_framework.serializers import (
     ValidationError,
 )
 
-from .models import Key
+from apps.api.models import Key
 
 
 class RichTextField(CharField):

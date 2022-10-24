@@ -18,8 +18,8 @@ from rest_framework.exceptions import ParseError, APIException, NotFound
 from apps.seo.outils.visiteur_meta import SeoInformation
 from apps.seo.views import SEOListView
 
-from .models import EndpointsCategory, Key, ReasonKeyRequested
-from .serializers import AuthKeySerializer
+from apps.api.models import EndpointsCategory, Key, ReasonKeyRequested
+from apps.api.serializers import AuthKeySerializer
 
 
 class ObtainAuthKey(APIView):

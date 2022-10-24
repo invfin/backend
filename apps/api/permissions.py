@@ -1,7 +1,7 @@
 from rest_framework.exceptions import AuthenticationFailed, PermissionDenied
 from rest_framework.permissions import SAFE_METHODS, BasePermission
 
-from .models import Key
+from apps.api.models import Key
 
 
 class ReadOnly(BasePermission):

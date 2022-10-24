@@ -29,7 +29,7 @@ from apps.general.mixins import BaseToAllMixin
 from apps.general.utils import UniqueCreator
 from apps.super_investors.models import Superinvestor
 
-from .managers import KeyManager
+from apps.api.managers import KeyManager
 
 FULL_DOMAIN = settings.FULL_DOMAIN
 

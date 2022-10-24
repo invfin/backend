@@ -1,6 +1,5 @@
 from typing import Dict, Type
 
-from apps.seo.models import Visiteur
 from apps.socialmedias.outils.content_creation import (
     QuestionContentCreation,
     CompanyNewsContentCreation,
@@ -58,16 +57,6 @@ class EngagementMachine:
             **newsletter_content_from_object,
             users_selected="",
         )
-
-    def periodic_engagement(self):
-        for user in User.objects.all():
-            pass
-
-    def prepare_engagement_by_user(self, user: User):
-        pass
-
-    def prepare_engagement_by_visiteur(self, visiteur: Visiteur):
-        pass
 
     def send_website_email_engagement(self, user: User):
         last_email_engagement = WebsiteEmailTrack.objects.filter(

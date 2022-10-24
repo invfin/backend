@@ -342,7 +342,7 @@ class TestFinprepInfo(TestCase):
         for statement in finprep_data.CASHFLOW_STATEMENT:
             CashflowStatementFinprep.objects.create(**self.normalizer.normalize_cashflow_statements_finprep(statement))
         assert 5 == CashflowStatementFinprep.objects.all().count()
-        assert (old_number_statements_created, CashflowStatementFinprep.objects.all().count())
+        assert old_number_statements_created == CashflowStatementFinprep.objects.all().count()
         for statement in previous_list_data:
             new_statement = CashflowStatementFinprep.objects.get(date=statement.date)
             with self.subTest(statement):

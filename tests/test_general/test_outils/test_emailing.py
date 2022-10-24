@@ -24,7 +24,7 @@ class EmailTest(TestCase):
 
     def test_html_link(self):
         assert '<a href="link" target="_blank">Text</a>' == EmailingSystem.html_link("link", "Text")
-        assert '<a href="http:example.com:8000link" target="_blank">Text</a>' == EmailingSystem.html_link(
+        assert '<a href="http://example.com:8000link" target="_blank">Text</a>' == EmailingSystem.html_link(
             "link", "Text", True
         )
 
@@ -52,9 +52,11 @@ class EmailTest(TestCase):
             "sender": "EMAIL_DEFAULT@example.com",  # Not always necessary
             **email_info_image_tag_tracker,
         }
-        message, sender = EmailingSystem(constants.EMAIL_FOR_NOTIFICATION)._prepare_email(email_dict, self.user)
+        sender, message = EmailingSystem(constants.EMAIL_FOR_NOTIFICATION)._prepare_email(email_dict, self.user)
+        email_track = WebsiteEmailTrack.objects.get(email_related=web_email)
+        expected_data = {'subject': 'Subject here', 'app_label': 'web', 'object_name': 'WebsiteEmail', 'id': 1, 'user': self.user, 'image_tag': email_track.encoded_url}
         assert "InvFin <EMAIL_DEFAULT@example.com>" == sender
-        assert """""" == message
+        assert expected_data == message
 
     def test__prepare_sender(self):
         public_blog_sender = EmailingSystem(constants.EMAIL_FOR_PUBLIC_BLOG)._prepare_sender("writter")
@@ -78,8 +80,8 @@ class EmailTest(TestCase):
             **email_info_image_tag_tracker,
         }
         email_machine_response = email_machine._prepare_body(email_dict, self.user)
-        web_email_track = WebsiteEmailTrack.objects.get(email_related=web_email)
-        expected_result = {**email_dict, "user": self.user, "image_tag": web_email_track.encoded_url}
+        email_track = WebsiteEmailTrack.objects.get(email_related=web_email)
+        expected_result = {'subject': 'Subject here', 'sender': 'EMAIL_DEFAULT@example.com', 'app_label': 'web', 'object_name': 'WebsiteEmail', 'id': 1, 'user': self.user, 'image_tag': email_track.encoded_url}
         assert expected_result == email_machine_response
 
     def test_enviar_email(self):
@@ -109,5 +111,5 @@ class EmailTest(TestCase):
         assert len(mail.outbox) == 1
         assert mail.outbox[0].subject == "Subject here"
         assert mail.outbox[0].body == "Message there"
-        assert mail.outbox[0].from_email == "EMAIL_DEFAULT@example.com"
+        assert mail.outbox[0].from_email == "Web-automation <EMAIL_DEFAULT@example.com>"
         assert mail.outbox[0].to == ["EMAIL_DEFAULT@example.com"]

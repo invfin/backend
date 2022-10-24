@@ -1,7 +1,6 @@
-import random
 from typing import Type
 
-from django.db.models import QuerySet, Count, F
+from django.db.models import QuerySet, Count
 
 from apps.general.constants import BASE_ESCRITO_PUBLISHED
 from apps.general.managers import BaseManager
@@ -27,11 +26,6 @@ class TermQuerySet(QuerySet):
 class TermManager(BaseManager):
     def get_queryset(self):
         return TermQuerySet(self.model, using=self._db).prefetch_all()
-
-    def get_random(self, query=None):
-        query = query if query else self.all()
-        models_list = list(query)
-        return random.choice(models_list)
 
     def all_terms_ready_newsletter(self) -> QuerySet:
         return (

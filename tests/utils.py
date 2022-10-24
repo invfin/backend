@@ -49,7 +49,7 @@ class BaseAPIViewTest(APITestCase):
 
     api_prefix: str = "api"
     api_version: str = settings.API_VERSION["CURRENT_VERSION"]
-    allowed_verbs: Dict = {"GET", "HEAD", "OPTIONS"}
+    allowed_verbs: set = {"GET", "HEAD", "OPTIONS"}
     path_name: str = ""
     url_path: str = ""
     api_key_param: str = "api_key"
@@ -154,7 +154,7 @@ class BaseAPIViewTest(APITestCase):
 
     def test_no_params(self):
         if self.params:
-            response = self.client.get(self.full_endpoint_key)
+            response = self.client.get(self.endpoint_key)
             assert response.status_code == status.HTTP_404_NOT_FOUND
             assert response.data == {"detail": ErrorDetail(string=self.no_param_error_messages, code="parse_error")}
 
@@ -164,7 +164,7 @@ class BaseAPIViewTest(APITestCase):
                 params = self.params
                 params["bad"] = params.pop(key)
                 params = urllib.parse.urlencode(params)
-                response = self.client.get(f"{self.full_endpoint_key}&{params}")
+                response = self.client.get(f"{self.endpoint_key}&{params}")
                 assert response.status_code == status.HTTP_400_BAD_REQUEST
                 assert response.data == {
                     "detail": ErrorDetail(string=self.wrong_param_error_message, code="parse_error")
@@ -176,7 +176,7 @@ class BaseAPIViewTest(APITestCase):
                 params = self.params
                 params[key] = "random"
                 params = urllib.parse.urlencode(params)
-                response = self.client.get(f"{self.full_endpoint_key}&{params}")
+                response = self.client.get(f"{self.endpoint_key}&{params}")
                 assert response.status_code == status.HTTP_404_NOT_FOUND
                 assert response.data == {"detail": ErrorDetail(string=self.not_found_error_messages, code="not_found")}
 

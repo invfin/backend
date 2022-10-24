@@ -58,5 +58,8 @@ class TestEngagementMachine(TestCase):
         content_object = social_constants.TERM_FOR_CONTENT
         whom_to_send = constants.WHOM_TO_SEND_EMAIL_ALL
 
+        self.term.checkings.update({"has_information_clean": {"state": "yes", "time": ""}})
+        self.term.save(update_fields=["checkings"])
+
         web_email = EngagementMachine().create_newsletter(web_email_type, content_object, whom_to_send)
         assert isinstance(web_email, WebsiteEmail)

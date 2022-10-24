@@ -49,16 +49,14 @@ class TestContentCreation(TestCase):
     def test_create_hashtags(self):
         content_creator = ContentCreation
         content_creator.model_class = Term
-        hashtags = DjangoTestingModel.create(
-            Hashtag,
-            quantity=2,
-            in_bulk=True,
-            title=DataCreator.create_random_string(20),
-            platform=social_constants.FACEBOOK,
-        )
+        hashtags = [DjangoTestingModel.create(
+                Hashtag,
+                title=DataCreator.create_random_string(20),
+                platform=social_constants.FACEBOOK,
+            ) for index in range(2)]
         data_result_list, data_result_hashtags = content_creator.create_hashtags(social_constants.FACEBOOK)
         assert data_result_hashtags == "#" + " #".join([hashtag.title for hashtag in hashtags])
-        assert data_result_list == list(hashtags)
+        assert data_result_list == hashtags
 
         data_no_result_list, data_no_result_hashtags = content_creator.create_hashtags(social_constants.TWITTER)
         assert data_no_result_list == []

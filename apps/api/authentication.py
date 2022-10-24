@@ -1,8 +1,8 @@
 from rest_framework.authentication import BaseAuthentication
 from rest_framework.exceptions import AuthenticationFailed
 
-from .constants import WRONG_API_KEY, API_KEY_REMOVED, NO_API_KEY
-from .models import Key
+from apps.api.constants import WRONG_API_KEY, API_KEY_REMOVED, NO_API_KEY
+from apps.api.models import Key
 
 
 class KeyAuthentication(BaseAuthentication):

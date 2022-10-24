@@ -1,3 +1,5 @@
+import random
+
 from django.db.models import Manager, QuerySet
 
 from apps.general import constants
@@ -11,6 +13,11 @@ class BaseManager(Manager):
 
     def filter_checkings_not_seen(self, check: str) -> QuerySet:
         return self.filter(**{f"checkings__has_{check}__state": "no", f"checkings__has_{check}__time": ""})
+
+    def get_random(self, query=None):
+        query = query if query else self.all()
+        models_list = list(query)
+        return random.choice(models_list) if models_list else models_list
 
 
 class CurrencyManager(Manager):

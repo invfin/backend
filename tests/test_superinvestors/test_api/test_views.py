@@ -12,7 +12,7 @@ from tests.data.superinvestors_data import LIST_SUPERINVESTORS, SINGLE_SUPERINVE
 User = get_user_model()
 
 
-class TestAllSuperinvestorsAPIView(BaseAPIViewTest):
+class TestAllSuperinvestorsAPIView(BaseAPIViewTest, APITestCase):
     path_name = "api:superinvestors_lista_superinversores"
     url_path = "/lista-superinversores/"
 
@@ -44,7 +44,7 @@ class TestAllSuperinvestorsAPIView(BaseAPIViewTest):
         assert json.loads(json.dumps(response.data)) == expected_data
 
 
-class TestSuperinvestorActivityAPIView(BaseAPIViewTest):
+class TestSuperinvestorActivityAPIView(BaseAPIViewTest, APITestCase):
     path_name = "api:superinvestors_lista_movimientos"
     url_path = "/lista-movimientos/"
     params = {"slug": ""}
@@ -60,7 +60,7 @@ class TestSuperinvestorActivityAPIView(BaseAPIViewTest):
         assert json.loads(json.dumps(response.data))[0] == expected_data
 
 
-class TestSuperinvestorHistoryAPIView(BaseAPIViewTest):
+class TestSuperinvestorHistoryAPIView(BaseAPIViewTest, APITestCase):
     path_name = "api:superinvestors_lista_historial"
     url_path = "/lista-historial/"
     params = {"slug": ""}
