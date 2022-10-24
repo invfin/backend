@@ -74,7 +74,7 @@ class EmailingSystem:
         return sender, base_body
 
     def enviar_email(self, email: Dict, receiver_id: int):
-        # Needs to be defined what email expects
+        # Needs to be defined what email expects because for now when sending a term newsletter subject isn't in email: Dict
         receiver = User.objects.get(id=receiver_id)
         subject = email.pop("subject")
         sender, base_body = self._prepare_email(email, receiver)

@@ -31,6 +31,7 @@ def send_email_engagement_task(email_id: int):
         users_to_send_to = email.users_selected.all()
 
     for user in users_to_send_to:
+        # Maybe override dict_for_task or send a dict different with subject, body, etc to send it and send the newsletter
         send_email_task.delay(email.dict_for_task, user.id, EMAIL_FOR_WEB)
     email.sent = True
     email.save(update_fields=["sent"])
