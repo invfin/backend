@@ -73,6 +73,8 @@ class TestSocialPosting(TestCase):
     @patch("apps.socialmedias.socialposter.facepy.Facebook.post")
     def test_share_content(self, mock_facepy, mock_tweetpy):
         assert 0 == TermSharedHistorial.objects.all().count()
+        self.term.checkings.update({"has_information_clean": {"state": "yes", "time": ""}})
+        self.term.save(update_fields=["checkings"])
         mock_facepy.return_value = {
             "post_response": [
                 {

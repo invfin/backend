@@ -24,7 +24,7 @@ class TermContentCreation(ContentCreation):
     for_content = [socialmedias_constants.TERM]
 
     def get_object(self) -> Type:
-        return Term.objects.term_ready_newsletter()
+        return self.model_class._default_manager.term_ready_newsletter()
 
     def get_object_content(self, **kwargs):
         """Creates a basic content for a term's newsletter or post.

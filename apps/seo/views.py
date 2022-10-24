@@ -15,7 +15,7 @@ from apps.escritos.models import Term, TermsRelatedToResume
 from apps.preguntas_respuestas.models import Question
 from apps.public_blog.models import PublicBlog
 
-from .mixins import SEOViewMixin
+from apps.seo.mixins import SEOViewMixin
 from apps.web.models import Promotion
 
 

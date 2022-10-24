@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.urls import include, path
 
-from .views import APIDocumentation, request_API_key
+from apps.api.views import APIDocumentation, request_API_key
 
 API_version = settings.API_VERSION['CURRENT_VERSION']
 

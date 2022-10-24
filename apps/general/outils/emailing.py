@@ -68,7 +68,7 @@ class EmailingSystem:
 
         return f"{sender} <{email}>"
 
-    def _prepare_email(self, email: Dict[str, str], receiver: Type) -> Tuple[str, str]:
+    def _prepare_email(self, email: Dict[str, str], receiver: Type) -> Tuple[str, Dict]:
         sender = self._prepare_sender(email.pop("sender", None))
         base_body = self._prepare_body(email, receiver)
         return sender, base_body

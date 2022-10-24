@@ -1,15 +1,8 @@
-import logging
-import operator
-
 from django.utils.deprecation import MiddlewareMixin
 from django.utils.functional import SimpleLazyObject
 
-from .outils.visiteur_meta import SeoInformation
+from apps.seo.outils.visiteur_meta import SeoInformation
 
-from django.contrib import auth
-
-logger = logging.getLogger(__name__)
-lower = operator.methodcaller('lower')
 
 def get_visiteur(request):
     """
@@ -24,9 +17,8 @@ def get_visiteur(request):
 class VisiteurMiddleware(MiddlewareMixin):
     """
     A middleware class that adds a ``visiteur`` attribute to the current request.
+    TODO: If the request comes from an API endpoint the user won't have the is_authenticated
     """
-
-
     def process_request(self, request):
         """
         Adds a ``visiteur`` attribute to the ``request`` parameter.
