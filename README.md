@@ -53,6 +53,11 @@ A tag to create utm parameters for the urls. source and campaign are at the end 
 ### Facebook
 When posting with images or video on facebook, around 6 (or maybe more) lines of text shows up.
 
+## Parse Edgar
+From this url f"https://data.sec.gov/submissions/CIK{cik_number}.json"
+we can get all the fillings of a company. The idea would be to parse it, build the full urls to access the files
+and then store the complete url with date and other info according.
+
 # TODO
 1. [ ] Improve recommendations
 2. [ ] Improve roboadvisor
@@ -63,20 +68,3 @@ When posting with images or video on facebook, around 6 (or maybe more) lines of
 7. [ ] Improve emailing
 8. [ ] Improve noitfications
 9. [ ] Improve tests
-
-
-# How to start locally
-
-Make sure that you have make installed.
-
-Run the following command to build the images
-- make build
-
-Then run this to have the containers running.
-- make up
-
-Run the different tests.
-- make test
-
-Make sure that the styles is correct.
-- make isort_pep
