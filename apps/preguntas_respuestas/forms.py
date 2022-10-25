@@ -27,11 +27,3 @@ class CreateQuestionForm(ModelForm):
         if len(content) < 10:
             raise ValidationError("Detalla precisamente tu pregunta para que la comunidad pueda ayudarte.")
         return content
-
-
-class CreateAnswerForm(ModelForm):
-    content = CharField(widget=CKEditorWidget(config_name="writter"))
-
-    class Meta:
-        model = Answer
-        fields = ["content"]

@@ -13,6 +13,8 @@ class KeyAuthentication(BaseAuthentication):
             if Key.objects.filter(key=key).exists():
                 if Key.objects.key_is_active(key):
                     key = Key.objects.get_key(key)
+                    # DRF wants to receive (request.user, request.auth)
+                    # https://www.django-rest-framework.org/api-guide/authentication/#sessionauthentication
                     return (key.user, key)
                 raise AuthenticationFailed(API_KEY_REMOVED)
             raise AuthenticationFailed(WRONG_API_KEY)

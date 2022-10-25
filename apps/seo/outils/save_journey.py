@@ -1,4 +1,4 @@
-from typing import Union, Tuple
+from typing import Union, Tuple, Optional, Type
 
 from django.utils import timezone
 from django.contrib.auth import get_user_model
@@ -25,21 +25,29 @@ class JourneyClassifier:
     def get_user_or_visiteur(
         self,
         request
-    ) -> Tuple[Union[Visiteur, User], str, Union[VisiteurJourney, UserJourney]]:
-        if request.user.is_authenticated:
-            default_journey_model = UserJourney
-            user_str = "User"
-            user = request.user
+    ) -> Tuple[Optional[Union[Type[Visiteur], Type[User]]], Optional[str], Optional[Union[Type[VisiteurJourney], Type[UserJourney]]]]:
+        default_journey_model = None
+        user_str = ""
+        user = None
+        if hasattr(request, "auth") and request.auth and request.auth.user == request.user:
+            # Come from API endpoint
+            pass
+        else:
+            # Is a "regular user" from a regular view
+            if request.user.is_authenticated:
+                default_journey_model = UserJourney
+                user_str = "User"
+                user = request.user
 
-        elif request.user.is_anonymous:
-            visiteur = None
-            if hasattr(request, "is_visiteur") and request.is_visiteur:
-                visiteur = request.visiteur
-            if not visiteur:
-                visiteur = SeoInformation().find_visiteur(request)
-            default_journey_model = VisiteurJourney
-            user_str = "Visiteur"
-            user = visiteur
+            elif request.user.is_anonymous:
+                visiteur = None
+                if hasattr(request, "is_visiteur") and request.is_visiteur:
+                    visiteur = request.visiteur
+                if not visiteur:
+                    visiteur = SeoInformation().find_visiteur(request)
+                default_journey_model = VisiteurJourney
+                user_str = "Visiteur"
+                user = visiteur
 
         return user, user_str, default_journey_model
 
@@ -66,7 +74,7 @@ class JourneyClassifier:
     def get_specific_journey(
         self,
         current_path
-    ) -> Tuple[Union[Company, Term, Question, PublicBlog], str]:
+    ) -> Tuple[Optional[Union[Type[Company], Type[Term], Type[Question], Type[PublicBlog]]], Optional[str]]:
         splited_path = current_path.split('/')
 
         model_visited, journey_model = None, None
@@ -80,7 +88,7 @@ class JourneyClassifier:
                 info = splited_path[1]
 
             if "general/assets" in current_path:
-                return model_visited, journey_model
+                return None, None
 
             if '/screener/analisis-de/' in current_path:
                 journey_model = 'CompanyVisited'
@@ -103,5 +111,3 @@ class JourneyClassifier:
                     model_visited, journey_model = None, None
 
         return model_visited, journey_model
-
-
