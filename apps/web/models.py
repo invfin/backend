@@ -17,12 +17,20 @@ from django.urls import reverse
 from ckeditor.fields import RichTextField
 
 from apps.general.mixins import BaseToAllMixin
-from apps.general.bases import BaseEmail, BaseNewsletter
+from apps.general.bases import BaseTrackEmail, BaseEmail
 from apps.seo.models import Visiteur
 from apps.socialmedias.constants import SOCIAL_MEDIAS
 from apps.seo import constants
 from apps.users.models import User
 from apps.web.constants import WHOM_TO_SEND_EMAIL, WHOM_TO_SEND_EMAIL_ALL
+
+
+"""
+Rethink how to organize users categories, emails from web, and promotions...
+If a user wants to turn down recieve emails, where does he do it?
+We want to classify users. We want to separate the content from emails and promotions by categories as well.
+
+"""
 
 
 class WebsiteLegalPage(Model, BaseToAllMixin):
@@ -41,9 +49,31 @@ class WebsiteLegalPage(Model, BaseToAllMixin):
         return super().save(*args, **kwargs)
 
 
+class UsersCategory(Model, BaseToAllMixin):
+    name = CharField(max_length=800)
+    slug = SlugField(max_length=800, null=True, blank=True)
+    name_for_user = CharField(max_length=800, null=True, blank=True)
+    show_to_user = BooleanField(default=False)
+    users = ManyToManyField(User, blank=True)
+
+    class Meta:
+        ordering = ["-id"]
+        verbose_name = "Users category"
+        db_table = "users_categories"
+
+    def __str__(self) -> str:
+        return self.name
+
+    def save(self, *args, **kwargs):  # new
+        if not self.slug:
+            self.slug = self.save_unique_field("slug", self.name)
+        return super().save(*args, **kwargs)
+
+
 class WebsiteEmailsType(Model, BaseToAllMixin):
     name = CharField(max_length=800)
     slug = SlugField(max_length=800, null=True, blank=True)
+    users_category = ForeignKey(ContentType, on_delete=CASCADE, null=True)
 
     class Meta:
         ordering = ["-id"]
@@ -59,7 +89,7 @@ class WebsiteEmailsType(Model, BaseToAllMixin):
         return super().save(*args, **kwargs)
 
 
-class WebsiteEmail(BaseNewsletter):
+class WebsiteEmail(BaseEmail):
     content = RichTextField()
     type_related = ForeignKey(
         WebsiteEmailsType,
@@ -123,7 +153,7 @@ class WebsiteEmail(BaseNewsletter):
         return {"status": status, "color": color, "icon": icon, "bs_color": bs_color}
 
 
-class WebsiteEmailTrack(BaseEmail):
+class WebsiteEmailTrack(BaseTrackEmail):
     email_related = ForeignKey(
         WebsiteEmail,
         null=True,
@@ -219,29 +249,3 @@ class Promotion(Model, BaseToAllMixin):
         utm_campaign = f"utm_campaign={self.campaign_related.title}"
         utm_term = f"utm_term={self.title}"
         return f"{self.redirect_to}?{utm_source}&{utm_medium}&{utm_campaign}&{utm_term}"
-
-
-class UsersCategory(Model, BaseToAllMixin):
-    name = CharField(max_length=800)
-    slug = SlugField(max_length=800, null=True, blank=True)
-    name_for_user = CharField(max_length=800, null=True, blank=True)
-    show_to_user = BooleanField(default=False)
-    email_type_related = ManyToManyField(
-        WebsiteEmailsType,
-        blank=True,
-        related_name="users_categories",
-    )
-    users = ManyToManyField(User, blank=True)
-
-    class Meta:
-        ordering = ["-id"]
-        verbose_name = "Users category"
-        db_table = "users_categories"
-
-    def __str__(self) -> str:
-        return self.name
-
-    def save(self, *args, **kwargs):  # new
-        if not self.slug:
-            self.slug = self.save_unique_field("slug", self.name)
-        return super().save(*args, **kwargs)

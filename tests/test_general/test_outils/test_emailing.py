@@ -54,7 +54,14 @@ class EmailTest(TestCase):
         }
         sender, message = EmailingSystem(constants.EMAIL_FOR_NOTIFICATION)._prepare_email(email_dict, self.user)
         email_track = WebsiteEmailTrack.objects.get(email_related=web_email)
-        expected_data = {'subject': 'Subject here', 'app_label': 'web', 'object_name': 'WebsiteEmail', 'id': 1, 'user': self.user, 'image_tag': email_track.encoded_url}
+        expected_data = {
+            "subject": "Subject here",
+            "app_label": "web",
+            "object_name": "WebsiteEmail",
+            "id": 1,
+            "user": self.user,
+            "image_tag": email_track.encoded_url,
+        }
         assert "InvFin <EMAIL_DEFAULT@example.com>" == sender
         assert expected_data == message
 
@@ -66,7 +73,7 @@ class EmailTest(TestCase):
         assert "InvFin <EMAIL_DEFAULT@example.com>" == notif_sender
         assert "Lucas - InvFin <MAIN_EMAIL@example.com>" == web_sender
 
-    def test__prepare_body(self):
+    def test__prepare_content(self):
         email_machine = EmailingSystem(constants.EMAIL_FOR_NOTIFICATION)
         web_email = DjangoTestingModel.create(WebsiteEmail, id=1)
         email_info_image_tag_tracker = {
@@ -79,9 +86,17 @@ class EmailTest(TestCase):
             "sender": "EMAIL_DEFAULT@example.com",  # Not always necessary
             **email_info_image_tag_tracker,
         }
-        email_machine_response = email_machine._prepare_body(email_dict, self.user)
+        email_machine_response = email_machine._prepare_content(email_dict, self.user)
         email_track = WebsiteEmailTrack.objects.get(email_related=web_email)
-        expected_result = {'subject': 'Subject here', 'sender': 'EMAIL_DEFAULT@example.com', 'app_label': 'web', 'object_name': 'WebsiteEmail', 'id': 1, 'user': self.user, 'image_tag': email_track.encoded_url}
+        expected_result = {
+            "subject": "Subject here",
+            "sender": "EMAIL_DEFAULT@example.com",
+            "app_label": "web",
+            "object_name": "WebsiteEmail",
+            "id": 1,
+            "user": self.user,
+            "image_tag": email_track.encoded_url,
+        }
         assert expected_result == email_machine_response
 
     def test_enviar_email(self):

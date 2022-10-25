@@ -16,6 +16,7 @@ User = get_user_model()
 def send_email_engagement_task(email_id: int):
     """Recieves an email id for the web. And it sends it to the users related.
     Then it checks the email as sent
+    TODO: Change and generalise this tasks to send emails periodically
 
     Parameters
     ----------
@@ -30,9 +31,9 @@ def send_email_engagement_task(email_id: int):
     elif email.whom_to_send == web_constants.WHOM_TO_SEND_EMAIL_SELECTED:
         users_to_send_to = email.users_selected.all()
 
+    email_content_serialized = {"sender": "InvFin", **email.email_serialized}
     for user in users_to_send_to:
-        # Maybe override dict_for_task or send a dict different with subject, body, etc to send it and send the newsletter
-        send_email_task.delay(email.dict_for_task, user.id, EMAIL_FOR_WEB)
+        send_email_task.delay(email_content_serialized, user.id, EMAIL_FOR_WEB, web_constants.CONTENT_FOR_NEWSLETTER)
     email.sent = True
     email.save(update_fields=["sent"])
 
@@ -52,10 +53,12 @@ def check_and_start_send_email_engagement_task():
     email_to_send = WebsiteEmail.objects.filter(sent=False, date_to_send__isnull=False).first()
     if email_to_send:
         if email_to_send.date_to_send <= timezone.now():
-            send_email_engagement_task.delay(email_to_send.id)
-            return EmailingSystem.simple_email(
-                f"Newsletter sent {email_to_send.id}",
-                f"Newsletter with the object {email_to_send.object} has been sent",
-            )
+            print(email_to_send.type_related.users_categories.all())
+            print("*" * 100)
+            # send_email_engagement_task.delay(email_to_send.id)
+            # return EmailingSystem.simple_email(
+            #     f"Newsletter {email_to_send.id} sent",
+            #     f"Newsletter with the object {email_to_send.object} has been sent",
+            # )
         return None
     return EmailingSystem.simple_email("There are no website emails ready", "Create newsletters")

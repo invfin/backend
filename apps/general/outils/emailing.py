@@ -48,12 +48,12 @@ class EmailingSystem:
             email_specifications.pop("app_label"), email_specifications.pop("object_name"), require_ready=True
         )._default_manager.get(
             pk=email_specifications.pop("id")
-        )  # email_model_instance is a Model inheritaded from BaseNewsletter
+        )  # email_model_instance is a Model inheritaded from BaseEmail
         email_track = email_model_instance.email_related.create(sent_to=receiver)
-        # email_track is a Model inhertitaded from BaseEmail
+        # email_track is a Model inhertitaded from BaseTrackEmail
         return email_track.encoded_url
 
-    def _prepare_body(self, email: Dict[str, Any], receiver: Type) -> Dict:
+    def _prepare_content(self, email: Dict[str, Any], receiver: Type) -> Dict:
         return {**email, "user": receiver, "image_tag": self._prepare_email_track(email, receiver)}
 
     def _prepare_sender(self, sender: str = None) -> str:
@@ -70,16 +70,33 @@ class EmailingSystem:
 
     def _prepare_email(self, email: Dict[str, str], receiver: Type) -> Tuple[str, Dict]:
         sender = self._prepare_sender(email.pop("sender", None))
-        base_body = self._prepare_body(email, receiver)
-        return sender, base_body
+        content = self._prepare_content(email, receiver)
+        return sender, content
 
     def enviar_email(self, email: Dict, receiver_id: int):
-        # Needs to be defined what email expects because for now when sending a term newsletter subject isn't in email: Dict
+        """Recieves the email that has to be sent and the id of the user to sent the email to.
+
+        Parameters
+        ----------
+            email : Dict
+                The email's data to be sent
+                Example: {
+                    "subjects": The subject of the email
+                    "content": The content of the email
+                    "sender": The one who send the email
+                    "app_label": The app where the model lives
+                    "object_name": The model to retrieve
+                    "id": The id of the obj from the model to create the tracker tag
+                }
+
+            receiver_id : int
+                The id of the user to recieve the email
+        """
         receiver = User.objects.get(id=receiver_id)
         subject = email.pop("subject")
-        sender, base_body = self._prepare_email(email, receiver)
-        body = render_to_string(self.email_template, base_body)
-        email_message = EmailMessage(subject, body, sender, [receiver.email])
+        sender, content = self._prepare_email(email, receiver)
+        final_content = render_to_string(self.email_template, content)
+        email_message = EmailMessage(subject, final_content, sender, [receiver.email])
 
         email_message.content_subtype = "html"
         email_message.send()

@@ -13,7 +13,7 @@ from django.db.models import (
 
 User = get_user_model()
 
-from apps.general.bases import BaseEmail, BaseGenericModels, BaseToAllMixin
+from apps.general.bases import BaseTrackEmail, BaseGenericModels, BaseToAllMixin
 from apps.general.managers import PeriodManager, CurrencyManager
 from apps.general import constants
 
@@ -201,7 +201,7 @@ class Notification(BaseGenericModels):
         db_table = "notifications"
 
 
-class EmailNotification(BaseEmail):
+class EmailNotification(BaseTrackEmail):
     email_related = ForeignKey(Notification, null=True, blank=True, on_delete=SET_NULL, related_name="email_related")
 
     class Meta:

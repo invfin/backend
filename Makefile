@@ -32,8 +32,7 @@ changepassword:
 	docker-compose -f local.yml run --rm invfin ./manage.py changepassword $(ar)
 
 admin-pass:
-	docker-compose -f local.yml run --rm invfin ./manage.py changepassword Lucas
-	docker-compose -f local.yml run --rm invfin ./manage.py changepassword Lluc
+	docker-compose -f local.yml run --rm invfin ./manage.py admin_pass
 
 buildsemi:
 	docker-compose -f semiprod.yml build

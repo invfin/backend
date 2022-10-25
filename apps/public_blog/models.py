@@ -15,7 +15,7 @@ from django.urls import reverse
 
 from ckeditor.fields import RichTextField
 
-from apps.general.bases import BaseComment, BaseEmail, BaseEscrito, BaseNewsletter
+from apps.general.bases import BaseComment, BaseTrackEmail, BaseEscrito, BaseEmail
 from apps.public_blog.managers import PublicBlogManager
 
 
@@ -128,7 +128,7 @@ class PublicBlog(BaseEscrito):
         return result
 
 
-class PublicBlogAsNewsletter(BaseNewsletter):
+class PublicBlogAsNewsletter(BaseEmail):
     blog_related = OneToOneField(PublicBlog, on_delete=SET_NULL, null=True, related_name="public_blog_newsletter")
 
 
@@ -140,7 +140,7 @@ class PublicBlogComment(BaseComment):
         db_table = "blog_comments"
 
 
-# class EmailPublicBlog(BaseEmail):
+# class EmailPublicBlog(BaseTrackEmail):
 #     email_related = ForeignKey(
 #         PublicBlogAsNewsletter,
 #         null=True,

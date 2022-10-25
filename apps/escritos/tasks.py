@@ -46,13 +46,13 @@ def prepare_term_newsletter_task():
             that there isn't any term ready
     """
     term_for_newsletter = Term.objects.term_ready_newsletter()
+    notify = True
     if term_for_newsletter:
         if WebsiteEmail.objects.filter(
             content_type=term_for_newsletter.content_type.id, object_id=term_for_newsletter.id
         ).exists():
             subject = f"You need to clean a new term before creating a new newsletter"
             message = f"There aren terms ready to be sent, you must update one"
-            notify_term_to_improve_task.delay()
         else:
             web_email = EngagementMachine().create_newsletter(
                 web_email_type=web_constants.CONTENT_FOR_NEWSLETTER_TERM,
@@ -62,9 +62,11 @@ def prepare_term_newsletter_task():
             term_link_html = EmailingSystem.html_link(web_email.edit_url, term_for_newsletter.title)
             subject = f"{term_for_newsletter} is ready to be sent as a newsletter"
             message = f"You need to update {term_link_html} to be ready to be sent as a newsletter"
-
+            notify = False
     else:
         subject = "There are no terms ready for newsletters"
         message = "Create newsletters"
 
+    if notify:
+        notify_term_to_improve_task.delay()
     return EmailingSystem.simple_email(subject, message)

@@ -102,7 +102,6 @@ class CompanyDetailsView(SEODetailView):
             TODO
             Use logger instead of print
             """
-            print(e)
             response = None
         return response
 

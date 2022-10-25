@@ -1,5 +1,4 @@
 from django.contrib.auth import get_user_model
-from django.contrib import messages
 from django.urls import reverse
 from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
 from django.contrib.contenttypes.models import ContentType
@@ -22,7 +21,12 @@ from django.utils import timezone
 
 from ckeditor.fields import RichTextField
 
-from apps.general.constants import BASE_ESCRITO_STATUS, ESCRITO_STATUS_MAP, DEFAULT_EXTRA_DATA_DICT, BASE_ESCRITO_DRAFT
+from apps.general.constants import (
+    BASE_ESCRITO_STATUS,
+    ESCRITO_STATUS_MAP,
+    DEFAULT_EXTRA_DATA_DICT,
+    BASE_ESCRITO_DRAFT,
+)
 from apps.general.mixins import BaseEscritosMixins, CommonMixin, BaseToAllMixin
 
 User = get_user_model()
@@ -46,11 +50,19 @@ class BaseWrittenContent(BaseCreateUpdateTimeModel, CommonMixin):
     total_votes = IntegerField(default=0)
     total_views = PositiveIntegerField(default=0)
     times_shared = PositiveIntegerField(default=0)
-    category = ForeignKey("general.Category", on_delete=SET_NULL, blank=True, null=True)
+    category = ForeignKey(
+        "general.Category",
+        on_delete=SET_NULL,
+        blank=True,
+        null=True,
+    )
     tags = ManyToManyField("general.Tag", blank=True)
     author = ForeignKey(User, on_delete=SET_NULL, null=True)
     checkings = JSONField(default=default_dict)
-    website_email = GenericRelation("web.WebsiteEmail", related_query_name="website_email")
+    website_email = GenericRelation(
+        "web.WebsiteEmail",
+        related_query_name="website_email",
+    )
     # notifications = GenericRelation("general.Notification")
 
     class Meta:
@@ -79,12 +91,27 @@ class BaseWrittenContent(BaseCreateUpdateTimeModel, CommonMixin):
 class BaseEscrito(BaseWrittenContent, BaseEscritosMixins):
     resume = TextField(default="")
     published_at = DateTimeField(auto_now=True)
-    status = IntegerField(blank=True, default=BASE_ESCRITO_DRAFT, choices=BASE_ESCRITO_STATUS)
+    status = IntegerField(
+        blank=True,
+        default=BASE_ESCRITO_DRAFT,
+        choices=BASE_ESCRITO_STATUS,
+    )
     # thumbnail = CloudinaryField('image', null=True, width_field='image_width', height_field='image_height')
-    thumbnail = ImageField("image", blank=True, null=True, width_field="image_width", height_field="image_height")
+    thumbnail = ImageField(
+        "image",
+        blank=True,
+        null=True,
+        width_field="image_width",
+        height_field="image_height",
+    )
     non_thumbnail_url = CharField(max_length=500, null=True, blank=True)
     in_text_image = BooleanField(default=False)
-    meta_information = ForeignKey("seo.MetaParametersHistorial", on_delete=SET_NULL, blank=True, null=True)
+    meta_information = ForeignKey(
+        "seo.MetaParametersHistorial",
+        on_delete=SET_NULL,
+        blank=True,
+        null=True,
+    )
 
     class Meta:
         abstract = True
@@ -118,17 +145,35 @@ class BaseComment(BaseCreateUpdateTimeModel, BaseToAllMixin):
         return self.content_related.title
 
 
-class BaseNewsletter(BaseCreateUpdateTimeModel, BaseToAllMixin):
+class BaseEmail(BaseCreateUpdateTimeModel, BaseToAllMixin):
     title = CharField(max_length=500)
     content = RichTextField(config_name="simple")
-    default_title = ForeignKey("socialmedias.DefaultTilte", on_delete=SET_NULL, null=True, blank=True)
-    default_content = ForeignKey("socialmedias.DefaultContent", on_delete=SET_NULL, null=True, blank=True)
+    default_title = ForeignKey(
+        "socialmedias.DefaultTilte",
+        on_delete=SET_NULL,
+        null=True,
+        blank=True,
+    )
+    default_content = ForeignKey(
+        "socialmedias.DefaultContent",
+        on_delete=SET_NULL,
+        null=True,
+        blank=True,
+    )
     title_emojis = ManyToManyField("socialmedias.Emoji", blank=True)
     sent = BooleanField(default=False)
     date_to_send = DateTimeField(null=True, blank=True)
 
     class Meta:
         abstract = True
+
+    @property
+    def email_serialized(self):
+        return {
+            "subject": self.title,
+            "content": self.content,
+            **self.dict_for_task,
+        }
 
     @property
     def opening_rate(self):
@@ -138,7 +183,7 @@ class BaseNewsletter(BaseCreateUpdateTimeModel, BaseToAllMixin):
         return round(rate, 2)
 
 
-class BaseEmail(BaseCreateUpdateTimeModel, BaseToAllMixin):
+class BaseTrackEmail(BaseCreateUpdateTimeModel, BaseToAllMixin):
     sent_to = ForeignKey(User, on_delete=CASCADE)
     date_sent = DateTimeField(auto_now_add=True)
     opened = BooleanField(default=False)

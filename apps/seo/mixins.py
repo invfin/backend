@@ -1,4 +1,5 @@
 import random
+from typing import Dict
 
 from django.conf import settings
 
@@ -135,7 +136,7 @@ class SEOViewMixin(RecommenderMixin):
     def get_meta_modified_time(self, instance: object = None):
         return self.get_possible_meta_attribute(instance, ["updated_at"], None)
 
-    def get_schema_org(self, instance: object = None):
+    def get_schema_org(self, instance: object = None) -> Dict:
         try:
             schema_org = instance.schema_org
         except AttributeError:
@@ -183,7 +184,7 @@ class SEOViewMixin(RecommenderMixin):
         context = super().get_context_data(**kwargs)
         try:
             instance = self.object
-        except:
+        except Exception:
             instance = None
         context.update(self.get_meta_information(instance))
         if self.update_visits:
