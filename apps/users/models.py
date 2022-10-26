@@ -11,10 +11,13 @@ from django.db.models import (
     ForeignKey,
     ImageField,
     IntegerField,
+    JSONField,
     Model,
     OneToOneField,
     PositiveBigIntegerField,
     TextField,
+    SlugField,
+    ManyToManyField,
 )
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
@@ -25,6 +28,11 @@ from apps.general.mixins import BaseToAllMixin, ResizeImageMixin
 from apps.users.user_extension import UserExtended
 from apps.users.constants import MOVE_SOURCES, MOVEMENTS
 from apps.users.managers import CreditHistorialManager, ProfileManager, UserExtraManager
+from apps.web.constants import CONTENT_PURPOSES
+
+
+def default_dict():
+    return {key: {"title": value, "in_use": True} for key, value in CONTENT_PURPOSES}
 
 
 class User(AbstractUser, UserExtended):
@@ -36,6 +44,7 @@ class User(AbstractUser, UserExtended):
     last_time_seen = DateTimeField(blank=True, null=True)
     is_recurrent = BooleanField(default=False)
     is_customer = BooleanField(default=False)
+    notifications = JSONField(default=default_dict)
     objects = UserExtraManager()
 
     class Meta:
@@ -158,3 +167,22 @@ class CreditUsageHistorial(Model):
     @property
     def credits_needed(self):
         return self.final
+
+
+class UsersCategory(Model, BaseToAllMixin):
+    name = CharField(max_length=800)
+    slug = SlugField(max_length=800, null=True, blank=True)
+    users = ManyToManyField(User, blank=True)
+
+    class Meta:
+        ordering = ["-id"]
+        verbose_name = "Users category"
+        db_table = "users_categories"
+
+    def __str__(self) -> str:
+        return self.name
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = self.save_unique_field("slug", self.name)
+        return super().save(*args, **kwargs)

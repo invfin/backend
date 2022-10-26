@@ -207,7 +207,7 @@ class TestFinprepInfo(TestCase):
         for statement in finprep_data.INCOME_STATEMENT:
             IncomeStatementFinprep.objects.create(**self.normalizer.normalize_income_statements_finprep(statement))
         assert 5 == IncomeStatementFinprep.objects.all().count()
-        assert (old_number_statements_created, IncomeStatementFinprep.objects.all().count())
+        assert (old_number_statements_created== IncomeStatementFinprep.objects.all().count())
         for statement in previous_list_data:
             new_statement = IncomeStatementFinprep.objects.get(date=statement.date)
             with self.subTest(statement):

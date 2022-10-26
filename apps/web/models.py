@@ -9,6 +9,7 @@ from django.db.models import (
     ManyToManyField,
     PositiveBigIntegerField,
     SlugField,
+    TextField,
     Model,
     CASCADE,
 )
@@ -25,14 +26,6 @@ from apps.users.models import User
 from apps.web.constants import WHOM_TO_SEND_EMAIL, WHOM_TO_SEND_EMAIL_ALL
 
 
-"""
-Rethink how to organize users categories, emails from web, and promotions...
-If a user wants to turn down recieve emails, where does he do it?
-We want to classify users. We want to separate the content from emails and promotions by categories as well.
-
-"""
-
-
 class WebsiteLegalPage(Model, BaseToAllMixin):
     title = CharField(max_length=800)
     slug = SlugField(max_length=800, null=True, blank=True)
@@ -43,65 +36,107 @@ class WebsiteLegalPage(Model, BaseToAllMixin):
         verbose_name = "Legal website page"
         db_table = "website_pages_legals"
 
-    def save(self, *args, **kwargs):  # new
+    def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = self.save_unique_field("slug", self.title)
         return super().save(*args, **kwargs)
 
 
-class UsersCategory(Model, BaseToAllMixin):
-    name = CharField(max_length=800)
+class Campaign(Model, BaseToAllMixin):
+    title = CharField(max_length=600, blank=True)
     slug = SlugField(max_length=800, null=True, blank=True)
-    name_for_user = CharField(max_length=800, null=True, blank=True)
-    show_to_user = BooleanField(default=False)
-    users = ManyToManyField(User, blank=True)
+    description = TextField(blank=True)
+    categories = ManyToManyField("general.Category", blank=True)
+    tags = ManyToManyField("general.Tag", blank=True)
+    start_date = DateTimeField(blank=True, null=True)
+    end_date = DateTimeField(blank=True, null=True)
 
     class Meta:
-        ordering = ["-id"]
-        verbose_name = "Users category"
-        db_table = "users_categories"
+        verbose_name = "Campaign"
+        db_table = "campaigns"
 
     def __str__(self) -> str:
-        return self.name
+        return self.title
 
-    def save(self, *args, **kwargs):  # new
+    def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = self.save_unique_field("slug", self.name)
+            self.slug = self.save_unique_field("slug", self.title)
         return super().save(*args, **kwargs)
 
+    @property
+    def is_permanent(self):
+        return not self.end_date
 
-class WebsiteEmailsType(Model, BaseToAllMixin):
-    name = CharField(max_length=800)
+
+class Promotion(Model, BaseToAllMixin):
+    title = CharField(max_length=600, blank=True)
+    content = RichTextField()
+    thumbnail = CharField(max_length=600, blank=True)
     slug = SlugField(max_length=800, null=True, blank=True)
-    users_category = ForeignKey(ContentType, on_delete=CASCADE, null=True)
+    prize = PositiveBigIntegerField(default=0)
+    shareable_url = SlugField(max_length=600, blank=True)
+    redirect_to = SlugField(max_length=600, blank=True)
+    medium = CharField(max_length=250, choices=constants.MEDIUMS, default=constants.WEB,)
+    web_promotion_style = CharField(max_length=250, choices=constants.WEP_PROMOTION_STYLE, blank=True,)
+    web_location = CharField(max_length=250, choices=constants.WEP_PROMOTION_LOCATION, blank=True,)
+    web_place = CharField(max_length=250, choices=constants.WEP_PROMOTION_PLACE,blank=True,)
+    social_media = CharField(max_length=250, choices=SOCIAL_MEDIAS, blank=True,)
+    publication_date = DateTimeField(blank=True)
+    campaign = ForeignKey(
+        Campaign,
+        on_delete=SET_NULL,
+        null=True,
+        blank=True,
+        related_name="promotions",
+    )
+    reuse = BooleanField(default=False)
+    times_to_reuse = PositiveBigIntegerField(default=0)
+    users_clicked = ManyToManyField(User, blank=True)
+    visiteurs_clicked = ManyToManyField(Visiteur, blank=True)
+    clicks_by_user = PositiveBigIntegerField(default=0)
+    clicks_by_not_user = PositiveBigIntegerField(default=0)
 
     class Meta:
-        ordering = ["-id"]
-        verbose_name = "Website emails type"
-        db_table = "website_emails_type"
+        verbose_name = "Promotion"
+        db_table = "promotions"
 
     def __str__(self) -> str:
-        return self.name
+        return self.title
 
-    def save(self, *args, **kwargs):  # new
+    def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = self.save_unique_field("slug", self.name)
+            self.slug = self.save_unique_field("slug", self.title)
         return super().save(*args, **kwargs)
+
+    @property
+    def has_prize(self):
+        return self.prize != 0
+
+    @property
+    def full_url(self):
+        source = "web"
+        if self.medium != source:
+            source = self.social_media
+        utm_source = f"utm_source={source}"
+        utm_medium = f"utm_medium={self.medium}"
+        utm_campaign = f"utm_campaign={self.campaign.title}"
+        utm_term = f"utm_term={self.title}"
+        return f"{self.redirect_to}?{utm_source}&{utm_medium}&{utm_campaign}&{utm_term}"
 
 
 class WebsiteEmail(BaseEmail):
     content = RichTextField()
-    type_related = ForeignKey(
-        WebsiteEmailsType,
-        null=True,
-        blank=True,
-        on_delete=SET_NULL,
-        related_name="emails_sent",
-    )
     whom_to_send = CharField(
         max_length=800,
         choices=WHOM_TO_SEND_EMAIL,
         default=WHOM_TO_SEND_EMAIL_ALL,
+    )
+    campaign = ForeignKey(
+        Campaign,
+        on_delete=SET_NULL,
+        null=True,
+        blank=True,
+        related_name="emails",
     )
     users_selected = ManyToManyField(User, blank=True)
     content_type = ForeignKey(ContentType, on_delete=CASCADE, null=True)
@@ -168,84 +203,3 @@ class WebsiteEmailTrack(BaseTrackEmail):
 
     def __str__(self) -> str:
         return self.email_related.title
-
-
-class PromotionCampaign(Model, BaseToAllMixin):
-    title = CharField(max_length=600, blank=True)
-    slug = SlugField(max_length=800, null=True, blank=True)
-    categories = ManyToManyField("general.Category", blank=True)
-    tags = ManyToManyField("general.Tag", blank=True)
-    start_date = DateTimeField(blank=True, null=True)
-    end_date = DateTimeField(blank=True, null=True)
-    type_related = ForeignKey(
-        WebsiteEmailsType,
-        null=True,
-        blank=True,
-        on_delete=SET_NULL,
-        related_name="promotion_campaigns",
-    )
-
-    class Meta:
-        verbose_name = "Promotions campaign"
-        db_table = "promotions_campaigns"
-
-    def __str__(self) -> str:
-        return self.title
-
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = self.save_unique_field("slug", self.title)
-        return super().save(*args, **kwargs)
-
-
-class Promotion(Model, BaseToAllMixin):
-    title = CharField(max_length=600, blank=True)
-    content = RichTextField()
-    thumbnail = CharField(max_length=600, blank=True)
-    slug = SlugField(max_length=800, null=True, blank=True)
-    prize = PositiveBigIntegerField(default=0)
-    has_prize = BooleanField(default=False)
-    shareable_url = CharField(max_length=600, blank=True)
-    redirect_to = CharField(max_length=600, blank=True)
-    medium = CharField(max_length=250, choices=constants.MEDIUMS, blank=True)
-    web_promotion_type = CharField(max_length=250, choices=constants.WEP_PROMOTION_TYPE, blank=True)
-    web_location = CharField(max_length=250, choices=constants.WEP_PROMOTION_LOCATION, blank=True)
-    web_place = CharField(max_length=250, choices=constants.WEP_PROMOTION_PLACE, blank=True)
-    social_media = CharField(max_length=250, blank=True, choices=SOCIAL_MEDIAS)
-    publication_date = DateTimeField(blank=True)
-    campaign_related = ForeignKey(
-        PromotionCampaign,
-        on_delete=SET_NULL,
-        null=True,
-        blank=True,
-        related_name="promotions",
-    )
-    reuse = BooleanField(default=False)
-    times_to_reuse = PositiveBigIntegerField(default=0)
-    users_clicked = ManyToManyField(User, blank=True)
-    visiteurs_clicked = ManyToManyField(Visiteur, blank=True)
-    clicks_by_user = PositiveBigIntegerField(default=0)
-    clicks_by_not_user = PositiveBigIntegerField(default=0)
-
-    class Meta:
-        verbose_name = "Promotion"
-        db_table = "promotions"
-
-    def __str__(self) -> str:
-        return self.title
-
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = self.save_unique_field("slug", self.title)
-        return super().save(*args, **kwargs)
-
-    @property
-    def full_url(self):
-        source = "invfin"
-        if self.medium != source:
-            source = self.social_media
-        utm_source = f"utm_source={source}"
-        utm_medium = f"utm_medium={self.medium}"
-        utm_campaign = f"utm_campaign={self.campaign_related.title}"
-        utm_term = f"utm_term={self.title}"
-        return f"{self.redirect_to}?{utm_source}&{utm_medium}&{utm_campaign}&{utm_term}"

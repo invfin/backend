@@ -69,7 +69,7 @@ class TestAverageStatementsYahooQuery(TestCase):
         assert bs_yahooquery_dict["tax_assets"] == None
         assert bs_yahooquery_dict["other_non_current_assets"] == self.bs_yahooquery.other_non_current_assets
         assert bs_yahooquery_dict["total_non_current_assets"] == self.bs_yahooquery.total_non_current_assets
-        assert (bs_yahooquery_dict["other_assets"], None)
+        assert (bs_yahooquery_dict["other_assets"]== None)
         assert bs_yahooquery_dict["total_assets"] == self.bs_yahooquery.total_assets
         assert bs_yahooquery_dict["account_payables"] == self.bs_yahooquery.payables_and_accrued_expenses
         assert bs_yahooquery_dict["short_term_debt"] == self.bs_yahooquery.current_debt_and_capital_lease_obligation

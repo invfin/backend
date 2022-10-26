@@ -17,11 +17,30 @@ from apps.preguntas_respuestas.admin import (
 from .models import (
     CreditUsageHistorial,
     MetaProfileInfo,
-    MetaProfileHistorial,
+    UsersCategory,
     Profile
 )
 
 User = get_user_model()
+
+
+@admin.register(UsersCategory)
+class UsersCategoryAdmin(admin.ModelAdmin):
+    list_display = [
+        "id",
+        "name",
+        "slug",
+        "name_for_user",
+        "show_to_user",
+    ]
+    list_editable = [
+        "name_for_user",
+        "show_to_user",
+    ]
+    filter_horizontal = [
+        "email_type_related",
+        "users",
+    ]
 
 
 class MetaProfileInfoInline(admin.StackedInline):

@@ -2,36 +2,16 @@ from django.contrib import admin
 
 from apps.web.models import (
     WebsiteEmail,
-    WebsiteEmailsType,
     WebsiteEmailTrack,
     WebsiteLegalPage,
     Promotion,
-    PromotionCampaign,
-    UsersCategory,
+    Campaign,
 )
 
 
-@admin.register(UsersCategory)
-class UsersCategoryAdmin(admin.ModelAdmin):
-    list_display = [
-        "id",
-        "name",
-        "slug",
-        "name_for_user",
-        "show_to_user",
-    ]
-    list_editable = [
-        "name_for_user",
-        "show_to_user",
-    ]
-    filter_horizontal = [
-        "email_type_related",
-        "users",
-    ]
 
-
-@admin.register(PromotionCampaign)
-class PromotionCampaignAdmin(admin.ModelAdmin):
+@admin.register(Campaign)
+class CampaignAdmin(admin.ModelAdmin):
     list_display = [
         "id",
         "title",
@@ -52,11 +32,11 @@ class PromotionAdmin(admin.ModelAdmin):
         "shareable_url",
         "redirect_to",
         "medium",
-        "web_promotion_type",
+        "web_promotion_style",
         "web_location",
         "social_media",
         "publication_date",
-        "campaign_related",
+        "campaign",
         "reuse",
         "times_to_reuse",
         "clicks_by_user",
@@ -89,19 +69,11 @@ class WebsiteEmailAdmin(admin.ModelAdmin):
         "id",
         "title",
         "opening_rate",
-        "type_related",
+        "campaign",
         "sent",
         "date_to_send",
     ]
     list_editable = [
         "type_related",
         "date_to_send",
-    ]
-
-
-@admin.register(WebsiteEmailsType)
-class WebsiteEmailsTypeAdmin(admin.ModelAdmin):
-    list_display = [
-        "id",
-        "name",
     ]

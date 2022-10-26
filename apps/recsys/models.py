@@ -33,7 +33,7 @@ class BaseModelRecommended(Model, BaseToAllMixin):
     }
     place = CharField(max_length=150, choices=constants.WEP_PROMOTION_PLACE, default=constants.SIDE)
     location = CharField(max_length=150, choices=constants.WEP_PROMOTION_LOCATION, default=constants.ALL_WEB)
-    kind = CharField(max_length=150, choices=constants.WEP_PROMOTION_TYPE, default=constants.SOLO)
+    style = CharField(max_length=150, choices=constants.WEP_PROMOTION_STYLE, default=constants.SOLO)
     clicked = BooleanField(default=False)
     recommendation_personalized = BooleanField(default=False)
     recommendation_explained = JSONField(default=dict)

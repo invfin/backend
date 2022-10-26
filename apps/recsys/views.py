@@ -41,7 +41,7 @@ class RecommendationClickedRedirectView(RedirectView):
         content = obj.location
         term = obj.model_recommended
         place = obj.place
-        kind = obj.kind
+        style = obj.style
         utm_source = f'utm_source={source}'
         utm_medium = f'utm_medium={medium}'
         utm_campaign = f'utm_campaign={campaign}'
@@ -69,7 +69,7 @@ class BaseRecommendationView(TemplateView):
     model_to_recommend: Model = None
     place: str = None
     location: str = None
-    kind: str = None
+    style: str = None
     recommendation_log_model: Model = None
     slice_recommedations: int = None
 
@@ -102,7 +102,7 @@ class BaseRecommendationView(TemplateView):
                 user=user,
                 place=self.place,
                 location=self.location,
-                kind=self.kind,
+                style=self.style,
                 recommendation_explained=recommendation_explained,
                 model_recommended=recommendation
             )
@@ -220,5 +220,5 @@ class CompaniesRecommendedSide(BaseCompanyVisitedRecommendationView):
     template_name = 'company/side_recsys.html'
     place = constants.SIDE
     location = constants.ALL_WEB
-    kind = constants.LISTA
+    style = constants.LISTA
     slice_recommedations = 5

@@ -24,7 +24,7 @@ class BaseModelRecommendededAdmin(admin.ModelAdmin):
         "recommendation_explained",
         "place",
         "location",
-        "kind",
+        "style",
         'date',
     ]
 
