@@ -82,8 +82,7 @@ class ManageEmailEngagementUpdateView(PrivateWebUpdateView):
 
     def form_valid(self, form) -> HttpResponse:
         seguir = dict(form.data).pop("seguir", None)
-        # content not being saved
-        print(form.save())
+        form.save()
         if seguir:
             return self.successful_return()
         return HttpResponseRedirect(self.get_success_url())
