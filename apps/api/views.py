@@ -1,4 +1,4 @@
-from typing import Tuple, Type, List, Union
+from typing import Tuple, Type, List, Union, Optional, Callable, Dict
 
 from django.apps import apps
 from django.contrib import messages
@@ -136,18 +136,17 @@ class BaseAPIView(APIView):
         overrides the base get request
     """
 
-    model: Tuple[Type, bool] = ()
-    queryset: Tuple[Type, bool] = ()
-    serializer_class: Type = None
+    model: Optional[Tuple[Type, bool]] = None
+    queryset: Optional[Tuple[Callable, bool]] = None
+    serializer_class: Optional[Type] = None
     url_parameters: List[str] = []
     fk_lookup_model: str = ""
     limited: bool = False
-    model_to_track: Union[Type, str] = None
+    model_to_track: Optional[Union[Type, str]] = None
     is_excel: bool = False
 
     def get_model_to_track(self) -> Union[Type, None]:
         """
-        TODO maybe instead of saving the model saved we should also saved the endpoint requested
 
         Raises:
             NotImplementedError: model_to_track is set to None by default, if we don't want to save the request
@@ -167,7 +166,7 @@ class BaseAPIView(APIView):
             return apps.get_model("api", object_name, require_ready=True)
         raise NotImplementedError('You need to set a "model_to_track"')
 
-    def get_object_searched(self, queryset: Union[Type, QuerySet]) -> Type:
+    def get_object_searched(self, queryset: Union[Type, QuerySet, List]) -> Type:
         """
         TODO
         Improve the way that we get the searched model (Company, superinvestor or Term)
@@ -185,22 +184,21 @@ class BaseAPIView(APIView):
                 raise ParseError("Ha habido un problema con tu búsqueda, asegúrate de haber introducido un valor")
         return search
 
-    def save_request(self, queryset: Union[Type, QuerySet], path: str, ip: str) -> None:
+    def save_request(self, queryset: Union[Type, QuerySet, List], path: str, ip: str) -> None:
         request_model = self.get_model_to_track()
-        if request_model:
-            search = self.get_object_searched(queryset)
-            obj_data = dict(
-                ip=ip,
-                key=self.request.auth,
-                user=self.request.user,
-                path=path,
-                search=search,
-            )
-            if hasattr(request_model, "is_excel"):
-                obj_data.update({"is_excel": self.is_excel})
-            request_model.objects.create(**obj_data)
+        search = self.get_object_searched(queryset)
+        obj_data = dict(
+            ip=ip,
+            key=self.request.auth,
+            user=self.request.user,
+            path=path,
+            search=search,
+        )
+        if hasattr(request_model, "is_excel"):
+            obj_data.update({"is_excel": self.is_excel})
+        request_model._default_manager.create(**obj_data)
 
-    def final_responses(self, serializer, queryset: QuerySet, path: str, ip: str) -> Response:
+    def final_response(self, serializer, queryset: QuerySet, path: str, ip: str) -> Union[Response, APIException]:
         if status.is_success:
             self.save_request(queryset, path, ip)
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -210,25 +208,31 @@ class BaseAPIView(APIView):
     def find_query_value(self, query_dict: dict) -> Union[Tuple[str, str], Tuple[None, None]]:
         for url_query_param, url_query_value in query_dict.items():
             if url_query_param in self.url_parameters and url_query_value:
+                if url_query_param == "ticker":
+                    url_query_value = url_query_value.upper()
                 return url_query_param, url_query_value
         return None, None
 
-    def check_limitation(self, queryset: QuerySet) -> QuerySet:
+    def check_limitation(self, queryset: Union[QuerySet, List]) -> Union[QuerySet, List]:
         if self.request.auth.has_subscription is False:
             queryset = queryset[:10]
         return queryset
 
-    def get_object(self) -> Tuple[Union[Type, QuerySet], bool]:
+    def get_object(self) -> Tuple[Union[Type, Callable], bool]:
         """
+        Tries to get a tuple with the model to use or a queryset and a bool. In case that neither of both
+        are found it will look for the model of the serializer.
+        The boolean it's used to know if the serializer has many or not.
+
         Parameters
         ----------
-        self: regular self
-            Regular self
+        self: BaseAPIView
+            BaseAPIView
 
         Returns
         -------
-        res: tuple
-            returns a tuple with the model to query or a queryset
+        res: Tuple[Union[Type, QuerySet], bool]
+            returns a tuple with the model to query or a queryset and a boolean
         """
         if self.queryset:
             return self.queryset
@@ -237,23 +241,27 @@ class BaseAPIView(APIView):
         elif not self.model and not self.queryset:
             return self.serializer_class.Meta.model, False
 
-    def generate_queryset(
-        self, model_or_callable: Union[Type, QuerySet], many: bool, url_query_param: str, url_query_value: str
-    ):
+    def generate_lookup(
+        self,
+        url_query_param: Optional[str] = "",
+        url_query_value: Optional[str] = "",
+    ) -> Dict:
         """
+        Generates a dict with the key, value used to perform a filter in the queryset
+
         Parameters
         ----------
-        model_or_queryset: Union[Type, QuerySet]
-            A model class or a model's manager
+        url_query_param: Optional[str]
+            The parameter passed in the url to perform the query
+
+        url_query_value: Optional[str]
+            The value passed in the url to perform the query
 
         Returns
         -------
-        obj_or_queryset: Union[Type, QuerySet]
-            Return a specific object or a queryset according to the users lookup
-
-        TODO
-        --------
-            Improve lookup
+            lookup_data: Dict
+                The dictionary that might tbe empty, with the keys,values to perform filters
+                against
         """
         lookup_data = dict()
         if self.url_parameters or self.fk_lookup_model:
@@ -263,30 +271,55 @@ class BaseAPIView(APIView):
                 lookup_data = {f"{self.fk_lookup_model}": url_query_value}
             elif self.url_parameters:
                 lookup_data = {url_query_param: url_query_value}
+        return lookup_data
+
+    def generate_queryset(
+        self,
+        model_or_callable: Union[Type, Callable],
+        lookup_dict: Dict,
+    ):
+        """
+        This method it's used to perform a query. From the values passed from the url
+        we build a filter against the model or queryset passed in the view.
+
+        Parameters
+        ----------
+        model_or_callable: Union[Type, Callable]
+            A model class or a model's manager's method
+
+        lookup_dict: Dict
+            The filter to apply to the queryset
+
+        Returns
+        -------
+        obj_or_queryset: Union[Type, QuerySet]
+            Return a specific object or a queryset according to the users lookup
+
+        """
+
 
         if self.queryset:
-            obj_or_queryset = model_or_callable(**lookup_data)
+            obj_or_queryset = model_or_callable(**lookup_dict)
             if not obj_or_queryset:
                 raise NotFound("Tu búsqueda no ha devuelto ningún resultado")
         else:
             try:
-                obj_or_queryset = model_or_callable.objects.get(**lookup_data)
+                obj_or_queryset = model_or_callable._default_manager.get(**lookup_dict)
             except model_or_callable.DoesNotExist:
                 raise NotFound("Tu búsqueda no ha devuelto ningún resultado")
 
         return obj_or_queryset
 
-    def get(self, request) -> Response:
+    def get(self, request) -> Union[Response, APIException]:
         model_or_callable, many = self.get_object()
         query_dict = request.query_params.dict()
         url_query_param, url_query_value = self.find_query_value(query_dict)
-        if url_query_param == "ticker":
-            url_query_value = url_query_value.upper()
-        queryset = self.generate_queryset(model_or_callable, many, url_query_param, url_query_value)
+        lookup_dict = self.generate_lookup(url_query_param, url_query_value)
+        queryset = self.generate_queryset(model_or_callable, lookup_dict)
         if self.limited:
             queryset = self.check_limitation(queryset)
         serializer = self.serializer_class(queryset, many=many)
-        return self.final_responses(
+        return self.final_response(
             serializer, queryset, request.build_absolute_uri(), SeoInformation.get_client_ip(request)
         )
 

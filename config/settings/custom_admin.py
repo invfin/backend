@@ -60,6 +60,9 @@ SIDE_MENU = [
                 "model": "seo.UserJourney",
                 "label": "Journey",
             },
+{
+                "model": "users.UsersCategory",
+            },
             {"model": "seo.UserCompanyVisited", "label": "Company visited"},
             {"model": "seo.UserPublicBlogVisited", "label": "Blog visited"},
             {"model": "seo.UserQuestionVisited", "label": "Question visited"},
@@ -152,7 +155,7 @@ SIDE_MENU = [
         "icon": "fas fa-sitemap",
         "models": (
             {
-                "model": "web.WebsiteEmailsType",
+                "model": "web.Campaign",
             },
             {
                 "model": "web.WebsiteEmail",
@@ -161,13 +164,7 @@ SIDE_MENU = [
                 "model": "web.WebsiteEmailTrack",
             },
             {
-                "model": "web.PromotionCampaign",
-            },
-            {
                 "model": "web.Promotion",
-            },
-            {
-                "model": "web.UsersCategory",
             },
             {
                 "model": "web.WebsiteLegalPage",

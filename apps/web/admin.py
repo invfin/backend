@@ -74,6 +74,6 @@ class WebsiteEmailAdmin(admin.ModelAdmin):
         "date_to_send",
     ]
     list_editable = [
-        "type_related",
+        "campaign",
         "date_to_send",
     ]

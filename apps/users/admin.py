@@ -30,15 +30,8 @@ class UsersCategoryAdmin(admin.ModelAdmin):
         "id",
         "name",
         "slug",
-        "name_for_user",
-        "show_to_user",
-    ]
-    list_editable = [
-        "name_for_user",
-        "show_to_user",
     ]
     filter_horizontal = [
-        "email_type_related",
         "users",
     ]
 

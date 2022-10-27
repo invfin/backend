@@ -10,7 +10,7 @@ from apps.socialmedias.outils.content_creation import (
 from apps.web.models import WebsiteEmailTrack
 from apps.web.utils import more_than_month
 from apps.web import constants
-from apps.web.models import WebsiteEmail, WebsiteEmailsType
+from apps.web.models import WebsiteEmail, Campaign
 from apps.socialmedias import constants as social_constants
 from apps.users.models import User
 
@@ -41,7 +41,7 @@ class EngagementMachine:
         content_creator = self.get_creator(content_object)
         content_creator.for_content = [social_constants.WEB]
         newsletter_content_from_object = content_creator().create_newsletter_content_from_object()
-        type_related, created = WebsiteEmailsType.objects.get_or_create(
+        type_related, created = Campaign.objects.get_or_create(
             slug=web_email_type, defaults={"name": constants.CONTENT_PURPOSES_MAP[web_email_type]}
         )
         link = newsletter_content_from_object.pop("link")

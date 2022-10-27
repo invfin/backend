@@ -53,7 +53,7 @@ class WebEmailForm(ModelForm):
             "title",
             "date_to_send",
             "content",
-            "type_related",
+            "campaign",
             "whom_to_send",
             "users_selected",
         ]
