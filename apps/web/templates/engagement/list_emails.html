@@ -34,10 +34,12 @@
                     {% if web_email.status_waiting or web_email.status_draft %}
                     <a href="{% url 'web:update_email_engagement' web_email.id %}"
                         class="btn btn-sm btn-primary mb-1">Edit</a>
+                    <a href="{{web_email.previsualization_url}}" target="_blank"
+                        class="btn btn-sm btn-success mb-1">Preview</a>
                     {% endif %}
                     {% if web_email.status_waiting %}
                     <button hx-get="{% url 'web:send_email_engagement' web_email.id %}"
-                        class="btn btn-sm btn-primary mb-1">Send</button>
+                        class="btn btn-sm btn-danger mb-1">Send</button>
                     {% endif %}
                 </div>
             </div>
