@@ -50,8 +50,17 @@ class Campaign(Model, BaseToAllMixin):
     tags = ManyToManyField("general.Tag", blank=True)
     start_date = DateTimeField(blank=True, null=True)
     end_date = DateTimeField(blank=True, null=True)
-    focused_on = CharField(max_length=250, choices=constants.CORE_CAMPAIGN_FOCUS)
-    users = ForeignKey("users.UsersCategory", on_delete=CASCADE, null=True, blank=True, related_name="campaigns",)
+    focused_on = CharField(
+        max_length=250,
+        choices=constants.CORE_CAMPAIGN_FOCUS,
+    )
+    users_category = ForeignKey(
+        "users.UsersCategory",
+        on_delete=CASCADE,
+        null=True,
+        blank=True,
+        related_name="campaigns",
+    )
 
     class Meta:
         verbose_name = "Campaign"
@@ -78,11 +87,31 @@ class Promotion(Model, BaseToAllMixin):
     prize = PositiveBigIntegerField(default=0)
     shareable_url = SlugField(max_length=600, blank=True)
     redirect_to = SlugField(max_length=600, blank=True)
-    medium = CharField(max_length=250, choices=seo_constants.MEDIUMS, default=seo_constants.WEB,)
-    web_promotion_style = CharField(max_length=250, choices=seo_constants.WEP_PROMOTION_STYLE, blank=True,)
-    web_location = CharField(max_length=250, choices=seo_constants.WEP_PROMOTION_LOCATION, blank=True,)
-    web_place = CharField(max_length=250, choices=seo_constants.WEP_PROMOTION_PLACE,blank=True,)
-    social_media = CharField(max_length=250, choices=SOCIAL_MEDIAS, blank=True,)
+    medium = CharField(
+        max_length=250,
+        choices=seo_constants.MEDIUMS,
+        default=seo_constants.WEB,
+    )
+    web_promotion_style = CharField(
+        max_length=250,
+        choices=seo_constants.WEP_PROMOTION_STYLE,
+        blank=True,
+    )
+    web_location = CharField(
+        max_length=250,
+        choices=seo_constants.WEP_PROMOTION_LOCATION,
+        blank=True,
+    )
+    web_place = CharField(
+        max_length=250,
+        choices=seo_constants.WEP_PROMOTION_PLACE,
+        blank=True,
+    )
+    social_media = CharField(
+        max_length=250,
+        choices=SOCIAL_MEDIAS,
+        blank=True,
+    )
     publication_date = DateTimeField(blank=True)
     campaign = ForeignKey(
         Campaign,
@@ -156,6 +185,15 @@ class WebsiteEmail(BaseEmail):
     @property
     def edit_url(self):
         return reverse("web:update_email_engagement", args=[self.pk])
+
+    @property
+    def previsualization_url(self):
+        return reverse("web:preview_email_engagement", args=[self.pk])
+
+    @property
+    def previsualization_template(self):
+        template = self.campaign.slug.split("-")[0]
+        return f"emailing/web/{template}.html"
 
     @property
     def status_draft(self):

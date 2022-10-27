@@ -9,6 +9,7 @@ from apps.web.views import (
     ManageWebView,
     ManageEmailEngagementCreateView,
     ManageEmailEngagementUpdateView,
+    ManagePreviewEmailEngagementDetailsView,
     ManageEmailEngagementListView,
     ManageTermListView,
     ManageTermUpdateView,
@@ -26,6 +27,11 @@ urlpatterns = [
     path("manage-create-email-engament/", ManageEmailEngagementCreateView.as_view(), name="create_email_engagement"),
     path(
         "manage-update-email-engament/<pk>", ManageEmailEngagementUpdateView.as_view(), name="update_email_engagement"
+    ),
+    path(
+        "manage-preview-email-engament/<pk>",
+        ManagePreviewEmailEngagementDetailsView.as_view(),
+        name="preview_email_engagement",
     ),
     path("manage-terms/", ManageTermListView.as_view(), name="manage_all_terms"),
     path("manage-term/<slug>/", ManageTermUpdateView.as_view(), name="manage_single_term"),

@@ -1,7 +1,7 @@
 from django.urls import reverse
 from django.views.generic import CreateView, DetailView, ListView, UpdateView, TemplateView, FormView
 from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib import messages
 
 from apps.escritos.models import Term
@@ -73,8 +73,20 @@ class ManageEmailEngagementUpdateView(PrivateWebUpdateView):
     template_name = "engagement/form_email.html"
     pk_url_kwarg = "pk"
 
+    def successful_return(self):
+        messages.success(self.request, "Guardado correctamente")
+        return HttpResponse(status=204, headers={"HX-Trigger": "showMessageSuccess"})
+
     def get_success_url(self) -> str:
         return reverse("web:manage_web")
+
+    def form_valid(self, form) -> HttpResponse:
+        seguir = dict(form.data).pop("seguir", None)
+        # content not being saved
+        print(form.save())
+        if seguir:
+            return self.successful_return()
+        return HttpResponseRedirect(self.get_success_url())
 
 
 class ManageEmailEngagementCreateView(PrivateWebCreateView):
@@ -83,6 +95,24 @@ class ManageEmailEngagementCreateView(PrivateWebCreateView):
 
     def get_success_url(self) -> str:
         return reverse("web:manage_web")
+
+
+class ManagePreviewEmailEngagementDetailsView(PrivateWebDetailView):
+    model = WebsiteEmail
+    pk_url_kwarg = "pk"
+
+    def render_to_response(self, context, **response_kwargs):
+        template_name = self.object.previsualization_template
+        context.update({"content": self.object.content, "preview": True})
+
+        response_kwargs.setdefault("content_type", self.content_type)
+        return self.response_class(
+            request=self.request,
+            template=[template_name],
+            context=context,
+            using=self.template_engine,
+            **response_kwargs,
+        )
 
 
 class ManageTermListView(PrivateWebListView):

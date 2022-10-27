@@ -57,7 +57,7 @@ def prepare_term_newsletter_task():
             web_email = EngagementMachine().create_newsletter(
                 web_email_type=web_constants.CONTENT_FOR_NEWSLETTER_TERM,
                 content_object=socialmedias_constants.TERM_FOR_CONTENT,
-                whom_to_send=web_constants.WHOM_TO_SEND_EMAIL_TYPE_RELATED,
+                whom_to_send=web_constants.WHOM_TO_SEND_EMAIL_CAMPAIGN_RELATED,
             )
             term_link_html = EmailingSystem.html_link(web_email.edit_url, term_for_newsletter.title)
             subject = f"{term_for_newsletter} is ready to be sent as a newsletter"

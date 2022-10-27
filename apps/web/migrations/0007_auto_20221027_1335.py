@@ -2,30 +2,56 @@
 
 from django.db import migrations, models
 import django.db.models.deletion
+from apps.web.constants import CONTENT_PURPOSES
+
+
+def populate_categories_users(apps, schema):
+    for key, value in CONTENT_PURPOSES:
+        Campaign = apps.get_model("web", "Campaign")
+        UsersCategory = apps.get_model("users", "UsersCategory")
+        cat = UsersCategory.objects.create(name=value, slug=key)
+        Campaign.objects.create(title=value, slug=key, users_category=cat)
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
-        ('users', '0002_auto_20221027_0903'),
-        ('web', '0006_auto_20221027_0903'),
+        ("users", "0002_auto_20221027_0903"),
+        ("web", "0006_auto_20221027_0903"),
     ]
 
     operations = [
         migrations.AddField(
-            model_name='campaign',
-            name='focused_on',
-            field=models.CharField(choices=[('promotion', 'Promotion'), ('suggestion', 'Suggestion'), ('announcement', 'Announcement'), ('welcome', 'Welcome'), ('engagement', 'Engagement'), ('newsletter', 'Newsletter')], default='', max_length=250),
+            model_name="campaign",
+            name="focused_on",
+            field=models.CharField(
+                choices=[
+                    ("promotion", "Promotion"),
+                    ("suggestion", "Suggestion"),
+                    ("announcement", "Announcement"),
+                    ("welcome", "Welcome"),
+                    ("engagement", "Engagement"),
+                    ("newsletter", "Newsletter"),
+                ],
+                default="",
+                max_length=250,
+            ),
             preserve_default=False,
         ),
         migrations.AddField(
-            model_name='campaign',
-            name='users',
-            field=models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='users.userscategory'),
+            model_name="campaign",
+            name="users_category",
+            field=models.ForeignKey(
+                blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to="users.userscategory"
+            ),
         ),
         migrations.AlterField(
-            model_name='websiteemail',
-            name='whom_to_send',
-            field=models.CharField(choices=[('all', 'All'), ('campaign_related', 'Campaign related'), ('selected', 'Selected')], default='all', max_length=800),
+            model_name="websiteemail",
+            name="whom_to_send",
+            field=models.CharField(
+                choices=[("all", "All"), ("campaign_related", "Campaign related"), ("selected", "Selected")],
+                default="all",
+                max_length=800,
+            ),
         ),
+        migrations.RunPython(populate_categories_users),
     ]

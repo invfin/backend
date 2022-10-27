@@ -1,4 +1,4 @@
-from typing import Dict, Tuple, Type, Any
+from typing import Dict, Tuple, Type, Any, Union
 
 from django.apps import apps
 from django.conf import settings
@@ -8,6 +8,8 @@ from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
 
 from apps.general import constants
+from apps.web import constants as web_constants
+
 
 User = get_user_model()
 
@@ -27,7 +29,7 @@ class EmailingSystem:
     # EMAIL_DEFAULT = env("EMAIL_DEFAULT", default=f"EMAIL_DEFAULT@{CURRENT_DOMAIN}")
     # EMAIL_SUGGESTIONS = env("EMAIL_SUGGESTIONS", default=f"EMAIL_SUGGESTIONS@{CURRENT_DOMAIN}")
 
-    def __init__(self, is_for: str = None, web_objective: str = None) -> None:
+    def __init__(self, is_for: str = "", web_objective: str = "") -> None:
         """
         is_for might be :
             -constants.EMAIL_FOR_PUBLIC_BLOG
@@ -35,7 +37,9 @@ class EmailingSystem:
             -constants.EMAIL_FOR_WEB
         """
         self.is_for = is_for
-        self.web_objective = web_objective
+        if is_for == constants.EMAIL_FOR_WEB and not web_objective:
+            raise NotImplementedError("You must set a web_objective")
+        self.web_objective = web_objective.split("-")[0]
         template = f"{is_for}/{web_objective}" if web_objective else is_for
         self.email_template = f"emailing/{template}.html"
 
@@ -56,37 +60,46 @@ class EmailingSystem:
     def _prepare_content(self, email: Dict[str, Any], receiver: Type) -> Dict:
         return {**email, "user": receiver, "image_tag": self._prepare_email_track(email, receiver)}
 
-    def _prepare_sender(self, sender: str = None) -> str:
+    def _prepare_sender(self, sender: str = "") -> str:
         if self.is_for == constants.EMAIL_FOR_PUBLIC_BLOG:
             email = settings.EMAIL_NEWSLETTER
         elif self.is_for == constants.EMAIL_FOR_NOTIFICATION:
             email = settings.EMAIL_DEFAULT
             sender = "InvFin"
         else:
-            email = settings.MAIN_EMAIL
             sender = "Lucas - InvFin"
+            if self.web_objective in web_constants.WEB_OBJECTIVES:
+                email = settings.EMAIL_SUGGESTIONS
+            else:
+                email = settings.MAIN_EMAIL
 
         return f"{sender} <{email}>"
 
     def _prepare_email(self, email: Dict[str, str], receiver: Type) -> Tuple[str, Dict]:
-        sender = self._prepare_sender(email.pop("sender", None))
+        sender = self._prepare_sender(email.pop("sender", ""))
         content = self._prepare_content(email, receiver)
         return sender, content
 
-    def enviar_email(self, email: Dict, receiver_id: int):
+    def enviar_email(self, email: Dict[str, Union[str, int]], receiver_id: int):
         """Recieves the email that has to be sent and the id of the user to sent the email to.
 
         Parameters
         ----------
-            email : Dict
+            email : Dict[str, Union[str, int]]
                 The email's data to be sent
                 Example: {
-                    "subjects": The subject of the email
-                    "content": The content of the email
-                    "sender": The one who send the email
-                    "app_label": The app where the model lives
-                    "object_name": The model to retrieve
-                    "id": The id of the obj from the model to create the tracker tag
+                    "subject": str
+                        The subject of the email
+                    "content": str
+                        The content of the email
+                    "sender":
+                        The one who send the email
+                    "app_label": str
+                        The app where the model lives
+                    "object_name": str
+                        The model to retrieve
+                    "id": int
+                        The id of the obj from the model to create the tracker tag
                 }
 
             receiver_id : int

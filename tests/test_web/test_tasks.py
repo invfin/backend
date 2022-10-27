@@ -60,25 +60,24 @@ class TestTask(TestCase):
             users_category = DjangoTestingModel.create(UsersCategory)
             user_1 = DjangoTestingModel.create(User)
             users_category.users.add(user_1)
-            campaign = DjangoTestingModel.create(Campaign, users=users_category)
+            campaign = DjangoTestingModel.create(Campaign, users_category=users_category)
 
-            email_with_type = DjangoTestingModel.create(
+            email_with_campaign = DjangoTestingModel.create(
                 WebsiteEmail,
                 sent=False,
                 campaign=campaign,
                 whom_to_send=web_constants.WHOM_TO_SEND_EMAIL_CAMPAIGN_RELATED,
             )
 
-
-            send_email_engagement_task(email_with_type.id)
+            send_email_engagement_task(email_with_campaign.id)
             # mock_send_email_task.call_count
             mock_send_email_task.has_been_called_with(
-                email_with_type.dict_for_task,
+                email_with_campaign.dict_for_task,
                 user_1.id,
                 EMAIL_FOR_WEB,
             )
-            email_with_type.refresh_from_db()
-            assert email_with_type.sent is True
+            email_with_campaign.refresh_from_db()
+            assert email_with_campaign.sent is True
 
         with self.subTest(web_constants.WHOM_TO_SEND_EMAIL_SELECTED):
             email_with_users = DjangoTestingModel.create(

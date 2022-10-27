@@ -43,7 +43,15 @@
                     {{form.users_selected|as_crispy_field}}
                 </div>
                 <div class="col-lg-12 col-sm-12">
-                    {{form.type_related|as_crispy_field}}
+                    {{form.campaign|as_crispy_field}}
+                </div>
+                <input hidden name="seguir" value="true">
+                <div class="col-12 mb-4">
+                    <a href="{{object.previsualization_url}}" target="_blank" class="btn btn-success col-12">Preview</a>
+                </div>
+                <div class="col-12 mb-4">
+                    <button hx-post="" hx-headers='{"X-CSRFToken":"{{ csrf_token }}"}' hx-include="[name='seguir']"
+                        class="btn btn-primary col-12">Guardar y seguir</button>
                 </div>
                 <div class="col-12">
                     <button type="submit" class="btn btn-primary col-12">Guardar</button>

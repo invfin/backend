@@ -27,7 +27,7 @@ def send_email_engagement_task(email_id: int):
     if email.whom_to_send == web_constants.WHOM_TO_SEND_EMAIL_ALL:
         users_to_send_to = User.objects.all()
     elif email.whom_to_send == web_constants.WHOM_TO_SEND_EMAIL_CAMPAIGN_RELATED:
-        users_to_send_to = email.campaign.users.users.all()
+        users_to_send_to = email.campaign.users_category.users.all()
     elif email.whom_to_send == web_constants.WHOM_TO_SEND_EMAIL_SELECTED:
         users_to_send_to = email.users_selected.all()
 
@@ -53,12 +53,10 @@ def check_and_start_send_email_engagement_task():
     email_to_send = WebsiteEmail.objects.filter(sent=False, date_to_send__isnull=False).first()
     if email_to_send:
         if email_to_send.date_to_send <= timezone.now():
-            print(email_to_send.campaign.users.users.all())
-            print("*" * 100)
-            # send_email_engagement_task.delay(email_to_send.id)
-            # return EmailingSystem.simple_email(
-            #     f"Newsletter {email_to_send.id} sent",
-            #     f"Newsletter with the object {email_to_send.object} has been sent",
-            # )
+            send_email_engagement_task.delay(email_to_send.id)
+            return EmailingSystem.simple_email(
+                f"Newsletter {email_to_send.id} sent",
+                f"Newsletter with the object {email_to_send.object} has been sent",
+            )
         return None
     return EmailingSystem.simple_email("There are no website emails ready", "Create newsletters")

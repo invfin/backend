@@ -52,6 +52,9 @@ class UserForm(forms.ModelForm):
         model = User
         fields = ["first_name", "last_name", "username"]
 
+    def __init__(self, instance, *args, **kwargs) -> None:
+        super().__init__(instance=instance, *args, **kwargs)
+
 
 class UserProfileForm(forms.ModelForm):
     edad = forms.DateField(

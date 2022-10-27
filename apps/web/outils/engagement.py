@@ -41,14 +41,14 @@ class EngagementMachine:
         content_creator = self.get_creator(content_object)
         content_creator.for_content = [social_constants.WEB]
         newsletter_content_from_object = content_creator().create_newsletter_content_from_object()
-        type_related, created = Campaign.objects.get_or_create(
-            slug=web_email_type, defaults={"name": constants.CONTENT_PURPOSES_MAP[web_email_type]}
+        campaign, created = Campaign.objects.get_or_create(
+            slug=web_email_type, defaults={"title": constants.CONTENT_PURPOSES_MAP[web_email_type]}
         )
         link = newsletter_content_from_object.pop("link")
         newsletter_content_from_object.update(
             {
                 "object": newsletter_content_from_object.pop("content_shared"),
-                "type_related": type_related,
+                "campaign": campaign,
                 "whom_to_send": whom_to_send,
             }
         )
@@ -62,7 +62,7 @@ class EngagementMachine:
         last_email_engagement = WebsiteEmailTrack.objects.filter(
             sent_to=user,
             email_related__sent=True,
-            email_related__type_related__slug__startswith=constants.CONTENT_FOR_ENGAGEMENT,
+            email_related__campaign__slug__startswith=constants.CONTENT_FOR_ENGAGEMENT,
         )
         if last_email_engagement.exists():
             # If an email for engagement has already been sent

@@ -9,13 +9,22 @@ from apps.web.models import (
 )
 
 
-
 @admin.register(Campaign)
 class CampaignAdmin(admin.ModelAdmin):
     list_display = [
         "id",
         "title",
         "slug",
+        "focused_on",
+        "start_date",
+        "end_date",
+    ]
+    filter_horizontal = [
+        "categories",
+        "tags",
+    ]
+    list_editable = [
+        "focused_on",
         "start_date",
         "end_date",
     ]

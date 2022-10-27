@@ -60,8 +60,8 @@ class WebEmailForm(ModelForm):
 
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
-        self.fields["type_related"].widget = RelatedFieldWidgetWrapper(
-            self.fields["type_related"].widget,
-            self.instance._meta.get_field("type_related").remote_field,
+        self.fields["campaign"].widget = RelatedFieldWidgetWrapper(
+            self.fields["campaign"].widget,
+            self.instance._meta.get_field("campaign").remote_field,
             site,
         )
