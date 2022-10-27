@@ -6,16 +6,18 @@ from apps.api.models import Key
 
 
 class KeyAuthentication(BaseAuthentication):
-    # TODO Should we do only one query to check if the key exists and is active?
     def authenticate(self, request):
         key = request.GET.get("api_key")
         if key:
-            if Key.objects.filter(key=key).exists():
-                if Key.objects.key_is_active(key):
-                    key = Key.objects.get_key(key)
+            try:
+                key_obj = Key.objects.get(key=key)
+            except Key.DoesNotExist:
+                raise AuthenticationFailed(WRONG_API_KEY)
+            else:
+                if key_obj.in_use:
                     # DRF wants to receive (request.user, request.auth)
                     # https://www.django-rest-framework.org/api-guide/authentication/#sessionauthentication
-                    return (key.user, key)
-                raise AuthenticationFailed(API_KEY_REMOVED)
-            raise AuthenticationFailed(WRONG_API_KEY)
+                    return (key_obj.user, key_obj)
+                else:
+                    raise AuthenticationFailed(API_KEY_REMOVED)
         raise AuthenticationFailed(NO_API_KEY)

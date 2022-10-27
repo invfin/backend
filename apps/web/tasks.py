@@ -14,7 +14,7 @@ User = get_user_model()
 
 @shared_task(autoretry_for=(Exception,), max_retries=3)
 def send_email_engagement_task(email_id: int):
-    """Recieves an email id for the web. And it sends it to the users related.
+    """Receives an email id for the web. And it sends it to the users related.
     Then it checks the email as sent
     TODO: Change and generalise this tasks to send emails periodically
 
@@ -26,8 +26,8 @@ def send_email_engagement_task(email_id: int):
     email = WebsiteEmail.objects.get(pk=email_id)
     if email.whom_to_send == web_constants.WHOM_TO_SEND_EMAIL_ALL:
         users_to_send_to = User.objects.all()
-    elif email.whom_to_send == web_constants.WHOM_TO_SEND_EMAIL_TYPE_RELATED:
-        users_to_send_to = email.type_related.users_categories.all()
+    elif email.whom_to_send == web_constants.WHOM_TO_SEND_EMAIL_CAMPAIGN_RELATED:
+        users_to_send_to = email.campaign.users.users.all()
     elif email.whom_to_send == web_constants.WHOM_TO_SEND_EMAIL_SELECTED:
         users_to_send_to = email.users_selected.all()
 
@@ -53,7 +53,7 @@ def check_and_start_send_email_engagement_task():
     email_to_send = WebsiteEmail.objects.filter(sent=False, date_to_send__isnull=False).first()
     if email_to_send:
         if email_to_send.date_to_send <= timezone.now():
-            print(email_to_send.type_related.users_categories.all())
+            print(email_to_send.campaign.users.users.all())
             print("*" * 100)
             # send_email_engagement_task.delay(email_to_send.id)
             # return EmailingSystem.simple_email(

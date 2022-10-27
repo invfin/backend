@@ -21,9 +21,9 @@ from apps.general.mixins import BaseToAllMixin
 from apps.general.bases import BaseTrackEmail, BaseEmail
 from apps.seo.models import Visiteur
 from apps.socialmedias.constants import SOCIAL_MEDIAS
-from apps.seo import constants
+from apps.seo import constants as seo_constants
 from apps.users.models import User
-from apps.web.constants import WHOM_TO_SEND_EMAIL, WHOM_TO_SEND_EMAIL_ALL
+from apps.web import constants
 
 
 class WebsiteLegalPage(Model, BaseToAllMixin):
@@ -50,6 +50,8 @@ class Campaign(Model, BaseToAllMixin):
     tags = ManyToManyField("general.Tag", blank=True)
     start_date = DateTimeField(blank=True, null=True)
     end_date = DateTimeField(blank=True, null=True)
+    focused_on = CharField(max_length=250, choices=constants.CORE_CAMPAIGN_FOCUS)
+    users = ForeignKey("users.UsersCategory", on_delete=CASCADE, null=True, blank=True, related_name="campaigns",)
 
     class Meta:
         verbose_name = "Campaign"
@@ -64,7 +66,7 @@ class Campaign(Model, BaseToAllMixin):
         return super().save(*args, **kwargs)
 
     @property
-    def is_permanent(self):
+    def is_permanent(self) -> bool:
         return not self.end_date
 
 
@@ -76,10 +78,10 @@ class Promotion(Model, BaseToAllMixin):
     prize = PositiveBigIntegerField(default=0)
     shareable_url = SlugField(max_length=600, blank=True)
     redirect_to = SlugField(max_length=600, blank=True)
-    medium = CharField(max_length=250, choices=constants.MEDIUMS, default=constants.WEB,)
-    web_promotion_style = CharField(max_length=250, choices=constants.WEP_PROMOTION_STYLE, blank=True,)
-    web_location = CharField(max_length=250, choices=constants.WEP_PROMOTION_LOCATION, blank=True,)
-    web_place = CharField(max_length=250, choices=constants.WEP_PROMOTION_PLACE,blank=True,)
+    medium = CharField(max_length=250, choices=seo_constants.MEDIUMS, default=seo_constants.WEB,)
+    web_promotion_style = CharField(max_length=250, choices=seo_constants.WEP_PROMOTION_STYLE, blank=True,)
+    web_location = CharField(max_length=250, choices=seo_constants.WEP_PROMOTION_LOCATION, blank=True,)
+    web_place = CharField(max_length=250, choices=seo_constants.WEP_PROMOTION_PLACE,blank=True,)
     social_media = CharField(max_length=250, choices=SOCIAL_MEDIAS, blank=True,)
     publication_date = DateTimeField(blank=True)
     campaign = ForeignKey(
@@ -118,18 +120,18 @@ class Promotion(Model, BaseToAllMixin):
         if self.medium != source:
             source = self.social_media
         utm_source = f"utm_source={source}"
-        utm_medium = f"utm_medium={self.medium}"
-        utm_campaign = f"utm_campaign={self.campaign.title}"
-        utm_term = f"utm_term={self.title}"
-        return f"{self.redirect_to}?{utm_source}&{utm_medium}&{utm_campaign}&{utm_term}"
+        utm_medium = f"&utm_medium={self.medium}"
+        utm_campaign = f"&utm_campaign={self.campaign.title}" if self.campaign else ""
+        utm_term = f"&utm_term={self.title}"
+        return f"{self.redirect_to}?{utm_source}{utm_medium}{utm_campaign}{utm_term}"
 
 
 class WebsiteEmail(BaseEmail):
     content = RichTextField()
     whom_to_send = CharField(
         max_length=800,
-        choices=WHOM_TO_SEND_EMAIL,
-        default=WHOM_TO_SEND_EMAIL_ALL,
+        choices=constants.WHOM_TO_SEND_EMAIL,
+        default=constants.WHOM_TO_SEND_EMAIL_ALL,
     )
     campaign = ForeignKey(
         Campaign,
@@ -153,7 +155,7 @@ class WebsiteEmail(BaseEmail):
 
     @property
     def edit_url(self):
-        return reverse("web:update_email_engagement", args=[self.id])
+        return reverse("web:update_email_engagement", args=[self.pk])
 
     @property
     def status_draft(self):

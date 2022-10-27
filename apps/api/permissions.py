@@ -13,12 +13,11 @@ class ReadOnly(BasePermission):
         return True
 
 
-class CheckCuota(BasePermission):
+class CheckCuota(ReadOnly):
     message = "Ya has usado toda tu cuota, si quieres aumentarla puedes pedirlo desde tu perfil"
 
     def has_permission(self, request, view):
-        if request.method not in SAFE_METHODS:
-            raise PermissionDenied("Este endpoint es para leer")
+        super().has_permission(request, view)
         key = request.GET.get("api_key")
         if key:
             return Key.objects.has_cuota(key)

@@ -9,12 +9,12 @@ from bfet import DjangoTestingModel
 from apps.general.constants import EMAIL_FOR_WEB
 from apps.escritos.models import Term
 from apps.escritos.tasks import prepare_term_newsletter_task
-from apps.users.models import User
+from apps.users.models import User, UsersCategory
 from apps.web.tasks import (
     check_and_start_send_email_engagement_task,
     send_email_engagement_task,
 )
-from apps.web.models import WebsiteEmail, WebsiteEmailsType, UsersCategory
+from apps.web.models import WebsiteEmail, Campaign
 from apps.web import constants as web_constants
 
 
@@ -24,7 +24,8 @@ class TestTask(TestCase):
         pass
 
     @patch("apps.general.outils.emailing.EmailingSystem.simple_email")
-    def test_prepare_term_newsletter(self, mock_simple_email):
+    @patch("apps.escritos.tasks.notify_term_to_improve_task.delay")
+    def test_prepare_term_newsletter(self, mock_simple_email, mock_notify_term_to_improve_task):
         prepare_term_newsletter_task()
         subject = "There are no terms ready for newsletters"
         message = "Create newsletters"
@@ -55,19 +56,19 @@ class TestTask(TestCase):
 
     @patch("apps.general.tasks.send_email_task.delay")
     def test_send_email_engagement_task(self, mock_send_email_task):
-        with self.subTest(web_constants.WHOM_TO_SEND_EMAIL_TYPE_RELATED):
-            email_type = DjangoTestingModel.create(WebsiteEmailsType)
+        with self.subTest(web_constants.WHOM_TO_SEND_EMAIL_CAMPAIGN_RELATED):
+            users_category = DjangoTestingModel.create(UsersCategory)
+            user_1 = DjangoTestingModel.create(User)
+            users_category.users.add(user_1)
+            campaign = DjangoTestingModel.create(Campaign, users=users_category)
+
             email_with_type = DjangoTestingModel.create(
                 WebsiteEmail,
                 sent=False,
-                type_related=email_type,
-                whom_to_send=web_constants.WHOM_TO_SEND_EMAIL_TYPE_RELATED,
+                campaign=campaign,
+                whom_to_send=web_constants.WHOM_TO_SEND_EMAIL_CAMPAIGN_RELATED,
             )
-            users_category = DjangoTestingModel.create(UsersCategory)
-            user_1 = DjangoTestingModel.create(User)
 
-            users_category.users.add(user_1)
-            users_category.email_type_related.add(email_type)
 
             send_email_engagement_task(email_with_type.id)
             # mock_send_email_task.call_count
@@ -83,7 +84,7 @@ class TestTask(TestCase):
             email_with_users = DjangoTestingModel.create(
                 WebsiteEmail,
                 sent=False,
-                type_related=email_type,
+                campaign=campaign,
                 whom_to_send=web_constants.WHOM_TO_SEND_EMAIL_SELECTED,
             )
             user_2 = DjangoTestingModel.create(User)
@@ -101,7 +102,7 @@ class TestTask(TestCase):
             email_with_all = DjangoTestingModel.create(
                 WebsiteEmail,
                 sent=False,
-                type_related=email_type,
+                campaign=campaign,
                 whom_to_send=web_constants.WHOM_TO_SEND_EMAIL_ALL,
             )
             send_email_engagement_task(email_with_all.id)
