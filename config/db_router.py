@@ -1,17 +1,17 @@
 from django.conf import settings
 
 
-class AnalyticDatabase:
-    route_app_labels = ["analytic"]
+class DataWarehouse:
+    route_app_labels = ["data_warehouse"]
 
     def db_for_read(self, model, **hints):
         if model._meta.app_label in self.route_app_labels:
-            return settings.ANALYTIC_DB_ROUTER
+            return settings.DATA_WAREHOUSE_DB_ROUTER
         return "default"
 
     def db_for_write(self, model, **hints):
         if model._meta.app_label in self.route_app_labels:
-            return settings.ANALYTIC_DB_ROUTER
+            return settings.DATA_WAREHOUSE_DB_ROUTER
         return "default"
 
     def allow_relation(self, obj1, obj2, **hints):
@@ -21,5 +21,5 @@ class AnalyticDatabase:
 
     def allow_migrate(self, db, app_label, model_name=None, **hints):
         if app_label in self.route_app_labels:
-            return db == settings.ANALYTIC_DB_ROUTER
+            return db == settings.DATA_WAREHOUSE_DB_ROUTER
         return db == "default"

@@ -25,12 +25,12 @@ DATABASES = {"default": env.db(DATABASE_URL)}
 DATABASES["default"]["ATOMIC_REQUESTS"] = True
 
 
-# DATABASES["analytics"] = env.db(DATABASE_URL)
+# DATABASES["data_warehouse"] = env.db(DATABASE_URL)
 # DATABASE_ROUTERS = [
-#     'config.db_router.AnalyticDatabase',
+#     'config.db_router.DataWarehouse',
 # ]
 
-# ANALYTIC_DB_ROUTER = "analytic"
+# DATA_WAREHOUSE_DB_ROUTER = "data_warehouse"
 # CACHES
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#caches
