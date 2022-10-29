@@ -42,7 +42,7 @@ class TermContentCreation(ContentCreation):
             f" {line_break}Estos son los puntos claves que encontrarás:"
         )
         for index, term_content in enumerate(self.object.term_content_parts.all()):
-            description = f"{description}{index}.-{term_content.title}{line_break}"
+            description = f"{description}{line_break}{index}.-{term_content.title}"
         return description
 
 
