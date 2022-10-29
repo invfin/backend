@@ -19,11 +19,13 @@ from .models import (
 @admin.register(DefaultContent)
 class DefaultContentAdmin(admin.ModelAdmin):
     list_display = ["id", "title", "for_content", "purpose"]
+    list_editable = ["title", "for_content", "purpose"]
 
 
 @admin.register(DefaultTilte)
 class DefaultTilteAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
     list_display = ["id", "title", "for_content", "purpose"]
+    list_editable = ["title", "for_content", "purpose"]
 
 
 @admin.register(Emoji)
