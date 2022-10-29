@@ -30,7 +30,7 @@ class ScreenerInicioView(SEOListView):
         "Estudia todos loas activos que quieras para ser el mejor inversor. Ten acceso a más de 30000 empresas y 30"
         " años de información."
     )
-    meta_tags = "empresas, inversiones, analisis de empresas, invertir"
+    meta_tags = ["empresas, inversiones, analisis de empresas, invertir"]
     meta_title = "Más de 30 años de información financiera de cualquier activo"
 
     def get_context_data(self, **kwargs):
@@ -49,7 +49,7 @@ class CompanyScreenerInicioView(SEOListView):
         "Estudia todas las empresas que quieras para ser el mejor inversor. Ten acceso a más de 30000 empresas y 30"
         " años de información."
     )
-    meta_tags = "empresas, inversiones, analisis de empresas, invertir"
+    meta_tags = ["empresas, inversiones, analisis de empresas, invertir"]
     # meta_title =
 
     def get_queryset(self, **kwargs):
@@ -76,7 +76,7 @@ class YahooScreenerView(SEODetailView):
     context_object_name = "screener"
     slug_url_kwarg = "slug"
     slug_field = "slug"
-    meta_tags = "empresas, inversiones, analisis de empresas, invertir"
+    meta_tags = ["empresas, inversiones, analisis de empresas, invertir"]
 
 
 class EtfScreenerInicioView(ListView):
@@ -97,10 +97,10 @@ class CompanyDetailsView(SEODetailView):
             response = Company.objects.prefetch_yearly_historical_data(ticker=ticker)
         except Company.DoesNotExist:
             response, _ = Company.objects.get_or_create(name="Need-parsing", ticker=ticker)
-        except Exception as e:
+        except Exception:
             """
             TODO
-            Use logger instead of print
+            Use logger
             """
             response = None
         return response

@@ -3,27 +3,41 @@
 # InvFin
 The main purpose of the webapp is to centralise information about investing, in spanish.
 
-# CURRENT PARTS
-* Q&A
-* Screener
-* Public Blog
-* Roboadvisor
-* SuperInvestors
-* Portfolio
-* Dicctionary
+
+# Sections:
+
+<!-- toc -->
+- [Q&A](#Q&A)
+- [Dicctionary](#Dicctionary)
+- [Blog](#Blog)
+- [Screener](#Screener)
+- [Roboadvisor](#Roboadvisor)
+- [SuperInvestors](#SuperInvestors)
+- [Portfolio](#Portfolio)
+<!-- - [API](#API)
+- [Internal](#Internal)
+    - [Recsys](#Recsys)
+    - [Emailing](#Emailing)
+- [Side Notes](#SideNotes) -->
+<!-- tocstop -->
+
 
 
 ## Q&A
-One part is the written content where users can vote, read definitions, share content, ask and answer questions (like SO), improve some definitions or create their own newsletter.
-This part is very basic, users can CRUD answers, comments, etc... if they are log in, nothing really fancy.
+The Q&A as the purpose of allowing users to ask questions and answer them to help their pairs.
+To find the best answers users can upvote or downvote both questions and answers.
+Furtheremore they can comment them if they want to add anything to it.
+
+## Dictionnary
+An extensive dictionnary fullfiled with financial, economical, accounting, investing, etc... terms where
+users can learn about. They can also participate improving the definitions, examples, images and the overall explanation.
+
+## Blog
+Users can become writters and send newsletter, have their own domain (subdomain) and create a fan base to send them their newsletters through email.
+In this part the writters can see all related to their content, views, times shared, interactions, emails opening rate, and so on.
 
 ## Screener
-The second part is the screener. For now it's just companies (ETFs and Superinvestors are still in developpements, I have to recreate the database schema, and set up templates, views, etc...) 
-In this part, users can look for over 30000 companies around the globe. They can see their financial statements and metrics with nice charts and tables.
-
-## Public Blog
-The third part is the "management". Users can create their own newsletter, have a subdomain and create a fan base to send them their newsletters (like substack).
-In this part they can see all related to their content, views, times shared, interactions, emails opening rate, etc...
+In this part, users can look for over 30000 companies around the globe. They can see their financial statements and financial metrics to make their due diligence. They can introduce their own values to analyse the future value of the company, submit FODA analysis and know which superinvestors have the given company in their portfolio.
 
 ## Roboadvisor
 Users will have a investor profile and based on that they can ask to analyse some company and see if it would match their profile and investement approach.
@@ -33,9 +47,9 @@ Users can keep track of their finance and investments and share it with the worl
 
 
 # SIDE NOTES
-## Creation
+<!-- ## Creation
 I used cookiecutter to start the project to see how to structure it "correctly".
-The website is deployed on a single core CPU so multithreading is limited. For everything related to sending emails or scraping for information Celery with Redis handle that. Why Redis? Well, Django Cookiecutter came with that so I wanted to give it a try. Before I used RabbitMQ as it is focused on being a message broker I thought that it was more appropriate. Now I'm using Redis to test it and because I can use it to cache.
+The website is deployed on a single core CPU so multithreading is limited. For everything related to sending emails or scraping for information Celery with Redis handle that. Why Redis? Well, Django Cookiecutter came with that so I wanted to give it a try. Before I used RabbitMQ as it is focused on being a message broker I thought that it was more appropriate. Now I'm using Redis to test it and because I can use it to cache. -->
 
 ## TemplateTags
 ### UTM
@@ -65,6 +79,7 @@ and then store the complete url with date and other info according.
 4. [ ] Add other assets
 5. [ ] Enable categories on portfolio
 6. [ ] Add random prize
-7. [ ] Improve emailing
-8. [ ] Improve noitfications
-9. [ ] Improve tests
+7. [ ] Improve tests
+
+
+https://github.com/InterNations/antwort

@@ -13,9 +13,7 @@
     ],
     "python.analysis.typeCheckingMode": "basic",
     "python.analysis.autoImportCompletions": true,
-    "python.linting.enabled": true,
     "python.testing.autoTestDiscoverOnSaveEnabled": true,
-    "python.linting.pycodestyleEnabled": true,
     "editor.tokenColorCustomizations": {
         "textMateRules": [
             {
@@ -38,5 +36,9 @@
         "editor.bracketPairColorization.enabled": true,
         "editor.autoIndent": "advanced",
         "editor.wordWrapColumn": 110,
-    }
+    },
+    "python.linting.mypyEnabled": true,
+    "python.linting.flake8Enabled": true,
+    "python.linting.enabled": true,
+    "python.linting.pycodestyleEnabled": true,
 }

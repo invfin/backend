@@ -34,54 +34,59 @@ class CompanyManager(Manager):
         )
 
     def prefetch_yearly_historical_data(self, **kwargs) -> Type:
-        """
-        TODO
-        Maybe create 3 different methods for prefetching data (or only 2 and one do the filter part on the statements side)
-        """
         lookup_filter = {"company__ticker": kwargs["ticker"]} if "ticker" in kwargs else {}
 
         return self.prefetch_related(
             Prefetch(
-                "inc_statements", queryset=self.model.inc_statements.rel.related_model.objects.yearly(**lookup_filter)
+                "inc_statements",
+                queryset=self.model.inc_statements.rel.related_model.objects.yearly(False, **lookup_filter),
             ),
             Prefetch(
-                "balance_sheets", queryset=self.model.balance_sheets.rel.related_model.objects.yearly(**lookup_filter)
+                "balance_sheets",
+                queryset=self.model.balance_sheets.rel.related_model.objects.yearly(False, **lookup_filter),
             ),
             Prefetch(
-                "cf_statements", queryset=self.model.cf_statements.rel.related_model.objects.yearly(**lookup_filter)
+                "cf_statements",
+                queryset=self.model.cf_statements.rel.related_model.objects.yearly(False, **lookup_filter),
             ),
             Prefetch(
                 "rentability_ratios",
-                queryset=self.model.rentability_ratios.rel.related_model.objects.yearly(**lookup_filter),
+                queryset=self.model.rentability_ratios.rel.related_model.objects.yearly(False, **lookup_filter),
             ),
             Prefetch(
                 "liquidity_ratios",
-                queryset=self.model.liquidity_ratios.rel.related_model.objects.yearly(**lookup_filter),
+                queryset=self.model.liquidity_ratios.rel.related_model.objects.yearly(False, **lookup_filter),
             ),
-            Prefetch("margins", queryset=self.model.margins.rel.related_model.objects.yearly(**lookup_filter)),
-            Prefetch("fcf_ratios", queryset=self.model.fcf_ratios.rel.related_model.objects.yearly(**lookup_filter)),
+            Prefetch("margins", queryset=self.model.margins.rel.related_model.objects.yearly(False, **lookup_filter)),
+            Prefetch(
+                "fcf_ratios", queryset=self.model.fcf_ratios.rel.related_model.objects.yearly(False, **lookup_filter)
+            ),
             Prefetch(
                 "per_share_values",
-                queryset=self.model.per_share_values.rel.related_model.objects.yearly(**lookup_filter),
+                queryset=self.model.per_share_values.rel.related_model.objects.yearly(False, **lookup_filter),
             ),
             Prefetch(
                 "non_gaap_figures",
-                queryset=self.model.non_gaap_figures.rel.related_model.objects.yearly(**lookup_filter),
+                queryset=self.model.non_gaap_figures.rel.related_model.objects.yearly(False, **lookup_filter),
             ),
             Prefetch(
                 "operation_risks_ratios",
-                queryset=self.model.operation_risks_ratios.rel.related_model.objects.yearly(**lookup_filter),
+                queryset=self.model.operation_risks_ratios.rel.related_model.objects.yearly(False, **lookup_filter),
             ),
-            Prefetch("ev_ratios", queryset=self.model.ev_ratios.rel.related_model.objects.yearly(**lookup_filter)),
             Prefetch(
-                "growth_rates", queryset=self.model.growth_rates.rel.related_model.objects.yearly(**lookup_filter)
+                "ev_ratios", queryset=self.model.ev_ratios.rel.related_model.objects.yearly(False, **lookup_filter)
+            ),
+            Prefetch(
+                "growth_rates",
+                queryset=self.model.growth_rates.rel.related_model.objects.yearly(False, **lookup_filter),
             ),
             Prefetch(
                 "efficiency_ratios",
-                queryset=self.model.efficiency_ratios.rel.related_model.objects.yearly(**lookup_filter),
+                queryset=self.model.efficiency_ratios.rel.related_model.objects.yearly(False, **lookup_filter),
             ),
             Prefetch(
-                "price_to_ratios", queryset=self.model.price_to_ratios.rel.related_model.objects.yearly(**lookup_filter)
+                "price_to_ratios",
+                queryset=self.model.price_to_ratios.rel.related_model.objects.yearly(False, **lookup_filter),
             ),
         ).get(**kwargs)
 
