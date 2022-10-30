@@ -1,22 +1,12 @@
-from django.forms import (
-    CharField,
-    DateTimeField,
-    DateTimeInput,
-    EmailField,
-    Form,
-    ModelForm,
-    Textarea,
-    ChoiceField,
-)
 from django.contrib.admin import site
 from django.contrib.admin.widgets import RelatedFieldWidgetWrapper
+from django.forms import CharField, ChoiceField, DateTimeField, DateTimeInput, EmailField, Form, ModelForm, Textarea
 
 from apps.general.outils.emailing import EmailingSystem
-
+from apps.socialmedias import constants as socialmedias_constants
+from apps.web import constants
 from apps.web.models import WebsiteEmail
 from apps.web.outils.engagement import EngagementMachine
-from apps.web import constants
-from apps.socialmedias import constants as socialmedias_constants
 
 
 class AutomaticNewsletterForm(Form):

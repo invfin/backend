@@ -297,7 +297,6 @@ class BaseAPIView(APIView):
 
         """
 
-
         if self.queryset:
             obj_or_queryset = model_or_callable(**lookup_dict)
             if not obj_or_queryset:
@@ -329,7 +328,7 @@ class APIDocumentation(SEOListView):
     template_name = "explorar/api_documentation.html"
     context_object_name = "endpoints_categories"
     meta_description = "La mejor y más completa API de información financiera y económica"
-    meta_tags = ["finanzas", "blog financiero", "blog el financiera", "invertir", "API"]
+    meta_tags = "finanzas", "blog financiero", "blog el financiera", "invertir", "API"
     meta_title = "API documentación"
     meta_category = "API"
 

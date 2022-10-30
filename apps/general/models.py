@@ -1,4 +1,3 @@
-from cloudinary.models import CloudinaryField
 from django.contrib.auth import get_user_model
 from django.db.models import (
     CASCADE,
@@ -7,15 +6,18 @@ from django.db.models import (
     CharField,
     ForeignKey,
     IntegerField,
-    Model,
     ManyToManyField,
+    Model,
 )
 
-User = get_user_model()
+from cloudinary.models import CloudinaryField
 
-from apps.general.bases import BaseTrackEmail, BaseGenericModels, BaseToAllMixin
-from apps.general.managers import PeriodManager, CurrencyManager
 from apps.general import constants
+from apps.general.bases import BaseGenericModels, BaseToAllMixin, BaseTrackEmail
+from apps.general.managers import CurrencyManager, PeriodManager
+
+
+User = get_user_model()
 
 
 class EscritosClassification(Model, BaseToAllMixin):
@@ -36,7 +38,7 @@ class EscritosClassification(Model, BaseToAllMixin):
         abstract = True
 
     def __str__(self):
-        return self.name or f"{self.id}"
+        return self.name or f"{self.pk}"
 
     def save(self, *args, **kwargs):  # new
         if not self.slug:

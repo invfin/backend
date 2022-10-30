@@ -1,6 +1,9 @@
+from typing import Dict
+
+
 EXTRA_DATA_DICT_KEY_OLD_URLS = "previous_urls"
 
-DEFAULT_EXTRA_DATA_DICT = {
+DEFAULT_EXTRA_DATA_DICT: Dict = {
     EXTRA_DATA_DICT_KEY_OLD_URLS: [],
 }
 

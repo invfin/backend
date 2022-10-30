@@ -1,11 +1,11 @@
 from celery import shared_task
 
-from apps.general.outils.emailing import EmailingSystem
 from apps.escritos.models import Term
+from apps.general.outils.emailing import EmailingSystem
 from apps.socialmedias import constants as socialmedias_constants
-from apps.web.outils.engagement import EngagementMachine
 from apps.web import constants as web_constants
 from apps.web.models import WebsiteEmail
+from apps.web.outils.engagement import EngagementMachine
 
 
 @shared_task(autoretry_for=(Exception,), max_retries=3)
@@ -18,19 +18,29 @@ def notify_term_to_improve_task():
         None
             Send emails
     """
-    terms_without_info = Term.objects.filter_checkings_not_seen("information_clean")
+    terms_without_info = Term.objects.to_be_cleaned()
     if terms_without_info.exists():
         term = terms_without_info.first()
+        terms_without_info_but_already_requested = Term.objects.filter_checkings(
+            [
+                {"request_improvement": True},
+                {"information_clean": False},
+            ]
+        ).exclude(pk=term.pk)
+        term.modify_checking("request_improvement", True)
         term_link_html = EmailingSystem.html_link(term.admin_urls["change"], term.title)
-        return EmailingSystem.simple_email(
-            f"It's time to update {term}",
-            f"You need to update {term_link_html} right now",
-        )
+        content = f"You need to update {term_link_html} right now."
+        subject = f"It's time to update {term}"
+        if terms_without_info_but_already_requested:
+            subject = f"{subject} and also {terms_without_info_but_already_requested.count()} more"
+            content = f"{content} Furtheremore you have to improve:"
+            for term_left in terms_without_info_but_already_requested:
+                term_left_link_html = EmailingSystem.html_link(term_left.admin_urls["change"], term_left.title)
+                content = f"{content}\n {term_left_link_html}"
     else:
-        return EmailingSystem.simple_email(
-            "No terms left to update",
-            "All terms are correct",
-        )
+        content = "No terms left to update"
+        subject = "All terms are correct"
+    return EmailingSystem.simple_email(subject, content)
 
 
 @shared_task(autoretry_for=(Exception,), max_retries=3)
@@ -51,8 +61,8 @@ def prepare_term_newsletter_task():
         if WebsiteEmail.objects.filter(
             content_type=term_for_newsletter.content_type.id, object_id=term_for_newsletter.id
         ).exists():
-            subject = f"You need to clean a new term before creating a new newsletter"
-            message = f"There aren terms ready to be sent, you must update one"
+            subject = "You need to clean a new term before creating a new newsletter"
+            message = "There aren terms ready to be sent, you must update one"
         else:
             web_email = EngagementMachine().create_newsletter(
                 web_email_type=web_constants.CONTENT_FOR_NEWSLETTER_TERM,

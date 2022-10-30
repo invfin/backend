@@ -46,7 +46,7 @@ class BaseCreateUpdateTimeModel(Model):
 
 class BaseWrittenContent(BaseCreateUpdateTimeModel, CommonMixin):
     title = CharField(max_length=500, null=True, blank=True)
-    slug = CharField(max_length=500, null=True, blank=True)
+    slug = CharField(max_length=500, null=True, blank=True)  # TODO change to slug field and allow blank but not null
     total_votes = IntegerField(default=0)
     total_views = PositiveIntegerField(default=0)
     times_shared = PositiveIntegerField(default=0)
@@ -68,7 +68,7 @@ class BaseWrittenContent(BaseCreateUpdateTimeModel, CommonMixin):
     class Meta:
         abstract = True
 
-    def save(self, *args, **kwargs):  # new
+    def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = self.save_unique_field("slug", self.title)
         return super().save(*args, **kwargs)

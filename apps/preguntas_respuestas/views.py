@@ -22,7 +22,7 @@ class QuestionsView(SEOListView):
     context_object_name = "questions"
     ordering = ["-created_at"]
     meta_description = "Haz una pregunta o responde a la comunidad para conseguir premios increíbles"
-    meta_tags = ["finanzas, blog financiero, blog el financiera, invertir"]
+    meta_tags = "finanzas, blog financiero, blog el financiera, invertir"
     meta_title = "Resuelve tus dudas o ayuda otros inversores y gana dinero"
     is_article = True
     open_graph_type = "article"

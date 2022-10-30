@@ -119,6 +119,16 @@ class BaseToAllMixin:
             url = f"{FULL_DOMAIN}{slug}"
         return url
 
+    def has_checking(self, checking: str) -> bool:
+        return self.checkings[f"has_{checking}"]["state"] == "yes"
+
+    def modify_checking(self, checking: str, has_it: bool):
+        dt = datetime.now()
+        ts = datetime.timestamp(dt)
+        state = "yes" if has_it else "no"
+        self.checkings.update({f"has_{checking}": {"state": state, "time": ts}})
+        self.save(update_fields=["checkings"])
+
 
 class CommonMixin(BaseToAllMixin):
     @property
@@ -138,26 +148,26 @@ class CommonMixin(BaseToAllMixin):
         return urlsafe_base64_encode(force_bytes(f"{self.base_url_to_encode}-down"))
 
     def vote(self, user, action):
-        user_already_upvoted = True if user in self.upvotes.all() else False
-        user_already_downvoted = True if user in self.downvotes.all() else False
+        user_already_upvoted = user in self.upvotes.all()
+        user_already_downvoted = user in self.downvotes.all()
         vote_result = 0
-        if action == "up" and user_already_upvoted == True or action == "down" and user_already_downvoted == True:
+        if action == "up" and user_already_upvoted or action == "down" and user_already_downvoted:
             return vote_result
         if action == "up":
-            if user_already_downvoted == True:
+            if user_already_downvoted:
                 self.downvotes.remove(user)
                 self.upvotes.add(user)
                 vote_result = 2
-            elif user_already_upvoted == False:
+            elif not user_already_upvoted:
                 self.upvotes.add(user)
                 vote_result = 1
 
         elif action == "down":
-            if user_already_upvoted == True:
+            if user_already_upvoted:
                 self.upvotes.remove(user)
                 self.downvotes.add(user)
                 vote_result = -2
-            elif user_already_downvoted == False:
+            elif not user_already_downvoted:
                 self.downvotes.add(user)
                 vote_result = -1
 
@@ -193,49 +203,8 @@ class CommonMixin(BaseToAllMixin):
             }
         return schema_org
 
-    @property
-    def meta_info(self):
-        meta_info = {}
-        if self.object_name == "Question":
-            meta_info["modified_time"] = self.updated_at
-            meta_info["meta_image"] = self.author.foto
-            meta_info["meta_title"] = self.title
-            meta_info["meta_desc"] = self.content
-            meta_info["meta_url"] = self.get_absolute_url()
-            meta_info["meta_tags"] = self.tags.all()
-            meta_info["meta_category"] = self.category
-            meta_info["meta_author"] = self.author
-            meta_info["schema_org"] = self.schema_org
-        else:
-            try:
-                saved_meta = self.meta_information.parameter_settings
-            except:
-                self.save_secondary_info(str(self._meta).split(".")[1])
-            else:
-                meta_info["modified_time"] = saved_meta.modified_time
-                meta_info["meta_image"] = saved_meta.meta_img
-                meta_info["meta_title"] = saved_meta.meta_title
-                meta_info["meta_desc"] = saved_meta.meta_description
-                meta_info["meta_url"] = saved_meta.meta_url
-                meta_info["meta_tags"] = saved_meta.meta_keywords
-                meta_info["meta_category"] = "Inversiones"
-                meta_info["meta_author"] = saved_meta.meta_author
-                meta_info["schema_org"] = saved_meta.schema_org
-
-        return meta_info
-
 
 class BaseEscritosMixins:
-    def check_checkings(self, main_dict: str) -> bool:
-        return self.checkings[f"has_{main_dict}"]["state"] == "yes"
-
-    def modify_checkings(self, main_dict: str, has_it: bool):
-        dt = datetime.now()
-        ts = datetime.timestamp(dt)
-        state = "yes" if has_it else "no"
-        self.checkings.update({f"has_{main_dict}": {"state": state, "time": ts}})
-        self.save(update_fields=["checkings"])
-
     def search_image(self, content):
         soup = bs(content, "html.parser")
         images = [img for img in soup.find_all("img")]

@@ -22,7 +22,7 @@ class GlosarioView(SEOListView):
     context_object_name = "terms"
     paginate_by = 10
     meta_description = "Todos los términos y definiciones que necesitas conocer para invertir correctamente"
-    meta_tags = ["finanzas, blog financiero, blog el financiera, invertir"]
+    meta_tags = "finanzas, blog financiero, blog el financiera, invertir"
     meta_title = "El diccionario que necesitas como inversor"
     path_name = "recommend_side_companies"
     recsys_title = "Empresas más visitadas"

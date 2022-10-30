@@ -10,12 +10,13 @@ def users_notifications(request):
     user = request.user
     count_notifications = 0
     user_notifs = None
+    # TODO ask for request.auth, if it's found it means that it comes from API
     try:
         if user.is_authenticated:
             user_notifs = Notification.objects.filter(user=user).order_by("-date")
             count_notifications = user_notifs.count()
         return {"count_notifications": count_notifications, "user_notifs": user_notifs}
-    except Exception as e:
+    except Exception:
         pass
     return {}
 

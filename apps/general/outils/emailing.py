@@ -116,7 +116,7 @@ class EmailingSystem:
 
     @classmethod
     def simple_email(cls, subject: str, message: str, sent_by: str = "Web-automation"):
-        return send_mail(subject, mark_safe(message), f"{sent_by} <{settings.EMAIL_DEFAULT}>", [settings.EMAIL_DEFAULT])
+        return send_mail(subject, message, f"{sent_by} <{settings.EMAIL_DEFAULT}>", [settings.EMAIL_DEFAULT])
 
     @classmethod
     def html_link(cls, link: str, text: str, autocomplete_url: bool = False) -> str:

@@ -3,10 +3,10 @@ from typing import Type
 from django.db.models import QuerySet, Count
 
 from apps.general.constants import BASE_ESCRITO_PUBLISHED
-from apps.general.managers import BaseManager
+from apps.general.managers import BaseManager, BaseQuerySet
 
 
-class TermQuerySet(QuerySet):
+class TermQuerySet(BaseQuerySet):
     def tags_category_prefetch(self):
         return self.prefetch_related(
             "category",
@@ -27,9 +27,25 @@ class TermManager(BaseManager):
     def get_queryset(self):
         return TermQuerySet(self.model, using=self._db).prefetch_all()
 
+    def to_be_cleaned(self):
+        return self.filter(
+            **{
+                "checkings__has_information_clean__state": "no",
+                "checkings__has_request_improvement__state": "no",
+            }
+        )
+
+    def cleaning_requested(self):
+        return self.filter(
+            **{
+                "checkings__has_information_clean__state": "no",
+                "checkings__has_request_improvement__state": "yes",
+            }
+        )
+
     def all_terms_ready_newsletter(self) -> QuerySet:
         return (
-            self.filter_checkings("information_clean", True)
+            self.filter_checking("information_clean", True)
             .annotate(
                 times_sent_email=Count("website_email"),
             )

@@ -26,7 +26,7 @@ class SEOViewMixin(RecommenderMixin):
     """
 
     meta_description: str = ""
-    meta_tags: list = []
+    meta_tags: str = ""
     meta_title: str = ""
     meta_url: str = ""
     meta_image: str = ""
@@ -37,6 +37,7 @@ class SEOViewMixin(RecommenderMixin):
     update_visits: bool = False
     no_index: bool = False
     no_follow: bool = False
+    private_view: bool = False
 
     def update_views(self, instance):
         instance.total_views += 1
@@ -67,12 +68,12 @@ class SEOViewMixin(RecommenderMixin):
     def get_meta_title(self, instance: object = None):
         meta_title = self.meta_title
         if not meta_title:
-            if instance:
+            if self.private_view:
+                meta_title = self.__class__.__name__
+            else:
                 meta_title = self.get_possible_meta_attribute(
                     instance, ["meta_title", "name", "title"], "Invierte correctamente"
                 )
-            else:
-                meta_title = self.__class__.__name__
         return meta_title
 
     def get_meta_description(self, instance: object = None):
@@ -144,6 +145,8 @@ class SEOViewMixin(RecommenderMixin):
         return schema_org
 
     def get_meta_robots(self):
+        if self.private_view:
+            return "nofollow,noindex"
         if not self.no_follow and not self.no_index:
             return None
         elif self.no_follow and not self.no_index:
