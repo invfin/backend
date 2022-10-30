@@ -1,8 +1,8 @@
 import binascii
 import csv
 import functools
-import os
 import json
+import os
 import random
 from urllib.parse import urlunparse
 

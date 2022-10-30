@@ -2,23 +2,46 @@
 {% load static crispy_forms_tags %}
 {% block header %}{% include "headers/inicio.html" %}{% endblock header%}
 {% block FormContent %}
-<form method="POST" action="{% url 'public_blog:create_blog' %}">
-    <div class="card">
+
+<form method="POST" enctype="multipart/form-data">
+    <div>
         {% csrf_token %}
-        {{ form.media }}
-        {% for field in form %}
-        {% if field.errors %}
-        <div class="alert alert-danger" role="alert">
-            {{ field.errors|striptags }}
-        </div>
-        {% endif %}
-        {% endfor %}
-        <div class="card-body">
-            {% crispy form %}
-            <div class="col-12 mt-4">
-                <button class="btn btn-primary col-12" type="submit">Guardar</button>
+        <div class="card">
+
+            {{ form.media }}
+            {% for field in form %}
+            {% if field.errors %}
+            <div class="alert alert-danger" role="alert">
+                {{ field.errors|striptags }}
             </div>
+            {% endif %}
+            {% endfor %}
+            <div class="card-body">
+                {% crispy form %}
+
+            </div>
+        </div>
+        {{ formset_content.management_form }}
+        {{ formset_content.media }}
+        {% for form in formset_content.forms %}
+        <div class="card">
+            {% for field in form %}
+            {% if field.errors %}
+            <div class="alert alert-danger" role="alert">
+                {{ field.errors|striptags }}
+            </div>
+            {% endif %}
+            {% endfor %}
+            <div class="card-body">
+
+                {{ form|crispy }}
+            </div>
+        </div>
+        {% endfor %}
+        <div class="col-12 mt-4">
+            <button class="btn btn-primary col-12" type="submit">Guardar</button>
         </div>
     </div>
 </form>
+
 {% endblock FormContent %}

@@ -87,9 +87,9 @@ class TestCompanyManagers(TestCase):
             checkings={"has_institutionals": {"state": "no", "time": ""}},
         )
 
-    def test_filter_checkings(self):
-        assert [self.zinga] == list(Company.objects.filter_checkings("institutionals", True))
-        assert [self.apple, self.google, self.louis] == list(Company.objects.filter_checkings("institutionals", False))
+    def test_filter_checking(self):
+        assert [self.zinga] == list(Company.objects.filter_checking("institutionals", True))
+        assert [self.apple, self.google, self.louis] == list(Company.objects.filter_checking("institutionals", False))
 
     def test_companies_by_main_exchange(self):
         assert [self.apple, self.google, self.zinga] == list(

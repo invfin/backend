@@ -199,7 +199,7 @@ def update_basic_info_company_task():
 
 @celery_app.task()
 def update_company_key_stats_task():
-    companies_without_info = Company.objects.filter_checkings_not_seen("key_stats")
+    companies_without_info = Company.objects.filter_checking_not_seen("key_stats")
     if companies_without_info.exists():
         company = companies_without_info.first()
         return RetrieveCompanyData(company).create_key_stats_yahooquery()
@@ -214,7 +214,7 @@ def update_company_key_stats_task():
 
 @celery_app.task()
 def update_company_institutionals_task():
-    companies_without_info = Company.objects.filter_checkings_not_seen("institutionals")
+    companies_without_info = Company.objects.filter_checking_not_seen("institutionals")
     if companies_without_info.exists():
         company = companies_without_info.first()
         return RetrieveCompanyData(company).create_institutionals_yahooquery()
@@ -229,7 +229,7 @@ def update_company_institutionals_task():
 
 @celery_app.task()
 def update_company_financials_finprep_task():
-    companies_without_info = Company.objects.filter_checkings_not_seen("latest_financials_finprep_info")
+    companies_without_info = Company.objects.filter_checking_not_seen("latest_financials_finprep_info")
     if companies_without_info.exists():
         company = companies_without_info.first()
         return RetrieveCompanyData(company).create_financials_finprep()
@@ -244,7 +244,7 @@ def update_company_financials_finprep_task():
 
 @celery_app.task()
 def update_company_financials_finnhub_task():
-    companies_without_info = Company.objects.filter_checkings_not_seen("first_financials_finnhub_info")
+    companies_without_info = Company.objects.filter_checking_not_seen("first_financials_finnhub_info")
     if companies_without_info.exists():
         company = companies_without_info.first()
         return RetrieveCompanyData(company).create_financials_finnhub()
@@ -262,7 +262,7 @@ def update_company_financials_yfinance_task(company_id: int = None):
     if company_id:
         company = Company.objects.get(id=company_id)
     else:
-        companies_without_info = Company.objects.filter_checkings_not_seen("first_financials_yfinance_info")
+        companies_without_info = Company.objects.filter_checking_not_seen("first_financials_yfinance_info")
         if companies_without_info.exists():
             company = companies_without_info.first()
     if company:
@@ -283,7 +283,7 @@ def update_company_financials_yahooquery_task(company_id: int = None):
     if company_id:
         company = Company.objects.get(id=company_id)
     else:
-        companies_without_info = Company.objects.filter_checkings_not_seen("first_financials_yahooquery_info")
+        companies_without_info = Company.objects.filter_checking_not_seen("first_financials_yahooquery_info")
         if companies_without_info.exists():
             company = companies_without_info.first()
     if company:
@@ -305,11 +305,11 @@ def fix_update_financials_task(company_id):
     fix_information_incorrect_filed_task.delay(company.id)
     update_periods_final_statements.delay(company.id)
     update_finprep_from_current.delay(company.id)
-    if not company.check_checkings("first_financials_yfinance_info"):
+    if not company.has_checking("first_financials_yfinance_info"):
         update_company_financials_yfinance_task.delay(company.id)
-    if not company.check_checkings("first_financials_yahooquery_info"):
+    if not company.has_checking("first_financials_yahooquery_info"):
         update_company_financials_yahooquery_task.delay(company.id)
-    if not company.check_checkings("first_financials_yfinance_info") and not company.check_checkings(
+    if not company.has_checking("first_financials_yfinance_info") and not company.has_checking(
         "first_financials_yahooquery_info"
     ):
         time.sleep(15)
@@ -319,6 +319,6 @@ def fix_update_financials_task(company_id):
 
 @celery_app.task()
 def launch_fix_update_financials_task():
-    # for company in Company.objects.filter_checkings_not_seen("launch_fix_update"):
+    # for company in Company.objects.filter_checking_not_seen("launch_fix_update"):
     for company in Company.objects.filter(ticker="INTC"):
         fix_update_financials_task.delay(company.id)

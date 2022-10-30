@@ -5,14 +5,14 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib import messages
 
 from apps.escritos.models import Term
+from apps.escritos.forms import TermAndTermContentForm, term_content_formset
 from apps.web.models import WebsiteEmail
 from apps.web.forms import WebEmailForm, AutomaticNewsletterForm
 from apps.seo.views import SEOViewMixin
 
 
 class BasePrivateWebView(LoginRequiredMixin, UserPassesTestMixin, SEOViewMixin):
-    no_index = True
-    no_follow = True
+    private_view = True
 
     def test_func(self):
         return self.request.user.is_superuser
@@ -120,11 +120,31 @@ class ManageTermListView(PrivateWebListView):
     context_object_name = "terms"
 
     def get_queryset(self):
-        return self.model._default_manager.all_terms_ready_newsletter()
+        return self.model._default_manager.cleaning_requested()
 
 
-class ManageTermUpdateView(PrivateWebUpdateView):
+class ManageTermUpdateView(PrivateWebDetailView):
     model = Term
     template_name = "management/update_term.html"
     slug_field = "slug"
-    fields = "__all__"
+
+    def get_success_url(self) -> str:
+        return reverse("web:manage_all_terms")
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["formset_content"] = term_content_formset(instance=self.object)
+        context["form"] = TermAndTermContentForm(instance=self.object)
+        return context
+
+    def post(self, request, *args: str, **kwargs) -> HttpResponse:
+        object = self.get_object()
+        formset = term_content_formset(request.POST, instance=object)
+        form = TermAndTermContentForm(request.POST, instance=object)
+        if all([form.is_valid(), formset.is_valid()]):
+            form.save()
+            formset.save()
+            messages.success(request, "Guardado correctamente")
+            return HttpResponseRedirect(self.get_success_url())
+        else:
+            return self.render_to_response(self.get_context_data(form=form, formset=formset))

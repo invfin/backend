@@ -1,7 +1,7 @@
 import random
-from typing import Type, Dict, Any
+from typing import Any, Dict, Type
 
-from django.db.models import Count, F, Manager, Q, QuerySet, Prefetch
+from django.db.models import Count, F, Manager, Prefetch, Q, QuerySet
 
 
 class CompanyManager(Manager):
@@ -232,7 +232,7 @@ class CompanyManager(Manager):
             .order_by("total_visits")
         )
 
-    def filter_checkings(self, check: str, has_it: bool) -> QuerySet:
+    def filter_checking(self, check: str, has_it: bool) -> QuerySet:
         checking = f"has_{check}"
         state = "yes" if has_it else "no"
         return (
@@ -241,7 +241,7 @@ class CompanyManager(Manager):
             .order_by("exchange__main_org__order")
         )
 
-    def filter_checkings_not_seen(self, check: str) -> QuerySet:
+    def filter_checking_not_seen(self, check: str) -> QuerySet:
         return (
             self.filter(**{f"checkings__has_{check}__state": "no", f"checkings__has_{check}__time": ""})
             .exclude(name__contains="Need-parsing")

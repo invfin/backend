@@ -1,4 +1,4 @@
-from ckeditor.fields import RichTextField
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db.models import (
     CASCADE,
@@ -15,7 +15,8 @@ from django.db.models import (
 from django.template.defaultfilters import slugify
 from django.urls import reverse
 from django.utils import timezone
-from django.conf import settings
+
+from ckeditor.fields import RichTextField
 
 from apps.general.bases import BaseComment, BaseEscrito, BaseFavoritesHistorial
 
@@ -42,7 +43,7 @@ class Term(BaseEscrito):
 
     @property
     def term_parts(self):
-        return TermContent.objects.filter(term_related=self)
+        return self.term_content_parts.all()
 
     def link(self):
         return f"{DOMAIN}{self.get_absolute_url()}"

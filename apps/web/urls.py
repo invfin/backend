@@ -2,18 +2,18 @@ from django.urls import path
 
 from apps.web.api.urls import urlpatterns as api_urlpatterns
 from apps.web.views import (
+    AutomaticEmailNewsletterView,
     ExcelRedirectView,
     HomePage,
     LegalPages,
-    soporte_view,
-    ManageWebView,
     ManageEmailEngagementCreateView,
+    ManageEmailEngagementListView,
     ManageEmailEngagementUpdateView,
     ManagePreviewEmailEngagementDetailsView,
-    ManageEmailEngagementListView,
     ManageTermListView,
     ManageTermUpdateView,
-    AutomaticEmailNewsletterView,
+    ManageWebView,
+    soporte_view,
 )
 
 app_name = "web"

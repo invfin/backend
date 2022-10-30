@@ -16,12 +16,11 @@ from django.db.models import (
 )
 from django.urls import reverse
 
-from apps.general.mixins import BaseToAllMixin
-from apps.general.constants import PERIOD_FOR_YEAR
-
 from apps.empresas import constants
 from apps.empresas.extensions.company import CompanyExtended
 from apps.empresas.managers import CompanyManager, CompanyUpdateLogManager
+from apps.general.constants import PERIOD_FOR_YEAR
+from apps.general.mixins import BaseToAllMixin
 
 
 def default_dict():
@@ -90,7 +89,7 @@ class Company(Model, BaseToAllMixin, CompanyExtended):
 
     @property
     def has_meta_image(self):
-        if "has_meta_image" in self.checkings and self.check_checkings("has_meta_image"):
+        if "has_meta_image" in self.checkings and self.has_checking("has_meta_image"):
             return True
         if self.remote_image_imagekit or self.remote_image_cloudinary:
             return True
@@ -123,16 +122,6 @@ class Company(Model, BaseToAllMixin, CompanyExtended):
             f"{current_ratios['average_shares_out']} acciones en circulación la empresa obtiene una capitalización "
             f"bursátil de {round(current_ratios['marketcap'], 2)} {currency}"
         )
-
-    def check_checkings(self, main_dict: str) -> bool:
-        return self.checkings[f"has_{main_dict}"]["state"] == "yes"
-
-    def modify_checkings(self, main_dict: str, has_it: bool):
-        dt = datetime.now()
-        ts = datetime.timestamp(dt)
-        state = "yes" if has_it else "no"
-        self.checkings.update({f"has_{main_dict}": {"state": state, "time": ts}})
-        self.save(update_fields=["checkings"])
 
     @property
     def has_institutions(self):

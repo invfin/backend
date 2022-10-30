@@ -6,11 +6,12 @@ from django.contrib import messages
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views.generic import DetailView, RedirectView
+
 from apps.general.utils import HostChecker
 from apps.public_blog.models import WritterProfile
-from apps.seo.views import SEOTemplateView
-from apps.web.models import WebsiteLegalPage
+from apps.seo.views import SEOTemplateView, SEODetailView
 from apps.web.forms import ContactForm
+from apps.web.models import WebsiteLegalPage
 
 
 class HomePage(SEOTemplateView):
@@ -19,9 +20,9 @@ class HomePage(SEOTemplateView):
         if writter:
             context.update(
                 {
-                    "meta_desc": writter.user_profile.bio,
+                    "meta_description": writter.user_profile.bio,
                     "meta_title": writter.full_name,
-                    "meta_img": writter.foto,
+                    "meta_image": writter.foto,
                     "current_profile": writter,
                 }
             )
@@ -43,19 +44,13 @@ class HomePage(SEOTemplateView):
         )
 
 
-class LegalPages(DetailView):
+class LegalPages(SEODetailView):
     template_name = "legals.html"
     model = WebsiteLegalPage
     context_object_name = "object"
     slug_field = "slug"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["meta_desc"] = "Todo lo que necesitas para ser un mejor inversor"
-        context["meta_tags"] = "finanzas, blog financiero, blog el financiera, invertir"
-        context["meta_title"] = "Invierte correctamente"
-        context["meta_url"] = ""
-        return context
+    meta_description = "Todo lo que necesitas para ser un mejor inversor"
+    meta_tags = "finanzas, blog financiero, blog el financiera, invertir"
 
 
 def soporte_view(request):

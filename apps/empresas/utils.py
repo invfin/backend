@@ -48,7 +48,7 @@ def log_company(checking: str = None):
                 )
                 if checking:
                     has_it = had_error is False
-                    company.modify_checkings(checking, has_it)
+                    company.modify_checking(checking, has_it)
 
         return wrapper
 
