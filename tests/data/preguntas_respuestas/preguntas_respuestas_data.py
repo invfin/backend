@@ -1,5 +1,4 @@
 QUESTION = {
-   "id":2,
    "title":"¿Todas estas nuevas empresas de carros sobrevivirán? ",
    "slug":"todas-estas-nuevas-empresas-de-carros-sobreviviran",
    "created_at":"2021-11-03 02:57:41",
@@ -18,7 +17,6 @@ QUESTION = {
 }
 
 ANSWER = {
-      "id":72,
       "author_id":2,
       "created_at":"20/02/2022 01:24:57",
       "content":"<p>Ventaja: puedes analizar cualquier activo que sea graficable (acciones, divisas, commodities, etc.)</p>\r\n\r\n<p>Desventaja: no considera la salud financiera del emisor del activo a analizar (acciones, bonos, etc.)</p>\r\n",

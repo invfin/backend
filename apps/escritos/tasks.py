@@ -45,7 +45,7 @@ def notify_term_to_improve_task():
 
 @shared_task(autoretry_for=(Exception,), max_retries=3)
 def prepare_term_newsletter_task():
-    """A task destinated to check across all the terms that are "clean"(the conent is correct and has a resume)
+    """A task destinated to check across all the terms that are "clean"(the content is correct and has a resume)
     and get one. From this term selected it creates a newsletter to be sent to all the users (maybe it would be needed
     to sent to just the users that are interested)
 

@@ -1,16 +1,24 @@
-import random
 from typing import Any, Dict, Type
 
 from django.db.models import Count, F, Manager, Prefetch, Q, QuerySet
 
+from apps.general.managers import BaseManager, BaseQuerySet
 
-class CompanyManager(Manager):
 
-    """
-    TODO
-    Create querysets or managers for statements to return quarters and for year separately
-    https://docs.djangoproject.com/en/dev/topics/db/managers/#don-t-filter-away-any-results-in-this-type-of-manager-subclass
-    """
+class CompanyQuerySet(BaseQuerySet):
+    def existing_companies(self):
+        return self.exclude(name__contains="Need-parsing")
+
+    def clean_companies(self):
+        return self.existing_companies().filter(no_incs=False, no_bs=False, no_cfs=False)
+
+    def complete_companies(self):
+        return self.clean_companies().filter(description_translated=True)
+
+
+class CompanyManager(BaseManager):
+    def get_queryset(self):
+        return CompanyQuerySet(self.model, using=self._db)
 
     def only_essential(self) -> QuerySet:
         return self.only(
@@ -133,10 +141,6 @@ class CompanyManager(Manager):
             .get(**kwargs)
         )
 
-    def get_random(self, query=None) -> Type:
-        query = query if query else self.all()
-        return random.choice(list(query))
-
     def companies_by_main_exchange(self, name=None) -> QuerySet:
         return self.filter(exchange__main_org__name=name).exclude(name__contains="Need-parsing")
 
@@ -232,18 +236,16 @@ class CompanyManager(Manager):
             .order_by("total_visits")
         )
 
-    def filter_checking(self, check: str, has_it: bool) -> QuerySet:
-        checking = f"has_{check}"
-        state = "yes" if has_it else "no"
+    def filter_checking(self, checking: str, has_it: bool) -> QuerySet:
         return (
-            self.filter(**{f"checkings__{checking}__state": state})
+            self.filter_checking(checking, has_it)
             .exclude(name__contains="Need-parsing")
             .order_by("exchange__main_org__order")
         )
 
-    def filter_checking_not_seen(self, check: str) -> QuerySet:
+    def filter_checking_not_seen(self, checking: str) -> QuerySet:
         return (
-            self.filter(**{f"checkings__has_{check}__state": "no", f"checkings__has_{check}__time": ""})
+            self.filter_checking_not_seen(checking)
             .exclude(name__contains="Need-parsing")
             .order_by("exchange__main_org__order")
         )

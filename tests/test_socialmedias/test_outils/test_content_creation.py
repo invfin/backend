@@ -11,6 +11,7 @@ from apps.socialmedias.models import Emoji, DefaultTilte, DefaultContent, TermSh
 class TestContentCreation(TestCase):
     @classmethod
     def setUpTestData(cls) -> None:
+        # TODO patch the random generated contents
         cls.term = DjangoTestingModel.create(Term)
 
     def test_get_object(self):
@@ -406,6 +407,7 @@ class TestContentCreation(TestCase):
             assert (emoji_1 in result_data["title_emojis"]) is True
             assert (emoji_1.emoji in result_data["title"]) is True
         if "default_title" in result_data:
+            print(result_data["default_title"])
             assert default_title_news == result_data["default_title"]
         else:
             expected_data = {"title": "Custom title"}

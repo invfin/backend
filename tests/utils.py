@@ -16,7 +16,6 @@ from rest_framework.test import APITestCase
 
 from apps.api.models import Key
 from apps.business.models import (
-    Customer,
     Product,
     ProductComplementary,
     ProductSubscriber,
@@ -38,7 +37,7 @@ HTTP_VERBS = {
 }
 
 
-class BaseAPIViewTest(APITestCase):
+class BaseAPIViewTestMixin:
     """
     Mixin for sharing test methods for views.
     Needs the following attributes:
@@ -90,17 +89,16 @@ class BaseAPIViewTest(APITestCase):
             Key, user=user_key_removed, in_use=False, removed=datetime.datetime.utcnow()
         )
         cls.key = DjangoTestingModel.create(Key, user=user_key, in_use=True, removed=None)
+        cls.endpoint = resolve_url(cls.path_name)
+        cls.endpoint_no_key = f"{cls.endpoint}?{cls.api_key_param}="
+        cls.endpoint_removed_key = f"{cls.endpoint_no_key}{cls.removed_key.key}"
+        cls.endpoint_wrong_key = f"{cls.endpoint_removed_key}4"
+        cls.endpoint_key = f"{cls.endpoint_no_key}{cls.subscription_key.key}"
+        cls.full_endpoint = cls.endpoint_key
+        if cls.params:
+            params = urllib.parse.urlencode(cls.params)
+            cls.full_endpoint = f"{cls.full_endpoint}&{params}"
 
-    def setUp(self) -> None:
-        self.endpoint = resolve_url(self.path_name)
-        self.endpoint_no_key = f"{self.endpoint}?{self.api_key_param}="
-        self.endpoint_removed_key = f"{self.endpoint_no_key}{self.removed_key.key}"
-        self.endpoint_wrong_key = f"{self.endpoint_removed_key}4"
-        self.endpoint_key = f"{self.endpoint_no_key}{self.subscription_key.key}"
-        self.full_endpoint = self.endpoint_key
-        if self.params:
-            params = urllib.parse.urlencode(self.params)
-            self.full_endpoint = f"{self.full_endpoint}&{params}"
 
     def test_verbs(self):
         for verb in self.allowed_verbs:

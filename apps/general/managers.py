@@ -1,5 +1,5 @@
 import random
-from typing import Dict, List, Type, Union
+from typing import Dict, List, Type, Optional
 
 from django.db.models import Manager, QuerySet
 
@@ -38,10 +38,10 @@ class BaseManager(Manager):
     def filter_checking_not_seen(self, checking: str) -> QuerySet:
         return self.get_queryset().filter_checking_not_seen(checking)
 
-    def get_random(self, query=None) -> Union[Type, List]:
+    def get_random(self, query: QuerySet = None) -> Optional[Type]:
         query = query if query else self.all()
         models_list = list(query)
-        return random.choice(models_list) if models_list else models_list
+        return random.choice(models_list) if models_list else None
 
 
 class CurrencyManager(Manager):

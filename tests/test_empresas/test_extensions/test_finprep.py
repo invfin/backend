@@ -29,7 +29,7 @@ class TestAverageStatementsFinprep(TestCase):
         assert self.inc_st_finprep.research_and_development_expenses == inc_st_finprep_dict["rd_expenses"]
         assert (
             self.inc_st_finprep.general_and_administrative_expenses
-            == inc_st_finprep_dict["general_administrative_expenses"],
+            == inc_st_finprep_dict["general_administrative_expenses"]
         )
         assert self.inc_st_finprep.selling_and_marketing_expenses == inc_st_finprep_dict["selling_marketing_expenses"]
         assert self.inc_st_finprep.selling_general_and_administrative_expenses == inc_st_finprep_dict["sga_expenses"]
@@ -48,11 +48,11 @@ class TestAverageStatementsFinprep(TestCase):
         assert self.inc_st_finprep.income_tax_expense == inc_st_finprep_dict["income_tax_expenses"]
         assert self.inc_st_finprep.net_income == inc_st_finprep_dict["net_income"]
         assert (
-            self.inc_st_finprep.weighted_average_shs_out == inc_st_finprep_dict["weighted_average_shares_outstanding"],
+            self.inc_st_finprep.weighted_average_shs_out == inc_st_finprep_dict["weighted_average_shares_outstanding"]
         )
         assert (
             self.inc_st_finprep.weighted_average_shs_out_dil
-            == inc_st_finprep_dict["weighted_average_diluated_shares_outstanding"],
+            == inc_st_finprep_dict["weighted_average_diluated_shares_outstanding"]
         )
 
     def test_return_standard_balance_sheet(self):
@@ -84,7 +84,7 @@ class TestAverageStatementsFinprep(TestCase):
         assert self.bs_finprep.deferred_revenue_non_current == bs_finprep_dict["deferred_revenue_non_current"]
         assert (
             self.bs_finprep.deferred_tax_liabilities_non_current
-            == bs_finprep_dict["deferred_tax_liabilities_non_current"],
+            == bs_finprep_dict["deferred_tax_liabilities_non_current"]
         )
         assert self.bs_finprep.other_non_current_liabilities == bs_finprep_dict["other_non_current_liabilities"]
         assert self.bs_finprep.total_non_current_liabilities == bs_finprep_dict["total_non_current_liabilities"]
@@ -94,7 +94,7 @@ class TestAverageStatementsFinprep(TestCase):
         assert self.bs_finprep.retained_earnings == bs_finprep_dict["retained_earnings"]
         assert (
             self.bs_finprep.accumulated_other_comprehensive_income_loss
-            == bs_finprep_dict["accumulated_other_comprehensive_income_loss"],
+            == bs_finprep_dict["accumulated_other_comprehensive_income_loss"]
         )
         assert self.bs_finprep.othertotal_stockholders_equity == bs_finprep_dict["othertotal_stockholders_equity"]
         assert self.bs_finprep.total_stockholders_equity == bs_finprep_dict["total_stockholders_equity"]
@@ -123,7 +123,7 @@ class TestAverageStatementsFinprep(TestCase):
         )
         assert (
             self.cf_st_finprep.investments_in_property_plant_and_equipment
-            == cf_st_finprep_dict["investments_property_plant_equipment"],
+            == cf_st_finprep_dict["investments_property_plant_equipment"]
         )
         assert self.cf_st_finprep.acquisitions_net == cf_st_finprep_dict["acquisitions_net"]
         assert self.cf_st_finprep.purchases_of_investments == cf_st_finprep_dict["purchases_investments"]
@@ -137,7 +137,7 @@ class TestAverageStatementsFinprep(TestCase):
         assert self.cf_st_finprep.other_financing_activites == cf_st_finprep_dict["other_financing_activities"]
         assert (
             self.cf_st_finprep.net_cash_used_provided_by_financing_activities
-            == cf_st_finprep_dict["financing_activities_cf"],
+            == cf_st_finprep_dict["financing_activities_cf"]
         )
         assert self.cf_st_finprep.effect_of_forex_changes_on_cash == cf_st_finprep_dict["effect_forex_exchange"]
         assert self.cf_st_finprep.net_change_in_cash == cf_st_finprep_dict["net_change_cash"]

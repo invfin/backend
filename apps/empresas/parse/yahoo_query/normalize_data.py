@@ -226,7 +226,7 @@ class NormalizeYahooQuery:
 
     def normalize_institutional_yahooquery(self, df_institution_ownership):
         df = df_institution_ownership.reset_index()
-        df = df.drop(columns=['symbol','row','maxAge'])
+        df = df.drop(columns=['symbol', 'row', 'maxAge'])
         return df
 
     def normalize_key_stats_yahooquery(self, key_stats):

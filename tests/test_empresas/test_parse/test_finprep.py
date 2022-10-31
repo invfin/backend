@@ -44,6 +44,7 @@ class TestParseFinprep(TestCase):
 
 
 class TestNormalizeFinprep(TestCase):
+    @classmethod
     def setUpTestData(cls) -> None:
         cls.parser = NormalizeFinprep()
         cls.company = DTM.create(Company, ticker="AAPL")

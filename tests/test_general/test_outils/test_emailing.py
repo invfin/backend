@@ -66,9 +66,12 @@ class EmailTest(TestCase):
         assert expected_data == message
 
     def test__prepare_sender(self):
+        """
+        TODO test it with all the web objectives
+        """
         public_blog_sender = EmailingSystem(constants.EMAIL_FOR_PUBLIC_BLOG)._prepare_sender("writter")
         notif_sender = EmailingSystem(constants.EMAIL_FOR_NOTIFICATION)._prepare_sender()
-        web_sender = EmailingSystem(constants.EMAIL_FOR_WEB)._prepare_sender()
+        web_sender = EmailingSystem(constants.EMAIL_FOR_WEB, "Not in web objective")._prepare_sender()
         assert "writter <EMAIL_NEWSLETTER@example.com>" == public_blog_sender
         assert "InvFin <EMAIL_DEFAULT@example.com>" == notif_sender
         assert "Lucas - InvFin <MAIN_EMAIL@example.com>" == web_sender

@@ -1,5 +1,7 @@
 import vcr
 
+from unittest import skip
+
 from django.conf import settings
 from django.test import TestCase
 
@@ -55,7 +57,8 @@ class TestFacePoster(TestCase):
             == description
         )
 
-    # @facebook_vcr.use_cassette
+    @skip("Not ready")
+    @facebook_vcr.use_cassette
     def test_post(self):
         post_content = dict(
             media="",

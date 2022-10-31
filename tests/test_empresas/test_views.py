@@ -9,7 +9,7 @@ from django.test.utils import CaptureQueriesContext
 from rest_framework.test import APITestCase
 
 from apps.general import constants as general_constants
-from tests.utils import BaseAPIViewTest
+from tests.utils import BaseAPIViewTestMixin
 from apps.empresas.models import (
     Company,
     IncomeStatement,
@@ -19,7 +19,7 @@ from apps.empresas.models import (
 from apps.general.models import Period
 
 
-class TestExcelAPIIncome(BaseAPIViewTest):
+class TestExcelAPIIncome(BaseAPIViewTestMixin, APITestCase):
     path_name = "empresas:ExcelAPIIncome"
     url_path = "/company-information/excel-api/income"
     params = {"ticker": "INTC"}
@@ -77,10 +77,7 @@ class TestExcelAPIIncome(BaseAPIViewTest):
         assert json.loads(json.dumps(response.data))[0] == expected_data
 
 
-from django.test import TestCase
-
-
-class TestExcelAPIBalance(BaseAPIViewTest):
+class TestExcelAPIBalance(BaseAPIViewTestMixin, APITestCase):
     path_name = "empresas:ExcelAPIBalance"
     url_path = "/company-information/excel-api/balance"
     params = {"ticker": "INTC"}
@@ -152,10 +149,7 @@ class TestExcelAPIBalance(BaseAPIViewTest):
         assert json.loads(json.dumps(response.data))[0] == expected_data
 
 
-from django.test import TestCase
-
-
-class TestExcelAPICashflow(BaseAPIViewTest):
+class TestExcelAPICashflow(BaseAPIViewTestMixin, APITestCase):
     path_name = "empresas:ExcelAPICashflow"
     url_path = "/company-information/excel-api/cashflow"
     params = {"ticker": "INTC"}

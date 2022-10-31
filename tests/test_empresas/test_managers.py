@@ -13,21 +13,20 @@ from apps.general.models import (
 )
 
 
-class TestCompanyManagers(TestCase):
+
+
+class TestQuerySet(TestCase):
+
+
+class TestManager(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.sector = DjangoTestingModel.create(Sector)
-
         cls.industry = DjangoTestingModel.create(Industry)
-
         cls.exchange_org_fr = DjangoTestingModel.create(ExchangeOrganisation, name="France")
-
         cls.exchange_org_usa = DjangoTestingModel.create(ExchangeOrganisation, name="Estados Unidos")
-
         cls.exchange_nyse = DjangoTestingModel.create(Exchange, exchange_ticker="NYSE", main_org=cls.exchange_org_usa)
-
         cls.exchange_euro = DjangoTestingModel.create(Exchange, exchange_ticker="EURO", main_org=cls.exchange_org_fr)
-
         cls.apple = DjangoTestingModel.create(
             Company,
             ticker="AAPL",
@@ -42,7 +41,6 @@ class TestCompanyManagers(TestCase):
             exchange=cls.exchange_nyse,
             checkings={"has_institutionals": {"state": "no", "time": ""}},
         )
-
         cls.zinga = DjangoTestingModel.create(
             Company,
             ticker="ZNGA",
@@ -57,7 +55,6 @@ class TestCompanyManagers(TestCase):
             exchange=cls.exchange_nyse,
             checkings={"has_institutionals": {"state": "yes", "time": ""}},
         )
-
         cls.louis = DjangoTestingModel.create(
             Company,
             ticker="LVMH",
@@ -71,7 +68,6 @@ class TestCompanyManagers(TestCase):
             has_error=False,
             checkings={"has_institutionals": {"state": "no", "time": ""}},
         )
-
         cls.google = DjangoTestingModel.create(
             Company,
             ticker="GOOGL",
