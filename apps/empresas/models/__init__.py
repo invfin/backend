@@ -6,7 +6,7 @@ from .company import (
     CompanyYFinanceProxy,
     CompanyFinprepProxy,
     CompanyFinnhubProxy,
-    CompanyStatementsProxy
+    CompanyStatementsProxy,
 )
 from .exchanges import (
     Exchange,
@@ -47,11 +47,10 @@ from .yahoo_query import (
     BalanceSheetYahooQuery,
     CashflowStatementYahooQuery,
     IncomeStatementYahooQuery,
-    KeyStatsYahooQuery
+    KeyStatsYahooQuery,
 )
-from .finnhub import (
-    StatementsFinnhub
-)
+from .finnhub import StatementsFinnhub
+from .as_reported import IncomeStatementAsReported, BalanceSheetAsReported, CashflowStatementAsReported
 
 __all__ = [
     "CompanyYahooQueryProxy",
@@ -59,13 +58,11 @@ __all__ = [
     "CompanyFinprepProxy",
     "CompanyFinnhubProxy",
     "CompanyStatementsProxy",
-
     "Company",
     "CompanyStockPrice",
     "CompanyUpdateLog",
     "Exchange",
     "ExchangeOrganisation",
-
     "IncomeStatement",
     "BalanceSheet",
     "CashflowStatement",
@@ -80,22 +77,20 @@ __all__ = [
     "CompanyGrowth",
     "EficiencyRatio",
     "PriceToRatio",
-
     "InstitutionalOrganization",
     "TopInstitutionalOwnership",
-
     "BalanceSheetFinprep",
     "CashflowStatementFinprep",
     "IncomeStatementFinprep",
-
     "BalanceSheetYFinance",
     "CashflowStatementYFinance",
     "IncomeStatementYFinance",
-
     "BalanceSheetYahooQuery",
     "CashflowStatementYahooQuery",
     "IncomeStatementYahooQuery",
     "KeyStatsYahooQuery",
-
     "StatementsFinnhub",
+    "IncomeStatementAsReported",
+    "BalanceSheetAsReported",
+    "CashflowStatementAsReported",
 ]

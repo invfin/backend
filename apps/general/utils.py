@@ -3,6 +3,7 @@ import csv
 import functools
 import json
 import os
+import re
 import random
 from urllib.parse import urlunparse
 
@@ -16,6 +17,13 @@ from apps.public_blog.models import WritterProfile
 
 User = get_user_model()
 FULL_DOMAIN = settings.FULL_DOMAIN
+
+
+pattern = re.compile(r"(?<!^)(?=[A-Z])")
+
+
+def camel_to_snake(word):
+    return pattern.sub("_", word).lower()
 
 
 def add_new_default_check(checking, json_file):
