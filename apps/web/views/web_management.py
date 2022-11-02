@@ -1,14 +1,14 @@
-from django.urls import reverse
-from django.views.generic import CreateView, DetailView, ListView, UpdateView, TemplateView, FormView
-from django.contrib.auth.mixins import UserPassesTestMixin, LoginRequiredMixin
-from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib import messages
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.http import HttpResponse, HttpResponseRedirect
+from django.urls import reverse
+from django.views.generic import CreateView, DetailView, FormView, ListView, TemplateView, UpdateView
 
-from apps.escritos.models import Term
 from apps.escritos.forms import TermAndTermContentForm, term_content_formset
-from apps.web.models import WebsiteEmail
-from apps.web.forms import WebEmailForm, AutomaticNewsletterForm
+from apps.escritos.models import Term
 from apps.seo.views import SEOViewMixin
+from apps.web.forms import AutomaticNewsletterForm, WebEmailForm
+from apps.web.models import WebsiteEmail
 
 
 class BasePrivateWebView(LoginRequiredMixin, UserPassesTestMixin, SEOViewMixin):
@@ -141,8 +141,9 @@ class ManageTermUpdateView(PrivateWebDetailView):
         object = self.get_object()
         formset = term_content_formset(request.POST, instance=object)
         form = TermAndTermContentForm(request.POST, instance=object)
+        modify_checking = True if "save_definetly" in request.POST else False
         if all([form.is_valid(), formset.is_valid()]):
-            form.save()
+            form.save(modify_checking=modify_checking)
             formset.save()
             messages.success(request, "Guardado correctamente")
             return HttpResponseRedirect(self.get_success_url())

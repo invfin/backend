@@ -48,6 +48,11 @@ class Term(BaseEscrito):
     def link(self):
         return f"{DOMAIN}{self.get_absolute_url()}"
 
+    @property
+    def editable_link(self):
+        url = reverse("web:manage_single_term", kwargs={"slug": self.slug})
+        return f"{DOMAIN}{url}"
+
 
 class TermContent(Model):
     term_related = ForeignKey(Term, on_delete=SET_NULL, null=True, related_name="term_content_parts")

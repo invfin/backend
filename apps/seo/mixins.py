@@ -68,12 +68,13 @@ class SEOViewMixin(RecommenderMixin):
     def get_meta_title(self, instance: object = None):
         meta_title = self.meta_title
         if not meta_title:
-            if self.private_view:
-                meta_title = self.__class__.__name__
-            else:
+            if instance:
                 meta_title = self.get_possible_meta_attribute(
                     instance, ["meta_title", "name", "title"], "Invierte correctamente"
                 )
+            elif self.private_view and not instance:
+                meta_title = self.__class__.__name__
+
         return meta_title
 
     def get_meta_description(self, instance: object = None):

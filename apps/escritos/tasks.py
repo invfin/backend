@@ -28,15 +28,15 @@ def notify_term_to_improve_task():
             ]
         ).exclude(pk=term.pk)
         term.modify_checking("request_improvement", True)
-        term_link_html = EmailingSystem.html_link(term.admin_urls["change"], term.title)
+        term_link_html = EmailingSystem.html_link(term.editable_link, term.title)
         content = f"You need to update {term_link_html} right now."
         subject = f"It's time to update {term}"
         if terms_without_info_but_already_requested:
             subject = f"{subject} and also {terms_without_info_but_already_requested.count()} more"
             content = f"{content} Furtheremore you have to improve:"
             for term_left in terms_without_info_but_already_requested:
-                term_left_link_html = EmailingSystem.html_link(term_left.admin_urls["change"], term_left.title)
-                content = f"{content}\n {term_left_link_html}"
+                term_left_link_html = EmailingSystem.html_link(term_left.editable_link, term_left.title)
+                content = f"{content}<br> {term_left_link_html}"
     else:
         content = "No terms left to update"
         subject = "All terms are correct"

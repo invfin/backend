@@ -1,4 +1,4 @@
-from typing import Dict, Tuple, Type, Any, Union
+from typing import Dict, List, Tuple, Type, Any, Union
 
 from django.apps import apps
 from django.conf import settings
@@ -109,14 +109,30 @@ class EmailingSystem:
         subject = email.pop("subject")
         sender, content = self._prepare_email(email, receiver)
         final_content = render_to_string(self.email_template, content)
-        email_message = EmailMessage(subject, final_content, sender, [receiver.email])
+        self.send_email(subject, final_content, sender, [receiver.email])
 
+    @classmethod
+    def send_email(
+        cls,
+        subject: str,
+        body: str,
+        from_email: str,
+        to: Union[List, Tuple],
+        bcc: Union[List, Tuple] = [],
+        connection=None,
+        attachments: List = [],
+        headers: Dict = {},
+        cc: Union[List, Tuple] = [],
+        reply_to: Union[List, Tuple] = [],
+    ):
+        email_message = EmailMessage(subject, body, from_email, to, bcc, connection, attachments, headers, cc, reply_to)
         email_message.content_subtype = "html"
         email_message.send()
 
     @classmethod
     def simple_email(cls, subject: str, message: str, sent_by: str = "Web-automation"):
-        return send_mail(subject, message, f"{sent_by} <{settings.EMAIL_DEFAULT}>", [settings.EMAIL_DEFAULT])
+        body = render_to_string("emailing/web/internal.html", {"content": message})
+        return cls.send_email(subject, body, f"{sent_by} <{settings.EMAIL_DEFAULT}>", [settings.EMAIL_DEFAULT])
 
     @classmethod
     def html_link(cls, link: str, text: str, autocomplete_url: bool = False) -> str:

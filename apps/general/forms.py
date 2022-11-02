@@ -11,6 +11,8 @@ class BaseEscritoForm(ModelForm):
             "tags",
             "status",
             "resume",
+            "non_thumbnail_url",
+            "in_text_image",
         ]
 
     def clean_slug(self):
