@@ -19,6 +19,7 @@ class ContentCreation:
     for_content: List[int] = []
 
     def __init__(self, platform: str = "") -> None:
+        # TODO change the platform's contants to a own
         self.object: Type = self.get_object()
         self.platform: str = platform
         self.for_content.append(socialmedias_constants.ALL)
