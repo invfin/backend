@@ -35,12 +35,21 @@ class IncomeStatementAsReported(BaseStatement):
     company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="inc_statements")
     financial_data = JSONField()
 
+    class Meta:
+        db_table = "assets_income_statement_as_reported"
+
 
 class BalanceSheetAsReported(BaseStatement):
     company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="balance_sheets_as_reported")
     financial_data = JSONField()
 
+    class Meta:
+        db_table = "assets_balance_sheet_as_reported"
+
 
 class CashflowStatementAsReported(BaseStatement):
     company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="cf_statements_as_reported")
     financial_data = JSONField()
+
+    class Meta:
+        db_table = "assets_cashflow_statement_as_reported"
