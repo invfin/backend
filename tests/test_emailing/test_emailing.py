@@ -8,7 +8,7 @@ from django.contrib.auth import get_user_model
 
 from bfet import DjangoTestingModel
 
-from apps.general.outils.emailing import EmailingSystem
+from apps.emailing.outils.emailing import EmailingSystem
 from apps.escritos.models import Term
 from apps.general import constants
 from apps.web.models import WebsiteEmail, WebsiteEmailTrack

@@ -15,7 +15,9 @@ from django.urls import reverse
 
 from ckeditor.fields import RichTextField
 
-from apps.general.bases import BaseComment, BaseTrackEmail, BaseEscrito, BaseEmail
+from apps.escritos.abstracts import AbstractWrittenContent
+from apps.general.abstracts import AbstractComment
+from apps.emailing.abstracts import AbstractEmail
 from apps.public_blog.managers import PublicBlogManager
 
 
@@ -85,7 +87,7 @@ class NewsletterFollowers(Model):
         db_table = "writter_followers_newsletters"
 
 
-class PublicBlog(AbstractEscrito):
+class PublicBlog(AbstractWrittenContent):
     send_as_newsletter = BooleanField(default=False)
     content = RichTextField(config_name="writter")
     upvotes = ManyToManyField(User, blank=True, related_name="user_upvote_blog")
@@ -128,11 +130,11 @@ class PublicBlog(AbstractEscrito):
         return result
 
 
-class PublicBlogAsNewsletter(BaseEmail):
+class PublicBlogAsNewsletter(AbstractEmail):
     blog_related = OneToOneField(PublicBlog, on_delete=SET_NULL, null=True, related_name="public_blog_newsletter")
 
 
-class PublicBlogComment(BaseComment):
+class PublicBlogComment(AbstractComment):
     content_related = ForeignKey(PublicBlog, on_delete=CASCADE, null=True, related_name="comments_related")
 
     class Meta:

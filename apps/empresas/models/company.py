@@ -19,7 +19,7 @@ from django.urls import reverse
 from apps.empresas import constants
 from apps.empresas.extensions.company import CompanyExtended
 from apps.empresas.managers import CompanyManager, CompanyUpdateLogManager
-from apps.general.constants import PERIOD_FOR_YEAR
+from apps.periods.constants import PERIOD_FOR_YEAR
 from apps.general.mixins import BaseToAllMixin
 
 

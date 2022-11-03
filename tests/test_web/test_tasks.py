@@ -6,13 +6,14 @@ from django.test import TestCase
 
 from bfet import DjangoTestingModel
 
-from apps.general.constants import EMAIL_FOR_WEB
+from apps.emailing.constants import EMAIL_FOR_WEB
 from apps.users.models import User, UsersCategory
-from apps.web.tasks import (
+from apps.engagement_machine.tasks import (
     check_and_start_send_email_engagement_task,
     send_email_engagement_task,
 )
-from apps.web.models import WebsiteEmail, Campaign
+from apps.web.models import WebsiteEmail
+from apps.promotions.models import Campaign
 from apps.web import constants as web_constants
 
 

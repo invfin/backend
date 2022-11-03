@@ -4,14 +4,15 @@ from apps.translate.google_trans_new import google_translator
 
 from apps.empresas.models import Company
 from apps.empresas.outils.retrieve_data import RetrieveCompanyData
-from apps.socialmedias.outils.content_creation import ContentCreation
+from apps.content_creation.outils.content_creator import ContentCreation
 from apps.socialmedias.models import NewsSharedHistorial
 from apps.socialmedias import constants as socialmedias_constants
+from apps.content_creation import constants
 
 
 class CompanyContentCreation(ContentCreation):
     model_class = Company
-    for_content = [socialmedias_constants.COMPANY]
+    for_content = [constants.COMPANY]
     """
     crear section para reports
     crear section para company itself
@@ -33,7 +34,7 @@ class CompanyContentCreation(ContentCreation):
 
 class CompanyNewsContentCreation(CompanyContentCreation):
     shared_model_historial = NewsSharedHistorial
-    for_content = [socialmedias_constants.NEWS]
+    for_content = [constants.NEWS]
 
     def get_new_object(self, object_filter: Dict = {}):
         if object_filter and "exclude" in object_filter:

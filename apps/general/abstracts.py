@@ -21,15 +21,13 @@ from apps.general.mixins import BaseToAllMixin, CommentsMixin, VotesMixin
 
 User = get_user_model()
 
+
 class AbstractTimeStampedModel(Model, BaseToAllMixin):
     created_at = DateTimeField(auto_now_add=True)
     updated_at = DateTimeField(auto_now=True)
 
     class Meta:
         abstract = True
-
-
-
 
 
 class AbstractComment(AbstractTimeStampedModel, BaseToAllMixin):
@@ -45,7 +43,6 @@ class AbstractComment(AbstractTimeStampedModel, BaseToAllMixin):
     @property
     def title(self):
         return self.content_related.title
-
 
 
 class AbstractGenericModels(AbstractTimeStampedModel, BaseToAllMixin):

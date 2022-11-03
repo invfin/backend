@@ -21,6 +21,11 @@ from apps.escritos import constants
 
 User = get_user_model()
 
+
+def default_dict():
+    return constants.DEFAULT_EXTRA_DATA_DICT
+
+
 class AbstractWrittenContent(AbstractTimeStampedModel, CommentsMixin, VotesMixin):
     title = CharField(max_length=500, null=True, blank=True)
     slug = CharField(max_length=500, null=True, blank=True)  # TODO change to slug field and allow blank but not null

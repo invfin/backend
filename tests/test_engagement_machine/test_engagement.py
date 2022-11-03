@@ -3,7 +3,7 @@ from django.test import TestCase
 from bfet import DjangoTestingModel
 
 from apps.web import constants
-from apps.socialmedias.outils.content_creation import (
+from apps.content_creation.outils import (
     QuestionContentCreation,
     CompanyNewsContentCreation,
     TermContentCreation,
@@ -11,7 +11,7 @@ from apps.socialmedias.outils.content_creation import (
     CompanyContentCreation,
 )
 from apps.escritos.models import Term
-from apps.web.outils.engagement import EngagementMachine
+from apps.engagement_machine.outils.engagement import EngagementMachine
 from apps.web.models import WebsiteEmail
 from apps.socialmedias import constants as social_constants
 from apps.socialmedias.models import Emoji, DefaultTilte

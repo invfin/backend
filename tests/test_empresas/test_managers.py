@@ -7,7 +7,7 @@ from apps.empresas.models import (
     Exchange,
     ExchangeOrganisation,
 )
-from apps.general.models import (
+from apps.industries_sectors.models import (
     Industry,
     Sector,
 )

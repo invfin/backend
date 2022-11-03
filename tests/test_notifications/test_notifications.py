@@ -5,8 +5,8 @@ from bfet import DjangoTestingModel
 from django.contrib.auth import get_user_model
 
 from apps.general import constants
-from apps.general.outils.notifications import NotificationSystem
-from apps.general.models import Notification
+from apps.notifications.outils.notifications import NotificationSystem
+from apps.notifications.models import Notification
 from apps.users.models import Profile
 from apps.preguntas_respuestas.models import Question, QuesitonComment, AnswerComment, Answer
 from apps.public_blog.models import PublicBlog, NewsletterFollowers
@@ -25,7 +25,12 @@ class TestNotificationSystem(TestCase):
         DjangoTestingModel.create(Profile, user=cls.user_2)
         cls.question = DjangoTestingModel.create(Question, author=cls.user_1)
         cls.question_comment = DjangoTestingModel.create(
-            QuesitonComment, content_related=DjangoTestingModel.create(Question, author=DjangoTestingModel.create(User),), author=DjangoTestingModel.create(User),
+            QuesitonComment,
+            content_related=DjangoTestingModel.create(
+                Question,
+                author=DjangoTestingModel.create(User),
+            ),
+            author=DjangoTestingModel.create(User),
         )
         cls.answer = DjangoTestingModel.create(
             Answer, author=DjangoTestingModel.create(User), question_related=cls.question
@@ -159,7 +164,7 @@ class TestNotificationSystem(TestCase):
         assert "Notification" == announce_new_vote_question["object_name"]
         assert first_notif.id == announce_new_vote_question["id"]
 
-        announce_new_vote_answer = NotificationSystem().announce_new_vote(self.answer,constants.NEW_VOTE)
+        announce_new_vote_answer = NotificationSystem().announce_new_vote(self.answer, constants.NEW_VOTE)
         assert type(announce_new_vote_answer) == list
         assert len(announce_new_vote_answer) == 1
         assert 2 == Notification.objects.all().count()

@@ -4,7 +4,7 @@ from django.db import models
 from django_json_widget.widgets import JSONEditorWidget
 
 from apps.empresas.tasks import update_periods_final_statements
-from apps.general.models import Period
+from apps.periods.models import Period
 from apps.empresas.outils.update import UpdateCompany
 from apps.empresas.utils import arrange_quarters
 from apps.empresas.admin.base import BaseJSONWidgetInline, update_financials

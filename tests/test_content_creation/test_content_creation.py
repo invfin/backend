@@ -3,9 +3,10 @@ from bfet import DjangoTestingModel, DataCreator
 from django.test import TestCase
 
 from apps.escritos.models import Term
-from apps.content_creator import ContentCreation
+from apps.content_creation.outils.content_creator import ContentCreation
 from apps.socialmedias import constants as social_constants
-from apps.socialmedias.models import Emoji, DefaultTilte, DefaultContent, TermSharedHistorial, Hashtag
+from apps.socialmedias.models import TermSharedHistorial
+from apps.content_creation.models import Emoji, DefaultTilte, DefaultContent, Hashtag
 
 
 class TestContentCreation(TestCase):
@@ -14,11 +15,14 @@ class TestContentCreation(TestCase):
 
     def test_create_hashtags(self):
         # TODO create subtests for each socialmedia with hashtags
-        hashtags = [DjangoTestingModel.create(
+        hashtags = [
+            DjangoTestingModel.create(
                 Hashtag,
                 title=DataCreator.create_random_string(20),
                 platform=social_constants.FACEBOOK,
-            ) for index in range(2)]
+            )
+            for index in range(2)
+        ]
         data_result_list, data_result_hashtags = self.content_creator.create_hashtags(social_constants.FACEBOOK)
         assert data_result_hashtags == "#" + " #".join([hashtag.title for hashtag in hashtags])
         assert data_result_list == hashtags
@@ -388,5 +392,3 @@ class BaseTestContentCreation:
         if "hashtags" in result_data:
             assert (hashtag in result_data["hashtags_list"]) is True
             assert f"#{hashtag.title}" == result_data["hashtags"]
-
-

@@ -5,17 +5,21 @@ from django.db.models import (
     BooleanField,
     CharField,
     ForeignKey,
-    IntegerField,
+    DateTimeField,
+    TextField,
+    SlugField,
     ManyToManyField,
     Model,
+    PositiveBigIntegerField,
 )
 
-from cloudinary.models import CloudinaryField
+from ckeditor.fields import RichTextField
 
-from apps.general import constants
-from apps.general.bases import BaseGenericModels, BaseToAllMixin, BaseTrackEmail
-from apps.general.managers import CurrencyManager, PeriodManager
-
+from apps.promotions import constants
+from apps.general.mixins import BaseToAllMixin
+from apps.seo import constants as seo_constants
+from apps.seo.models import Visiteur
+from apps.socialmedias.constants import SOCIAL_MEDIAS
 
 User = get_user_model()
 

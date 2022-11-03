@@ -16,7 +16,7 @@ from apps.empresas.models import (
     BalanceSheet,
     CashflowStatement,
 )
-from apps.general.models import Period
+from apps.periods.models import Period
 
 
 class TestExcelAPIIncome(BaseAPIViewTestMixin, APITestCase):

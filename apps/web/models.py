@@ -18,10 +18,7 @@ from django.urls import reverse
 from ckeditor.fields import RichTextField
 
 from apps.general.mixins import BaseToAllMixin
-from apps.general.bases import BaseTrackEmail, BaseEmail
-from apps.seo.models import Visiteur
-from apps.socialmedias.constants import SOCIAL_MEDIAS
-from apps.seo import constants as seo_constants
+from apps.emailing.abstracts import AbstractTrackEmail, AbstractEmail
 from apps.users.models import User
 from apps.web import constants
 
@@ -42,7 +39,7 @@ class WebsiteLegalPage(Model, BaseToAllMixin):
         return super().save(*args, **kwargs)
 
 
-class WebsiteEmail(BaseEmail):
+class WebsiteEmail(AbstractEmail):
     content = RichTextField()
     whom_to_send = CharField(
         max_length=800,
@@ -50,7 +47,7 @@ class WebsiteEmail(BaseEmail):
         default=constants.WHOM_TO_SEND_EMAIL_ALL,
     )
     campaign = ForeignKey(
-        Campaign,
+        "promotions.Campaign",
         on_delete=SET_NULL,
         null=True,
         blank=True,
@@ -115,7 +112,7 @@ class WebsiteEmail(BaseEmail):
         return {"status": status, "color": color, "icon": icon, "bs_color": bs_color}
 
 
-class WebsiteEmailTrack(BaseTrackEmail):
+class WebsiteEmailTrack(AbstractTrackEmail):
     email_related = ForeignKey(
         WebsiteEmail,
         null=True,

@@ -22,7 +22,7 @@ FULL_DOMAIN = settings.FULL_DOMAIN
 
 
 class ResizeImageMixin:
-    def resize(self, imageField: ImageField, size: tuple, format:str = "WebP"):
+    def resize(self, imageField: ImageField, size: tuple, format: str = "WebP"):
         im = Image.open(imageField)  # Catch original
         source_image = im.convert("RGB")
         source_image.thumbnail(size)  # Resize to size
@@ -178,8 +178,3 @@ class VotesMixin:
         self.total_votes += vote_result
         self.save(update_fields=["total_votes"])
         return vote_result
-
-
-
-
-

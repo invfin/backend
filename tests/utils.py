@@ -20,7 +20,7 @@ from apps.business.models import (
     ProductComplementary,
     ProductSubscriber,
 )
-from apps.general.models import Currency
+from apps.currencies.models import Currency
 
 User = get_user_model()
 
@@ -98,7 +98,6 @@ class BaseAPIViewTestMixin:
         if cls.params:
             params = urllib.parse.urlencode(cls.params)
             cls.full_endpoint = f"{cls.full_endpoint}&{params}"
-
 
     def test_verbs(self):
         for verb in self.allowed_verbs:

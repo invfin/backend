@@ -45,7 +45,7 @@ from apps.empresas.models import (
     KeyStatsYahooQuery,
     StatementsFinnhub,
 )
-from apps.general.models import Period
+from apps.periods.models import Period
 
 
 class TestUtils(TestCase):

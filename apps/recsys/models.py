@@ -17,7 +17,8 @@ from apps.escritos.models import Term
 from apps.preguntas_respuestas.models import Question
 from apps.public_blog.models import PublicBlog
 from apps.seo import constants
-from apps.web.models import Promotion, Visiteur
+from apps.promotions.models import Promotion
+from apps.seo.models import Visiteur
 
 User = get_user_model()
 

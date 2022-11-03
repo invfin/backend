@@ -3,9 +3,7 @@ from datetime import datetime
 
 import pandas as pd
 
-from apps.general import constants
 from apps.general.outils.save_from_df import DFInfoCreator
-from apps.general.models import Period
 from apps.empresas.models import (
     BalanceSheetYahooQuery,
     IncomeStatementYahooQuery,

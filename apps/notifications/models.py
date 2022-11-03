@@ -5,22 +5,16 @@ from django.db.models import (
     BooleanField,
     CharField,
     ForeignKey,
-    IntegerField,
-    ManyToManyField,
-    Model,
 )
 
-from cloudinary.models import CloudinaryField
-
-from apps.general import constants
-from apps.general.bases import BaseGenericModels, BaseToAllMixin, BaseTrackEmail
-from apps.general.managers import CurrencyManager, PeriodManager
-
+from . import constants
+from apps.general.abstracts import AbstractGenericModels
+from apps.emailing.abstracts import AbstractTrackEmail
 
 User = get_user_model()
 
 
-class Notification(BaseGenericModels):
+class Notification(AbstractGenericModels):
     user = ForeignKey(User, on_delete=CASCADE)
     notification_type = CharField(max_length=500, choices=constants.NOTIFICATIONS_TYPE)
     is_seen = BooleanField(default=False)
@@ -30,7 +24,7 @@ class Notification(BaseGenericModels):
         db_table = "notifications"
 
 
-class EmailNotification(BaseTrackEmail):
+class EmailNotification(AbstractTrackEmail):
     email_related = ForeignKey(Notification, null=True, blank=True, on_delete=SET_NULL, related_name="email_related")
 
     class Meta:

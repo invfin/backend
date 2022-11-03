@@ -1,5 +1,5 @@
 from django.contrib.auth import get_user_model
-from django.utils.timezone import timezone
+from django.utils import timezone
 from django.db.models import (
     CASCADE,
     SET_NULL,
@@ -8,18 +8,14 @@ from django.db.models import (
     ForeignKey,
     DateTimeField,
     ManyToManyField,
-    Model,
 )
 
 from ckeditor.fields import RichTextField
 
-from apps.general import constants
 from apps.general.abstracts import AbstractTimeStampedModel
 
 
 User = get_user_model()
-
-
 
 
 class AbstractEmail(AbstractTimeStampedModel):

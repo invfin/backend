@@ -6,7 +6,7 @@ from django.db.models import (
 )
 
 from apps.general.abstracts import AbstractTimeStampedModel
-from apps.general.managers import CurrencyManager
+from apps.currencies.managers import CurrencyManager
 from apps.countries.models import Country
 
 User = get_user_model()
