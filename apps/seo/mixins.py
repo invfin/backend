@@ -68,13 +68,12 @@ class SEOViewMixin(RecommenderMixin):
     def get_meta_title(self, instance: object = None):
         meta_title = self.meta_title
         if not meta_title:
-            if instance:
+            if self.private_view and not instance:
+                meta_title = self.__class__.__name__
+            else:
                 meta_title = self.get_possible_meta_attribute(
                     instance, ["meta_title", "name", "title"], "Invierte correctamente"
                 )
-            elif self.private_view and not instance:
-                meta_title = self.__class__.__name__
-
         return meta_title
 
     def get_meta_description(self, instance: object = None):
@@ -139,11 +138,7 @@ class SEOViewMixin(RecommenderMixin):
         return self.get_possible_meta_attribute(instance, ["updated_at"], None)
 
     def get_schema_org(self, instance: object = None) -> Dict:
-        try:
-            schema_org = instance.schema_org
-        except AttributeError:
-            schema_org = {}
-        return schema_org
+        return getattr(instance, "schema_org", {})
 
     def get_meta_robots(self):
         if self.private_view:
