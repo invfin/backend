@@ -6,7 +6,7 @@ from django.apps import apps
 from django.contrib.auth import get_user_model
 
 from apps.general import constants
-from apps.general.models import Notification
+from apps.notifications.models import Notification
 
 User = get_user_model()
 

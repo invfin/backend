@@ -2,8 +2,8 @@ from typing import Dict
 
 from config import celery_app
 
-from apps.general.outils.emailing import EmailingSystem
-from apps.general.outils.notifications import NotificationSystem
+from apps.emailing.outils.emailing import EmailingSystem
+from apps.notifications.outils.notifications import NotificationSystem
 
 
 @celery_app.task()

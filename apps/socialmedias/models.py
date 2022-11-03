@@ -19,8 +19,8 @@ from apps.preguntas_respuestas.models import Question
 from apps.public_blog.models import PublicBlog, WritterProfile
 from apps.general.mixins import BaseToAllMixin
 from apps.content_creation.models import DefaultContent, DefaultTilte, Emoji, Hashtag
-from apps.content_creation.constants import POST_TYPE, SOCIAL_MEDIAS
-
+from apps.content_creation.constants import POST_TYPE
+from apps.socialmedias.constants import SOCIAL_MEDIAS
 User = get_user_model()
 
 

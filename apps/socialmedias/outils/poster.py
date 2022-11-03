@@ -5,9 +5,9 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 
 
-from apps.socialmedias.socialposter.facepy import Facebook
-from apps.socialmedias.socialposter.tweetpy import Twitter
-from apps.socialmedias.outils.content_creation import (
+from apps.socialmedias.outils.socialposter.facepy import Facebook
+from apps.socialmedias.outils.socialposter.tweetpy import Twitter
+from apps.content_creation.outils.content_creator import (
     CompanyContentCreation,
     CompanyNewsContentCreation,
     TermContentCreation,

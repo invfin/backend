@@ -5,9 +5,9 @@ from django.utils.html import format_html, strip_tags
 from apps.escritos.models import Term
 from apps.preguntas_respuestas.models import Question
 from apps.public_blog.models import PublicBlog
-from apps.socialmedias import constants as socialmedias_constants
+from apps.content_creation import constants as socialmedias_constants
 from apps.socialmedias.models import BlogSharedHistorial
-from apps.socialmedias.outils.content_creation import ContentCreation
+from apps.content_creation.outils.content_creator import ContentCreation
 
 
 class PublicBlogContentCreation(ContentCreation):

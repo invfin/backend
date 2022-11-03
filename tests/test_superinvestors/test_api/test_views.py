@@ -7,7 +7,7 @@ from django.contrib.auth import get_user_model
 
 from tests.utils import BaseAPIViewTest
 from apps.super_investors.models import Superinvestor
-from tests.data.superinvestors_data import LIST_SUPERINVESTORS, SINGLE_SUPERINVESTOR
+from tests.data.superinvestors.superinvestors_data import LIST_SUPERINVESTORS, SINGLE_SUPERINVESTOR
 
 User = get_user_model()
 

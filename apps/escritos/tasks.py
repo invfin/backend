@@ -1,11 +1,11 @@
 from celery import shared_task
 
 from apps.escritos.models import Term
-from apps.general.outils.emailing import EmailingSystem
+from apps.emailing.outils.emailing import EmailingSystem
 from apps.socialmedias import constants as socialmedias_constants
 from apps.web import constants as web_constants
 from apps.web.models import WebsiteEmail
-from apps.web.outils.engagement import EngagementMachine
+from apps.engagement_machine.outils.engagement import EngagementMachine
 
 
 @shared_task(autoretry_for=(Exception,), max_retries=3)

@@ -3,7 +3,7 @@ from django.test import TestCase
 from bfet import DjangoTestingModel
 
 from apps.web import constants
-from apps.content_creation.outils import (
+from apps.content_creation.outils.content_creator import (
     QuestionContentCreation,
     CompanyNewsContentCreation,
     TermContentCreation,

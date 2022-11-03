@@ -14,7 +14,8 @@ from django.db.models import (
 from apps.web import constants as web_constants
 from apps.general.mixins import BaseToAllMixin
 
-from .constants import FOR_CONTENT, SOCIAL_MEDIAS, ALL
+from apps.socialmedias.constants import SOCIAL_MEDIAS
+from .constants import FOR_CONTENT, ALL
 from .managers import EmojisManager, HashtagsManager, TitlesManager, DefaultContentManager
 
 User = get_user_model()
