@@ -85,7 +85,7 @@ class NewsletterFollowers(Model):
         db_table = "writter_followers_newsletters"
 
 
-class PublicBlog(BaseEscrito):
+class PublicBlog(AbstractEscrito):
     send_as_newsletter = BooleanField(default=False)
     content = RichTextField(config_name="writter")
     upvotes = ManyToManyField(User, blank=True, related_name="user_upvote_blog")
