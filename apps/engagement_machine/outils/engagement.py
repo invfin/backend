@@ -1,6 +1,6 @@
 from typing import Dict, Type
 
-from apps.socialmedias.outils.content_creation import (
+from apps.content_creation.outils.content_creator import (
     QuestionContentCreation,
     CompanyNewsContentCreation,
     TermContentCreation,
@@ -10,18 +10,19 @@ from apps.socialmedias.outils.content_creation import (
 from apps.web.models import WebsiteEmailTrack
 from apps.web.utils import more_than_month
 from apps.web import constants
-from apps.web.models import WebsiteEmail, Campaign
-from apps.socialmedias import constants as social_constants
+from apps.web.models import WebsiteEmail
+from apps.promotions.models import Campaign
+from apps.content_creation import constants as content_creation_constants
 from apps.users.models import User
 
 
 class EngagementMachine:
     content_creators_map: Dict = {
-        social_constants.QUESTION_FOR_CONTENT: QuestionContentCreation,
-        social_constants.NEWS_FOR_CONTENT: CompanyNewsContentCreation,
-        social_constants.TERM_FOR_CONTENT: TermContentCreation,
-        social_constants.PUBLIC_BLOG_FOR_CONTENT: PublicBlogContentCreation,
-        social_constants.COMPANY_FOR_CONTENT: CompanyContentCreation,
+        content_creation_constants.QUESTION_FOR_CONTENT: QuestionContentCreation,
+        content_creation_constants.NEWS_FOR_CONTENT: CompanyNewsContentCreation,
+        content_creation_constants.TERM_FOR_CONTENT: TermContentCreation,
+        content_creation_constants.PUBLIC_BLOG_FOR_CONTENT: PublicBlogContentCreation,
+        content_creation_constants.COMPANY_FOR_CONTENT: CompanyContentCreation,
     }
 
     def get_creator(self, content_object: str) -> Type:
@@ -39,7 +40,7 @@ class EngagementMachine:
 
     def create_newsletter(self, web_email_type: str, content_object: str, whom_to_send: str) -> WebsiteEmail:
         content_creator = self.get_creator(content_object)
-        content_creator.for_content = [social_constants.WEB]
+        content_creator.for_content = [content_creation_constants.WEB]
         newsletter_content_from_object = content_creator().create_newsletter_content_from_object()
         campaign, created = Campaign.objects.get_or_create(
             slug=web_email_type, defaults={"title": constants.CONTENT_PURPOSES_MAP[web_email_type]}

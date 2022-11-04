@@ -33,12 +33,12 @@ class AbstractWrittenContent(AbstractTimeStampedModel, CommentsMixin, VotesMixin
     total_views = PositiveIntegerField(default=0)
     times_shared = PositiveIntegerField(default=0)
     category = ForeignKey(
-        "general.Category",
+        "classifications.Category",
         on_delete=SET_NULL,
         blank=True,
         null=True,
     )
-    tags = ManyToManyField("general.Tag", blank=True)
+    tags = ManyToManyField("classifications.Tag", blank=True)
     author = ForeignKey(User, on_delete=SET_NULL, null=True)
     checkings = JSONField(default=default_dict)
     website_email = GenericRelation(

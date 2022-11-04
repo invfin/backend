@@ -6,7 +6,8 @@ from django.apps import apps
 
 from apps.empresas.models import Company, Exchange
 from apps.escritos.models import Term
-from apps.general.models import Country, Industry, Sector
+from apps.industries_sectors.models import Industry, Sector
+from apps.countries.models import Country
 from apps.public_blog.models import PublicBlog
 from apps.seo import constants
 

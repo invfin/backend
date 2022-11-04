@@ -2,16 +2,16 @@ from django.contrib.admin import site
 from django.contrib.admin.widgets import RelatedFieldWidgetWrapper
 from django.forms import CharField, ChoiceField, DateTimeField, DateTimeInput, EmailField, Form, ModelForm, Textarea
 
-from apps.general.outils.emailing import EmailingSystem
-from apps.socialmedias import constants as socialmedias_constants
+from apps.emailing.outils.emailing import EmailingSystem
+from apps.content_creation import constants as content_creation_constants
 from apps.web import constants
 from apps.web.models import WebsiteEmail
-from apps.web.outils.engagement import EngagementMachine
+from apps.engagement_machine.outils.engagement import EngagementMachine
 
 
 class AutomaticNewsletterForm(Form):
     web_email_type = ChoiceField(choices=constants.CONTENT_PURPOSES)
-    content_object = ChoiceField(choices=socialmedias_constants.MODELS_FOR_CONTENT)
+    content_object = ChoiceField(choices=content_creation_constants.MODELS_FOR_CONTENT)
     whom_to_send = ChoiceField(choices=constants.WHOM_TO_SEND_EMAIL)
 
     def create_newsletter(self):
