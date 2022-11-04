@@ -113,6 +113,7 @@ class TestFacePoster(TestCase):
         }
         assert expected_response == fb_response
 
+    @skip("Not ready")
     def test_get_long_live_page_token(self):
         fb_response = self.facebook.get_long_live_page_token()
         print(fb_response)

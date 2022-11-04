@@ -5,7 +5,8 @@ import time
 from django.apps import apps
 from django.contrib.auth import get_user_model
 
-from apps.general import constants
+from apps.emailing import constants as emailing_constants
+from apps.notifications import constants
 from apps.notifications.models import Notification
 
 User = get_user_model()
@@ -74,7 +75,7 @@ class NotificationSystem:
                     },
                 ),
                 "receiver_id": writter.id,
-                "is_for": constants.EMAIL_FOR_NOTIFICATION,
+                "is_for": emailing_constants.EMAIL_FOR_NOTIFICATION,
             }
         ]
 
@@ -91,7 +92,7 @@ class NotificationSystem:
                     },
                 ),
                 "receiver_id": obj.content_related.author.id,
-                "is_for": constants.EMAIL_FOR_NOTIFICATION,
+                "is_for": emailing_constants.EMAIL_FOR_NOTIFICATION,
             }
         ]
 
@@ -108,7 +109,7 @@ class NotificationSystem:
                     },
                 ),
                 "receiver_id": obj.author.id,
-                "is_for": constants.EMAIL_FOR_NOTIFICATION,
+                "is_for": emailing_constants.EMAIL_FOR_NOTIFICATION,
             }
         ]
 
@@ -126,7 +127,7 @@ class NotificationSystem:
                     "content": question.content,
                 },
             )
-            notif_info.append({"email": email, "receiver_id": user.id, "is_for": constants.EMAIL_FOR_NOTIFICATION})
+            notif_info.append({"email": email, "receiver_id": user.id, "is_for": emailing_constants.EMAIL_FOR_NOTIFICATION})
         return notif_info
 
     def announce_new_blog(self, blog, notif_type):
@@ -142,7 +143,7 @@ class NotificationSystem:
                     "content": blog.resume,
                 },
             )
-            notif_info.append({"email": email, "receiver_id": user.id, "is_for": constants.EMAIL_FOR_NOTIFICATION})
+            notif_info.append({"email": email, "receiver_id": user.id, "is_for": emailing_constants.EMAIL_FOR_NOTIFICATION})
         return notif_info
 
     def announce_new_answer(self, answer, notif_type):
@@ -151,6 +152,7 @@ class NotificationSystem:
         users_relateds = question.related_users
         users_relateds.append(question.author)
         for user in users_relateds:
+            print(user)
             if user != answer.author:
                 title = question.title[:15]
                 subject = f"{title}... tiene una nueva respuesta"
@@ -165,7 +167,8 @@ class NotificationSystem:
                         "content": answer.content,
                     },
                 )
-                notif_info.append({"email": email, "receiver_id": user.id, "is_for": constants.EMAIL_FOR_NOTIFICATION})
+                notif_info.append({"email": email, "receiver_id": user.id, "is_for": emailing_constants.EMAIL_FOR_NOTIFICATION})
+
         return notif_info
 
     def announce_answer_accepted(self, answer, notif_type):
@@ -185,5 +188,5 @@ class NotificationSystem:
                     "content": f"Tu respuesta a {question.title} ha sido acceptda. Felicidades.",
                 },
             )
-            notif_info.append({"email": email, "receiver_id": user.id, "is_for": constants.EMAIL_FOR_NOTIFICATION})
+            notif_info.append({"email": email, "receiver_id": user.id, "is_for": emailing_constants.EMAIL_FOR_NOTIFICATION})
         return notif_info

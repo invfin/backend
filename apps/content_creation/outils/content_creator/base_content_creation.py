@@ -6,6 +6,7 @@ from django.apps import apps
 from django.conf import settings
 
 from apps.content_creation.models import DefaultContent, DefaultTilte, Emoji, Hashtag
+from apps.content_creation import constants
 from apps.socialmedias import constants as socialmedias_constants
 from apps.seo.utils import generate_url_with_utm
 
@@ -22,9 +23,9 @@ class ContentCreation:
         # TODO change the platform's contants to a own
         self.object: Type = self.get_object()
         self.platform: str = platform
-        self.for_content.append(socialmedias_constants.ALL)
-        if platform == socialmedias_constants.PLATFORM_WEB:
-            self.for_content.append(socialmedias_constants.WEB)
+        self.for_content.append(constants.ALL)
+        if platform == constants.PLATFORM_WEB:
+            self.for_content.append(constants.WEB)
         self.for_content = list(set(self.for_content))
 
     def get_object(self) -> Type:

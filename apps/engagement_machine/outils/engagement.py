@@ -8,7 +8,7 @@ from apps.content_creation.outils.content_creator import (
     CompanyContentCreation,
 )
 from apps.web.models import WebsiteEmailTrack
-from apps.web.utils import more_than_month
+from apps.engagement_machine.utils import more_than_month
 from apps.web import constants
 from apps.web.models import WebsiteEmail
 from apps.promotions.models import Campaign

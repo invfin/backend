@@ -33,10 +33,10 @@ class UserExtended:
 
     @property
     def full_name(self):
-        if self.first_name:
-            full_name = self.first_name
         if self.first_name and self.last_name:
             full_name = f"{self.first_name} {self.last_name}"
+        elif self.first_name:
+            full_name = self.first_name
         else:
             full_name = self.username
         return full_name

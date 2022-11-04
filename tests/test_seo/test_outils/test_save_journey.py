@@ -100,7 +100,6 @@ class TestJourneyClassifier(TestCase):
         visiteur_request = MockRequest()
         visiteur_request.visiteur = self.visiteur
         visiteur_request.is_visiteur = True
-        print(visiteur_request.__dict__)
         JourneyClassifier().save_journey(visiteur_request, question_path, comes_from)
         assert 1 == VisiteurJourney.objects.all().count()
         assert 1 == VisiteurQuestionVisited.objects.all().count()
