@@ -11,7 +11,7 @@ class BaseStatement(Model, BaseToAllMixin):
     year = DateField(null=True, blank=True)
     company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True)
     period = ForeignKey(Period, on_delete=SET_NULL, null=True, blank=True)
-    reported_currency = ForeignKey("general.Currency", on_delete=SET_NULL, null=True, blank=True)
+    reported_currency = ForeignKey("currencies.Currency", on_delete=SET_NULL, null=True, blank=True)
     objects = BaseStatementManager()
 
     class Meta:

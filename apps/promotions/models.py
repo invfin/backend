@@ -28,8 +28,8 @@ class Campaign(Model, BaseToAllMixin):
     title = CharField(max_length=600, blank=True)
     slug = SlugField(max_length=800, null=True, blank=True)
     description = TextField(blank=True)
-    categories = ManyToManyField("general.Category", blank=True)
-    tags = ManyToManyField("general.Tag", blank=True)
+    categories = ManyToManyField("classifications.Category", blank=True)
+    tags = ManyToManyField("classifications.Tag", blank=True)
     start_date = DateTimeField(blank=True, null=True)
     end_date = DateTimeField(blank=True, null=True)
     focused_on = CharField(
