@@ -28,7 +28,7 @@ class AbstractEmail(AbstractTimeStampedModel):
         blank=True,
     )
     default_content = ForeignKey(
-        "socialmedias.DefaultContent",
+        "content_creation.DefaultContent",
         on_delete=SET_NULL,
         null=True,
         blank=True,
