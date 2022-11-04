@@ -27,7 +27,7 @@ from apps.content_creation.outils import (
 )
 from apps.socialmedias.outils.poster import SocialPosting
 from apps.content_creation import constants
-from apps.socialmedias.models import Emoji, DefaultTilte
+from apps.content_creation.models import Emoji, DefaultTilte
 
 FULL_DOMAIN = settings.FULL_DOMAIN
 

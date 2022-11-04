@@ -14,7 +14,7 @@ from apps.escritos.models import Term
 from apps.engagement_machine.outils.engagement import EngagementMachine
 from apps.web.models import WebsiteEmail
 from apps.socialmedias import constants as social_constants
-from apps.socialmedias.models import Emoji, DefaultTilte
+from apps.content_creation.models import Emoji, DefaultTilte
 
 
 class TestEngagementMachine(TestCase):

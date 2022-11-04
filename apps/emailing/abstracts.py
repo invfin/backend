@@ -22,7 +22,7 @@ class AbstractEmail(AbstractTimeStampedModel):
     title = CharField(max_length=500)
     content = RichTextField(config_name="simple")
     default_title = ForeignKey(
-        "socialmedias.DefaultTilte",
+        "content_creation.DefaultTilte",
         on_delete=SET_NULL,
         null=True,
         blank=True,
@@ -33,7 +33,7 @@ class AbstractEmail(AbstractTimeStampedModel):
         null=True,
         blank=True,
     )
-    title_emojis = ManyToManyField("socialmedias.Emoji", blank=True)
+    title_emojis = ManyToManyField("content_creation.Emoji", blank=True)
     sent = BooleanField(default=False)
     date_to_send = DateTimeField(null=True, blank=True)
 

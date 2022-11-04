@@ -5,7 +5,7 @@ from typing import Dict, List, Type, Any, Tuple, Union
 from django.apps import apps
 from django.conf import settings
 
-from apps.socialmedias.models import DefaultContent, DefaultTilte, Emoji, Hashtag
+from apps.content_creation.models import DefaultContent, DefaultTilte, Emoji, Hashtag
 from apps.socialmedias import constants as socialmedias_constants
 from apps.seo.utils import generate_url_with_utm
 
