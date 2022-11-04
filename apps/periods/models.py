@@ -18,8 +18,9 @@ from apps.periods.managers import PeriodManager
 User = get_user_model()
 
 
-
 class Period(AbstractTimeStampedModel):
+    created_at = None
+    updated_at = None
     year = IntegerField(null=True, blank=True)
     period = IntegerField(choices=PERIODS, null=True, blank=True)
     objects = PeriodManager()
