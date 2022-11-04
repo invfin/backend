@@ -18,7 +18,7 @@ from apps.socialmedias.models import (
 )
 from apps.socialmedias.outils.socialposter.facepy import Facebook
 from apps.socialmedias.outils.socialposter.tweetpy import Twitter
-from apps.content_creation.outils import (
+from apps.content_creation.outils.content_creator import (
     CompanyContentCreation,
     CompanyNewsContentCreation,
     TermContentCreation,

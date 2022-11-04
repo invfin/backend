@@ -1,9 +1,11 @@
 import json
 
-from tests.utils import BaseAPIViewTest
+from rest_framework.test import APITestCase
+
+from tests.utils import BaseAPIViewTestMixin
 
 
-class TestAllTermsAPIView(BaseAPIViewTest):
+class TestAllTermsAPIView(BaseAPIViewTestMixin, APITestCase):
     path_name = "api:all_terms_api"
     url_path = "/lista-terminos/"
 
@@ -50,7 +52,7 @@ class TestAllTermsAPIView(BaseAPIViewTest):
         assert json.loads(json.dumps(response.data))[0] == expected_data
 
 
-class TestTermAPIView(BaseAPIViewTest):
+class TestTermAPIView(BaseAPIViewTestMixin, APITestCase):
     path_name = "api:term_api"
     url_path = "/termino/"
     params = {"id": 1}

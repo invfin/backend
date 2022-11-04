@@ -9,7 +9,7 @@ from apps.content_creation.outils.content_creator import ContentCreation
 from apps.socialmedias import constants as social_constants
 from apps.socialmedias.models import TermSharedHistorial
 from apps.content_creation.models import Emoji, DefaultTilte, DefaultContent, Hashtag
-
+from apps.content_creation import constants
 
 class TestContentCreation(TestCase):
     def setUp(self) -> None:
@@ -198,7 +198,7 @@ class TestContentCreation(TestCase):
 
         with self.subTest("Test with no emojis, custom title filtered"):
             default_title_news = DjangoTestingModel.create(
-                DefaultTilte, title="Default title news", for_content=social_constants.NEWS
+                DefaultTilte, title="Default title news", for_content=constants.NEWS
             )
             expected_data = {
                 "title": "Default title news",
@@ -208,7 +208,7 @@ class TestContentCreation(TestCase):
                 customize_title=True,
                 custom_title_info={
                     "default_title_position": "Beginning",
-                    "default_title_filter": {"for_content": social_constants.NEWS},
+                    "default_title_filter": {"for_content": constants.NEWS},
                 },
                 use_emojis=False,
             )
@@ -230,10 +230,10 @@ class TestContentCreation(TestCase):
             assert result_data == expected_data
 
         default_title_news = DjangoTestingModel.create(
-            DefaultTilte, title="Default title news", for_content=social_constants.NEWS
+            DefaultTilte, title="Default title news", for_content=constants.NEWS
         )
         result_data = self.content_creator.create_random_title(
-            **{"default_title_filter": {"for_content": social_constants.NEWS}},
+            **{"default_title_filter": {"for_content": constants.NEWS}},
         )
         expected_data = {
             "title": "Default title news",
@@ -265,11 +265,11 @@ class TestContentCreation(TestCase):
 
         assert self.content_creator.create_content(content="first content") == {"content": "first content"}
 
-        default_content_web = DjangoTestingModel.create(DefaultContent, for_content=social_constants.WEB)
+        default_content_web = DjangoTestingModel.create(DefaultContent, for_content=constants.WEB)
 
         assert self.content_creator.create_content(
             content="first content",
-            default_content_filter={"for_content__in": [social_constants.WEB]},
+            default_content_filter={"for_content__in": [constants.WEB]},
         ) == {
             "content": "first content",
         }
@@ -279,27 +279,27 @@ class TestContentCreation(TestCase):
             content_creator_all = ContentCreation
             content_creator_all.model_class = Term
             content_creator_all.for_content = []
-            assert content_creator_all().create_default_title_filter() == {"for_content__in": [social_constants.ALL]}
+            assert content_creator_all().create_default_title_filter() == {"for_content__in": [constants.ALL]}
         with self.subTest("content Term"):
             content_creator_term = ContentCreation
             content_creator_term.for_content = []
-            content_creator_term.for_content = [social_constants.TERM]
+            content_creator_term.for_content = [constants.TERM]
             assert content_creator_term().create_default_title_filter() == {
-                "for_content__in": [social_constants.ALL, social_constants.TERM]
+                "for_content__in": [constants.ALL, constants.TERM]
             }
         with self.subTest("content with Web"):
             content_creator_web = ContentCreation
             content_creator_web.model_class = Term
             content_creator_web.for_content = []
-            assert content_creator_web(social_constants.PLATFORM_WEB).create_default_title_filter() == {
-                "for_content__in": [social_constants.ALL, social_constants.WEB]
+            assert content_creator_web(constants.PLATFORM_WEB).create_default_title_filter() == {
+                "for_content__in": [constants.ALL, constants.WEB]
             }
 
     def test_create_default_content_filter(self):
-        assert ContentCreation().create_default_content_filter() == {"for_content__in": [social_constants.ALL]}
+        assert ContentCreation().create_default_content_filter() == {"for_content__in": [constants.ALL]}
 
-        assert ContentCreation(social_constants.PLATFORM_WEB).create_default_content_filter() == {
-            "for_content__in": [social_constants.ALL, social_constants.WEB]
+        assert ContentCreation(constants.PLATFORM_WEB).create_default_content_filter() == {
+            "for_content__in": [constants.ALL, constants.WEB]
         }
 
 
@@ -337,7 +337,7 @@ class BaseTestContentCreation:
         default_title_all = DjangoTestingModel.create(
             DefaultTilte,
             title="Default title",
-            for_content=social_constants.ALL,
+            for_content=constants.ALL,
         )
         result_data = self.content_creator().prepare_inital_data()
         assert default_title_all == result_data["default_title"]
@@ -356,7 +356,7 @@ class BaseTestContentCreation:
         default_title_all = DjangoTestingModel.create(
             DefaultTilte,
             title="Default title",
-            for_content=social_constants.ALL,
+            for_content=constants.ALL,
         )
         result_data = self.content_creator().create_newsletter_content_from_object()
         assert default_title_all == result_data["default_title"]
@@ -370,27 +370,28 @@ class BaseTestContentCreation:
         assert self.model_class_obj.shareable_link == result_data["link"]
 
     def test_create_social_media_content_from_object(self):
-        # TODO test it with the different socialmedias
-
         emoji_1 = DjangoTestingModel.create(Emoji)
         default_title_all = DjangoTestingModel.create(
             DefaultTilte,
             title="Default title",
-            for_content=social_constants.ALL,
+            for_content=constants.ALL,
         )
-
-        hashtag = DjangoTestingModel.create(Hashtag, title="hashtag", platform=social_constants.TWITTER)
-        result_data = self.content_creator(social_constants.TWITTER).create_social_media_content_from_object()
-        assert default_title_all == result_data["default_title"]
-        if "title_emojis" in result_data:
-            assert (emoji_1 in result_data["title_emojis"]) is True
-            assert (emoji_1.emoji in result_data["title"]) is True
-        assert (default_title_all.title in result_data["title"]) is True
-        assert self.model_class_obj.resume == result_data["content"]
-        assert self.model_class_obj.shareable_link == result_data["link"]
-        assert self.model_class_obj == result_data["content_shared"]
-        assert self.model_class_obj.image == result_data["media"]
-        assert TermSharedHistorial == result_data["shared_model_historial"]
-        if "hashtags" in result_data:
-            assert (hashtag in result_data["hashtags_list"]) is True
-            assert f"#{hashtag.title}" == result_data["hashtags"]
+        for socialmedia in social_constants.SOCIAL_MEDIAS_USED:
+            with self.subTest(socialmedia):
+                hashtag = DjangoTestingModel.create(Hashtag, title="hashtag",
+                                                    platform=socialmedia)
+                result_data = self.content_creator(
+                    socialmedia).create_social_media_content_from_object()
+                assert default_title_all == result_data["default_title"]
+                if "title_emojis" in result_data:
+                    assert (emoji_1 in result_data["title_emojis"]) is True
+                    assert (emoji_1.emoji in result_data["title"]) is True
+                assert (default_title_all.title in result_data["title"]) is True
+                assert self.model_class_obj.resume == result_data["content"]
+                assert self.model_class_obj.shareable_link == result_data["link"]
+                assert self.model_class_obj == result_data["content_shared"]
+                assert self.model_class_obj.image == result_data["media"]
+                assert TermSharedHistorial == result_data["shared_model_historial"]
+                if "hashtags" in result_data:
+                    assert (hashtag in result_data["hashtags_list"]) is True
+                    assert f"#{hashtag.title}" == result_data["hashtags"]

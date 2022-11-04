@@ -22,8 +22,8 @@ class TestTask(TestCase):
     def setUpTestData(cls) -> None:
         pass
 
-    @patch("apps.web.tasks.send_email_engagement_task.delay")
-    @patch("apps.general.outils.emailing.EmailingSystem.simple_email")
+    @patch("apps.engagement_machine.tasks.send_email_engagement_task.delay")
+    @patch("apps.emailing.outils.emailing.EmailingSystem.simple_email")
     def test_check_and_start_send_email_engagement_task(self, mock_send_email_engagement_task, mock_simple_email):
         check_and_start_send_email_engagement_task()
         mock_simple_email.called_with("There are no website emails ready", "Create newsletters")
@@ -39,7 +39,7 @@ class TestTask(TestCase):
         DjangoTestingModel.create(WebsiteEmail, sent=False, date_to_send=tomorrow)
         assert check_and_start_send_email_engagement_task() is None
 
-    @patch("apps.general.tasks.send_email_task.delay")
+    @patch("apps.emailing.tasks.send_email_task.delay")
     def test_send_email_engagement_task(self, mock_send_email_task):
         with self.subTest(web_constants.WHOM_TO_SEND_EMAIL_CAMPAIGN_RELATED):
             users_category = DjangoTestingModel.create(UsersCategory)

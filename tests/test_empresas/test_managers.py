@@ -15,7 +15,7 @@ from apps.industries_sectors.models import (
 
 
 
-class TestQuerySet(TestCase):
+# class TestQuerySet(TestCase):
 
 
 class TestManager(TestCase):
