@@ -1,1 +1,1 @@
-from apps.general.models import Tag, Category
+from apps.classifications.models import Tag, Category

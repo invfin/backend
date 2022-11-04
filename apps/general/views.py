@@ -23,7 +23,7 @@ from apps.super_investors.models import (
 )
 
 from apps.general import constants
-from apps.general.models import Notification
+from apps.notifications.models import Notification
 from apps.general.tasks import prepare_notification_task
 
 

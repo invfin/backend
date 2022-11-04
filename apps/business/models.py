@@ -17,10 +17,10 @@ from django.db.models import (
 from django.urls import reverse
 
 from apps.business import constants
-from apps.general.bases import BaseComment
-from apps.general.models import Currency
+from apps.general.abstracts import AbstractComment
+from apps.currencies.models import Currency
 from apps.general.mixins import BaseToAllMixin
-from apps.web.models import Promotion
+from apps.promotions.models import Promotion
 
 from apps.business.managers import ProductManager
 
@@ -31,9 +31,9 @@ def default_dict():
     return dict(
         title="¿Qué incluye?",
         include=[
-            {"icon": "<i class='fas fa-infinity'></i>", "text": "Acceso de por vida"},
-            {"icon": "<i class='fas fa-file-archive'></i>", "text": "Actualizaciones constantes"},
-            {"icon": "<i class='fas fa-book'></i>", "text": "Ebook de regalo"},
+            {"icon": "<i class='fas fa-infinity'></i>", "text": "Acceso de por vida",},
+            {"icon": "<i class='fas fa-file-archive'></i>", "text": "Actualizaciones constantes",},
+            {"icon": "<i class='fas fa-book'></i>", "text": "Ebook de regalo",},
         ],
     )
 
@@ -84,7 +84,7 @@ class Product(StripeFields):
 
 
 class ProductComplementary(StripeFields):
-    product = ForeignKey(Product, on_delete=CASCADE, null=True, related_name="complementary")
+    product = ForeignKey(Product, on_delete=CASCADE, null=True, related_name="complementary",)
     image = CharField(max_length=500, null=True, blank=True)
     video = CharField(max_length=500, null=True, blank=True)
     title = CharField(max_length=300, blank=True)
@@ -94,12 +94,12 @@ class ProductComplementary(StripeFields):
     description = RichTextField(null=True, blank=True)
     is_active = BooleanField(default=True)
     currency = ForeignKey(Currency, on_delete=SET_NULL, null=True)
-    subscription_period = CharField(max_length=300, blank=True, choices=constants.SUBSCRIPTION_PERIOD)
+    subscription_period = CharField(max_length=300, blank=True, choices=constants.SUBSCRIPTION_PERIOD,)
     subscription_interval = IntegerField(default=0, blank=True)
     created_at = DateTimeField(auto_now_add=True)
     updated_at = DateTimeField(null=True, blank=True)
     extras = JSONField(default=default_dict)
-    purchase_result = CharField(max_length=300, blank=True, choices=constants.PURCHASE_RESULT)
+    purchase_result = CharField(max_length=300, blank=True, choices=constants.PURCHASE_RESULT,)
     product_result = CharField(max_length=300, blank=True, default="")
 
     class Meta:
@@ -137,11 +137,11 @@ class ProductComplementary(StripeFields):
 
 
 class ProductSubscriber(Model, BaseToAllMixin):
-    product = ForeignKey(Product, on_delete=CASCADE, null=True, related_name="subscribers")
+    product = ForeignKey(Product, on_delete=CASCADE, null=True, related_name="subscribers",)
     product_complementary = ForeignKey(
-        ProductComplementary, on_delete=CASCADE, null=True, related_name="complementary_subs"
+        ProductComplementary, on_delete=CASCADE, null=True, related_name="complementary_subs",
     )
-    subscriber = ForeignKey(User, on_delete=CASCADE, null=True, related_name="subscriptions")
+    subscriber = ForeignKey(User, on_delete=CASCADE, null=True, related_name="subscriptions",)
     created_at = DateTimeField(auto_now_add=True)
     updated_at = DateTimeField(null=True, blank=True)
     is_active = BooleanField(default=True)
@@ -155,9 +155,9 @@ class ProductSubscriber(Model, BaseToAllMixin):
         return self.product.title
 
 
-class ProductComment(BaseComment):
+class ProductComment(AbstractComment):
     rating = IntegerField(null=True, blank=True)
-    content_related = ForeignKey(Product, on_delete=CASCADE, null=True, related_name="comments_related")
+    content_related = ForeignKey(Product, on_delete=CASCADE, null=True, related_name="comments_related",)
 
     class Meta:
         verbose_name = "Product"
@@ -169,9 +169,9 @@ class ProductComment(BaseComment):
 
 
 class ProductDiscount(StripeFields):
-    product = ForeignKey(Product, on_delete=SET_NULL, null=True, blank=True)
-    product_complementary = ForeignKey(ProductComplementary, on_delete=SET_NULL, null=True, blank=True)
-    promotion = ForeignKey(Promotion, on_delete=SET_NULL, null=True, blank=True, related_name="promotion_discount")
+    product = ForeignKey(Product, on_delete=SET_NULL, null=True, blank=True,)
+    product_complementary = ForeignKey(ProductComplementary, on_delete=SET_NULL, null=True, blank=True,)
+    promotion = ForeignKey(Promotion, on_delete=SET_NULL, null=True, blank=True, related_name="promotion_discount",)
     start_date = DateTimeField(null=True, blank=True)
     end_date = DateTimeField(null=True, blank=True)
     discount = FloatField(null=True, blank=True)
@@ -188,8 +188,8 @@ class ProductDiscount(StripeFields):
 
 
 class ProductComplementaryPaymentLink(StripeFields):
-    product_complementary = ForeignKey(ProductComplementary, on_delete=CASCADE, null=True, related_name="payment_links")
-    promotion = ForeignKey(Promotion, on_delete=SET_NULL, null=True, blank=True, related_name="promotion_link_payment")
+    product_complementary = ForeignKey(ProductComplementary, on_delete=CASCADE, null=True, related_name="payment_links",)
+    promotion = ForeignKey(Promotion, on_delete=SET_NULL, null=True, blank=True, related_name="promotion_link_payment",)
     title = CharField(max_length=500, null=True, blank=True)
     link = CharField(max_length=500, null=True, blank=True)
     created_at = DateTimeField(auto_now_add=True)
@@ -207,7 +207,7 @@ class ProductComplementaryPaymentLink(StripeFields):
 
 class TransactionHistorial(Model, BaseToAllMixin):
     product = ForeignKey(Product, on_delete=SET_NULL, null=True)
-    product_complementary = ForeignKey(ProductComplementary, on_delete=SET_NULL, null=True, blank=True)
+    product_complementary = ForeignKey(ProductComplementary, on_delete=SET_NULL, null=True, blank=True,)
     product_comment = ForeignKey(ProductComment, on_delete=SET_NULL, null=True, blank=True)
     customer = ForeignKey(Customer, on_delete=SET_NULL, null=True)
     created_at = DateTimeField(auto_now_add=True)
@@ -228,7 +228,7 @@ class TransactionHistorial(Model, BaseToAllMixin):
 
 class StripeWebhookResponse(StripeFields):
     product = ForeignKey(Product, on_delete=SET_NULL, null=True)
-    product_complementary = ForeignKey(ProductComplementary, on_delete=SET_NULL, null=True, blank=True)
+    product_complementary = ForeignKey(ProductComplementary, on_delete=SET_NULL, null=True, blank=True,)
     customer = ForeignKey(Customer, on_delete=SET_NULL, null=True, blank=True)
     full_response = JSONField(default=dict)
     created_at = DateTimeField(auto_now_add=True)

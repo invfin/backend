@@ -3,7 +3,7 @@ import vcr
 from django.test import TestCase
 
 from bfet import DjangoTestingModel
-from apps.general.models import Period
+from apps.periods.models import Period
 from apps.empresas.models import Company
 from apps.empresas.parse.y_finance import YFinanceInfo
 from apps.empresas.models import BalanceSheetYFinance, CashflowStatementYFinance, IncomeStatementYFinance

@@ -92,19 +92,19 @@ SIDE_MENU = [
         "icon": "fas fa-globe",
         "models": (
             {
-                "model": "general.Category",
+                "model": "classifications.Category",
             },
             {
-                "model": "general.Tag",
+                "model": "classifications.Tag",
             },
             {
-                "model": "general.Currency",
+                "model": "currencies.Currency",
             },
             {
-                "model": "general.Country",
+                "model": "countries.Country",
             },
             {
-                "model": "general.Notification",
+                "model": "notifications.Notification",
             },
         ),
     },
@@ -137,16 +137,16 @@ SIDE_MENU = [
         "icon": "fas fa-pen-nib",
         "models": (
             {
-                "model": "socialmedias.DefaultTilte",
+                "model": "content_creation.DefaultTilte",
             },
             {
-                "model": "socialmedias.DefaultContent",
+                "model": "content_creation.DefaultContent",
             },
             {
-                "model": "socialmedias.Emoji",
+                "model": "content_creation.Emoji",
             },
             {
-                "model": "socialmedias.Hashtag",
+                "model": "content_creation.Hashtag",
             },
         ),
     },
@@ -155,7 +155,7 @@ SIDE_MENU = [
         "icon": "fas fa-sitemap",
         "models": (
             {
-                "model": "web.Campaign",
+                "model": "promotions.Campaign",
             },
             {
                 "model": "web.WebsiteEmail",
@@ -164,7 +164,7 @@ SIDE_MENU = [
                 "model": "web.WebsiteEmailTrack",
             },
             {
-                "model": "web.Promotion",
+                "model": "promotions.Promotion",
             },
             {
                 "model": "web.WebsiteLegalPage",
@@ -282,13 +282,13 @@ SIDE_MENU = [
                 "label": "Institutions",
             },
             {
-                "model": "general.Industry",
+                "model": "industries_sectors.Industry",
             },
             {
-                "model": "general.Sector",
+                "model": "industries_sectors.Sector",
             },
             {
-                "model": "general.Period",
+                "model": "periods.Period",
             },
             {
                 "model": "empresas.CompanyUpdateLog",

@@ -7,7 +7,7 @@ from apps.translate.google_trans_new import google_translator
 from apps.empresas.utils import log_company
 from apps.empresas.outils.ratios import CalculateCompanyFinancialRatios
 from apps.empresas.outils.average_statements import AverageStatements
-from apps.general.constants import PERIOD_FOR_YEAR
+from apps.periods.constants import PERIOD_FOR_YEAR
 
 
 class UpdateCompany(CalculateCompanyFinancialRatios, AverageStatements):

@@ -2,7 +2,7 @@ from typing import Type
 
 from django.db.models import QuerySet, Count
 
-from apps.general.constants import BASE_ESCRITO_PUBLISHED
+from apps.escritos.constants import BASE_ESCRITO_PUBLISHED
 from apps.general.managers import BaseManager, BaseQuerySet
 
 

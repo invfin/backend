@@ -5,14 +5,15 @@ from bfet import DjangoTestingModel
 from rest_framework.test import APITestCase
 from django.contrib.auth import get_user_model
 
-from tests.utils import BaseAPIViewTest
+
+from tests.utils import BaseAPIViewTestMixin
 from apps.super_investors.models import Superinvestor
-from tests.data.superinvestors_data import LIST_SUPERINVESTORS, SINGLE_SUPERINVESTOR
+from tests.data.superinvestors.superinvestors_data import LIST_SUPERINVESTORS, SINGLE_SUPERINVESTOR
 
 User = get_user_model()
 
 
-class TestAllSuperinvestorsAPIView(BaseAPIViewTest, APITestCase):
+class TestAllSuperinvestorsAPIView(BaseAPIViewTestMixin, APITestCase):
     path_name = "api:superinvestors_lista_superinversores"
     url_path = "/lista-superinversores/"
 
@@ -44,7 +45,7 @@ class TestAllSuperinvestorsAPIView(BaseAPIViewTest, APITestCase):
         assert json.loads(json.dumps(response.data)) == expected_data
 
 
-class TestSuperinvestorActivityAPIView(BaseAPIViewTest, APITestCase):
+class TestSuperinvestorActivityAPIView(BaseAPIViewTestMixin, APITestCase):
     path_name = "api:superinvestors_lista_movimientos"
     url_path = "/lista-movimientos/"
     params = {"slug": ""}
@@ -60,7 +61,7 @@ class TestSuperinvestorActivityAPIView(BaseAPIViewTest, APITestCase):
         assert json.loads(json.dumps(response.data))[0] == expected_data
 
 
-class TestSuperinvestorHistoryAPIView(BaseAPIViewTest, APITestCase):
+class TestSuperinvestorHistoryAPIView(BaseAPIViewTestMixin, APITestCase):
     path_name = "api:superinvestors_lista_historial"
     url_path = "/lista-historial/"
     params = {"slug": ""}

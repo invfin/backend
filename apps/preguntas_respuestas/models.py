@@ -4,11 +4,9 @@ from django.db.models import (
     CASCADE,
     SET_NULL,
     BooleanField,
-    DateTimeField,
     ForeignKey,
     IntegerField,
     ManyToManyField,
-    Model,
 )
 from django.urls import reverse
 
@@ -18,25 +16,18 @@ from itertools import chain
 
 from ckeditor.fields import RichTextField
 
-from apps.general.bases import BaseComment, BaseWrittenContent
-from apps.general.mixins import CommonMixin
+from apps.escritos.abstracts import AbstractWrittenContent
+from apps.general.abstracts import AbstractComment, AbstractTimeStampedModel
+from apps.general.mixins import CommentsMixin, VotesMixin
 
 from .managers import QuestionManager
 
 
-class Question(BaseWrittenContent):
-    content = RichTextField(
-        config_name="writter",
-    )
-    is_answered = BooleanField(
-        default=False,
-    )
-    hide_question = BooleanField(
-        default=False,
-    )
-    has_accepted_answer = BooleanField(
-        default=False,
-    )
+class Question(AbstractWrittenContent):
+    content = RichTextField(config_name="writter")
+    is_answered = BooleanField(default=False)
+    hide_question = BooleanField(default=False)
+    has_accepted_answer = BooleanField(default=False)
     upvotes = ManyToManyField(
         User,
         blank=True,
@@ -136,31 +127,22 @@ class Question(BaseWrittenContent):
         return ques_schema
 
 
-class Answer(Model, CommonMixin):
+class Answer(AbstractTimeStampedModel, CommentsMixin, VotesMixin):
     author = ForeignKey(
         User,
         on_delete=SET_NULL,
         null=True,
         related_name="answers_apported",
     )
-    created_at = DateTimeField(
-        auto_now_add=True,
-    )
-    content = RichTextField(
-        config_name="writter",
-    )
+    content = RichTextField(config_name="writter")
     question_related = ForeignKey(
         Question,
         on_delete=CASCADE,
         blank=False,
         related_name="answers",
     )
-    is_accepted = BooleanField(
-        default=False,
-    )
-    total_votes = IntegerField(
-        default=0,
-    )
+    is_accepted = BooleanField(default=False)
+    total_votes = IntegerField(default=0)
     upvotes = ManyToManyField(
         User,
         blank=True,
@@ -170,9 +152,6 @@ class Answer(Model, CommonMixin):
         User,
         blank=True,
         related_name="user_downvote_answer",
-    )
-    updated_at = DateTimeField(
-        auto_now=True,
     )
 
     class Meta:
@@ -197,7 +176,7 @@ class Answer(Model, CommonMixin):
         return f"https://{domain}/question/{self.question_related.slug}/#{self.id}"
 
 
-class QuesitonComment(BaseComment):
+class QuesitonComment(AbstractComment):
     content_related = ForeignKey(
         Question,
         on_delete=CASCADE,
@@ -213,7 +192,7 @@ class QuesitonComment(BaseComment):
         return str(self.id)
 
 
-class AnswerComment(BaseComment):
+class AnswerComment(AbstractComment):
     content_related = ForeignKey(
         Answer,
         on_delete=CASCADE,

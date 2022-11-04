@@ -5,7 +5,7 @@ from unittest import skip
 from datetime import datetime
 
 from bfet import DjangoTestingModel
-from apps.general.models import Period
+from apps.periods.models import Period
 from apps.empresas.models import (
     Company,
     BalanceSheetYahooQuery,

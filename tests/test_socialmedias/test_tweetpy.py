@@ -14,7 +14,7 @@ from apps.socialmedias.models import (
     QuestionSharedHistorial,
     TermSharedHistorial,
 )
-from apps.socialmedias.socialposter.tweetpy import Twitter
+from apps.socialmedias.outils.socialposter.tweetpy import Twitter
 
 from apps.socialmedias.outils.poster import SocialPosting
 

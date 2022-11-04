@@ -139,6 +139,16 @@ LOCAL_APPS = [
     "apps.api",
     "apps.business",
     "apps.recsys",
+    "apps.emailing",
+    "apps.classifications",
+    "apps.content_creation",
+    "apps.engagement_machine",
+    "apps.industries_sectors",
+    "apps.countries",
+    "apps.currencies",
+    "apps.notifications",
+    "apps.periods",
+    "apps.promotions",
 ]
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps

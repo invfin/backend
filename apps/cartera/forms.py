@@ -16,7 +16,7 @@ from django.forms import (
     Textarea,
 )
 
-from apps.general.models import Currency
+from apps.currencies.models import Currency
 
 from .models import (
     Asset,

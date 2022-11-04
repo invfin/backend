@@ -11,7 +11,7 @@ from apps.business.models import (
     ProductComplementaryPaymentLink,
 )
 from apps.business import constants
-from apps.general.models import Currency
+from apps.currencies.models import Currency
 
 
 business_vcr = vcr.VCR(

@@ -16,9 +16,9 @@ from apps.socialmedias.models import (
     Hashtag,
     TermSharedHistorial,
 )
-from apps.socialmedias.socialposter.facepy import Facebook
-from apps.socialmedias.socialposter.tweetpy import Twitter
-from apps.socialmedias.outils.content_creation import (
+from apps.socialmedias.outils.socialposter.facepy import Facebook
+from apps.socialmedias.outils.socialposter.tweetpy import Twitter
+from apps.content_creation.outils.content_creator import (
     CompanyContentCreation,
     CompanyNewsContentCreation,
     TermContentCreation,
@@ -26,8 +26,8 @@ from apps.socialmedias.outils.content_creation import (
     PublicBlogContentCreation,
 )
 from apps.socialmedias.outils.poster import SocialPosting
-from apps.socialmedias import constants
-from apps.socialmedias.models import Emoji, DefaultTilte
+from apps.content_creation import constants
+from apps.content_creation.models import Emoji, DefaultTilte
 
 FULL_DOMAIN = settings.FULL_DOMAIN
 

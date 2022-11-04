@@ -2,8 +2,9 @@ from django.test import TestCase
 
 from bfet import DjangoTestingModel, DataCreator
 
-from apps.general.constants import PERIOD_FOR_YEAR
-from apps.general.models import Period, Currency
+from apps.periods.constants import PERIOD_FOR_YEAR
+from apps.currencies.models import Currency
+from apps.periods.models import Period
 from apps.empresas.outils.average_statements import AverageStatements
 from apps.empresas.models import (
     Company,

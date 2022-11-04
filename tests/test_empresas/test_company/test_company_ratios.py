@@ -8,7 +8,7 @@ from django.test import TestCase
 
 from apps.empresas.outils.update import UpdateCompany
 from apps.empresas.models import Company
-from tests.data import finprep_data as data
+from tests.data.empresas.finprep import finprep_data as data
 
 
 company_vcr = vcr.VCR(

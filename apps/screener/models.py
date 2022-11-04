@@ -23,8 +23,8 @@ from apps.etfs.models import Etf
 
 User = get_user_model()
 
-from apps.general.bases import BaseFavoritesHistorial
-from apps.general.models import Category, Tag
+from apps.general.abstracts import AbstractFavoritesHistorial
+from apps.classifications.models import Category, Tag
 
 from . import constants
 
@@ -43,7 +43,7 @@ class CompanyInformationBought(Model):
         return f'{self.user.username} - {self.asset.name} - {self.id}'
 
 
-class FavoritesStocksHistorial(BaseFavoritesHistorial):
+class FavoritesStocksHistorial(AbstractFavoritesHistorial):
     asset = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True)
 
     class Meta:
@@ -68,7 +68,7 @@ class FavoritesStocksList(Model):
         return self.user.username
 
 
-class FavoritesEtfsHistorial(BaseFavoritesHistorial):
+class FavoritesEtfsHistorial(AbstractFavoritesHistorial):
     asset = ForeignKey(Etf, on_delete=SET_NULL, null=True, blank=True)
 
     class Meta:
@@ -149,10 +149,10 @@ class UserCompanyObservation(Model):
 
     def __str__(self):
         return self.user.username + ' ' +self.company.ticker + ' ' + str(self.date)
-    
+
     def get_absolute_url(self):
         return reverse("screener:company", kwargs={"ticker": self.company.ticker})
-    
+
     @property
     def observation_info(self):
         data = {}
@@ -185,14 +185,14 @@ class YahooScreener(Model):
     class Meta:
         verbose_name = "Yahoo screener"
         db_table = "screener_yahoo_screeners"
-    
+
     def __str__(self):
         return self.name
-    
+
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name)
         return super().save(*args, **kwargs)
-    
+
     def get_absolute_url(self):
         return reverse("screener:yahoo_screener", kwargs={"slug": self.slug})

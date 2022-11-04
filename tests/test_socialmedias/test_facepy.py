@@ -5,8 +5,8 @@ from unittest import skip
 from django.conf import settings
 from django.test import TestCase
 
-from apps.socialmedias.constants import POST_TYPE_TEXT
-from apps.socialmedias.socialposter.facepy import Facebook
+from apps.content_creation.constants import POST_TYPE_TEXT
+from apps.socialmedias.outils.socialposter.facepy import Facebook
 
 
 facebook_vcr = vcr.VCR(

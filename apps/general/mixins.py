@@ -5,7 +5,6 @@ from datetime import datetime
 from io import BytesIO
 
 from PIL import Image
-from bs4 import BeautifulSoup as bs
 from rest_framework.serializers import ModelSerializer
 
 from django.contrib.contenttypes.models import ContentType
@@ -23,12 +22,12 @@ FULL_DOMAIN = settings.FULL_DOMAIN
 
 
 class ResizeImageMixin:
-    def resize(self, imageField: ImageField, size: tuple):
+    def resize(self, imageField: ImageField, size: tuple, format: str = "WebP"):
         im = Image.open(imageField)  # Catch original
         source_image = im.convert("RGB")
         source_image.thumbnail(size)  # Resize to size
         output = BytesIO()
-        source_image.save(output, format="WebP")  # Save resize image to bytes
+        source_image.save(output, format=format)  # Save resize image to bytes
         output.seek(0)
 
         content_file = ContentFile(output.read())  # Read output and create ContentFile in memory
@@ -112,13 +111,15 @@ class BaseToAllMixin:
 
     @property
     def shareable_link(self):
-        try:
+        if hasattr(self, "custom_url"):
             url = self.custom_url
-        except:
+        else:
             slug = self.get_absolute_url()
             url = f"{FULL_DOMAIN}{slug}"
         return url
 
+
+class CheckingsMixin:
     def has_checking(self, checking: str) -> bool:
         return self.checkings[f"has_{checking}"]["state"] == "yes"
 
@@ -130,7 +131,7 @@ class BaseToAllMixin:
         self.save(update_fields=["checkings"])
 
 
-class CommonMixin(BaseToAllMixin):
+class CommentsMixin:
     @property
     def related_comments(self):
         return self.comments_related.all()
@@ -139,6 +140,8 @@ class CommonMixin(BaseToAllMixin):
     def encoded_url_comment(self):
         return self.encoded_url
 
+
+class VotesMixin:
     @property
     def encoded_url_up(self):
         return urlsafe_base64_encode(force_bytes(f"{self.base_url_to_encode}-up"))
@@ -175,101 +178,3 @@ class CommonMixin(BaseToAllMixin):
         self.total_votes += vote_result
         self.save(update_fields=["total_votes"])
         return vote_result
-
-    @property
-    def schema_org(self):
-        if self.object_name == "Question":
-            schema_org = self.schema_org
-        else:
-            meta_url = f"{FULL_DOMAIN}/definicion/{self.slug}/"
-            if self.object_name == "PublicBlog":
-                meta_url = f"{self.author.custom_url}/p/{self.slug}/"
-            schema_org = {
-                "@context": "https://schema.org",
-                "@type": "Article",
-                "mainEntityOfPage": {"@type": "WebPage", "@id": f"{meta_url}"},
-                "headline": f"{self.title}",
-                "image": f"{self.non_thumbnail_url}",
-                "datePublished": f"{self.published_at}",
-                "author": {"@type": "Person", "name": f"{self.author.full_name}"},
-                "publisher": {
-                    "@type": "Organization",
-                    "name": "Inversiones & Finanzas",
-                    "logo": {
-                        "@type": "ImageObject",
-                        "url": f"{FULL_DOMAIN}/static/general/assets/img/favicon/favicon.ico",
-                    },
-                },
-            }
-        return schema_org
-
-
-class BaseEscritosMixins:
-    def search_image(self, content):
-        soup = bs(content, "html.parser")
-        images = [img for img in soup.find_all("img")]
-        image = False
-        if len(images) != 0:
-            image = images[0]
-            image = image.get("src")
-        return image
-
-    def extra_info(self, image):
-        if image == False:
-            self.in_text_image = False
-        else:
-            self.in_text_image = True
-            self.non_thumbnail_url = image
-
-    def create_meta_information(self, type_content):
-        from apps.seo.models import MetaParameters, MetaParametersHistorial
-
-        meta_url = f"{FULL_DOMAIN}/definicion/{self.slug}/"
-        if type_content == "blog":
-            meta_url = f"{self.author.custom_url}/p/{self.slug}/"
-
-        meta = MetaParameters.objects.create(
-            meta_title=self.title,
-            meta_description=self.resume,
-            meta_img=self.non_thumbnail_url,
-            meta_url=meta_url,
-            meta_keywords=", ".join([tag.name for tag in self.tags.all()]),
-            meta_author=self.author,
-            published_time=self.published_at,
-            modified_time=self.updated_at,
-            created_at=self.created_at,
-            schema_org={
-                "@context": "https://schema.org",
-                "@type": "Article",
-                "mainEntityOfPage": {"@type": "WebPage", "@id": f"{meta_url}"},
-                "headline": f"{self.title}",
-                "image": f"{self.non_thumbnail_url}",
-                "datePublished": f"{self.published_at}",
-                "author": {"@type": "Person", "name": f"{self.author.full_name}"},
-                "publisher": {
-                    "@type": "Organization",
-                    "name": "Inversiones & Finanzas",
-                    "logo": {
-                        "@type": "ImageObject",
-                        "url": f"{FULL_DOMAIN}/static/general/assets/img/favicon/favicon.ico",
-                    },
-                },
-            },
-        )
-        meta_historial = MetaParametersHistorial.objects.create(
-            parameter_settings=meta,
-            in_use=True,
-        )
-
-        self.meta_information = meta_historial
-
-    def save_secondary_info(self, content_type):
-        if content_type != "blog":
-            for term_part in self.term_parts.all():
-                image = self.search_image(term_part.content)
-                if image != False:
-                    break
-        else:
-            image = self.search_image(self.content)
-        self.extra_info(image)
-        self.create_meta_information(content_type)

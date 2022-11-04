@@ -6,8 +6,8 @@ from django.db.models import OuterRef, Subquery, Q
 
 from config import celery_app
 
-from apps.general.constants import PERIOD_FOR_YEAR
-from apps.general.models import Period
+from apps.periods.constants import PERIOD_FOR_YEAR
+from apps.periods.models import Period
 from apps.empresas.outils.update import UpdateCompany
 from apps.empresas.outils.retrieve_data import RetrieveCompanyData
 from apps.empresas.utils import arrange_quarters

@@ -6,7 +6,7 @@ from bs4 import BeautifulSoup as bs
 from django.utils import timezone
 
 from apps.empresas.models import Company
-from apps.general.models import Period
+from apps.periods.models import Period
 from apps.general.constants import HEADERS
 from .models import Superinvestor, SuperinvestorActivity, SuperinvestorHistory
 
