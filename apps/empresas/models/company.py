@@ -20,7 +20,7 @@ from apps.empresas import constants
 from apps.empresas.extensions.company import CompanyExtended
 from apps.empresas.managers import CompanyManager, CompanyUpdateLogManager
 from apps.periods.constants import PERIOD_FOR_YEAR
-from apps.general.mixins import BaseToAllMixin
+from apps.general.mixins import BaseToAllMixin, CheckingsMixin
 
 
 def default_dict():
@@ -28,7 +28,7 @@ def default_dict():
         return json.load(checks_json)
 
 
-class Company(Model, BaseToAllMixin, CompanyExtended):
+class Company(Model, BaseToAllMixin, CompanyExtended, CheckingsMixin):
     ticker = CharField(max_length=30, unique=True, db_index=True)
     name = CharField(max_length=700, null=True, blank=True)
     currency = ForeignKey("currencies.Currency", on_delete=SET_NULL, null=True, blank=True)

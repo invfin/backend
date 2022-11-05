@@ -8,6 +8,16 @@ PUBLIC_BLOG = 4
 COMPANY = 5
 WEB = 6
 
+FOR_CONTENT = (
+    (ALL, "All"),
+    (QUESTION, "Question"),
+    (NEWS, "News"),
+    (TERM, "Term"),
+    (PUBLIC_BLOG, "PublicBlog"),
+    (COMPANY, "Company"),
+    (WEB, "Web"),
+)
+
 QUESTION_FOR_CONTENT = "question"
 NEWS_FOR_CONTENT = "news"
 TERM_FOR_CONTENT = "term"
@@ -22,15 +32,7 @@ MODELS_FOR_CONTENT = (
     (COMPANY_FOR_CONTENT, "Company"),
 )
 
-FOR_CONTENT = (
-    (ALL, "All"),
-    (QUESTION, "Question"),
-    (NEWS, "News"),
-    (TERM, "Term"),
-    (PUBLIC_BLOG, "PublicBlog"),
-    (COMPANY, "Company"),
-    (WEB, "Web"),
-)
+
 
 POST_TYPE_VIDEO = 1
 POST_TYPE_IMAGE = 2

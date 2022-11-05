@@ -15,7 +15,7 @@ from django.db.models import (
 )
 
 from apps.general.abstracts import AbstractTimeStampedModel
-from apps.general.mixins import CommentsMixin, VotesMixin
+from apps.general.mixins import CommentsMixin, VotesMixin, CheckingsMixin
 from apps.classifications.models import Tag
 from apps.escritos import constants
 
@@ -26,7 +26,7 @@ def default_dict():
     return constants.DEFAULT_EXTRA_DATA_DICT
 
 
-class AbstractWrittenContent(AbstractTimeStampedModel, CommentsMixin, VotesMixin):
+class AbstractWrittenContent(AbstractTimeStampedModel, CommentsMixin, VotesMixin, CheckingsMixin):
     title = CharField(max_length=500, null=True, blank=True)
     slug = CharField(max_length=500, null=True, blank=True)  # TODO change to slug field and allow blank but not null
     total_votes = IntegerField(default=0)

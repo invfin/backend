@@ -152,7 +152,6 @@ class NotificationSystem:
         users_relateds = question.related_users
         users_relateds.append(question.author)
         for user in users_relateds:
-            print(user)
             if user != answer.author:
                 title = question.title[:15]
                 subject = f"{title}... tiene una nueva respuesta"

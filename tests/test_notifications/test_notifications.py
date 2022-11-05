@@ -198,8 +198,8 @@ class TestNotificationSystem(TestCase):
     def test_announce_new_blog(self):
         announce_new_blog = NotificationSystem().announce_new_blog(self.blog, constants.NEW_BLOG_POST)
         assert type(announce_new_blog) == list
-        assert len(announce_new_blog) == 8
-        assert 8 == Notification.objects.all().count()
+        assert len(announce_new_blog) == 2
+        assert 2 == Notification.objects.all().count()
         announce_new_blog = announce_new_blog[0]["email"]
         first_notif = Notification.objects.all().first()
         assert self.blog.title == announce_new_blog["subject"]
@@ -211,10 +211,9 @@ class TestNotificationSystem(TestCase):
 
     def test_announce_new_answer(self):
         announce_new_answer = NotificationSystem().announce_new_answer(self.answer, constants.NEW_ANSWER)
-        print(announce_new_answer)
         assert isinstance(announce_new_answer, list)
-        assert len(announce_new_answer) == 1
-        assert 1 == Notification.objects.all().count()
+        assert len(announce_new_answer) == 2
+        assert 2 == Notification.objects.all().count()
         announce_new_answer = announce_new_answer[0]["email"]
         first_notif = Notification.objects.all().first()
         assert "Tu pregunta tiene una nueva respuesta" == announce_new_answer["subject"]
@@ -227,10 +226,10 @@ class TestNotificationSystem(TestCase):
     def test_announce_answer_accepted(self):
         announce_answer_accepted = NotificationSystem().announce_answer_accepted(self.answer, constants.ANSWER_ACCEPTED)
         assert type(announce_answer_accepted) == list
-        assert len(announce_answer_accepted) == 1
-        assert 1 == Notification.objects.all().count()
+        assert len(announce_answer_accepted) == 2
+        assert 2 == Notification.objects.all().count()
         announce_answer_accepted = announce_answer_accepted[0]["email"]
-        first_notif = Notification.objects.all().first()
+        first_notif = Notification.objects.filter(user__first_name="answer").first()
         assert "Tu respuesta ha sido acceptada" == announce_answer_accepted["subject"]
         assert (
             f"Tu respuesta a {self.answer.question_related.title} ha sido acceptda. Felicidades."
