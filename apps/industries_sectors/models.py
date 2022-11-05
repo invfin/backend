@@ -4,7 +4,6 @@ from django.db.models import (
     Model,
 )
 
-
 User = get_user_model()
 
 

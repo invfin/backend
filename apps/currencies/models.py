@@ -13,8 +13,6 @@ User = get_user_model()
 
 
 class Currency(AbstractTimeStampedModel):
-    created_at = None
-    updated_at = None
     currency = CharField(
         max_length=500,
         null=True,

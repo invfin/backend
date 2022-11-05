@@ -16,7 +16,7 @@ from django.db.models import (
 from ckeditor.fields import RichTextField
 
 from apps.promotions import constants
-from apps.general.mixins import BaseToAllMixin
+from apps.general.abstracts import AbstractTimeStampedModel
 from apps.seo import constants as seo_constants
 from apps.seo.models import Visiteur
 from apps.socialmedias.constants import SOCIAL_MEDIAS
@@ -24,7 +24,7 @@ from apps.socialmedias.constants import SOCIAL_MEDIAS
 User = get_user_model()
 
 
-class Campaign(Model, BaseToAllMixin):
+class Campaign(AbstractTimeStampedModel):
     title = CharField(max_length=600, blank=True)
     slug = SlugField(max_length=800, null=True, blank=True)
     description = TextField(blank=True)
@@ -61,7 +61,7 @@ class Campaign(Model, BaseToAllMixin):
         return not self.end_date
 
 
-class Promotion(Model, BaseToAllMixin):
+class Promotion(AbstractTimeStampedModel):
     title = CharField(max_length=600, blank=True)
     content = RichTextField()
     thumbnail = CharField(max_length=600, blank=True)

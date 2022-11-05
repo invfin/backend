@@ -8,8 +8,6 @@ User = get_user_model()
 
 
 class Country(AbstractTimeStampedModel):
-    created_at = None
-    updated_at = None
     country = CharField(
         max_length=500,
         null=True,
