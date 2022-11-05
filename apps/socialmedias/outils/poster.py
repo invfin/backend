@@ -5,17 +5,17 @@ from django.conf import settings
 from django.contrib.auth import get_user_model
 
 
-from apps.socialmedias.socialposter.facepy import Facebook
-from apps.socialmedias.socialposter.tweetpy import Twitter
-from apps.socialmedias.outils.content_creation import (
+from apps.socialmedias.outils.socialposter.facepy import Facebook
+from apps.socialmedias.outils.socialposter.tweetpy import Twitter
+from apps.content_creation.outils.content_creator import (
     CompanyContentCreation,
     CompanyNewsContentCreation,
     TermContentCreation,
     QuestionContentCreation,
     PublicBlogContentCreation,
 )
+from apps.content_creation import constants as content_creation_constants
 from apps.socialmedias import constants
-
 
 User = get_user_model()
 
@@ -46,11 +46,11 @@ class SocialPosting:
         constants.TUMBLR: "",
     }
     content_creators_map: Dict = {
-        constants.QUESTION_FOR_CONTENT: QuestionContentCreation,
-        constants.NEWS_FOR_CONTENT: CompanyNewsContentCreation,
-        constants.TERM_FOR_CONTENT: TermContentCreation,
-        constants.PUBLIC_BLOG_FOR_CONTENT: PublicBlogContentCreation,
-        constants.COMPANY_FOR_CONTENT: CompanyContentCreation,
+        content_creation_constants.QUESTION_FOR_CONTENT: QuestionContentCreation,
+        content_creation_constants.NEWS_FOR_CONTENT: CompanyNewsContentCreation,
+        content_creation_constants.TERM_FOR_CONTENT: TermContentCreation,
+        content_creation_constants.PUBLIC_BLOG_FOR_CONTENT: PublicBlogContentCreation,
+        content_creation_constants.COMPANY_FOR_CONTENT: CompanyContentCreation,
     }
 
     def get_creator(self, content_object: str) -> Type:
@@ -118,8 +118,8 @@ class SocialPosting:
             socialmedia_content = socialmedia_content_creator(platform_shared).create_social_media_content_from_object()
             media = socialmedia_content.get("media", "")
             post_type = platform_post_type_dict["post_type"]
-            if not media and post_type != constants.POST_TYPE_TEXT:
-                post_type = constants.POST_TYPE_TEXT
+            if not media and post_type != content_creation_constants.POST_TYPE_TEXT:
+                post_type = content_creation_constants.POST_TYPE_TEXT
             # Here is where we are posting on socilamedia
             socialmedia_obj = self.get_socialmedia(platform_shared)
             socialmedia_obj_response = socialmedia_obj.post(

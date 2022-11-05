@@ -20,7 +20,7 @@ from django.db.models import (
 
 from apps.empresas.models import Company
 from apps.etfs.models import Etf
-from apps.general.models import Currency
+from apps.currencies.models import Currency
 from apps.general.utils import ChartSerializer
 
 User = get_user_model()
@@ -56,7 +56,7 @@ class PositionMovement(Model):
 
     user = ForeignKey(User, on_delete=SET_NULL, null=True, blank=True)
     move_type = IntegerField(choices=MOVE, null=True, blank=True)
-    asset_related = ForeignKey(Asset, null=True, blank=True ,on_delete=SET_NULL, related_name='movements')
+    asset_related = ForeignKey(Asset, null=True, blank=True ,on_delete=SET_NULL, related_name='movements',)
     price = DecimalField ("Precio", max_digits=100, decimal_places=2, default=0)
     date = DateField("Fecha del movimiento", null=True, blank=True)
     quantity = IntegerField("Cantidad", default=0)

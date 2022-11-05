@@ -4,8 +4,9 @@ from django.test import TestCase
 
 from bfet import DjangoTestingModel, DataCreator
 
-from apps.general import constants
-from apps.general.models import Period, Currency
+from apps.periods import constants
+from apps.currencies.models import Currency
+from apps.periods.models import Period
 from apps.empresas.outils.update import UpdateCompany
 from apps.empresas.models import (
     Company,

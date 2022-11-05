@@ -16,8 +16,8 @@ from django.template.defaultfilters import slugify
 from django.urls import reverse
 
 from apps.empresas.models import Company
-from apps.general.bases import BaseFavoritesHistorial
-from apps.general.models import Period
+from apps.general.abstracts import AbstractFavoritesHistorial
+from apps.periods.models import Period
 
 from apps.super_investors.managers import SuperinvestorManager, SuperinvestorHistoryManager
 
@@ -92,7 +92,7 @@ class Superinvestor(Model):
         return portfolio_information
 
 
-class FavoritesSuperinvestorsHistorial(BaseFavoritesHistorial):
+class FavoritesSuperinvestorsHistorial(AbstractFavoritesHistorial):
     superinvestor = ForeignKey(Superinvestor, on_delete=SET_NULL, null=True, blank=True)
 
     class Meta:
@@ -117,7 +117,7 @@ class FavoritesSuperinvestorsList(Model):
         return self.user.username
 
 
-class BaseSuperinvestorHoldingsInformation(Model):
+class AbstractSuperinvestorHoldingsInformation(Model):
     period_related = ForeignKey(Period, on_delete=SET_NULL, null=True, blank=True)
     company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True)
     company_name = TextField(blank=True, null=True)
@@ -159,7 +159,7 @@ class BaseSuperinvestorHoldingsInformation(Model):
         return sector
 
 
-class SuperinvestorActivity(BaseSuperinvestorHoldingsInformation):
+class SuperinvestorActivity(AbstractSuperinvestorHoldingsInformation):
     MOVE = ((1, 'Compra'), (2, 'Venta'))
 
     superinvestor_related = ForeignKey(
@@ -189,7 +189,7 @@ class SuperinvestorActivity(BaseSuperinvestorHoldingsInformation):
         return movement_type
 
 
-class SuperinvestorHistory(BaseSuperinvestorHoldingsInformation):
+class SuperinvestorHistory(AbstractSuperinvestorHoldingsInformation):
     superinvestor_related = ForeignKey(
         Superinvestor, on_delete=SET_NULL,
         null=True, blank=True, related_name='history'

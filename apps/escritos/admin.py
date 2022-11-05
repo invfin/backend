@@ -86,6 +86,9 @@ class TermAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
         ("content", "Term parts"),
     ]
 
+    def save_model(self, request, obj, form, change) -> None:
+        return super().save_model(request, obj, form, change)
+
     def term_link(self, obj):
         # link = reverse(f"web:manage_single_term", args=(obj.slug,))
         link = obj.get_absolute_url()

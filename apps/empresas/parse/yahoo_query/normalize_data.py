@@ -2,7 +2,7 @@ from typing import Dict, Union, Any, Type, Callable
 import datetime
 import pandas as pd
 
-from apps.general.models import Currency
+from apps.currencies.models import Currency
 
 
 class NormalizeYahooQuery:

@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAdminUser
 from rest_framework.generics import GenericAPIView
 
-from apps.web.tasks import send_email_engagement_task
+from apps.engagement_machine.tasks import send_email_engagement_task
 
 
 class SendNewsletterView(GenericAPIView):

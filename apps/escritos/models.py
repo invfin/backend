@@ -18,7 +18,8 @@ from django.utils import timezone
 
 from ckeditor.fields import RichTextField
 
-from apps.general.bases import BaseComment, BaseEscrito, BaseFavoritesHistorial
+from apps.general.abstracts import AbstractComment, AbstractFavoritesHistorial
+from apps.escritos.abstracts import AbstractPublishableContent
 
 from .managers import TermManager
 
@@ -26,7 +27,7 @@ DOMAIN = settings.FULL_DOMAIN
 User = get_user_model()
 
 
-class Term(BaseEscrito):
+class Term(AbstractPublishableContent):
     upvotes = ManyToManyField(User, blank=True, related_name="user_upvote_term")
     downvotes = ManyToManyField(User, blank=True, related_name="user_downvote_term")
     meta_information = None
@@ -47,6 +48,11 @@ class Term(BaseEscrito):
 
     def link(self):
         return f"{DOMAIN}{self.get_absolute_url()}"
+
+    @property
+    def editable_link(self):
+        url = reverse("web:manage_single_term", kwargs={"slug": self.slug})
+        return f"{DOMAIN}{url}"
 
 
 class TermContent(Model):
@@ -105,7 +111,7 @@ class TermCorrection(Model):
         return self.term_content_related.get_absolute_url()
 
 
-class TermsComment(BaseComment):
+class TermsComment(AbstractComment):
     content_related = ForeignKey(Term, on_delete=CASCADE, null=True, related_name="comments_related")
 
     class Meta:
@@ -126,7 +132,7 @@ class TermsRelatedToResume(Model):
         db_table = "terms_to_resume"
 
 
-class FavoritesTermsHistorial(BaseFavoritesHistorial):
+class FavoritesTermsHistorial(AbstractFavoritesHistorial):
     term = ForeignKey(Term, on_delete=SET_NULL, null=True, blank=True)
 
     class Meta:

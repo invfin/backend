@@ -19,8 +19,8 @@ from django.urls import reverse
 from apps.empresas import constants
 from apps.empresas.extensions.company import CompanyExtended
 from apps.empresas.managers import CompanyManager, CompanyUpdateLogManager
-from apps.general.constants import PERIOD_FOR_YEAR
-from apps.general.mixins import BaseToAllMixin
+from apps.periods.constants import PERIOD_FOR_YEAR
+from apps.general.mixins import BaseToAllMixin, CheckingsMixin
 
 
 def default_dict():
@@ -28,15 +28,15 @@ def default_dict():
         return json.load(checks_json)
 
 
-class Company(Model, BaseToAllMixin, CompanyExtended):
+class Company(Model, BaseToAllMixin, CompanyExtended, CheckingsMixin):
     ticker = CharField(max_length=30, unique=True, db_index=True)
     name = CharField(max_length=700, null=True, blank=True)
-    currency = ForeignKey("general.Currency", on_delete=SET_NULL, null=True, blank=True)
-    industry = ForeignKey("general.Industry", on_delete=SET_NULL, null=True, blank=True)
-    sector = ForeignKey("general.Sector", on_delete=SET_NULL, null=True, blank=True)
+    currency = ForeignKey("currencies.Currency", on_delete=SET_NULL, null=True, blank=True)
+    industry = ForeignKey("industries_sectors.Industry", on_delete=SET_NULL, null=True, blank=True)
+    sector = ForeignKey("industries_sectors.Sector", on_delete=SET_NULL, null=True, blank=True)
     website = CharField(max_length=250, null=True, blank=True)
     state = CharField(max_length=250, null=True, blank=True)
-    country = ForeignKey("general.Country", on_delete=SET_NULL, null=True, blank=True)
+    country = ForeignKey("countries.Country", on_delete=SET_NULL, null=True, blank=True)
     ceo = CharField(max_length=250, null=True, blank=True)
     image = CharField(max_length=250, null=True, blank=True)
     city = CharField(max_length=250, null=True, blank=True)

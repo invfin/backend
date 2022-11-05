@@ -8,7 +8,7 @@ from apps.preguntas_respuestas.models import Question
 from apps.public_blog.models import PublicBlog
 
 from apps.seo.mixins import SEOViewMixin
-from apps.web.models import Promotion
+from apps.promotions.models import Promotion
 
 
 class UrlShorterRedirectView(RedirectView):

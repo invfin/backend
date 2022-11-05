@@ -12,13 +12,11 @@ from apps.empresas.models import Company, IncomeStatement
 from apps.escritos.models import Term
 from apps.public_blog.models import PublicBlog, WritterProfile
 from apps.preguntas_respuestas.models import Question
-from apps.socialmedias.models import (
-    Hashtag,
-    TermSharedHistorial,
-)
-from apps.socialmedias.socialposter.facepy import Facebook
-from apps.socialmedias.socialposter.tweetpy import Twitter
-from apps.socialmedias.outils.content_creation import (
+from apps.content_creation.models import Hashtag, Emoji, DefaultTilte
+from apps.socialmedias.models import TermSharedHistorial
+from apps.socialmedias.outils.socialposter.facepy import Facebook
+from apps.socialmedias.outils.socialposter.tweetpy import Twitter
+from apps.content_creation.outils.content_creator import (
     CompanyContentCreation,
     CompanyNewsContentCreation,
     TermContentCreation,
@@ -27,7 +25,7 @@ from apps.socialmedias.outils.content_creation import (
 )
 from apps.socialmedias.outils.poster import SocialPosting
 from apps.socialmedias import constants
-from apps.socialmedias.models import Emoji, DefaultTilte
+from apps.content_creation import constants as content_creation_constants
 
 FULL_DOMAIN = settings.FULL_DOMAIN
 
@@ -52,15 +50,15 @@ class TestSocialPosting(TestCase):
         cls.blog = DjangoTestingModel.create(PublicBlog, title="blog title", resume="blog resume", author=user)
         cls.question = DjangoTestingModel.create(Question, title="question title", author=user)
         cls.fb_emoji = DjangoTestingModel.create(Emoji)
-        cls.default_title = DjangoTestingModel.create(DefaultTilte, title="Default title", for_content=constants.ALL)
+        cls.default_title = DjangoTestingModel.create(DefaultTilte, title="Default title", for_content=content_creation_constants.ALL)
 
     def test_get_creator(self):
         for content, content_creator in [
-            (constants.QUESTION_FOR_CONTENT, QuestionContentCreation),
-            (constants.NEWS_FOR_CONTENT, CompanyNewsContentCreation),
-            (constants.TERM_FOR_CONTENT, TermContentCreation),
-            (constants.PUBLIC_BLOG_FOR_CONTENT, PublicBlogContentCreation),
-            (constants.COMPANY_FOR_CONTENT, CompanyContentCreation),
+            (content_creation_constants.QUESTION_FOR_CONTENT, QuestionContentCreation),
+            (content_creation_constants.NEWS_FOR_CONTENT, CompanyNewsContentCreation),
+            (content_creation_constants.TERM_FOR_CONTENT, TermContentCreation),
+            (content_creation_constants.PUBLIC_BLOG_FOR_CONTENT, PublicBlogContentCreation),
+            (content_creation_constants.COMPANY_FOR_CONTENT, CompanyContentCreation),
         ]:
             with self.subTest(content):
                 assert content_creator == SocialPosting().get_creator(content)
@@ -69,8 +67,8 @@ class TestSocialPosting(TestCase):
         assert isinstance(SocialPosting().get_socialmedia(constants.FACEBOOK), Facebook)
         assert isinstance(SocialPosting().get_socialmedia(constants.TWITTER), Twitter)
 
-    @patch("apps.socialmedias.socialposter.tweetpy.Twitter.post")
-    @patch("apps.socialmedias.socialposter.facepy.Facebook.post")
+    @patch("apps.socialmedias.outils.socialposter.tweetpy.Twitter.post")
+    @patch("apps.socialmedias.outils.socialposter.facepy.Facebook.post")
     def test_share_content(self, mock_facepy, mock_tweetpy):
         assert 0 == TermSharedHistorial.objects.all().count()
         self.term.checkings.update({"has_information_clean": {"state": "yes", "time": ""}})
@@ -81,7 +79,7 @@ class TestSocialPosting(TestCase):
                     "social_id": "64dsf8g4dfg45dfh",
                     "title": "handmade fb title",
                     "content": "face content",
-                    "post_type": constants.POST_TYPE_TEXT_IMAGE,
+                    "post_type": content_creation_constants.POST_TYPE_TEXT_IMAGE,
                     "use_hashtags": True,
                     "use_emojis": True,
                     "use_link": True,
@@ -96,7 +94,7 @@ class TestSocialPosting(TestCase):
                 {
                     "social_id": "1dfg1661dh4fg",
                     "content": "handmade tw title",
-                    "post_type": constants.POST_TYPE_TEXT_IMAGE,
+                    "post_type": content_creation_constants.POST_TYPE_TEXT_IMAGE,
                     "use_hashtags": False,
                     "use_emojis": True,
                     "use_link": False,
@@ -107,7 +105,7 @@ class TestSocialPosting(TestCase):
                 {
                     "social_id": "dg5h71fghfgh",
                     "content": "handmade tw title",
-                    "post_type": constants.POST_TYPE_THREAD,
+                    "post_type": content_creation_constants.POST_TYPE_THREAD,
                     "use_hashtags": True,
                     "use_link": True,
                     "use_emojis": False,
@@ -118,28 +116,28 @@ class TestSocialPosting(TestCase):
             ]
         }
         SocialPosting().share_content(
-            constants.TERM_FOR_CONTENT,
+            content_creation_constants.TERM_FOR_CONTENT,
             [
-                {"platform_shared": constants.FACEBOOK, "post_type": constants.POST_TYPE_TEXT_IMAGE},
-                {"platform_shared": constants.TWITTER, "post_type": constants.POST_TYPE_TEXT_IMAGE},
+                {"platform_shared": constants.FACEBOOK, "post_type": content_creation_constants.POST_TYPE_TEXT_IMAGE},
+                {"platform_shared": constants.TWITTER, "post_type": content_creation_constants.POST_TYPE_TEXT_IMAGE},
             ],
         )
         assert 3 == TermSharedHistorial.objects.all().count()
         assert 1 == TermSharedHistorial.objects.filter(platform_shared=constants.FACEBOOK).count()
         assert 2 == TermSharedHistorial.objects.filter(platform_shared=constants.TWITTER).count()
-        assert 2 == TermSharedHistorial.objects.filter(post_type=constants.POST_TYPE_TEXT_IMAGE).count()
+        assert 2 == TermSharedHistorial.objects.filter(post_type=content_creation_constants.POST_TYPE_TEXT_IMAGE).count()
         assert (
             1
             == TermSharedHistorial.objects.filter(
                 platform_shared=constants.TWITTER,
-                post_type=constants.POST_TYPE_TEXT_IMAGE,
+                post_type=content_creation_constants.POST_TYPE_TEXT_IMAGE,
             ).count()
         )
         assert (
             1
             == TermSharedHistorial.objects.filter(
                 platform_shared=constants.TWITTER,
-                post_type=constants.POST_TYPE_THREAD,
+                post_type=content_creation_constants.POST_TYPE_THREAD,
             ).count()
         )
 
@@ -149,7 +147,7 @@ class TestSocialPosting(TestCase):
             "social_id": "64dsf8g4dfg45dfh",
             "title": "handmade fb title",
             "content": "face content",
-            "post_type": constants.POST_TYPE_TEXT_IMAGE,
+            "post_type": content_creation_constants.POST_TYPE_TEXT_IMAGE,
             "use_hashtags": True,
             "use_emojis": True,
             "use_link": True,
@@ -176,7 +174,7 @@ class TestSocialPosting(TestCase):
             socialmedia_content,
         )
         expected_data = {
-            "post_type": constants.POST_TYPE_TEXT_IMAGE,
+            "post_type": content_creation_constants.POST_TYPE_TEXT_IMAGE,
             "platform_shared": constants.FACEBOOK,
             "social_id": "64dsf8g4dfg45dfh",
             "title": "handmade fb title",
@@ -192,7 +190,7 @@ class TestSocialPosting(TestCase):
         assert 0 == TermSharedHistorial.objects.all().count()
         hashtag = DjangoTestingModel.create(Hashtag)
         expected_data = {
-            "post_type": constants.POST_TYPE_TEXT_IMAGE,
+            "post_type": content_creation_constants.POST_TYPE_TEXT_IMAGE,
             "platform_shared": constants.FACEBOOK,
             "social_id": "64dsf8g4dfg45dfh",
             "title": "handmade fb title",

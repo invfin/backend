@@ -14,9 +14,10 @@ class TermAndTermContentForm(BaseEscritoForm):
     class Meta(BaseEscritoForm.Meta):
         model = Term
 
-    def save(self, *args, **krags):
-        self.instance.modify_checking("information_clean", True)
-        return super().save(*args, **krags)
+    def save(self, *args, **kwrags):
+        if kwrags.pop("modify_checking"):
+            self.instance.modify_checking("information_clean", True)
+        return super().save(*args, **kwrags)
 
 
 term_content_formset = models.inlineformset_factory(

@@ -2,7 +2,7 @@ from typing import Type, Callable, Union
 
 import pandas as pd
 
-from apps.general.models import Period
+from apps.periods.models import Period
 
 
 class DFInfoCreator:

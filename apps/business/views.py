@@ -7,7 +7,7 @@ from django.shortcuts import redirect
 from django.urls import reverse
 from django.views.generic import RedirectView
 
-from apps.general.models import Currency
+from apps.currencies.models import Currency
 from apps.seo.views import SEODetailView, SEOListView, SEOTemplateView
 from apps.business.models import Customer, Product, ProductComplementary, TransactionHistorial
 
