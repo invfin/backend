@@ -1,19 +1,9 @@
 from django.contrib.auth import get_user_model
-from django.db.models import (
-    CASCADE,
-    SET_NULL,
-    BooleanField,
-    CharField,
-    ForeignKey,
-    IntegerField,
-    ManyToManyField,
-    Model,
-)
+from django.db.models import IntegerField
 
-from apps.periods.constants import PERIODS
 from apps.general.abstracts import AbstractTimeStampedModel
+from apps.periods.constants import PERIOD_FOR_YEAR, PERIODS
 from apps.periods.managers import PeriodManager
-
 
 User = get_user_model()
 
@@ -37,7 +27,7 @@ class Period(AbstractTimeStampedModel):
 
     @property
     def is_full_year(self):
-        return self.period == constants.PERIOD_FOR_YEAR
+        return self.period == PERIOD_FOR_YEAR
 
     @property
     def period_year(self):

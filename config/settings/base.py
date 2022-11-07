@@ -15,10 +15,9 @@ if READ_DOT_ENV_FILE:
     env.read_env(str(ROOT_DIR / ".env"))
 
 IS_PROD = env.bool("IS_PROD", False)
+IS_TEST = env.bool("IS_TEST", False)
 
-PROTOCOL = "http://"
-if IS_PROD:
-    PROTOCOL = "https://"
+PROTOCOL = "https://" if IS_PROD else "http://"
 
 # GENERAL
 # ------------------------------------------------------------------------------
@@ -442,6 +441,7 @@ MESSAGE_TAGS = {
 
 # GEOIP
 # ------------------------------------------------------------------------------
+# TODO move it into the test folder
 GEOIP_PATH = str(ROOT_DIR / "geoip")
 
 # Financial data KEYS

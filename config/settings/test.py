@@ -2,11 +2,7 @@
 With these settings, tests run faster.
 """
 
-from .base import *  # noqa
-from .base import env
-
-from .ckeditor import *
-from .custom_admin import *
+from .base import env, ROOT_DIR
 
 # GENERAL
 # ------------------------------------------------------------------------------
@@ -37,3 +33,5 @@ EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
 
 # Your stuff...
 # ------------------------------------------------------------------------------
+GEOIP_PATH = str(ROOT_DIR / "test-geoip")
+GEOIP_CITY = "GeoIP2-City.mmdb"
