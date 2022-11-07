@@ -23,9 +23,12 @@ User = get_user_model()
 
 class JourneyClassifier:
     def get_user_or_visiteur(
-        self,
-        request
-    ) -> Tuple[Optional[Union[Type[Visiteur], Type[User]]], Optional[str], Optional[Union[Type[VisiteurJourney], Type[UserJourney]]]]:
+        self, request
+    ) -> Tuple[
+        Optional[Union[Type[Visiteur], Type[User]]],
+        Optional[str],
+        Optional[Union[Type[VisiteurJourney], Type[UserJourney]]],
+    ]:
         default_journey_model = None
         user_str = ""
         user = None
@@ -54,35 +57,30 @@ class JourneyClassifier:
     def save_journey(self, request, current_path, comes_from):
         user, user_str, default_journey_model = self.get_user_or_visiteur(request)
         journey = default_journey_model.objects.create(
-            user=user,
-            current_path=current_path,
-            comes_from=comes_from,
-            parsed = True
+            user=user, current_path=current_path, comes_from=comes_from, parsed=True
         )
         model_visited, journey_model = self.get_specific_journey(current_path)
         if model_visited and journey_model:
-            apps.get_model(
-                app_label='seo',
-                model_name=f'{user_str}{journey_model}'
-            ).objects.create(
-                user=user,
-                visit=journey,
-                model_visited=model_visited,
-                date=timezone.now()
+            apps.get_model(app_label="seo", model_name=f"{user_str}{journey_model}").objects.create(
+                user=user, visit=journey, model_visited=model_visited, date=timezone.now()
             )
 
     def get_specific_journey(
-        self,
-        current_path
+        self, current_path
     ) -> Tuple[Optional[Union[Type[Company], Type[Term], Type[Question], Type[PublicBlog]]], Optional[str]]:
-        splited_path = current_path.split('/')
+        splited_path = current_path.split("/")
 
         model_visited, journey_model = None, None
 
-        if len(splited_path) > 3 and not settings.ADMIN_URL in current_path:
-
+        if all(
+            [
+                len(splited_path) > 3,
+                settings.ADMIN_URL not in current_path,
+                "href=/static/" not in current_path,
+            ]
+        ):
             splited_path = splited_path[-3:-1]
-            if splited_path[1].startswith('?utm'):
+            if splited_path[1].startswith("?utm"):
                 info = splited_path[0]
             else:
                 info = splited_path[1]
@@ -90,20 +88,20 @@ class JourneyClassifier:
             if "general/assets" in current_path:
                 return None, None
 
-            if '/screener/analisis-de/' in current_path:
-                journey_model = 'CompanyVisited'
+            if "/screener/analisis-de/" in current_path:
+                journey_model = "CompanyVisited"
                 model_visited = Company.objects.get(ticker=info)
 
-            elif '/p/' in current_path:
-                journey_model = 'PublicBlogVisited'
+            elif "/p/" in current_path:
+                journey_model = "PublicBlogVisited"
                 model_visited = PublicBlog.objects.get(slug=info)
 
-            elif '/question/' in current_path:
-                journey_model = 'QuestionVisited'
+            elif "/question/" in current_path:
+                journey_model = "QuestionVisited"
                 model_visited = Question.objects.get(slug=info)
 
-            elif '/definicion/' in current_path:
-                journey_model = 'TermVisited'
+            elif "/definicion/" in current_path:
+                journey_model = "TermVisited"
                 model_visited = Term.objects.filter(slug=info)
                 if model_visited.exists():
                     model_visited = model_visited.first()
