@@ -37,3 +37,4 @@ EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
 
 # Your stuff...
 # ------------------------------------------------------------------------------
+GEOIP_PATH = str(ROOT_DIR / "test-geoip")

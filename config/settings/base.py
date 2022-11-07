@@ -442,7 +442,9 @@ MESSAGE_TAGS = {
 
 # GEOIP
 # ------------------------------------------------------------------------------
-GEOIP_PATH = str(ROOT_DIR / "geoip")
+# TODO move it into the test folder
+GEOIP_PATH = str(ROOT_DIR / "test-geoip")
+GEOIP_CITY = "GeoIP2-City.mmdb"
 
 # Financial data KEYS
 # ------------------------------------------------------------------------------

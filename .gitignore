@@ -278,7 +278,8 @@ apps/media/
 .ipython/
 .envs/*
 
-geoip
+./geoip
+
 
 temp_venv
 .env
