@@ -1,3 +1,8 @@
+from .as_reported import (
+    IncomeStatementAsReported,
+    BalanceSheetAsReported,
+    CashflowStatementAsReported,
+)
 from .company import (
     Company,
     CompanyFinnhubProxy,
@@ -38,6 +43,9 @@ from .yahoo_query import (
 )
 
 __all__ = [
+    "IncomeStatementAsReported",
+    "BalanceSheetAsReported",
+    "CashflowStatementAsReported",
     "CompanyYahooQueryProxy",
     "CompanyYFinanceProxy",
     "CompanyFinprepProxy",

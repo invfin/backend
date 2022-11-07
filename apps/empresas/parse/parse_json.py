@@ -7,8 +7,9 @@ from apps.empresas.models import (
     BalanceSheetAsReported,
     CashflowStatementAsReported,
 )
-from apps.general.models import Period, Currency
-from apps.general import constants
+from apps.periods.models import Period
+from apps.currencies.models import Currency
+from apps.periods import constants
 
 main_url = "/home/lucas/Downloads/kaggle-companies-data"
 
