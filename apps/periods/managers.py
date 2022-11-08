@@ -27,7 +27,7 @@ class PeriodManager(Manager):
         return period
 
     def quarterly_periods(self) -> QuerySet:
-        return self.all().exclude(period=constants.PERIOD_FOR_YEAR)
+        return self.exclude(period=constants.PERIOD_FOR_YEAR)
 
     def yearly_periods(self) -> QuerySet:
         return self.filter(period=constants.PERIOD_FOR_YEAR)

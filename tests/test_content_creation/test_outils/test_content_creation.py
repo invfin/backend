@@ -252,7 +252,10 @@ class TestContentCreation(TestCase):
             assert (emoji_1 in result_data["title_emojis"]) is True
             assert (emoji_1.emoji in result_data["title"]) is True
         if "default_title" in result_data:
-            assert default_title_news == result_data["default_title"]
+            if result_data["default_title"].title.endswith("news"):
+                assert default_title_news == result_data["default_title"]
+            else:
+                assert default_title == result_data["default_title"]
         else:
             expected_data = {"title": "Custom title"}
             assert result_data == expected_data

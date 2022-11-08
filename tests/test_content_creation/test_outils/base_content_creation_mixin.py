@@ -15,13 +15,16 @@ class BaseTestContentCreation:
     content_creator: Type = None
     model_class: Type = None
     shared_model_historial: Type = None
+    model_class_obj: Type = None
 
-    @classmethod
-    def setUpTestData(cls) -> None:
-        cls.model_class_obj = DjangoTestingModel.create(cls.model_class)
+    def setUp(self) -> None:
+        self.content_creator = self.content_creator
+        self.model_class = self.model_class
+        self.shared_model_historial = self.shared_model_historial
+        self.model_class_obj = self.model_class_obj
 
     def test_get_object(self):
-        assert self.content_creator().get_object() == self.model_class
+        assert self.content_creator().get_object() == self.model_class_obj
 
     def test_get_shared_model_historial(self):
         assert self.content_creator().get_shared_model_historial() == self.shared_model_historial

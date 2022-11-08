@@ -79,7 +79,8 @@ class FollowingHistorial(Model):
 
 
 class NewsletterFollowers(Model):
-    user = OneToOneField(User, on_delete=SET_NULL, null=True, related_name="main_writter_followed")
+    # TODO change related_name to followers
+    user = OneToOneField(User, on_delete=SET_NULL, null=True, related_name="main_writter_followed",)
     followers = ManyToManyField(User, blank=True)
 
     class Meta:

@@ -15,7 +15,7 @@ class TestTask(TestCase):
     def setUpTestData(cls) -> None:
         pass
 
-    @patch("apps.general.outils.emailing.EmailingSystem.simple_email")
+    @patch("apps.emailing.outils.emailing.EmailingSystem.simple_email")
     @patch("apps.escritos.tasks.notify_term_to_improve_task.delay")
     def test_prepare_term_newsletter(self, mock_simple_email, mock_notify_term_to_improve_task):
         prepare_term_newsletter_task()

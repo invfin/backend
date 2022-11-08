@@ -1,10 +1,10 @@
-AAPL = {"id":7,
+AAPL = {
 "ticker":"AAPL",
 "name":"Apple Inc.",
-"sector_id":1,
+# "sector_id":1,
 "website":"http://www.apple.com",
 "state":"CALIFORNIA",
-"country_id":1,
+# "country_id":1,
 "ceo":"Mr. Timothy Cook",
 "image":"https://logo.clearbit.com/apple.com",
 "city":"Cupertino",

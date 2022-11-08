@@ -6,7 +6,7 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import redirect
 from django.views.generic import CreateView, UpdateView
 
-from apps.general.tasks import prepare_notification_task
+from apps.notifications.tasks import prepare_notification_task
 from apps.general import constants
 from apps.seo.views import SEODetailView, SEOListView
 from apps.preguntas_respuestas.forms import CreateQuestionForm

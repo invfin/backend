@@ -7,7 +7,7 @@ from django.core.mail import EmailMessage, send_mail
 from django.template.loader import render_to_string
 from django.utils.safestring import mark_safe
 
-from apps.general import constants
+from apps.emailing import constants
 from apps.web import constants as web_constants
 
 

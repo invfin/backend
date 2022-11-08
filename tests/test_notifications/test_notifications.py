@@ -24,14 +24,6 @@ class TestNotificationSystem(TestCase):
         DjangoTestingModel.create(Profile, user=cls.user_1)
         DjangoTestingModel.create(Profile, user=cls.user_2)
         cls.question = DjangoTestingModel.create(Question, author=cls.user_1)
-        cls.question_comment = DjangoTestingModel.create(
-            QuesitonComment,
-            content_related=DjangoTestingModel.create(
-                Question,
-                author=DjangoTestingModel.create(User),
-            ),
-            author=DjangoTestingModel.create(User),
-        )
         cls.answer = DjangoTestingModel.create(
             Answer,
             author=DjangoTestingModel.create(
@@ -40,6 +32,17 @@ class TestNotificationSystem(TestCase):
                 last_name="author",
             ),
             question_related=cls.question,
+        )
+        cls.question_comment = DjangoTestingModel.create(
+            QuesitonComment,
+            content_related=DjangoTestingModel.create(
+                Question,
+                                                      author=DjangoTestingModel.create(User),),
+            author=DjangoTestingModel.create(
+                User,
+                first_name="question comment",
+                last_name="author",
+            ),
         )
         cls.answer_comment = DjangoTestingModel.create(
             AnswerComment,
@@ -52,7 +55,7 @@ class TestNotificationSystem(TestCase):
         )
         cls.followers = DjangoTestingModel.create(NewsletterFollowers, user=cls.writter)
         cls.blog = DjangoTestingModel.create(PublicBlog, author=cls.writter)
-        cls.followers.followers.add(cls.user_1)
+        cls.followers.followers.add(cls.user_1, cls.user_2)
 
     def test_save_notif(self):
         assert 0 == Notification.objects.all().count()
@@ -228,14 +231,27 @@ class TestNotificationSystem(TestCase):
         assert type(announce_answer_accepted) == list
         assert len(announce_answer_accepted) == 2
         assert 2 == Notification.objects.all().count()
-        announce_answer_accepted = announce_answer_accepted[0]["email"]
-        first_notif = Notification.objects.filter(user__first_name="answer").first()
-        assert "Tu respuesta ha sido acceptada" == announce_answer_accepted["subject"]
-        assert (
-            f"Tu respuesta a {self.answer.question_related.title} ha sido acceptda. Felicidades."
-            == announce_answer_accepted["content"]
-        )
-        assert self.answer.shareable_link == announce_answer_accepted["url_to_join"]
-        assert "notifications" == announce_answer_accepted["app_label"]
-        assert "Notification" == announce_answer_accepted["object_name"]
-        assert first_notif.id == announce_answer_accepted["id"]
+        for answer_announced in announce_answer_accepted:
+            email_answer_announced = answer_announced["email"]
+            if email_answer_announced["subject"].startswith("Tu respuesta"):
+                first_notif = Notification.objects.get(id=email_answer_announced["id"])
+                assert "Tu respuesta ha sido acceptada" == email_answer_announced["subject"]
+                assert (
+                    f"Felicidades. Tu respuesta a {self.answer.question_related.title} ha sido acceptda."
+                    == email_answer_announced["content"]
+                )
+                assert self.answer.shareable_link == email_answer_announced["url_to_join"]
+                assert "notifications" == email_answer_announced["app_label"]
+                assert "Notification" == email_answer_announced["object_name"]
+                assert first_notif.id == email_answer_announced["id"]
+            else:
+                second_notif = Notification.objects.get(id=email_answer_announced["id"])
+                assert f"{self.answer.question_related.title[:15]}... tiene una respuesta acceptada" == email_answer_announced["subject"]
+                assert (
+                    f"No te lo pierdas, {self.answer.question_related.title} ya tiene una respuesta acceptda."
+                    == email_answer_announced["content"]
+                )
+                assert self.answer.shareable_link == email_answer_announced["url_to_join"]
+                assert "notifications" == email_answer_announced["app_label"]
+                assert "Notification" == email_answer_announced["object_name"]
+                assert second_notif.id == email_answer_announced["id"]

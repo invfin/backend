@@ -31,3 +31,9 @@ class TestPeriodManager(TestCase):
         period = Period.objects.third_quarter_period(2021)
         assert 2021 == period.year
         assert constants.PERIOD_3_QUARTER == period.period
+
+    def test_fourth_quarter_period(self):
+        period = Period.objects.fourth_quarter_period(2021)
+        assert 2021 == period.year
+        assert constants.PERIOD_4_QUARTER == period.period
+

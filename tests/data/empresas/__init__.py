@@ -40,14 +40,3 @@ from apps.empresas.models import (
     KeyStatsYahooQuery,
     StatementsFinnhub,
 )
-
-
-def full_company():
-    company = DjangoTestingModel.create(Company)
-    DjangoTestingModel.create(IncomeStatement, company=company)
-    DjangoTestingModel.create(BalanceSheet, company=company)
-    DjangoTestingModel.create(CashflowStatement, company=company)
-    return company
-
-
-COMPANY_FINAL_STATEMENTS = full_company
