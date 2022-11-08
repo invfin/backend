@@ -7,7 +7,7 @@ from django.db.models import (
     JSONField,
 )
 
-from apps.empresas.models import Company
+
 from apps.empresas.managers import BaseStatementManager
 from apps.general.mixins import BaseToAllMixin
 
@@ -16,8 +16,8 @@ class BaseStatement(Model, BaseToAllMixin):
     date = IntegerField(default=0)
     start_date = DateField(null=True, blank=True)
     end_date = DateField(null=True, blank=True)
-    period = ForeignKey("general.Period", on_delete=SET_NULL, null=True, blank=True)
-    reported_currency = ForeignKey("general.Currency", on_delete=SET_NULL, null=True, blank=True)
+    period = ForeignKey("periods.Period", on_delete=SET_NULL, null=True, blank=True)
+    reported_currency = ForeignKey("currencies.Currency", on_delete=SET_NULL, null=True, blank=True)
     objects = BaseStatementManager()
 
     class Meta:
@@ -32,15 +32,28 @@ class BaseStatement(Model, BaseToAllMixin):
 
 
 class IncomeStatementAsReported(BaseStatement):
-    company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="inc_statements")
+    company = ForeignKey(
+        "empresas.Company",
+        on_delete=SET_NULL,
+        null=True,
+        blank=True,
+        related_name="inc_statements_as_reported",
+    )
     financial_data = JSONField()
 
     class Meta:
         db_table = "assets_income_statement_as_reported"
+        ordering = ["-date", "period"]
 
 
 class BalanceSheetAsReported(BaseStatement):
-    company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="balance_sheets_as_reported")
+    company = ForeignKey(
+        "empresas.Company",
+        on_delete=SET_NULL,
+        null=True,
+        blank=True,
+        related_name="balance_sheets_as_reported",
+    )
     financial_data = JSONField()
 
     class Meta:
@@ -48,7 +61,13 @@ class BalanceSheetAsReported(BaseStatement):
 
 
 class CashflowStatementAsReported(BaseStatement):
-    company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="cf_statements_as_reported")
+    company = ForeignKey(
+        "empresas.Company",
+        on_delete=SET_NULL,
+        null=True,
+        blank=True,
+        related_name="cf_statements_as_reported",
+    )
     financial_data = JSONField()
 
     class Meta:

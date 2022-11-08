@@ -24,6 +24,7 @@ from .statements import (
     EficiencyRatioAdmin,
     PriceToRatioAdmin,
 )
+
 # from .institutions import (
 #     InstitutionalOrganizationAdmin,
 #     TopInstitutionalOwnershipAdmin,
@@ -51,8 +52,10 @@ from .finnhub import (
     CompanyFinnhubProxyAdmin,
     # StatementsFinnhubAdmin,
 )
+from .as_reported import CompanyAsReportedProxyAdmin
 
 __all__ = [
+    "CompanyAsReportedProxyAdmin",
     "CompanyYahooQueryProxy",
     "CompanyYFinanceProxy",
     "CompanyFinprepProxy",

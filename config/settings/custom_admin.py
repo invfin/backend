@@ -60,7 +60,7 @@ SIDE_MENU = [
                 "model": "seo.UserJourney",
                 "label": "Journey",
             },
-{
+            {
                 "model": "users.UsersCategory",
             },
             {"model": "seo.UserCompanyVisited", "label": "Company visited"},
@@ -266,6 +266,10 @@ SIDE_MENU = [
             {
                 "model": "empresas.CompanyFinnhubProxy",
                 "label": "Finnhub",
+            },
+            {
+                "model": "empresas.CompanyAsReportedProxy",
+                "label": "As reported",
             },
         ),
     },

@@ -5,6 +5,7 @@ from .as_reported import (
 )
 from .company import (
     Company,
+    CompanyAsReportedProxy,
     CompanyFinnhubProxy,
     CompanyFinprepProxy,
     CompanyStatementsProxy,
@@ -48,6 +49,7 @@ __all__ = [
     "CashflowStatementAsReported",
     "CompanyYahooQueryProxy",
     "CompanyYFinanceProxy",
+    "CompanyAsReportedProxy",
     "CompanyFinprepProxy",
     "CompanyFinnhubProxy",
     "CompanyStatementsProxy",

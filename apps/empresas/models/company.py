@@ -136,6 +136,23 @@ class Company(Model, BaseToAllMixin, CompanyExtended, CheckingsMixin):
         )
 
 
+class CompanyAsReportedProxy(Company):
+    class Meta:
+        proxy = True
+
+    @property
+    def has_inc(self):
+        return self.inc_statements_as_reported.all().exists()
+
+    @property
+    def has_bs(self):
+        return self.balance_sheets_as_reported.all().exists()
+
+    @property
+    def has_cf(self):
+        return self.cf_statements_as_reported.all().exists()
+
+
 class CompanyYahooQueryProxy(Company):
     class Meta:
         proxy = True
