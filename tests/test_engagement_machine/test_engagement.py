@@ -13,7 +13,7 @@ from apps.content_creation.outils.content_creator import (
 from apps.escritos.models import Term
 from apps.engagement_machine.outils.engagement import EngagementMachine
 from apps.web.models import WebsiteEmail
-from apps.socialmedias import constants as social_constants
+from apps.content_creation import constants as content_creation_constants
 from apps.content_creation.models import Emoji, DefaultTilte
 
 
@@ -23,17 +23,17 @@ class TestEngagementMachine(TestCase):
         cls.defualt_title = DjangoTestingModel.create(
             DefaultTilte,
             title="Default title",
-            for_content=social_constants.WEB,
+            for_content=content_creation_constants.WEB,
         )
         cls.title_emojis = DjangoTestingModel.create(Emoji, emoji="emoji")
         cls.term = DjangoTestingModel.create(Term, title="term default")
 
     def test_get_creator(self):
-        assert EngagementMachine().get_creator(social_constants.QUESTION_FOR_CONTENT) == QuestionContentCreation
-        assert EngagementMachine().get_creator(social_constants.NEWS_FOR_CONTENT) == CompanyNewsContentCreation
-        assert EngagementMachine().get_creator(social_constants.TERM_FOR_CONTENT) == TermContentCreation
-        assert EngagementMachine().get_creator(social_constants.PUBLIC_BLOG_FOR_CONTENT) == PublicBlogContentCreation
-        assert EngagementMachine().get_creator(social_constants.COMPANY_FOR_CONTENT) == CompanyContentCreation
+        assert EngagementMachine().get_creator(content_creation_constants.QUESTION_FOR_CONTENT) == QuestionContentCreation
+        assert EngagementMachine().get_creator(content_creation_constants.NEWS_FOR_CONTENT) == CompanyNewsContentCreation
+        assert EngagementMachine().get_creator(content_creation_constants.TERM_FOR_CONTENT) == TermContentCreation
+        assert EngagementMachine().get_creator(content_creation_constants.PUBLIC_BLOG_FOR_CONTENT) == PublicBlogContentCreation
+        assert EngagementMachine().get_creator(content_creation_constants.COMPANY_FOR_CONTENT) == CompanyContentCreation
 
     def test_send_website_email_engagement(self):
         title = "Default title"
@@ -55,7 +55,7 @@ class TestEngagementMachine(TestCase):
 
     def test_create_newsletter(self):
         web_email_type = constants.CONTENT_FOR_ENGAGEMENT
-        content_object = social_constants.TERM_FOR_CONTENT
+        content_object = content_creation_constants.TERM_FOR_CONTENT
         whom_to_send = constants.WHOM_TO_SEND_EMAIL_ALL
 
         self.term.checkings.update({"has_information_clean": {"state": "yes", "time": ""}})

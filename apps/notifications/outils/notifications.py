@@ -133,7 +133,7 @@ class NotificationSystem:
     def announce_new_blog(self, blog, notif_type):
         # blog.author.main_writter_followed.followers.all() that should be the actual loop over, all the writter's followers
         notif_info = []
-        for user in User.objects.all().exclude(pk=blog.author.pk):
+        for user in blog.author.main_writter_followed.followers.all():
             email = self.save_notif(
                 blog,
                 user,
@@ -176,15 +176,17 @@ class NotificationSystem:
         for user in question.related_users:
             title = question.title[:15]
             subject = f"{title}... tiene una respuesta acceptada"
+            content = f"No te lo pierdas, {question.title} ya tiene una respuesta acceptda."
             if answer.author == user:
                 subject = "Tu respuesta ha sido acceptada"
+                content = f"Felicidades. Tu respuesta a {question.title} ha sido acceptda."
             email = self.save_notif(
                 answer,
                 user,
                 notif_type,
                 {
                     "subject": subject,
-                    "content": f"Tu respuesta a {question.title} ha sido acceptda. Felicidades.",
+                    "content": content,
                 },
             )
             notif_info.append({"email": email, "receiver_id": user.id, "is_for": emailing_constants.EMAIL_FOR_NOTIFICATION})

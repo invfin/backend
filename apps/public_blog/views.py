@@ -9,7 +9,7 @@ from django.views.generic import CreateView, UpdateView
 
 from apps.general import constants as general_constants
 from apps.general.forms import DefaultNewsletterForm
-from apps.general.tasks import prepare_notification_task
+from apps.notifications.tasks import prepare_notification_task
 from apps.public_blog.forms import PublicBlogForm
 from apps.public_blog.models import NewsletterFollowers, PublicBlog, PublicBlogAsNewsletter, WritterProfile
 from apps.seo.views import SEODetailView, SEOListView

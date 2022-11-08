@@ -24,7 +24,7 @@ from apps.super_investors.models import (
 
 from apps.general import constants
 from apps.notifications.models import Notification
-from apps.general.tasks import prepare_notification_task
+from apps.notifications.tasks import prepare_notification_task
 
 
 class MessagesTemplateview(TemplateView):

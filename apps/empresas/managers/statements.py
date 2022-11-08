@@ -1,6 +1,6 @@
 from django.db.models import Manager, Q, QuerySet
 
-from apps.general import constants
+from apps.periods import constants
 
 
 class BaseStatementManager(Manager):
