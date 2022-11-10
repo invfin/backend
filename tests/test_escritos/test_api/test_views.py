@@ -49,6 +49,7 @@ class TestAllTermsAPIView(BaseAPIViewTestMixin, APITestCase):
                 "imagen": "https://cdn.wallstreetmojo.com/wp-content/uploads/2019/11/Comparative-Balance-Sheet-Example-1.1-1.png",
             },
         ]
+        print(response.data)
         assert json.loads(json.dumps(response.data))[0] == expected_data
 
 
