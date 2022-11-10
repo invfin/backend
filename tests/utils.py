@@ -145,6 +145,8 @@ class BaseAPIViewTestMixin:
     def test_no_params(self):
         if self.params:
             response = self.client.get(self.endpoint_key)
+            print(response.status_code)
+            print(response.data)
             assert response.status_code == status.HTTP_404_NOT_FOUND
             assert response.data == {"detail": ErrorDetail(string=self.no_param_error_messages, code="parse_error")}
 
@@ -167,6 +169,8 @@ class BaseAPIViewTestMixin:
                 params[key] = "random"
                 params = urllib.parse.urlencode(params)
                 response = self.client.get(f"{self.endpoint_key}&{params}")
+                print(response.status_code)
+                print(response.data)
                 assert response.status_code == status.HTTP_404_NOT_FOUND
                 assert response.data == {"detail": ErrorDetail(string=self.not_found_error_messages, code="not_found")}
 
