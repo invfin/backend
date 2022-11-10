@@ -205,8 +205,8 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.common.BrokenLinkEmailsMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "general.middleware.SubdomainURLRoutingMiddleware",
-    "seo.middleware.VisiteurMiddleware",
+    "apps.general.middleware.SubdomainURLRoutingMiddleware",
+    "apps.seo.middleware.VisiteurMiddleware",
 ]
 
 # SECURITY
@@ -441,7 +441,6 @@ MESSAGE_TAGS = {
 
 # GEOIP
 # ------------------------------------------------------------------------------
-# TODO move it into the test folder
 GEOIP_PATH = str(ROOT_DIR / "geoip")
 
 # Financial data KEYS

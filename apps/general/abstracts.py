@@ -1,22 +1,18 @@
 from django.contrib.auth import get_user_model
-from django.contrib.contenttypes.fields import GenericForeignKey, GenericRelation
+from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import (
     CASCADE,
     SET_NULL,
     BooleanField,
-    CharField,
     DateTimeField,
     ForeignKey,
-    ManyToManyField,
     Model,
-    IntegerField,
     PositiveIntegerField,
-    JSONField,
     TextField,
 )
 
-from apps.general.mixins import BaseToAllMixin, CommentsMixin, VotesMixin
+from apps.general.mixins import BaseToAllMixin
 
 
 User = get_user_model()
@@ -30,7 +26,7 @@ class AbstractTimeStampedModel(Model, BaseToAllMixin):
         abstract = True
 
 
-class AbstractComment(AbstractTimeStampedModel, BaseToAllMixin):
+class AbstractComment(AbstractTimeStampedModel):
     author = ForeignKey(User, on_delete=SET_NULL, null=True)
     content = TextField()
 
@@ -45,7 +41,7 @@ class AbstractComment(AbstractTimeStampedModel, BaseToAllMixin):
         return self.content_related.title
 
 
-class AbstractGenericModels(AbstractTimeStampedModel, BaseToAllMixin):
+class AbstractGenericModels(AbstractTimeStampedModel):
     content_type = ForeignKey(ContentType, on_delete=CASCADE)
     object_id = PositiveIntegerField()
     object = GenericForeignKey("content_type", "object_id")

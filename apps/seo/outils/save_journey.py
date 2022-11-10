@@ -56,14 +56,15 @@ class JourneyClassifier:
 
     def save_journey(self, request, current_path, comes_from):
         user, user_str, default_journey_model = self.get_user_or_visiteur(request)
-        journey = default_journey_model.objects.create(
-            user=user, current_path=current_path, comes_from=comes_from, parsed=True
-        )
-        model_visited, journey_model = self.get_specific_journey(current_path)
-        if model_visited and journey_model:
-            apps.get_model(app_label="seo", model_name=f"{user_str}{journey_model}").objects.create(
-                user=user, visit=journey, model_visited=model_visited, date=timezone.now()
+        if default_journey_model:
+            journey = default_journey_model.objects.create(
+                user=user, current_path=current_path, comes_from=comes_from, parsed=True
             )
+            model_visited, journey_model = self.get_specific_journey(current_path)
+            if model_visited and journey_model:
+                apps.get_model(app_label="seo", model_name=f"{user_str}{journey_model}").objects.create(
+                    user=user, visit=journey, model_visited=model_visited, date=timezone.now()
+                )
 
     def get_specific_journey(
         self, current_path

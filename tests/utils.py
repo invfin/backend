@@ -12,7 +12,6 @@ from django.conf import settings
 
 from rest_framework.exceptions import ErrorDetail, server_error
 from rest_framework import status
-from rest_framework.test import APITestCase
 
 from apps.api.models import Key
 from apps.business.models import (
@@ -52,10 +51,12 @@ class BaseAPIViewTestMixin:
     path_name: str = ""
     url_path: str = ""
     api_key_param: str = "api_key"
-    no_key_error_message: str = (
+    wrong_key_error_message: str = (
         "Tu clave es incorrecta, asegúrate que está bien escrita depués de api_key=<clave> o pide tu clave desde tu"
         " perfil"
     )
+    no_api_key_error_message: str = "Introduce tu clave en api_key, si no tienes alguna entra en tu perfil para crearla"
+    api_key_removed: str = "Tu clave ya no es válida, crea una nueva desde tu perfil"
     params: Dict[str, Any] = {}
     wrong_param_error_message: str = "Ha habido un problema con tu búsqueda, asegúrate de haber introducido un valor"
     no_param_error_messages: str = "No has introducido ninguna búsqueda"
@@ -115,26 +116,18 @@ class BaseAPIViewTestMixin:
         assert resolve_url(self.path_name) == f"/{self.api_prefix}/{self.api_version}{self.url_path}"
 
     def test_no_auth(self):
-        full_endpoint_removed_key = f"{self.endpoint_removed_key}"
-        full_endpoint_wrong_key = f"{self.endpoint_wrong_key}"
-        full_endpoint_no_key = f"{self.endpoint_no_key}"
-        if self.params:
-            params = urllib.parse.urlencode(self.params)
-            full_endpoint_removed_key = f"{self.endpoint_removed_key}&{params}"
-            full_endpoint_wrong_key = f"{self.endpoint_wrong_key}&{params}"
-            full_endpoint_no_key = f"{self.endpoint_no_key}&{params}"
-
-        response = self.client.get(full_endpoint_removed_key)
-        assert response.status_code == status.HTTP_403_FORBIDDEN
-        assert response.data == {"detail": ErrorDetail(string=self.no_key_error_message, code="permission_denied")}
-
-        response = self.client.get(full_endpoint_wrong_key)
-        assert response.status_code == status.HTTP_403_FORBIDDEN
-        assert response.data == {"detail": ErrorDetail(string=self.no_key_error_message, code="permission_denied")}
-
-        response = self.client.get(full_endpoint_no_key)
-        assert response.status_code == status.HTTP_403_FORBIDDEN
-        assert response.data == {"detail": ErrorDetail(string=self.no_key_error_message, code="permission_denied")}
+        for endpoint, endpoint_name, status_code, error_message, error_code in [
+            (self.endpoint_removed_key, "Key removed endpoint", status.HTTP_403_FORBIDDEN, self.api_key_removed, "permission_denied",),
+            (self.endpoint_wrong_key, "Wrong key endpoint", status.HTTP_401_UNAUTHORIZED, self.wrong_key_error_message, "authentication_failed",),
+            (self.endpoint_no_key, "No key endpoint", status.HTTP_401_UNAUTHORIZED, self.no_api_key_error_message, "authentication_failed",),
+        ]:
+            with self.subTest(endpoint_name):
+                if self.params:
+                    params = urllib.parse.urlencode(self.params)
+                    endpoint = f"{endpoint}&{params}"
+                response = self.client.get(endpoint)
+                assert response.status_code == status_code
+                assert response.data == {"detail": ErrorDetail(string=error_message, code=error_code)}
 
     @skip("Skipping")
     def test_server_problem(self):
@@ -152,6 +145,8 @@ class BaseAPIViewTestMixin:
     def test_no_params(self):
         if self.params:
             response = self.client.get(self.endpoint_key)
+            print(response.status_code)
+            print(response.data)
             assert response.status_code == status.HTTP_404_NOT_FOUND
             assert response.data == {"detail": ErrorDetail(string=self.no_param_error_messages, code="parse_error")}
 
@@ -174,9 +169,12 @@ class BaseAPIViewTestMixin:
                 params[key] = "random"
                 params = urllib.parse.urlencode(params)
                 response = self.client.get(f"{self.endpoint_key}&{params}")
+                print(response.status_code)
+                print(response.data)
                 assert response.status_code == status.HTTP_404_NOT_FOUND
                 assert response.data == {"detail": ErrorDetail(string=self.not_found_error_messages, code="not_found")}
 
     def test_success(self):
         response = self.client.get(self.full_endpoint)
+        print(response.status_code)
         assert response.status_code == status.HTTP_200_OK
