@@ -5,7 +5,7 @@ from django.utils import timezone
 import numpy as np
 from dateutil.relativedelta import relativedelta
 
-from apps.general import constants
+from apps.periods import constants
 from apps.periods.models import Period
 
 from apps.empresas.models import Company, CompanyUpdateLog

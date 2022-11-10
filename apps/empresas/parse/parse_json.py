@@ -1,7 +1,6 @@
-import os, json, re, concurrent.futures, datetime
+import os, json, re, concurrent.futures, datetime, timeit, random
 
 from tqdm import tqdm
-from tqdm.contrib.concurrent import process_map
 
 from apps.empresas.models import (
     Company,
@@ -13,9 +12,6 @@ from apps.periods.models import Period
 from apps.currencies.models import Currency
 from apps.periods import constants
 
-main_url = "/home/lucas/Downloads/kaggle-companies-data"
-
-
 pattern = re.compile(r"(?<!^)(?=[A-Z])")
 
 
@@ -24,24 +20,32 @@ def camel_to_snake(word):
 
 
 def save_into_dict(dict_to_save, dict_to_use):
-    concept = dict_to_save["concept"]
-    label = dict_to_save["label"]
+    original_concept = dict_to_save["concept"]
+    concept = original_concept
     if concept in dict_to_use:
-        if label in dict_to_use[concept]["labels"]:
-            dict_to_use[concept]["labels"][label] += 1
-        else:
-            dict_to_use[concept]["labels"].update({label: 0})
-    else:
-        dict_to_use[concept] = {"concept": camel_to_snake(concept), "labels": {label: 0}}
+        concept = f"{concept}_duplicated"
+        if concept in dict_to_use:
+            num = random.randint(0, 9999999)
+            concept = f"{concept}_{num}"
+    dict_to_use[concept] = {**dict_to_save, "snake_concept": camel_to_snake(original_concept)}
+
+
+def save_fields(file_name, data):
+    original_concept = data["concept"]
+    with open(f"./{file_name}.json", "r") as read_checks_json:
+        checks_json = json.load(read_checks_json)
+    checks_json.update({original_concept: "x"})
+    with open(f"./{file_name}.json", "w") as writte_checks_json:
+        json.dump(checks_json, writte_checks_json, indent=2, separators=(",", ": "))
 
 
 def save_lists(data, company, period, start_date, end_date):
     cashflow = data["cf"]
     balance = data["bs"]
     income = data["ic"]
-    info_inc_dict = dict(info=data["ic"])
-    info_bs_dict = dict(info=data["bs"])
-    info_cf_dict = dict(info=data["cf"])
+    info_inc_dict = {}
+    info_bs_dict = {}
+    info_cf_dict = {}
     currency = None
     for info_inc, info_bs, info_cf in zip(income, balance, cashflow):
         currency_str = info_inc["unit"]
@@ -53,9 +57,16 @@ def save_lists(data, company, period, start_date, end_date):
                     currency = Currency.objects.get(currency=currency_str.upper(), symbol="$")
                 else:
                     try:
-                        currency = Currency.objects.get_or_create(currency=currency_str.upper())
+                        currency, _ = Currency.objects.get_or_create(currency=currency_str.upper())
                     except Currency.MultipleObjectsReturned:
                         currency = Currency.objects.filter(currency=currency_str.upper()).first()
+
+        save_into_dict(info_inc, info_inc_dict)
+        save_into_dict(info_bs, info_bs_dict)
+        save_into_dict(info_cf, info_cf_dict)
+        # save_fields("info_inc", info_inc)
+        # save_fields("info_bs", info_bs)
+        # save_fields("info_cf", info_cf)
 
     IncomeStatementAsReported.objects.create(
         company=company,
@@ -106,18 +117,24 @@ def save_json_content(json_info_file):
         start_date = datetime.datetime.strptime(principal_data["startDate"], "%Y-%m-%d").date()
         end_date = datetime.datetime.strptime(principal_data["endDate"], "%Y-%m-%d").date()
         data = principal_data["data"]
+        company, period_obj = None, None
         company, created = Company.objects.get_or_create(
             ticker=principal_data["symbol"], defaults={"name": "From-as-reported"}
         )
         period = get_period(principal_data["quarter"])
         period_obj = Period.objects.get(year=year, period=period)
+
         save_lists(data, company, period_obj, start_date, end_date)
 
 
 def main():
-    # loop over folders
+    main_url = "/home/lucas/Downloads/kaggle-companies-data"
+    first_t = timeit.default_timer()
     for directorio in tqdm(os.listdir(f"{main_url}")):
         path = f"{main_url}/{directorio}"
         with concurrent.futures.ProcessPoolExecutor() as executor:
             for json_f in tqdm(os.listdir(f"{path}")):
                 executor.submit(save_json_content, f"{path}/{json_f}")
+                # save_json_content(f"{path}/{json_f}")
+    last_t = timeit.default_timer()
+    print("it took:", last_t - first_t)
