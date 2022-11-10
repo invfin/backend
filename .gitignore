@@ -289,3 +289,5 @@ checkout-single-subscription
 
 .idea
 *.sqlite3
+
+assets_*
