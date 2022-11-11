@@ -19,7 +19,7 @@ from apps.seo.views import SEOListView
 
 from apps.api.models import EndpointsCategory, Key, ReasonKeyRequested
 from apps.api.serializers import AuthKeySerializer
-from apps.api.exceptions import WrongParameterException, ParameterNotFoundException, QueryNotFoundException, ServerError
+from apps.api.exceptions import WrongParameterException, ParameterNotSetException, QueryNotFoundException, ServerError
 
 class ObtainAuthKey(APIView):
     throttle_classes = []
@@ -205,15 +205,6 @@ class BaseAPIView(APIView):
         else:
             return ServerError()
 
-    def find_query_value(self, query_dict: dict) -> Union[Tuple[str, str], Tuple[None, None]]:
-        for url_query_param, url_query_value in query_dict.items():
-            if url_query_param in self.url_parameters and url_query_value:
-                if url_query_param == "ticker":
-                    url_query_value = url_query_value.upper()
-                return url_query_param, url_query_value
-
-        return None, None
-
     def check_limitation(self, queryset: Union[QuerySet, List]) -> Union[QuerySet, List]:
         if self.request.auth.has_subscription is False:
             queryset = queryset[:10]
@@ -278,21 +269,61 @@ class BaseAPIView(APIView):
 
         return obj_or_queryset
 
+    def get_query_params(self, request) -> Tuple[str, str]:
+        """
+        Verify that there are parameters (if they are needed) and then check that the
+        parameters are the correct ones. If it's the case return the lookup dictionary that
+        will be used to perform a query (if necessary).
+
+        Parameters
+        ----------
+            request:
+                The request made
+
+        Returns
+        -------
+            lookup_data: Dict
+                The dictionary that might tbe empty, with the keys,values to perform filters
+                against
+
+        Raises
+        ------
+            WrongParameterException
+            ParameterNotSetException
+        """
+        query_dict = request.query_params.dict()
+        query_dict.pop("api_key")
+        if not query_dict:
+            raise ParameterNotSetException()
+        else:
+            return self.find_query_value(query_dict)
+
+    def find_query_value(self, query_dict: dict) -> Tuple[str, str]:
+        for url_query_param, url_query_value in query_dict.items():
+            if url_query_param in self.url_parameters and url_query_value:
+                if url_query_param == "ticker":
+                    url_query_value = url_query_value.upper()
+                return url_query_param, url_query_value
+        raise WrongParameterException()
+
+    def get_fk_lookup_model(self):
+        # TODO rename attribute
+        return self.fk_lookup_model
+
+    # def get_primary_lookup_param(self):
+    #     if not self.fk_lookup_model and not self.url_parameters
+
     def generate_lookup(
         self,
-        url_query_param: Optional[str] = "",
-        url_query_value: Optional[str] = "",
+        request
     ) -> Dict:
         """
         Generates a dict with the key, value used to perform a filter in the queryset
 
         Parameters
         ----------
-        url_query_param: Optional[str]
-            The parameter passed in the url to perform the query
-
-        url_query_value: Optional[str]
-            The value passed in the url to perform the query
+            request:
+                The request made
 
         Returns
         -------
@@ -302,10 +333,9 @@ class BaseAPIView(APIView):
         """
         lookup_data = dict()
         if self.url_parameters or self.fk_lookup_model:
-            if not url_query_value:
-                raise ParameterNotFoundException()
+            url_query_param, url_query_value = self.get_query_params(request)
             if self.fk_lookup_model:
-                lookup_data = {f"{self.fk_lookup_model}": url_query_value}
+                lookup_data = {self.fk_lookup_model: url_query_value}
             elif self.url_parameters:
                 lookup_data = {url_query_param: url_query_value}
         return lookup_data
@@ -313,12 +343,8 @@ class BaseAPIView(APIView):
     def get(self, request) -> Union[Response, ServerError]:
         # TODO Refactor
         model_or_queryset, many = self.get_model_or_queryset()
-        query_dict = request.query_params.dict()
-        query_dict.pop("api_key")
-        url_query_param, url_query_value = self.find_query_value(query_dict)
-        if not url_query_param and self.url_parameters:
-            raise WrongParameterException()
-        lookup_dict = self.generate_lookup(url_query_param, url_query_value)
+
+        lookup_dict = self.generate_lookup(request)
         queryset = self.generate_queryset(model_or_queryset, lookup_dict)
         if self.limited:
             queryset = self.check_limitation(queryset)

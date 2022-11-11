@@ -144,16 +144,21 @@ class TestBaseAPIView(TestCase):
         assert len(not_sliced_query) == 15
         assert isinstance(not_sliced_query, QuerySet)
 
-    def test_get_object(self):
+    def test_get_model_or_queryset(self):
         api_view_queryset = BaseAPIView()
         api_view_queryset.queryset = (IncomeStatement.objects.all, True)
         api_view_model = BaseAPIView()
         api_view_model.model = (IncomeStatement, False)
         api_view_neither = BaseAPIView()
         api_view_neither.serializer_class = IncomeStatementSerializer
-        assert api_view_queryset.get_object() == (IncomeStatement.objects.all, True)
-        assert api_view_model.get_object() == (IncomeStatement, False)
-        assert api_view_neither.get_object() == (IncomeStatement, False)
+        assert api_view_queryset.get_model_or_queryset() == (IncomeStatement.objects.all, True)
+        assert api_view_model.get_model_or_queryset() == (IncomeStatement, False)
+        assert api_view_neither.get_model_or_queryset() == (IncomeStatement, False)
+
+    def test_get_query_params(self):
+        request = MagicMock()
+        response = BaseAPIView().get_query_params()
+        assert {"":""} == response
 
     def test_generate_lookup(self):
         assert BaseAPIView().generate_lookup() == {}

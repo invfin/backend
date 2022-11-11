@@ -33,8 +33,8 @@ class WrongParameterException(ParseError):
     default_detail = constants.WRONG_PARAMETER
 
 
-class ParameterNotFoundException(ParseError):
-    default_detail = constants.PARAMETER_NOT_FOUND
+class ParameterNotSetException(ParseError):
+    default_detail = constants.PARAMETERS_NOT_SET
 
 
 class QueryNotFoundException(NotFound):
