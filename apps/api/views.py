@@ -210,7 +210,7 @@ class BaseAPIView(APIView):
             queryset = queryset[:10]
         return queryset
 
-    def get_model_or_queryset(self) -> Tuple[Union[Type, Callable], bool]:
+    def get_model_or_callable(self) -> Tuple[Union[Type, Callable], bool]:
         """
         Tries to get a tuple with the model to use or a queryset and a bool. In case that neither of both
         are found it will look for the model of the serializer.
@@ -233,28 +233,20 @@ class BaseAPIView(APIView):
         elif not self.model and not self.queryset:
             return self.serializer_class.Meta.model, False
 
-    def generate_queryset(
-        self,
-        model_or_callable: Union[Type, Callable],
-        lookup_dict: Dict,
-    ):
+    def prepare_queryset(self, lookup_dict: Dict):
         """
         This method it's used to perform a query. From the values passed from the url
         we build a filter against the model or queryset passed in the view.
 
         Parameters
         ----------
-        model_or_callable: Union[Type, Callable]
-            A model class or a model's manager's method
-
-        lookup_dict: Dict
-            The filter to apply to the queryset
+            lookup_dict: Dict
+                The filter to apply to the queryset
 
         Returns
         -------
-        obj_or_queryset: Union[Type, QuerySet]
-            Return a specific object or a queryset according to the users lookup
-
+            obj_or_queryset: Union[Type, QuerySet]
+                Return a specific object or a queryset according to the users lookup
         """
 
         if self.queryset:
@@ -268,6 +260,13 @@ class BaseAPIView(APIView):
                 raise QueryNotFoundException()
 
         return obj_or_queryset
+
+    def generate_queryset(
+        self,
+        model_or_callable: Union[Type, Callable],
+        ,
+    ):
+
 
     def get_query_params(self, request) -> Tuple[str, str]:
         """
