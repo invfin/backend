@@ -13,14 +13,13 @@ from rest_framework.response import Response
 from rest_framework.schemas import ManualSchema
 from rest_framework.schemas import coreapi as coreapi_schema
 from rest_framework.views import APIView
-from rest_framework.exceptions import ParseError, APIException, NotFound
 
 from apps.seo.outils.visiteur_meta import SeoInformation
 from apps.seo.views import SEOListView
 
 from apps.api.models import EndpointsCategory, Key, ReasonKeyRequested
 from apps.api.serializers import AuthKeySerializer
-
+from apps.api.exceptions import WrongParameterException, ParameterNotFoundException, QueryNotFoundException, ServerError
 
 class ObtainAuthKey(APIView):
     throttle_classes = []
@@ -145,7 +144,7 @@ class BaseAPIView(APIView):
     model_to_track: Optional[Union[Type, str]] = None
     is_excel: bool = False
 
-    def get_model_to_track(self) -> Union[Type, None]:
+    def get_model_to_track(self) -> Optional[Type]:
         """
 
         Raises:
@@ -181,29 +180,30 @@ class BaseAPIView(APIView):
             elif first_item_queryset._meta.app_label == "escritos":
                 search = first_item_queryset.term_related
             else:
-                raise ParseError("Ha habido un problema con tu búsqueda, asegúrate de haber introducido un valor")
+                raise WrongParameterException()
         return search
 
     def save_request(self, queryset: Union[Type, QuerySet, List], path: str, ip: str) -> None:
         request_model = self.get_model_to_track()
-        search = self.get_object_searched(queryset)
-        obj_data = dict(
-            ip=ip,
-            key=self.request.auth,
-            user=self.request.user,
-            path=path,
-            search=search,
-        )
-        if hasattr(request_model, "is_excel"):
-            obj_data.update({"is_excel": self.is_excel})
-        request_model._default_manager.create(**obj_data)
+        if request_model:
+            search = self.get_object_searched(queryset)
+            obj_data = dict(
+                ip=ip,
+                key=self.request.auth,
+                user=self.request.user,
+                path=path,
+                search=search,
+            )
+            if hasattr(request_model, "is_excel"):
+                obj_data.update({"is_excel": self.is_excel})
+            request_model._default_manager.create(**obj_data)
 
-    def final_response(self, serializer, queryset: QuerySet, path: str, ip: str) -> Union[Response, APIException]:
+    def final_response(self, serializer, queryset: QuerySet, path: str, ip: str) -> Union[Response, ServerError]:
         if status.is_success:
             self.save_request(queryset, path, ip)
             return Response(serializer.data, status=status.HTTP_200_OK)
         else:
-            return APIException("Lo siento ha habido un problema, vuelve a intentarlo en un momento")
+            return ServerError()
 
     def find_query_value(self, query_dict: dict) -> Union[Tuple[str, str], Tuple[None, None]]:
         for url_query_param, url_query_value in query_dict.items():
@@ -211,6 +211,7 @@ class BaseAPIView(APIView):
                 if url_query_param == "ticker":
                     url_query_value = url_query_value.upper()
                 return url_query_param, url_query_value
+
         return None, None
 
     def check_limitation(self, queryset: Union[QuerySet, List]) -> Union[QuerySet, List]:
@@ -218,7 +219,7 @@ class BaseAPIView(APIView):
             queryset = queryset[:10]
         return queryset
 
-    def get_object(self) -> Tuple[Union[Type, Callable], bool]:
+    def get_model_or_queryset(self) -> Tuple[Union[Type, Callable], bool]:
         """
         Tries to get a tuple with the model to use or a queryset and a bool. In case that neither of both
         are found it will look for the model of the serializer.
@@ -240,38 +241,6 @@ class BaseAPIView(APIView):
             return self.model
         elif not self.model and not self.queryset:
             return self.serializer_class.Meta.model, False
-
-    def generate_lookup(
-        self,
-        url_query_param: Optional[str] = "",
-        url_query_value: Optional[str] = "",
-    ) -> Dict:
-        """
-        Generates a dict with the key, value used to perform a filter in the queryset
-
-        Parameters
-        ----------
-        url_query_param: Optional[str]
-            The parameter passed in the url to perform the query
-
-        url_query_value: Optional[str]
-            The value passed in the url to perform the query
-
-        Returns
-        -------
-            lookup_data: Dict
-                The dictionary that might tbe empty, with the keys,values to perform filters
-                against
-        """
-        lookup_data = dict()
-        if self.url_parameters or self.fk_lookup_model:
-            if not url_query_value:
-                raise ParseError("No has introducido ninguna búsqueda")
-            if self.fk_lookup_model:
-                lookup_data = {f"{self.fk_lookup_model}": url_query_value}
-            elif self.url_parameters:
-                lookup_data = {url_query_param: url_query_value}
-        return lookup_data
 
     def generate_queryset(
         self,
@@ -300,21 +269,57 @@ class BaseAPIView(APIView):
         if self.queryset:
             obj_or_queryset = model_or_callable(**lookup_dict)
             if not obj_or_queryset:
-                raise NotFound("Tu búsqueda no ha devuelto ningún resultado")
+                raise QueryNotFoundException()
         else:
             try:
                 obj_or_queryset = model_or_callable._default_manager.get(**lookup_dict)
             except model_or_callable.DoesNotExist:
-                raise NotFound("Tu búsqueda no ha devuelto ningún resultado")
+                raise QueryNotFoundException()
 
         return obj_or_queryset
 
-    def get(self, request) -> Union[Response, APIException]:
-        model_or_callable, many = self.get_object()
+    def generate_lookup(
+        self,
+        url_query_param: Optional[str] = "",
+        url_query_value: Optional[str] = "",
+    ) -> Dict:
+        """
+        Generates a dict with the key, value used to perform a filter in the queryset
+
+        Parameters
+        ----------
+        url_query_param: Optional[str]
+            The parameter passed in the url to perform the query
+
+        url_query_value: Optional[str]
+            The value passed in the url to perform the query
+
+        Returns
+        -------
+            lookup_data: Dict
+                The dictionary that might tbe empty, with the keys,values to perform filters
+                against
+        """
+        lookup_data = dict()
+        if self.url_parameters or self.fk_lookup_model:
+            if not url_query_value:
+                raise ParameterNotFoundException()
+            if self.fk_lookup_model:
+                lookup_data = {f"{self.fk_lookup_model}": url_query_value}
+            elif self.url_parameters:
+                lookup_data = {url_query_param: url_query_value}
+        return lookup_data
+
+    def get(self, request) -> Union[Response, ServerError]:
+        # TODO Refactor
+        model_or_queryset, many = self.get_model_or_queryset()
         query_dict = request.query_params.dict()
+        query_dict.pop("api_key")
         url_query_param, url_query_value = self.find_query_value(query_dict)
+        if not url_query_param and self.url_parameters:
+            raise WrongParameterException()
         lookup_dict = self.generate_lookup(url_query_param, url_query_value)
-        queryset = self.generate_queryset(model_or_callable, lookup_dict)
+        queryset = self.generate_queryset(model_or_queryset, lookup_dict)
         if self.limited:
             queryset = self.check_limitation(queryset)
         serializer = self.serializer_class(queryset, many=many)

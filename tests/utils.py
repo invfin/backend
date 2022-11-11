@@ -58,10 +58,10 @@ class BaseAPIViewTestMixin:
     no_api_key_error_message: str = "Introduce tu clave en api_key, si no tienes alguna entra en tu perfil para crearla"
     api_key_removed: str = "Tu clave ya no es válida, crea una nueva desde tu perfil"
     params: Dict[str, Any] = {}
-    wrong_param_error_message: str = "Ha habido un problema con tu búsqueda, asegúrate de haber introducido un valor"
+    wrong_param_error_message: str = "Ha habido un problema con tu búsqueda, asegúrate de haber introducido los parámetros correctamente"
     no_param_error_messages: str = "No has introducido ninguna búsqueda"
     not_found_error_messages: str = "Tu búsqueda no ha devuelto ningún resultado"
-    server_problem_error_message: str = "Lo siento ha habido un problema"
+    server_problem_error_message: str = "Lo siento hemos tenido un problema, reinténtalo en un momento"
 
     @classmethod
     def setUpTestData(cls) -> None:
@@ -145,36 +145,40 @@ class BaseAPIViewTestMixin:
     def test_no_params(self):
         if self.params:
             response = self.client.get(self.endpoint_key)
-            print(response.status_code)
             print(response.data)
-            assert response.status_code == status.HTTP_404_NOT_FOUND
+            assert response.status_code == status.HTTP_400_BAD_REQUEST
             assert response.data == {"detail": ErrorDetail(string=self.no_param_error_messages, code="parse_error")}
 
     def test_wrong_params(self):
         if self.params:
+            original_params = {**self.params}
             for key in self.params.keys():
-                params = self.params
-                params["bad"] = params.pop(key)
-                params = urllib.parse.urlencode(params)
-                response = self.client.get(f"{self.endpoint_key}&{params}")
-                assert response.status_code == status.HTTP_400_BAD_REQUEST
-                assert response.data == {
-                    "detail": ErrorDetail(string=self.wrong_param_error_message, code="parse_error")
-                }
+                with self.subTest(key):
+                    params = original_params
+                    params["bad"] = params.pop(key)
+                    params = urllib.parse.urlencode(params)
+                    response = self.client.get(f"{self.endpoint_key}&{params}")
+                    assert response.status_code == status.HTTP_400_BAD_REQUEST
+                    assert response.data == {
+                        "detail": ErrorDetail(string=self.wrong_param_error_message, code="parse_error")
+                    }
 
     def test_not_found(self):
         if self.params:
+            original_params = {**self.params}
             for key in self.params.keys():
-                params = self.params
-                params[key] = "random"
-                params = urllib.parse.urlencode(params)
-                response = self.client.get(f"{self.endpoint_key}&{params}")
-                print(response.status_code)
-                print(response.data)
-                assert response.status_code == status.HTTP_404_NOT_FOUND
-                assert response.data == {"detail": ErrorDetail(string=self.not_found_error_messages, code="not_found")}
+                with self.subTest(key):
+                    params = original_params
+                    if key == "id":
+                        random_value = 1233425
+                    else:
+                        random_value = "random"
+                    params[key] = random_value
+                    params = urllib.parse.urlencode(params)
+                    response = self.client.get(f"{self.endpoint_key}&{params}")
+                    assert response.status_code == status.HTTP_404_NOT_FOUND
+                    assert response.data == {"detail": ErrorDetail(string=self.not_found_error_messages, code="not_found")}
 
     def test_success(self):
         response = self.client.get(self.full_endpoint)
-        print(response.status_code)
         assert response.status_code == status.HTTP_200_OK

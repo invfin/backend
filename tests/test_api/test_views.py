@@ -1,10 +1,12 @@
+from unittest.mock import MagicMock
+
 from bfet import DjangoTestingModel
 
 from django.db.models import QuerySet
 from django.test import TestCase
 
 from rest_framework import status
-from rest_framework.exceptions import APIException, ParseError, NotFound
+from rest_framework.exceptions import ParseError, NotFound
 
 from apps.api.views import BaseAPIView
 from apps.api.models import CompanyRequestAPI, Key
@@ -14,10 +16,6 @@ from apps.escritos.models import Term, TermContent
 from apps.super_investors.models import Superinvestor, SuperinvestorHistory
 from apps.users.models import User
 from apps.business.models import ProductSubscriber
-
-class MockRequest:
-    auth = None
-    user = None
 
 
 class TestBaseAPIView(TestCase):
@@ -29,9 +27,9 @@ class TestBaseAPIView(TestCase):
         cls.company = DjangoTestingModel.create(Company, ticker="INTC")
         cls.superinvestor = DjangoTestingModel.create(Superinvestor)
         for index in range(15):
-            DjangoTestingModel.create(TermContent, term_related=cls.term)
-            DjangoTestingModel.create(IncomeStatement, company=cls.company)
-            DjangoTestingModel.create(SuperinvestorHistory, superinvestor_related=cls.superinvestor,)
+            DjangoTestingModel.create(TermContent, force_create=True, term_related=cls.term,)
+            DjangoTestingModel.create(IncomeStatement, force_create=True,company=cls.company,)
+            DjangoTestingModel.create(SuperinvestorHistory, force_create=True, superinvestor_related=cls.superinvestor,)
 
 
     def test_get_model_to_track(self):
@@ -72,7 +70,7 @@ class TestBaseAPIView(TestCase):
     def test_save_request(self):
         assert CompanyRequestAPI.objects.all().count() == 0
         api_view = BaseAPIView()
-        request = MockRequest()
+        request = MagicMock(auth = None, user = None)
         request.auth = self.key
         request.user = self.user
         api_view.request = request
@@ -91,7 +89,7 @@ class TestBaseAPIView(TestCase):
         """
         assert CompanyRequestAPI.objects.all().count() == 0
         api_view = BaseAPIView()
-        request = MockRequest()
+        request = MagicMock(auth = None, user = None)
         request.auth = self.key
         request.user = self.user
         api_view.request = request
@@ -131,17 +129,14 @@ class TestBaseAPIView(TestCase):
             subscription=DjangoTestingModel.create(ProductSubscriber)
         )
         api_view = BaseAPIView()
-        request = MockRequest()
-        request.auth = self.key
-        request.user = self.user
-        api_view.request = request
+        api_view.request = MagicMock(auth = self.key, user = self.user)
         queryset = IncomeStatement.objects.all()
         sliced_query = api_view.check_limitation(queryset)
         assert len(sliced_query) == 10
         assert isinstance(sliced_query, QuerySet)
 
         api_view = BaseAPIView()
-        request = MockRequest()
+        request = MagicMock(auth = None, user = None)
         request.auth = sub_key
         request.user = self.user
         api_view.request = request

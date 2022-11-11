@@ -2,19 +2,19 @@ TERM = {
     "id": 1,
     "title": "Precio valor contable (P/B)",
     "slug": "precio-valor-en-libros",
-    "created_at": "03/08/2021 00:41:55",
-    "updated_at": "09/07/2022 21:05:48",
+    "created_at": "2021-08-03 00:41:55",
+    "updated_at": "2022-07-09 21:05:48",
     "total_votes": 0,
     "total_views": 238,
     "times_shared": 0,
-    #   "category_id": "",
+    # "category_id": "",
     #   "tags": "",
-    #   "author_id": 1,
+    # "author_id": 1,
     "resume": (
         "El price to book compara el precio de mercado de una empresa con su valor en libros, que muestra esencialmente"
         " el valor dado por el mercado por cada dólar del patrimonio neto de la compañía."
     ),
-    "published_at": "09/07/2022 21:05:48",
+    "published_at": "2022-07-09 21:05:48",
     "status": 1,
     "thumbnail": "",
     "non_thumbnail_url": "",
@@ -23,8 +23,27 @@ TERM = {
     #   "downvotes": ""
 }
 
+BALANCE_SHEET_TERM = {
+                "id": 2,
+                "title": "El balance sheet",
+                "slug": "el-balance-sheet-en-espanol",
+                "resume": (
+                    "El balance general es el estado financiero que muestra los activos, los pasivos y el patrimonio de"
+                    " los accionistas."
+                ),
+                "total_votes": 0,
+                "total_views": 180,
+                "times_shared": 0,
+"status": 1,
+    "thumbnail": "",
+                # "categoria": None,
+                # "autor": "Lucas Montes",
+"non_thumbnail_url": "https://cdn.wallstreetmojo.com/wp-content/uploads/2019/11/Comparative-Balance-Sheet-Example-1.1-1.png",
+    "in_text_image": True,
+            }
+
 EMPTY_TERM = {
-    "id": 2,
+    "id": 3,
     "title": "term vacío",
     "slug": "empty-term",
     "created_at": "2021-08-03 00:41:55",
@@ -32,11 +51,11 @@ EMPTY_TERM = {
     "total_votes": 0,
     "total_views": 199,
     "times_shared": 0,
-    "category_id": 1,
-    "author_id": 1,
+    # "category_id": 1,
+    # "author_id": 1,
     "resume": "",
     "published_at": "2022-07-10 18:44:11",
-    "status": 1,
+    "status": 2,
     "thumbnail": "",
     "non_thumbnail_url": "",
     "in_text_image": "0",
@@ -48,7 +67,6 @@ EMPTY_TERM = {
 TERM_CONTENT = [
     {
         "id": 2,
-        "term_related_id": 1,
         "title": "¿Qué te cuenta el price to book?",
         "order": 0,
         "content": (
@@ -68,7 +86,6 @@ TERM_CONTENT = [
     },
     {
         "id": 1,
-        "term_related_id": 1,
         "title": "¿Qué es el price to book?",
         "order": 0,
         "content": (

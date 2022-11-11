@@ -1,7 +1,11 @@
-from rest_framework.exceptions import PermissionDenied, APIException
+from rest_framework.exceptions import PermissionDenied, APIException, ParseError, NotFound
 from rest_framework import status
 
-from apps.api.constants import WRONG_API_KEY, API_KEY_REMOVED, API_KEY_NOT_FOUND
+from apps.api import constants
+
+
+class ServerError(APIException):
+    default_detail = constants.SERVER_ERROR
 
 
 class AuthenticationFailed(APIException):
@@ -14,12 +18,24 @@ class AuthenticationFailed(APIException):
 
 
 class KeyRemovedException(PermissionDenied):
-    default_detail = API_KEY_REMOVED
+    default_detail = constants.API_KEY_REMOVED
 
 
 class WrongKeyException(AuthenticationFailed):
-    default_detail = WRONG_API_KEY
+    default_detail = constants.WRONG_API_KEY
 
 
 class KeyNotFoundException(AuthenticationFailed):
-    default_detail = API_KEY_NOT_FOUND
+    default_detail = constants.API_KEY_NOT_FOUND
+
+
+class WrongParameterException(ParseError):
+    default_detail = constants.WRONG_PARAMETER
+
+
+class ParameterNotFoundException(ParseError):
+    default_detail = constants.PARAMETER_NOT_FOUND
+
+
+class QueryNotFoundException(NotFound):
+    default_detail = constants.QUERY_NOT_FOUND
