@@ -135,6 +135,22 @@ class Company(Model, BaseToAllMixin, CompanyExtended, CheckingsMixin):
             and self.cf_statements.filter(is_ttm=True).exists()
         )
 
+    @property
+    def has_as_reported(self):
+        return bool(self.has_as_rep_bs and self.has_as_rep_cf and self.has_as_rep_inc)
+
+    @property
+    def has_as_rep_inc(self) -> bool:
+        self.inc_statements_as_reported.all().exists()
+
+    @property
+    def has_as_rep_bs(self) -> bool:
+        self.balance_sheets_as_reported.all().exists()
+
+    @property
+    def has_as_rep_cf(self) -> bool:
+        self.cf_statements_as_reported.all().exists()
+
 
 class CompanyAsReportedProxy(Company):
     class Meta:

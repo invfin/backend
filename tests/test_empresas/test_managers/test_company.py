@@ -6,6 +6,7 @@ from apps.empresas.models import (
     Company,
     Exchange,
     ExchangeOrganisation,
+    IncomeStatementAsReported,
 )
 from apps.industries_sectors.models import (
     Industry,
@@ -46,6 +47,7 @@ class TestManager(TestCase):
                 "has_launch_fix_update": {"state": "yes", "time": ""},
             },
         )
+        DjangoTestingModel.create(IncomeStatementAsReported, company=cls.apple)
         cls.zinga = DjangoTestingModel.create(
             Company,
             ticker="ZNGA",
@@ -148,3 +150,6 @@ class TestManager(TestCase):
 
     def test_clean_companies_to_update(self):
         assert [self.google] == list(Company.objects.clean_companies_to_update("Estados Unidos"))
+
+    def test_has_as_reported(self):
+        assert self.apple in Company.objects.has_as_reported()

@@ -102,6 +102,7 @@ class CompanyAdmin(admin.ModelAdmin):
         "description_translated",
         "has_logo",
         "has_ttm",
+        "has_as_reported",
     ]
 
     list_filter = [

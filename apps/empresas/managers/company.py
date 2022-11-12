@@ -251,6 +251,16 @@ class CompanyManager(BaseManager):
         queryset = super().filter_checking_not_seen(checking)
         return queryset.existing_companies_by_exchange_importance()
 
+    def has_as_reported(self):
+        return self.annotate(
+            num_inc_statements_as_reported=Count("inc_statements_as_reported"),
+            num_balance_sheets_as_reported=Count("balance_sheets_as_reported"),
+            num_cf_statements_as_reported=Count("cf_statements_as_reported"),
+            total_as_reported=F("num_inc_statements_as_reported")
+            + F("num_balance_sheets_as_reported")
+            + F("num_cf_statements_as_reported"),
+        ).exclude(total_as_reported__lt=1)
+
 
 class CompanyUpdateLogManager(Manager):
     pass

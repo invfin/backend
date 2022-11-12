@@ -14,6 +14,8 @@ from apps.periods import constants
 
 pattern = re.compile(r"(?<!^)(?=[A-Z])")
 
+MAIN_URL = "/home/lucas/Downloads/kaggle-companies-data"
+
 
 def camel_to_snake(word):
     return pattern.sub("_", word).lower().replace(":", "")
@@ -39,7 +41,7 @@ def save_fields(file_name, data):
         json.dump(checks_json, writte_checks_json, indent=2, separators=(",", ": "))
 
 
-def save_lists(data, company, period, start_date, end_date):
+def save_lists(data, company, period, start_date, end_date, file, folder):
     cashflow = data["cf"]
     balance = data["bs"]
     income = data["ic"]
@@ -68,33 +70,20 @@ def save_lists(data, company, period, start_date, end_date):
         # save_fields("info_bs", info_bs)
         # save_fields("info_cf", info_cf)
 
-    IncomeStatementAsReported.objects.create(
+    data_shared_dict = dict(
         company=company,
         period=period,
         date=period.year,
-        financial_data=info_inc_dict,
         reported_currency=currency,
         start_date=start_date,
         end_date=end_date,
+        from_file=file,
+        from_folder=folder,
     )
-    BalanceSheetAsReported.objects.create(
-        company=company,
-        period=period,
-        date=period.year,
-        financial_data=info_bs_dict,
-        reported_currency=currency,
-        start_date=start_date,
-        end_date=end_date,
-    )
-    CashflowStatementAsReported.objects.create(
-        company=company,
-        period=period,
-        date=period.year,
-        financial_data=info_cf_dict,
-        reported_currency=currency,
-        start_date=start_date,
-        end_date=end_date,
-    )
+
+    IncomeStatementAsReported.objects.create(financial_data=info_inc_dict, **data_shared_dict)
+    BalanceSheetAsReported.objects.create(financial_data=info_bs_dict, **data_shared_dict)
+    CashflowStatementAsReported.objects.create(financial_data=info_cf_dict, **data_shared_dict)
 
 
 def get_period(quarter):
@@ -109,8 +98,9 @@ def get_period(quarter):
     return period
 
 
-def save_json_content(json_info_file):
+def save_json_content(file, folder):
     # we open the json and access to the data
+    json_info_file = f"{MAIN_URL}/{folder}/{file}"
     with open(f"{json_info_file}", "r") as f:
         principal_data = json.load(f)
         year = int(principal_data["year"])
@@ -124,17 +114,16 @@ def save_json_content(json_info_file):
         period = get_period(principal_data["quarter"])
         period_obj = Period.objects.get(year=year, period=period)
 
-        save_lists(data, company, period_obj, start_date, end_date)
+        save_lists(data, company, period_obj, start_date, end_date, file, folder)
 
 
 def main():
-    main_url = "/home/lucas/Downloads/kaggle-companies-data"
     first_t = timeit.default_timer()
-    for directorio in tqdm(os.listdir(f"{main_url}")):
-        path = f"{main_url}/{directorio}"
+    for directorio in tqdm(os.listdir(f"{MAIN_URL}")):
+        path = f"{MAIN_URL}/{directorio}"
         with concurrent.futures.ProcessPoolExecutor() as executor:
             for json_f in tqdm(os.listdir(f"{path}")):
-                executor.submit(save_json_content, f"{path}/{json_f}")
+                executor.submit(save_json_content, json_f, directorio)
                 # save_json_content(f"{path}/{json_f}")
     last_t = timeit.default_timer()
     print("it took:", last_t - first_t)

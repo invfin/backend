@@ -4,6 +4,7 @@ from django.db.models import (
     IntegerField,
     DateField,
     Model,
+    CharField,
     JSONField,
 )
 
@@ -18,6 +19,9 @@ class BaseStatement(Model, BaseToAllMixin):
     end_date = DateField(null=True, blank=True)
     period = ForeignKey("periods.Period", on_delete=SET_NULL, null=True, blank=True)
     reported_currency = ForeignKey("currencies.Currency", on_delete=SET_NULL, null=True, blank=True)
+    financial_data = JSONField()
+    from_file = CharField(max_length=250, null=True, default="")
+    from_folder = CharField(max_length=250, null=True, default="")
     objects = BaseStatementManager()
 
     class Meta:
@@ -39,11 +43,9 @@ class IncomeStatementAsReported(BaseStatement):
         blank=True,
         related_name="inc_statements_as_reported",
     )
-    financial_data = JSONField()
 
     class Meta:
         db_table = "assets_income_statement_as_reported"
-        ordering = ["-date", "period"]
 
 
 class BalanceSheetAsReported(BaseStatement):
@@ -54,7 +56,6 @@ class BalanceSheetAsReported(BaseStatement):
         blank=True,
         related_name="balance_sheets_as_reported",
     )
-    financial_data = JSONField()
 
     class Meta:
         db_table = "assets_balance_sheet_as_reported"
@@ -68,7 +69,6 @@ class CashflowStatementAsReported(BaseStatement):
         blank=True,
         related_name="cf_statements_as_reported",
     )
-    financial_data = JSONField()
 
     class Meta:
         db_table = "assets_cashflow_statement_as_reported"
