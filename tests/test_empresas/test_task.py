@@ -103,9 +103,9 @@ class TestCompanyTask(TestCase):
                 retrieve_data = RetrieveCompanyData(self.intc)
                 CompanyTask("key_stats", key).select_task(retrieve_data)
                 if "financials_yfinance_info" == key or "financials_yahooquery_info" == key:
-                    value.assert_called_once()
-                else:
                     assert value.called_with(retrieve_data)
+                else:
+                    value.assert_called_once()
 
     def test_send_ending_message(self):
         checking = "key_stats"

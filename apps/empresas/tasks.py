@@ -39,8 +39,8 @@ class CompanyTask:
             "institutionals": retrieve_data.create_institutionals_yahooquery,
         }
         if ("financials_yfinance_info" or "financials_yahooquery_info") == self.tasks_map_selector:
-            return tasks_map[self.tasks_map_selector]()
-        return tasks_map[self.tasks_map_selector](retrieve_data)
+            return tasks_map[self.tasks_map_selector](retrieve_data)
+        return tasks_map[self.tasks_map_selector]()
 
     def send_ending_message(self):
         return send_mail(
