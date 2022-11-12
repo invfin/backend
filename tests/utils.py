@@ -58,11 +58,13 @@ class BaseAPIViewTestMixin:
     no_api_key_error_message: str = "Introduce tu clave en api_key, si no tienes alguna entra en tu perfil para crearla"
     api_key_removed: str = "Tu clave ya no es válida, crea una nueva desde tu perfil"
     params: Dict[str, Any] = {}
-    wrong_param_error_message: str = "Ha habido un problema con tu búsqueda, asegúrate de haber introducido los parámetros correctamente"
+    wrong_param_error_message: str = (
+        "Ha habido un problema con tu búsqueda, asegúrate de haber introducido los parámetros correctamente"
+    )
     no_param_error_messages: str = "No has introducido ninguna búsqueda"
     not_found_error_messages: str = "Tu búsqueda no ha devuelto ningún resultado"
     server_problem_error_message: str = "Lo siento hemos tenido un problema, reinténtalo en un momento"
-    actual_api: bool = True # To remove once API for excel is actual url
+    actual_api: bool = True  # To remove once API for excel is actual url
 
     @classmethod
     def setUpTestData(cls) -> None:
@@ -121,9 +123,27 @@ class BaseAPIViewTestMixin:
 
     def test_no_auth(self):
         for endpoint, endpoint_name, status_code, error_message, error_code in [
-            (self.endpoint_removed_key, "Key removed endpoint", status.HTTP_403_FORBIDDEN, self.api_key_removed, "permission_denied",),
-            (self.endpoint_wrong_key, "Wrong key endpoint", status.HTTP_401_UNAUTHORIZED, self.wrong_key_error_message, "authentication_failed",),
-            (self.endpoint_no_key, "No key endpoint", status.HTTP_401_UNAUTHORIZED, self.no_api_key_error_message, "authentication_failed",),
+            (
+                self.endpoint_removed_key,
+                "Key removed endpoint",
+                status.HTTP_403_FORBIDDEN,
+                self.api_key_removed,
+                "permission_denied",
+            ),
+            (
+                self.endpoint_wrong_key,
+                "Wrong key endpoint",
+                status.HTTP_401_UNAUTHORIZED,
+                self.wrong_key_error_message,
+                "authentication_failed",
+            ),
+            (
+                self.endpoint_no_key,
+                "No key endpoint",
+                status.HTTP_401_UNAUTHORIZED,
+                self.no_api_key_error_message,
+                "authentication_failed",
+            ),
         ]:
             with self.subTest(endpoint_name):
                 if self.params:
@@ -149,7 +169,6 @@ class BaseAPIViewTestMixin:
     def test_no_params(self):
         if self.params:
             response = self.client.get(self.endpoint_key)
-            print(response.data)
             assert response.status_code == status.HTTP_400_BAD_REQUEST
             assert response.data == {"detail": ErrorDetail(string=self.no_param_error_messages, code="parse_error")}
 
@@ -181,7 +200,9 @@ class BaseAPIViewTestMixin:
                     params = urllib.parse.urlencode(params)
                     response = self.client.get(f"{self.endpoint_key}&{params}")
                     assert response.status_code == status.HTTP_404_NOT_FOUND
-                    assert response.data == {"detail": ErrorDetail(string=self.not_found_error_messages, code="not_found")}
+                    assert response.data == {
+                        "detail": ErrorDetail(string=self.not_found_error_messages, code="not_found")
+                    }
 
     def test_success(self):
         response = self.client.get(self.full_endpoint)

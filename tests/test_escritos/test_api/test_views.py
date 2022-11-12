@@ -126,7 +126,7 @@ class TestTermAPIView(BaseAPIViewTestMixin, APITestCase):
                 {
                     "id": 2,
                     "titulo": "¿Qué te cuenta el price to book?",
-                    "orden": "0",
+                    "orden": "1",
                     "contenido": (
                         "En otras palabras, si una empresa liquidase todos sus activos y pagara toda su deuda, el valor"
                         " restante ser&iacute;a el valor del libro de la compa&ntilde;&iacute;a. La relaci&oacute;n"
@@ -194,7 +194,7 @@ class TestTermAPIView(BaseAPIViewTestMixin, APITestCase):
                     {
                         "id": 2,
                         "titulo": "¿Qué te cuenta el price to book?",
-                        "orden": "0",
+                        "orden": "1",
                         "contenido": (
                             "En otras palabras, si una empresa liquidase todos sus activos y pagara toda su deuda, el valor"
                             " restante ser&iacute;a el valor del libro de la compa&ntilde;&iacute;a. La relaci&oacute;n"

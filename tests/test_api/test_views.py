@@ -1,10 +1,11 @@
+from unittest import skip
 from unittest.mock import MagicMock, patch
 
 from bfet import DjangoTestingModel
 
 from django.db.models import QuerySet
 from django.test import TestCase
-from django.test.client import RequestFactory
+from rest_framework.test import APIClient
 
 from rest_framework import status
 from rest_framework.exceptions import ParseError, NotFound
@@ -17,17 +18,29 @@ from apps.escritos.models import Term, TermContent
 from apps.super_investors.models import Superinvestor, SuperinvestorHistory
 from apps.users.models import User
 from apps.business.models import ProductSubscriber
+from apps.api.exceptions import WrongParameterException, ParameterNotSetException, QueryNotFoundException, ServerError
 
 
+class MockRequest(MagicMock):
+    def build_absolute_uri(self):
+        return "/company-information/excel-api/income"
+
+
+@skip("need refactors")
 class TestBaseAPIView(TestCase):
     @classmethod
     def setUpTestData(cls) -> None:
         cls.user = DjangoTestingModel.create(User)
-        cls.key = DjangoTestingModel.create(Key, user=cls.user)
+        cls.key = DjangoTestingModel.create(
+            Key,
+            user=cls.user,
+            in_use=True,
+            removed=None,
+        )
         cls.term = DjangoTestingModel.create(Term)
         cls.company = DjangoTestingModel.create(Company, ticker="INTC")
         cls.superinvestor = DjangoTestingModel.create(Superinvestor)
-        cls.request = MagicMock(auth=cls.key, user=cls.user)
+        cls.request = MockRequest(auth=cls.key, user=cls.user)
         for index in range(15):
             DjangoTestingModel.create(
                 TermContent,
@@ -81,11 +94,7 @@ class TestBaseAPIView(TestCase):
         assert CompanyRequestAPI.objects.all().count() == 0
         mock_get_client_ip.return_value = "123.23.234.3"
         api_view = BaseAPIView()
-        response = self.client.get("/company-information/excel-api/income")
-        request = response.wsgi_request
-        request.user = self.user
-        request.auth = self.key
-        api_view.request = request
+        api_view.request = self.request
         api_view.url_parameters = ["ticker"]
         api_view.model_to_track = "Company"
         api_view.save_request(IncomeStatement.objects.all())
@@ -153,10 +162,22 @@ class TestBaseAPIView(TestCase):
         assert api_view_model.get_model_or_queryset() == (IncomeStatement, False)
         assert api_view_neither.get_model_or_queryset() == (IncomeStatement, False)
 
-    def test_get_query_params(self):
-        request = MagicMock()
-        response = BaseAPIView().get_query_params()
-        assert {"": ""} == response
+    @patch("apps.api.views.BaseAPIView.find_query_value")
+    def test_get_query_params(self, mock_find_query_value):
+        view = BaseAPIView()
+        response = APIClient().get("/company-information/excel-api/income", {"api_key": "horror"})
+        print(response)
+        print(response.GET)
+        view.request = response.GET
+        with self.assertRaises(ParameterNotSetException):
+            view.get_query_params()
+
+        view = BaseAPIView()
+        request = self.request
+        request.query_params.key = "value"
+        view.request = request
+        view.get_query_params()
+        mock_find_query_value.return_value = {"key", "value"}
 
     def test_generate_lookup(self):
         assert BaseAPIView().generate_lookup() == {}

@@ -1,25 +1,24 @@
-from typing import Tuple, Type, List, Union, Optional, Callable, Dict, Any
+from typing import Any, Callable, Dict, List, Optional, Tuple, Type, Union
 
 from django.apps import apps
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import redirect
 from django.db.models import QuerySet
+from django.shortcuts import redirect
 
 from rest_framework import parsers, status
 from rest_framework.authentication import BasicAuthentication, SessionAuthentication
 from rest_framework.compat import coreapi, coreschema
 from rest_framework.response import Response
-from rest_framework.schemas import ManualSchema
-from rest_framework.schemas import coreapi as coreapi_schema
+from rest_framework.schemas import ManualSchema, coreapi as coreapi_schema
 from rest_framework.views import APIView
 
+from apps.api.exceptions import ParameterNotSetException, QueryNotFoundException, ServerError, WrongParameterException
+from apps.api.models import EndpointsCategory, Key, ReasonKeyRequested
+from apps.api.serializers import AuthKeySerializer
 from apps.seo.outils.visiteur_meta import SeoInformation
 from apps.seo.views import SEOListView
 
-from apps.api.models import EndpointsCategory, Key, ReasonKeyRequested
-from apps.api.serializers import AuthKeySerializer
-from apps.api.exceptions import WrongParameterException, ParameterNotSetException, QueryNotFoundException, ServerError
 
 class ObtainAuthKey(APIView):
     throttle_classes = []
@@ -262,15 +261,12 @@ class BaseAPIView(APIView):
 
         return queryset, many
 
-    def generate_queryset(
-        self
-    ) -> Tuple[Union[QuerySet, List], bool]:
+    def generate_queryset(self) -> Tuple[Union[QuerySet, List], bool]:
         lookup_dict = self.generate_lookup()
         queryset, many = self.prepare_queryset(lookup_dict)
         if self.limited:
             queryset = self.check_limitation(queryset)
         return queryset, many
-
 
     def get_query_params(self) -> Tuple[str, str]:
         """
@@ -314,9 +310,7 @@ class BaseAPIView(APIView):
                 return url_query_param, url_query_value
         raise WrongParameterException()
 
-    def generate_lookup(
-        self
-    ) -> Dict:
+    def generate_lookup(self) -> Dict:
         """
         Generates a dict with the key, value used to perform a filter in the queryset
         Returns
@@ -338,9 +332,7 @@ class BaseAPIView(APIView):
         queryset, many = self.generate_queryset()
         serializer = self.serializer_class(queryset, many=many)
         self.save_request(queryset)
-        return self.final_response(
-            serializer
-        )
+        return self.final_response(serializer)
 
 
 class APIDocumentation(SEOListView):

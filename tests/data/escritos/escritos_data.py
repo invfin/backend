@@ -68,7 +68,7 @@ TERM_CONTENT = [
     {
         "id": 2,
         "title": "¿Qué te cuenta el price to book?",
-        "order": 0,
+        "order": 1,
         "content": (
             "<p>En otras palabras, si una empresa liquidase todos sus activos y pagara toda su deuda, el valor restante"
             " ser&iacute;a el valor del libro de la compa&ntilde;&iacute;a. La relaci&oacute;n precio valor contable"

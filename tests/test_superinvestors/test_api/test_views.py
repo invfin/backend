@@ -46,7 +46,7 @@ class TestAllSuperinvestorsAPIView(BaseAPIViewTestMixin, APITestCase):
         ]
         assert json.loads(json.dumps(response.data)) == expected_data
 
-
+@skip("Not ready")
 class TestSuperinvestorActivityAPIView(BaseAPIViewTestMixin, APITestCase):
     path_name = "api:superinvestors_lista_movimientos"
     url_path = "/lista-movimientos/"
@@ -57,13 +57,12 @@ class TestSuperinvestorActivityAPIView(BaseAPIViewTestMixin, APITestCase):
         super().setUpTestData()
         DjangoTestingModel.create(Superinvestor, **SINGLE_SUPERINVESTOR)
 
-    @skip("Not ready")
     def test_success_response(self):
         response = self.client.get(self.full_endpoint, format="json")
         expected_data = []
         assert json.loads(json.dumps(response.data))[0] == expected_data
 
-
+@skip("Not ready")
 class TestSuperinvestorHistoryAPIView(BaseAPIViewTestMixin, APITestCase):
     path_name = "api:superinvestors_lista_historial"
     url_path = "/lista-historial/"
@@ -73,7 +72,6 @@ class TestSuperinvestorHistoryAPIView(BaseAPIViewTestMixin, APITestCase):
     def setUpTestData(cls) -> None:
         super().setUpTestData()
 
-    @skip("Not ready")
     def test_success_response(self):
         response = self.client.get(self.full_endpoint, format="json")
         expected_data = []
