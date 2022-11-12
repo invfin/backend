@@ -70,7 +70,7 @@ class BaseInvestorProfile(Model):
 
 
 class InvestorProfile(BaseInvestorProfile):
-    user = OneToOneField(User, on_delete=SET_NULL, null=True, related_name='user_investor_profile')
+    user = OneToOneField(User, on_delete=SET_NULL, null=True, related_name='investor_profile')
     updated_at = DateTimeField(auto_now_add=True)
 
     class Meta:

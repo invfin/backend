@@ -16,7 +16,7 @@ from apps.empresas.models import (
 )
 from apps.empresas.parse.yahoo_query import YahooQueryInfo
 
-
+# TODO patch the requests and responses
 # class TestYahooQueryInfo(TestCase):
 #     @classmethod
 #     def setUpTestData(cls) -> None:

@@ -1,3 +1,5 @@
+from typing import Optional
+
 from django.conf import settings
 
 PROTOCOL = settings.PROTOCOL
@@ -23,6 +25,7 @@ class UserExtended:
 
     @property
     def has_investor_profile(self):
+        # TODO use a backward lookup
         from apps.roboadvisor.models import InvestorProfile
 
         return InvestorProfile.objects.filter(user=self).exists()
@@ -42,13 +45,8 @@ class UserExtended:
         return full_name
 
     @property
-    def user_api_key(self):
-        from apps.api.models import Key
-
-        key = Key.objects.filter(user=self, in_use=True)
-        if key.exists() is True:
-            return key.first()
-        return False
+    def user_api_key(self) -> Optional[type]:
+        return self.api_key.filter(user=self, in_use=True).first()
 
     @property
     def questions_asked(self):
@@ -76,28 +74,26 @@ class UserExtended:
 
     @property
     def number_of_contributions(self):
+        # TODO make it in a single query
         return self.number_of_questions + self.number_of_answers
 
     @property
     def blogs_written(self):
         if self.is_writter:
-            return self.publicblog_set.filter(status=1)
+            return self.publicblog_set.filter(status=1) # TODO use a constants
         return []
 
     @property
     def fav_stocks(self):
-        fav_stocks = self.favorites_companies.stock.all()
-        return fav_stocks
+        return self.favorites_companies.stock.all()
 
     @property
     def fav_terms(self):
-        fav_terms = self.favorites_terms.term.all()
-        return fav_terms
+        return self.favorites_terms.term.all()
 
     @property
     def fav_superinvestors(self):
-        fav_superinvestors = self.favorites_superinvestors.superinvestor.all()
-        return fav_superinvestors
+        return self.favorites_superinvestors.superinvestor.all()
 
     @property
     def fav_writters(self):
@@ -108,11 +104,13 @@ class UserExtended:
             return [writter.user for writter in fav_writters]
         return []
 
-    def update_credits(self, number_of_credits):
+    def update_credits(self, number_of_credits: int) -> None:
+        # TODO move to an outils
         self.user_profile.creditos += number_of_credits
         self.user_profile.save(update_fields=["creditos"])
 
     def update_followers(self, user, action):
+        # TODO move to an outiils
         from apps.public_blog.models import FollowingHistorial
 
         if self.is_writter:
@@ -126,18 +124,20 @@ class UserExtended:
                     return "already follower"
                 following_historial.started_following = True
                 writter_followers.followers.add(user)
-                # enviar email para avisar que tiene un nuevo seguidor
+                # TODO enviar email para avisar que tiene un nuevo seguidor
 
             following_historial.save(update_fields=["stop_following", "started_following"])
             writter_followers.save()
 
             return True
 
-    def update_reputation(self, points):
+    def update_reputation(self, points: int) -> None:
+        # TODO move to an outils
         self.user_profile.reputation_score += points
         self.user_profile.save(update_fields=["reputation_score"])
 
     def create_meta_profile(self, request):
+        # TODO move to outils
         from apps.seo.outils.visiteur_meta import SeoInformation
 
         from .models import MetaProfileInfo
@@ -165,6 +165,7 @@ class UserExtended:
         return True
 
     def create_profile(self, request):
+        # TODO move to an outils
         from .models import Profile
 
         user_profile = Profile.objects.create(user=self)
@@ -176,6 +177,7 @@ class UserExtended:
         return True
 
     def add_fav_lists(self):
+        # TODO move to an outils
         from apps.escritos.models import FavoritesTermsList
         from apps.screener.models import FavoritesStocksList
 
@@ -186,6 +188,7 @@ class UserExtended:
         """
         TODO
         Switch print to loggin
+        move to outils
         """
         from allauth.account.utils import sync_user_email_addresses
 

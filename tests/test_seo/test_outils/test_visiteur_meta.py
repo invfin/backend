@@ -64,7 +64,7 @@ class TestSeoInformation(TestCase):
         expected_result = {
             "http_user_agent": None,
             "ip": "150.172.238.178",
-            **expected_location,
+            **self.expected_location,
 
         }
         assert expected_result == meta_information

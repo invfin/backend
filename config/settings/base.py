@@ -205,8 +205,8 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.common.BrokenLinkEmailsMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "general.middleware.SubdomainURLRoutingMiddleware",
-    "seo.middleware.VisiteurMiddleware",
+    "apps.general.middleware.SubdomainURLRoutingMiddleware",
+    "apps.seo.middleware.VisiteurMiddleware",
 ]
 
 # SECURITY
@@ -305,14 +305,14 @@ EMAIL_BACKEND = env(
 # https://docs.djangoproject.com/en/dev/ref/settings/#email-timeout
 EMAIL_TIMEOUT = 5
 
-EMAIL_CONTACT = env("EMAIL_CONTACT", default=f"EMAIL_CONTACT@{CURRENT_DOMAIN}")
-EMAIL_SUBJECT_PREFIX = env("EMAIL_SUBJECT_PREFIX", default=f"EMAIL_SUBJECT_PREFIX@{CURRENT_DOMAIN}")
-DEFAULT_EMAIL = env("DEFAULT_EMAIL", default=f"DEFAULT_EMAIL@{CURRENT_DOMAIN}")
-EMAIL_NEWSLETTER = env("EMAIL_NEWSLETTER", default=f"EMAIL_NEWSLETTER@{CURRENT_DOMAIN}")
-MAIN_EMAIL = env("MAIN_EMAIL", default=f"MAIN_EMAIL@{CURRENT_DOMAIN}")
-EMAIL_ACCOUNTS = env("EMAIL_ACCOUNTS", default=f"EMAIL_ACCOUNTS@{CURRENT_DOMAIN}")
-EMAIL_DEFAULT = env("EMAIL_DEFAULT", default=f"EMAIL_DEFAULT@{CURRENT_DOMAIN}")
-EMAIL_SUGGESTIONS = env("EMAIL_SUGGESTIONS", default=f"EMAIL_SUGGESTIONS@{CURRENT_DOMAIN}")
+EMAIL_CONTACT = env("EMAIL_CONTACT", default=f"EMAIL_CONTACT@example.com")
+EMAIL_SUBJECT_PREFIX = env("EMAIL_SUBJECT_PREFIX", default=f"EMAIL_SUBJECT_PREFIX@example.com")
+DEFAULT_EMAIL = env("DEFAULT_EMAIL", default=f"DEFAULT_EMAIL@example.com")
+EMAIL_NEWSLETTER = env("EMAIL_NEWSLETTER", default=f"EMAIL_NEWSLETTER@example.com")
+MAIN_EMAIL = env("MAIN_EMAIL", default=f"MAIN_EMAIL@example.com")
+EMAIL_ACCOUNTS = env("EMAIL_ACCOUNTS", default=f"EMAIL_ACCOUNTS@example.com")
+EMAIL_DEFAULT = env("EMAIL_DEFAULT", default=f"EMAIL_DEFAULT@example.com")
+EMAIL_SUGGESTIONS = env("EMAIL_SUGGESTIONS", default=f"EMAIL_SUGGESTIONS@example.com")
 
 # ADMIN
 # ------------------------------------------------------------------------------
@@ -441,7 +441,6 @@ MESSAGE_TAGS = {
 
 # GEOIP
 # ------------------------------------------------------------------------------
-# TODO move it into the test folder
 GEOIP_PATH = str(ROOT_DIR / "geoip")
 
 # Financial data KEYS

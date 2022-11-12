@@ -119,8 +119,16 @@ class BaseTestContentCreation:
             }
 
     def test_create_default_content_filter(self):
-        assert ContentCreation().create_default_content_filter() == {"for_content__in": [constants.ALL]}
-
-        assert ContentCreation(constants.PLATFORM_WEB).create_default_content_filter() == {
-            "for_content__in": [constants.ALL, constants.WEB]
-        }
+        with self.subTest("content All"):
+            content_creator_all = ContentCreation
+            content_creator_all.model_class = self.model_class
+            content_creator_all.for_content = []
+            assert content_creator_all().create_default_title_filter() == {
+                "for_content__in": [constants.ALL]}
+        with self.subTest("content with Web"):
+            content_creator_web = ContentCreation
+            content_creator_web.model_class = self.model_class
+            content_creator_web.for_content = []
+            assert content_creator_web(constants.PLATFORM_WEB).create_default_title_filter() == {
+                "for_content__in": [constants.ALL, constants.WEB]
+            }
