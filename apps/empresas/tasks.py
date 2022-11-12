@@ -38,7 +38,10 @@ class CompanyTask:
             "key_stats": retrieve_data.create_key_stats_yahooquery,
             "institutionals": retrieve_data.create_institutionals_yahooquery,
         }
-        if ("financials_yfinance_info" or "financials_yahooquery_info") == self.tasks_map_selector:
+        if (
+            self.tasks_map_selector == "financials_yfinance_info"
+            or self.tasks_map_selector == "financials_yahooquery_info"
+        ):
             return tasks_map[self.tasks_map_selector](retrieve_data)
         return tasks_map[self.tasks_map_selector]()
 
