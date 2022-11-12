@@ -8,7 +8,7 @@ from apps.empresas.models import BalanceSheetFinprep, IncomeStatementFinprep, Ca
 from apps.empresas.parse.finprep import FinprepInfo
 from apps.empresas.parse.finprep.normalize_data import NormalizeFinprep
 from apps.empresas.parse.finprep.parse_data import ParseFinprep
-from tests.data.empresas.finprep import finprep_data as data
+from tests.data.empresas.finprep import finprep_data
 
 
 parse_vcr = vcr.VCR(

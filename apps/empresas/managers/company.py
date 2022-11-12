@@ -15,6 +15,9 @@ class CompanyQuerySet(BaseQuerySet):
     def complete_companies(self):
         return self.clean_companies().filter(description_translated=True)
 
+    def existing_companies_by_exchange_importance(self):
+        return self.existing_companies().order_by("exchange__main_org__order")
+
 
 class CompanyManager(BaseManager):
     def get_queryset(self):
@@ -238,17 +241,15 @@ class CompanyManager(BaseManager):
 
     def filter_checking(self, checking: str, has_it: bool) -> QuerySet:
         return (
-            self.filter_checking(checking, has_it)
+            super()
+            .filter_checking(checking, has_it)
             .exclude(name__contains="Need-parsing")
             .order_by("exchange__main_org__order")
         )
 
     def filter_checking_not_seen(self, checking: str) -> QuerySet:
-        return (
-            self.filter_checking_not_seen(checking)
-            .exclude(name__contains="Need-parsing")
-            .order_by("exchange__main_org__order")
-        )
+        queryset = super().filter_checking_not_seen(checking)
+        return queryset.existing_companies_by_exchange_importance()
 
 
 class CompanyUpdateLogManager(Manager):

@@ -1,5 +1,7 @@
 import json
 
+from unittest import skip
+
 from bfet import DjangoTestingModel
 
 from rest_framework.test import APITestCase
@@ -55,6 +57,7 @@ class TestSuperinvestorActivityAPIView(BaseAPIViewTestMixin, APITestCase):
         super().setUpTestData()
         DjangoTestingModel.create(Superinvestor, **SINGLE_SUPERINVESTOR)
 
+    @skip("Not ready")
     def test_success_response(self):
         response = self.client.get(self.full_endpoint, format="json")
         expected_data = []
@@ -70,6 +73,7 @@ class TestSuperinvestorHistoryAPIView(BaseAPIViewTestMixin, APITestCase):
     def setUpTestData(cls) -> None:
         super().setUpTestData()
 
+    @skip("Not ready")
     def test_success_response(self):
         response = self.client.get(self.full_endpoint, format="json")
         expected_data = []

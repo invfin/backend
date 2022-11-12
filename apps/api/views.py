@@ -184,17 +184,14 @@ class BaseAPIView(APIView):
         return search
 
     def save_request(self, queryset: Union[Type, QuerySet, List]) -> None:
-        path = self.request.build_absolute_uri()
-        ip = SeoInformation.get_client_ip(self.request)
         requested_model = self.get_model_to_track()
         if requested_model:
-            search = self.get_object_searched(queryset)
             obj_data = dict(
-                ip=ip,
+                ip=SeoInformation.get_client_ip(self.request),
                 key=self.request.auth,
                 user=self.request.user,
-                path=path,
-                search=search,
+                path=self.request.build_absolute_uri(),
+                search=self.get_object_searched(queryset),
             )
             if hasattr(requested_model, "is_excel"):
                 obj_data.update({"is_excel": self.is_excel})

@@ -8,7 +8,7 @@ from django.test.utils import CaptureQueriesContext
 
 from rest_framework.test import APITestCase
 
-from apps.general import constants as general_constants
+from apps.periods import constants
 from tests.utils import BaseAPIViewTestMixin
 from apps.empresas.models import (
     Company,
@@ -23,6 +23,7 @@ class TestExcelAPIIncome(BaseAPIViewTestMixin, APITestCase):
     path_name = "empresas:ExcelAPIIncome"
     url_path = "/company-information/excel-api/income"
     params = {"ticker": "INTC"}
+    actual_api = False
 
     @classmethod
     def setUpTestData(cls):
@@ -38,7 +39,7 @@ class TestExcelAPIIncome(BaseAPIViewTestMixin, APITestCase):
             has_logo=True,
             has_error=False,
         )
-        cls.period_for_year = DjangoTestingModel.create(Period, year=2022, period=general_constants.PERIOD_FOR_YEAR)
+        cls.period_for_year = DjangoTestingModel.create(Period, year=2022, period=constants.PERIOD_FOR_YEAR)
         cls.yearly_income_statement = DjangoTestingModel.create(
             IncomeStatement, is_ttm=False, company=cls.clean_company, period=cls.period_for_year
         )
@@ -81,6 +82,7 @@ class TestExcelAPIBalance(BaseAPIViewTestMixin, APITestCase):
     path_name = "empresas:ExcelAPIBalance"
     url_path = "/company-information/excel-api/balance"
     params = {"ticker": "INTC"}
+    actual_api = False
 
     @classmethod
     def setUpTestData(cls):
@@ -96,7 +98,7 @@ class TestExcelAPIBalance(BaseAPIViewTestMixin, APITestCase):
             has_logo=True,
             has_error=False,
         )
-        cls.period_for_year = DjangoTestingModel.create(Period, year=2022, period=general_constants.PERIOD_FOR_YEAR)
+        cls.period_for_year = DjangoTestingModel.create(Period, year=2022, period=constants.PERIOD_FOR_YEAR)
         cls.yearly_balance_sheet = DjangoTestingModel.create(
             BalanceSheet, is_ttm=False, company=cls.clean_company, period=cls.period_for_year
         )
@@ -153,6 +155,7 @@ class TestExcelAPICashflow(BaseAPIViewTestMixin, APITestCase):
     path_name = "empresas:ExcelAPICashflow"
     url_path = "/company-information/excel-api/cashflow"
     params = {"ticker": "INTC"}
+    actual_api = False
 
     @classmethod
     def setUpTestData(cls):
@@ -168,7 +171,7 @@ class TestExcelAPICashflow(BaseAPIViewTestMixin, APITestCase):
             has_logo=True,
             has_error=False,
         )
-        cls.period_for_year = DjangoTestingModel.create(Period, year=2022, period=general_constants.PERIOD_FOR_YEAR)
+        cls.period_for_year = DjangoTestingModel.create(Period, year=2022, period=constants.PERIOD_FOR_YEAR)
         cls.yearly_cashflow_statement = DjangoTestingModel.create(
             CashflowStatement, is_ttm=False, company=cls.clean_company, period=cls.period_for_year
         )

@@ -62,6 +62,7 @@ class BaseAPIViewTestMixin:
     no_param_error_messages: str = "No has introducido ninguna búsqueda"
     not_found_error_messages: str = "Tu búsqueda no ha devuelto ningún resultado"
     server_problem_error_message: str = "Lo siento hemos tenido un problema, reinténtalo en un momento"
+    actual_api: bool = True # To remove once API for excel is actual url
 
     @classmethod
     def setUpTestData(cls) -> None:
@@ -113,7 +114,10 @@ class BaseAPIViewTestMixin:
                 )  # status.HTTP_405_METHOD_NOT_ALLOWED
 
     def test_url(self):
-        assert resolve_url(self.path_name) == f"/{self.api_prefix}/{self.api_version}{self.url_path}"
+        if self.actual_api:
+            assert resolve_url(self.path_name) == f"/{self.api_prefix}/{self.api_version}{self.url_path}"
+        else:
+            assert resolve_url(self.path_name) == f"{self.url_path}"
 
     def test_no_auth(self):
         for endpoint, endpoint_name, status_code, error_message, error_code in [
