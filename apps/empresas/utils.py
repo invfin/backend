@@ -1,5 +1,3 @@
-import json
-
 from django.utils import timezone
 
 import numpy as np
