@@ -131,3 +131,6 @@ class CompanyAdmin(admin.ModelAdmin):
         ("top-institutionals", "Top Institutions"),
         ("logs", "Logs"),
     ]
+
+    def get_queryset(self, request):
+        return super().get_queryset(request).prefetch_related("company_log_historial", "top_institutional_ownership")

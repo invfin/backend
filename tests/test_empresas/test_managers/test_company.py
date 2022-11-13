@@ -152,4 +152,6 @@ class TestManager(TestCase):
         assert [self.google] == list(Company.objects.clean_companies_to_update("Estados Unidos"))
 
     def test_has_as_reported(self):
+        print(Company.objects.has_as_reported())
         assert self.apple in Company.objects.has_as_reported()
+        assert self.zinga not in Company.objects.has_as_reported()

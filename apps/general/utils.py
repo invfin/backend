@@ -3,8 +3,8 @@ import csv
 import functools
 import json
 import os
-import re
 import random
+import re
 from urllib.parse import urlunparse
 
 from django.conf import settings
