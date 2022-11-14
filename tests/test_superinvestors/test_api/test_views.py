@@ -59,6 +59,8 @@ class TestSuperinvestorActivityAPIView(BaseAPIViewTestMixin, APITestCase):
 
     def test_success_response(self):
         response = self.client.get(self.full_endpoint, format="json")
+        print(response)
+        print(response.data)
         expected_data = []
         assert json.loads(json.dumps(response.data))[0] == expected_data
 

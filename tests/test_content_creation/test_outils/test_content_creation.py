@@ -1,10 +1,7 @@
-from typing import Type, Dict, List, Union, Optional
-
 from bfet import DjangoTestingModel, DataCreator
 
 from django.test import TestCase
 
-from apps.escritos.models import Term
 from apps.content_creation.outils.content_creator import ContentCreation
 from apps.socialmedias import constants as social_constants
 from apps.socialmedias.models import TermSharedHistorial
