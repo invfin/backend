@@ -9,6 +9,7 @@ from django.db.models import (
 )
 
 
+from apps.empresas.extensions.as_reported import IncomeStatementAsReportedExtended
 from apps.empresas.managers import BaseStatementManager
 from apps.general.mixins import BaseToAllMixin
 
@@ -20,6 +21,7 @@ class BaseStatement(Model, BaseToAllMixin):
     period = ForeignKey("periods.Period", on_delete=SET_NULL, null=True, blank=True)
     reported_currency = ForeignKey("currencies.Currency", on_delete=SET_NULL, null=True, blank=True)
     financial_data = JSONField()
+    mapped_fields = JSONField(default=dict)
     from_file = CharField(max_length=250, null=True, default="")
     from_folder = CharField(max_length=250, null=True, default="")
     objects = BaseStatementManager()
@@ -35,7 +37,7 @@ class BaseStatement(Model, BaseToAllMixin):
         return f"{self.company} - {period}"
 
 
-class IncomeStatementAsReported(BaseStatement):
+class IncomeStatementAsReported(BaseStatement, IncomeStatementAsReportedExtended):
     company = ForeignKey(
         "empresas.Company",
         on_delete=SET_NULL,
