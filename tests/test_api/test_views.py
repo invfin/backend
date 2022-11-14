@@ -1,20 +1,19 @@
-from unittest import skip
 from unittest.mock import MagicMock, patch
 
 from bfet import DjangoTestingModel
 
 from django.db.models import QuerySet
-from django.test import TestCase
-from rest_framework.test import APIClient
+from rest_framework.test import APITestCase
 
 from rest_framework import status
-from rest_framework.exceptions import ParseError, NotFound
+from rest_framework.exceptions import ParseError
 
 from apps.api.views import BaseAPIView
 from apps.api.models import CompanyRequestAPI, Key
-from apps.empresas.api.serializers import IncomeStatementSerializer
+from apps.empresas.api.serializers import IncomeStatementSerializer, BasicCompanySerializer
 from apps.empresas.models import Company, IncomeStatement
 from apps.escritos.models import Term, TermContent
+from apps.escritos.api.serializers import AllTermsSerializer
 from apps.super_investors.models import Superinvestor, SuperinvestorHistory
 from apps.users.models import User
 from apps.business.models import ProductSubscriber
@@ -26,19 +25,35 @@ class MockRequest(MagicMock):
         return "/company-information/excel-api/income"
 
 
-@skip("need refactors")
-class TestBaseAPIView(TestCase):
+class TestBaseAPIView(APITestCase):
     @classmethod
     def setUpTestData(cls) -> None:
-        cls.user = DjangoTestingModel.create(User)
+        cls.user = DjangoTestingModel.create(User, first_name="Term", last_name="Autor")
         cls.key = DjangoTestingModel.create(
             Key,
             user=cls.user,
             in_use=True,
             removed=None,
         )
-        cls.term = DjangoTestingModel.create(Term)
-        cls.company = DjangoTestingModel.create(Company, ticker="INTC")
+        cls.term = DjangoTestingModel.create(
+            Term,
+            id=1,
+            title="Term title",
+            slug="term-title",
+            resume="Term resume",
+            total_votes=4,
+            total_views=100,
+            times_shared=4,
+            category=None,
+            author=cls.user,
+            in_text_image=False,
+            non_thumbnail_url=None
+        )
+        cls.company = DjangoTestingModel.create(
+            Company,
+            ticker="INTC",
+            name="Intel"
+        )
         cls.superinvestor = DjangoTestingModel.create(Superinvestor)
         cls.request = MockRequest(auth=cls.key, user=cls.user)
         for index in range(15):
@@ -93,8 +108,12 @@ class TestBaseAPIView(TestCase):
     def test_save_request(self, mock_get_client_ip):
         assert CompanyRequestAPI.objects.all().count() == 0
         mock_get_client_ip.return_value = "123.23.234.3"
+        response = self.client.get(
+            "/company-information/excel-api/income",
+            {"api_key": self.key.key},
+        )
         api_view = BaseAPIView()
-        api_view.request = self.request
+        api_view.request = response.renderer_context["request"]
         api_view.url_parameters = ["ticker"]
         api_view.model_to_track = "Company"
         api_view.save_request(IncomeStatement.objects.all())
@@ -104,32 +123,29 @@ class TestBaseAPIView(TestCase):
         """
         TODO test when status is not success
         """
-        assert CompanyRequestAPI.objects.all().count() == 0
-        api_view = BaseAPIView()
-        api_view.request = self.request
-        api_view.url_parameters = ["ticker"]
-        api_view.model_to_track = "Company"
-        queryset = IncomeStatement.objects.all()
         # with self.assertRaises(APIException):
         #     final_response_error = api_view.final_response(
         #         IncomeStatementSerializer(queryset, many=True),
-        #         queryset,
-        #         "/company-information/excel-api/income",
-        #         "123.23.234.3",
         #     )
         #     assert final_response_error.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
-        final_response = api_view.final_response(IncomeStatementSerializer(queryset, many=True))
-        assert CompanyRequestAPI.objects.all().count() == 1
+        serializer = AllTermsSerializer(Term.objects.all(), many=True)
+        final_response = BaseAPIView().final_response(serializer)
+        assert serializer.data == final_response.data
         assert final_response.status_code == status.HTTP_200_OK
 
     def test_find_query_value(self):
         api_view = BaseAPIView()
         api_view.url_parameters = ["ticker"]
         assert api_view.find_query_value({"ticker": "INTC"}) == ("ticker", "INTC")
-        assert api_view.find_query_value({"not set": "INTC"}) == (None, None)
-        assert api_view.find_query_value({"not set": ""}) == (None, None)
-        assert BaseAPIView().find_query_value({}) == (None, None)
-        assert BaseAPIView().find_query_value({"not set": ""}) == (None, None)
+        with self.subTest("Errors"):
+            with self.assertRaises(WrongParameterException):
+                assert api_view.find_query_value({"not set": "INTC"})
+            with self.assertRaises(WrongParameterException):
+                assert api_view.find_query_value({"ticker": ""})
+            with self.assertRaises(WrongParameterException):
+                assert BaseAPIView().find_query_value({"not set": ""})
+            with self.assertRaises(WrongParameterException):
+                assert BaseAPIView().find_query_value({})
 
     def test_check_limitation(self):
         sub_key = DjangoTestingModel.create(
@@ -151,79 +167,72 @@ class TestBaseAPIView(TestCase):
         assert len(not_sliced_query) == 15
         assert isinstance(not_sliced_query, QuerySet)
 
-    def test_get_model_or_queryset(self):
+    def test_get_model_or_callable(self):
         api_view_queryset = BaseAPIView()
         api_view_queryset.queryset = (IncomeStatement.objects.all, True)
         api_view_model = BaseAPIView()
         api_view_model.model = (IncomeStatement, False)
         api_view_neither = BaseAPIView()
         api_view_neither.serializer_class = IncomeStatementSerializer
-        assert api_view_queryset.get_model_or_queryset() == (IncomeStatement.objects.all, True)
-        assert api_view_model.get_model_or_queryset() == (IncomeStatement, False)
-        assert api_view_neither.get_model_or_queryset() == (IncomeStatement, False)
+        assert api_view_queryset.get_model_or_callable() == (IncomeStatement.objects.all, True)
+        assert api_view_model.get_model_or_callable() == (IncomeStatement, False)
+        assert api_view_neither.get_model_or_callable() == (IncomeStatement, False)
 
     @patch("apps.api.views.BaseAPIView.find_query_value")
     def test_get_query_params(self, mock_find_query_value):
         view = BaseAPIView()
-        response = APIClient().get("/company-information/excel-api/income", {"api_key": "horror"})
-        print(response)
-        print(response.GET)
-        view.request = response.GET
+        response = self.client.get("/company-information/excel-api/income", {"api_key": "horror"})
+        view.request = response.renderer_context["request"]
         with self.assertRaises(ParameterNotSetException):
             view.get_query_params()
 
+        response = self.client.get(
+            "/company-information/excel-api/income",
+            {"api_key": "horror", "this": "is_called"},
+        )
         view = BaseAPIView()
-        request = self.request
-        request.query_params.key = "value"
-        view.request = request
+        view.request = response.renderer_context["request"]
         view.get_query_params()
-        mock_find_query_value.return_value = {"key", "value"}
+        mock_find_query_value.assert_called_with({"this": "is_called"})
 
-    def test_generate_lookup(self):
+    @patch("apps.api.views.BaseAPIView.get_query_params")
+    def test_generate_lookup(self, mock_get_query_params):
         assert BaseAPIView().generate_lookup() == {}
+        mock_get_query_params.return_value = "ticker", "INTC"
         with self.subTest("fk_lookup_model"):
             api_view_fk_lookup_model = BaseAPIView()
             api_view_fk_lookup_model.fk_lookup_model = "company__ticker"
-            with self.assertRaises(ParseError):
-                api_view_fk_lookup_model.generate_lookup("ticker", "")
-
-            assert api_view_fk_lookup_model.generate_lookup("ticker", "INTC") == {"company__ticker": "INTC"}
+            assert api_view_fk_lookup_model.generate_lookup() == {"company__ticker": "INTC"}
 
         with self.subTest("url_parameters"):
             api_view_url_parameters = BaseAPIView()
-            api_view_url_parameters.url_parameters = "ticker"
-            assert api_view_url_parameters.generate_lookup("ticker", "INTC") == {"ticker": "INTC"}
+            api_view_url_parameters.url_parameters = ["ticker"]
+            assert api_view_url_parameters.generate_lookup() == {"ticker": "INTC"}
 
-    def test_generate_queryset(self):
-        api_view_queryset = BaseAPIView()
-        api_view_queryset.queryset = (IncomeStatement.objects.filter, True)
-        with self.assertRaises(NotFound):
-            api_view_queryset.generate_queryset(
-                IncomeStatement.objects.filter,
-                {"company__ticker": "AAPL"},
-            )
+    @patch("apps.api.views.BaseAPIView.generate_lookup")
+    @patch("apps.api.views.BaseAPIView.prepare_queryset")
+    @patch("apps.api.views.BaseAPIView.check_limitation")
+    def test_generate_queryset(self, mock_check_limitation, mock_prepare_queryset, mock_generate_lookup):
+        queryset = IncomeStatement.objects.filter(**{"company__ticker": "INTC"})
+        with self.subTest("not limited"):
+            view_not_limited = BaseAPIView()
+            mock_generate_lookup.return_value = {"company__ticker": "INTC"}
+            mock_prepare_queryset.return_value = queryset, True
+            generated_queryset, many = view_not_limited.generate_queryset()
+            assert queryset == generated_queryset
+            assert many is True
+            mock_prepare_queryset.assert_called_with({"company__ticker": "INTC"})
+            assert mock_check_limitation.called is False
 
-        assert (
-            len(
-                api_view_queryset.generate_queryset(
-                    IncomeStatement.objects.filter,
-                    {"company__ticker": "INTC"},
-                )
-            )
-            == 15
-        )
-
-        api_view = BaseAPIView()
-        api_view.model = (Company, False)
-        with self.assertRaises(NotFound):
-            api_view.generate_queryset(
-                Company,
-                {"ticker": "AAPL"},
-            )
-        assert (
-            api_view.generate_queryset(
-                Company,
-                {"ticker": "INTC"},
-            )
-            == self.company
-        )
+        with self.subTest("limited"):
+            sliced_queryset = queryset[:10]
+            view_limited = BaseAPIView()
+            view_limited.limited = True
+            mock_generate_lookup.return_value = {"company__ticker": "INTC"}
+            mock_prepare_queryset.return_value = queryset, True
+            mock_check_limitation.return_value = sliced_queryset
+            generated_queryset, many = view_limited.generate_queryset()
+            mock_prepare_queryset.assert_called_with({"company__ticker": "INTC"})
+            mock_check_limitation.assert_called_with(queryset)
+            assert sliced_queryset == generated_queryset
+            assert many is True
