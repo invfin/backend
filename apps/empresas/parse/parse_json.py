@@ -7,6 +7,8 @@ from apps.empresas.models import (
     IncomeStatementAsReported,
     BalanceSheetAsReported,
     CashflowStatementAsReported,
+    StatementItemConcept,
+    StatementItem,
 )
 from apps.periods.models import Period
 from apps.currencies.models import Currency
@@ -21,34 +23,47 @@ def camel_to_snake(word):
     return pattern.sub("_", word).lower().replace(":", "")
 
 
-def save_into_dict(dict_to_save, dict_to_use):
-    original_concept = dict_to_save["concept"]
-    concept = original_concept
-    if concept in dict_to_use:
-        concept = f"{concept}_duplicated"
-        if concept in dict_to_use:
-            num = random.randint(0, 9999999)
-            concept = f"{concept}_{num}"
-    dict_to_use[concept] = {**dict_to_save, "snake_concept": camel_to_snake(original_concept)}
+def save_item_concept(
+    concept,
+    label,
+    company
+    ) -> StatementItemConcept:
+    slug = camel_to_snake(concept)
+    try:
+        item_concept = StatementItemConcept.objects.get(
+            concept=concept,
+            label=label,
+            slug=slug,
+        )
+    except StatementItemConcept.DoesNotExist:
+        if concept.startswith(company.ticker.lower()):
+            item_concept = StatementItemConcept.objects.create(
+                concept=concept,
+                label=label,
+                slug=slug,
+                company=company,
+            )
+        else:
+            item_concept = StatementItemConcept.objects.create(
+                concept=concept,
+                label=label,
+                slug=slug,
+            )
+    return item_concept
 
 
-def save_fields(file_name, data):
-    original_concept = data["concept"]
-    with open(f"./{file_name}.json", "r") as read_checks_json:
-        checks_json = json.load(read_checks_json)
-    checks_json.update({original_concept: "x"})
-    with open(f"./{file_name}.json", "w") as writte_checks_json:
-        json.dump(checks_json, writte_checks_json, indent=2, separators=(",", ": "))
+def retrieve_item(info: dict):
+    return
 
 
 def save_lists(data, company, period, start_date, end_date, file, folder):
     cashflow = data["cf"]
     balance = data["bs"]
     income = data["ic"]
-    info_inc_dict = {}
-    info_bs_dict = {}
-    info_cf_dict = {}
     currency = None
+    items_inc = []
+    items_bs = []
+    items_cf = []
     for info_inc, info_bs, info_cf in zip(income, balance, cashflow):
         currency_str = info_inc["unit"]
         if not currency:
@@ -63,12 +78,10 @@ def save_lists(data, company, period, start_date, end_date, file, folder):
                     except Currency.MultipleObjectsReturned:
                         currency = Currency.objects.filter(currency=currency_str.upper()).first()
 
-        save_into_dict(info_inc, info_inc_dict)
-        save_into_dict(info_bs, info_bs_dict)
-        save_into_dict(info_cf, info_cf_dict)
-        # save_fields("info_inc", info_inc)
-        # save_fields("info_bs", info_bs)
-        # save_fields("info_cf", info_cf)
+        items_inc.append(retrieve_item(info_inc))
+        items_bs.append(retrieve_item(info_bs))
+        items_cf.append(retrieve_item(info_cf))
+
 
     data_shared_dict = dict(
         company=company,
@@ -81,9 +94,12 @@ def save_lists(data, company, period, start_date, end_date, file, folder):
         from_folder=folder,
     )
 
-    IncomeStatementAsReported.objects.create(financial_data=info_inc_dict, **data_shared_dict)
-    BalanceSheetAsReported.objects.create(financial_data=info_bs_dict, **data_shared_dict)
-    CashflowStatementAsReported.objects.create(financial_data=info_cf_dict, **data_shared_dict)
+    inc_st = IncomeStatementAsReported.objects.create(financial_data=info_inc_dict, **data_shared_dict)
+    inc_st.fields.add(*items_inc)
+    bs_st = BalanceSheetAsReported.objects.create(financial_data=info_bs_dict, **data_shared_dict)
+    bs_st.fields.add(*items_bs)
+    cf_st = CashflowStatementAsReported.objects.create(financial_data=info_cf_dict, **data_shared_dict)
+    cf_st.fields.add(*items_cf)
 
 
 def get_period(quarter):

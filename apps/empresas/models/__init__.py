@@ -2,6 +2,8 @@ from .as_reported import (
     IncomeStatementAsReported,
     BalanceSheetAsReported,
     CashflowStatementAsReported,
+    StatementItemConcept,
+    StatementItem
 )
 from .company import (
     Company,
@@ -44,6 +46,8 @@ from .yahoo_query import (
 )
 
 __all__ = [
+"StatementItemConcept",
+"StatementItem",
     "IncomeStatementAsReported",
     "BalanceSheetAsReported",
     "CashflowStatementAsReported",

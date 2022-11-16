@@ -2,6 +2,7 @@ from django.db.models import SET_NULL, BooleanField, FloatField, ForeignKey, Int
 
 from apps.empresas.models import Company
 from apps.empresas.managers import BaseStatementManager
+from apps.empresas.fields import AccountingField
 from apps.periods.models import Period
 from apps.general.mixins import BaseToAllMixin
 

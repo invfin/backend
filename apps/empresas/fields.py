@@ -7,13 +7,13 @@ class AccountingField(DecimalField):
     def __init__(
         self,
         *args,
-        explanation_link: str = "",
+        definition_path: str = "",
         spanish_version: str = "",
         spanish_snake_version: str = "",
         **kwargs,
     ):
         kwargs.setdefault("allow_null", True)
-        self.explanation_link = explanation_link
+        self.definition_path = definition_path
         self.spanish_version = spanish_version
         self.spanish_snake_version = spanish_snake_version
         super().__init__(*args, **kwargs)

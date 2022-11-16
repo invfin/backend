@@ -1,29 +1,71 @@
+from django.conf import settings
 from django.db.models import (
     SET_NULL,
     ForeignKey,
     IntegerField,
     DateField,
-    DecimalField,
-    Model,
+    FloatField,
     CharField,
     JSONField,
     ManyToManyField,
     PROTECT,
+    SlugField,
+    TextField,
 )
 
 
 from apps.empresas.extensions.as_reported import IncomeStatementAsReportedExtended
 from apps.empresas.managers import BaseStatementManager
-from apps.general.mixins import BaseToAllMixin
+from apps.general.abstracts import AbstractTimeStampedModel
 
 
-class BaseStatement(Model, BaseToAllMixin):
+class StatementItemConcept(AbstractTimeStampedModel):
+    concept = CharField(max_length=350)
+    label = CharField(max_length=350)
+    slug = SlugField(max_length=350)
+    notes = TextField(null=True, default="")
+    tooltip = TextField(null=True, default="")
+    definition_path = SlugField(max_length=350)
+    company = ForeignKey(
+        "empresas.Company",
+        on_delete=SET_NULL,
+        null=True,
+        related_name="unique_statements_items",
+    )
+
+    class Meta:
+        db_table = "assets_as_repoted_statements_items_concepts"
+
+    @property
+    def is_unique_for_company(self) -> bool:
+        return bool(self.company)
+
+    @property
+    def definition_link(self):
+        return f"{settings.FULL_DOMAIN}{self.definition_path}"
+
+
+class StatementItem(AbstractTimeStampedModel):
+    concept = ForeignKey(StatementItemConcept, on_delete=PROTECT)
+    value = FloatField()
+    unit = CharField(max_length=50)
+    currency = ForeignKey("currencies.Currency", on_delete=SET_NULL, null=True)
+
+    class Meta:
+        db_table = "assets_as_repoted_statements_items"
+
+
+class BaseStatement(AbstractTimeStampedModel):
     date = IntegerField(default=0)
     start_date = DateField(null=True, blank=True)
     end_date = DateField(null=True, blank=True)
     period = ForeignKey("periods.Period", on_delete=SET_NULL, null=True, blank=True)
     reported_currency = ForeignKey("currencies.Currency", on_delete=SET_NULL, null=True, blank=True)
     financial_data = JSONField()
+    fields = ManyToManyField(
+        StatementItem,
+        blank=True
+    )
     from_file = CharField(max_length=250, null=True, default="")
     from_folder = CharField(max_length=250, null=True, default="")
     objects = BaseStatementManager()
@@ -39,17 +81,11 @@ class BaseStatement(Model, BaseToAllMixin):
         return f"{self.company} - {period}"
 
 
-
 class IncomeStatementAsReported(BaseStatement, IncomeStatementAsReportedExtended):
     company = ForeignKey(
         "empresas.Company",
         on_delete=SET_NULL,
         null=True,
-        blank=True,
-        related_name="inc_statements_as_reported",
-    )
-    fields = ManyToManyField(
-        StatementField,
         blank=True,
         related_name="inc_statements_as_reported",
     )
