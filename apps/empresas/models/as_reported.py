@@ -3,9 +3,12 @@ from django.db.models import (
     ForeignKey,
     IntegerField,
     DateField,
+    DecimalField,
     Model,
     CharField,
     JSONField,
+    ManyToManyField,
+    PROTECT,
 )
 
 
@@ -21,7 +24,6 @@ class BaseStatement(Model, BaseToAllMixin):
     period = ForeignKey("periods.Period", on_delete=SET_NULL, null=True, blank=True)
     reported_currency = ForeignKey("currencies.Currency", on_delete=SET_NULL, null=True, blank=True)
     financial_data = JSONField()
-    mapped_fields = JSONField(default=dict)
     from_file = CharField(max_length=250, null=True, default="")
     from_folder = CharField(max_length=250, null=True, default="")
     objects = BaseStatementManager()
@@ -37,11 +39,17 @@ class BaseStatement(Model, BaseToAllMixin):
         return f"{self.company} - {period}"
 
 
+
 class IncomeStatementAsReported(BaseStatement, IncomeStatementAsReportedExtended):
     company = ForeignKey(
         "empresas.Company",
         on_delete=SET_NULL,
         null=True,
+        blank=True,
+        related_name="inc_statements_as_reported",
+    )
+    fields = ManyToManyField(
+        StatementField,
         blank=True,
         related_name="inc_statements_as_reported",
     )
