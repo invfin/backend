@@ -23,11 +23,7 @@ def camel_to_snake(word):
     return pattern.sub("_", word).lower().replace(":", "")
 
 
-def save_item_concept(
-    concept,
-    label,
-    company
-    ) -> StatementItemConcept:
+def save_item_concept(concept, label, company) -> StatementItemConcept:
     slug = camel_to_snake(concept)
     try:
         item_concept = StatementItemConcept.objects.get(
@@ -52,8 +48,16 @@ def save_item_concept(
     return item_concept
 
 
-def retrieve_item(info: dict):
-    return
+def retrieve_item(info, currency, company):
+    currency_str = info["unit"]
+    if currency_str == "shares" or currency_str == "usd/shares":
+        use_currency = True
+    else:
+        use_currency = False
+    currency = currency if use_currency else None
+    value = info["value"]
+    concept = save_item_concept(info["concept"], info["label"], company)
+    return StatementItem.objects.create(concept=concept, value=value, unit=currency_str, currency=currency)
 
 
 def save_lists(data, company, period, start_date, end_date, file, folder):
@@ -78,10 +82,9 @@ def save_lists(data, company, period, start_date, end_date, file, folder):
                     except Currency.MultipleObjectsReturned:
                         currency = Currency.objects.filter(currency=currency_str.upper()).first()
 
-        items_inc.append(retrieve_item(info_inc))
-        items_bs.append(retrieve_item(info_bs))
-        items_cf.append(retrieve_item(info_cf))
-
+        items_inc.append(retrieve_item(info_inc, currency, company))
+        items_bs.append(retrieve_item(info_bs, currency, company))
+        items_cf.append(retrieve_item(info_cf, currency, company))
 
     data_shared_dict = dict(
         company=company,
@@ -94,11 +97,11 @@ def save_lists(data, company, period, start_date, end_date, file, folder):
         from_folder=folder,
     )
 
-    inc_st = IncomeStatementAsReported.objects.create(financial_data=info_inc_dict, **data_shared_dict)
+    inc_st = IncomeStatementAsReported.objects.create(financial_data=income, **data_shared_dict)
     inc_st.fields.add(*items_inc)
-    bs_st = BalanceSheetAsReported.objects.create(financial_data=info_bs_dict, **data_shared_dict)
+    bs_st = BalanceSheetAsReported.objects.create(financial_data=balance, **data_shared_dict)
     bs_st.fields.add(*items_bs)
-    cf_st = CashflowStatementAsReported.objects.create(financial_data=info_cf_dict, **data_shared_dict)
+    cf_st = CashflowStatementAsReported.objects.create(financial_data=cashflow, **data_shared_dict)
     cf_st.fields.add(*items_cf)
 
 

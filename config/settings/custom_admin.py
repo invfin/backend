@@ -373,6 +373,9 @@ SIDE_MENU = [
             {
                 "model": "empresas.CashflowStatementYFinance",
             },
+            {
+                "model": "empresas.IncomeStatementAsReported",
+            },
         ),
     },
     {

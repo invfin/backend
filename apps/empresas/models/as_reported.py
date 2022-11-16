@@ -1,18 +1,17 @@
 from django.conf import settings
 from django.db.models import (
+    PROTECT,
     SET_NULL,
-    ForeignKey,
-    IntegerField,
+    CharField,
     DateField,
     FloatField,
-    CharField,
+    ForeignKey,
+    IntegerField,
     JSONField,
     ManyToManyField,
-    PROTECT,
     SlugField,
     TextField,
 )
-
 
 from apps.empresas.extensions.as_reported import IncomeStatementAsReportedExtended
 from apps.empresas.managers import BaseStatementManager
@@ -62,10 +61,7 @@ class BaseStatement(AbstractTimeStampedModel):
     period = ForeignKey("periods.Period", on_delete=SET_NULL, null=True, blank=True)
     reported_currency = ForeignKey("currencies.Currency", on_delete=SET_NULL, null=True, blank=True)
     financial_data = JSONField()
-    fields = ManyToManyField(
-        StatementItem,
-        blank=True
-    )
+    fields = ManyToManyField(StatementItem, blank=True)
     from_file = CharField(max_length=250, null=True, default="")
     from_folder = CharField(max_length=250, null=True, default="")
     objects = BaseStatementManager()

@@ -261,6 +261,13 @@ class CompanyManager(BaseManager):
             + F("num_cf_statements_as_reported"),
         ).exclude(total_as_reported__lt=1)
 
+    def prefetch_as_reported(self):
+        return self.prefetch_related(
+            "inc_statements_as_reported",
+            "balance_sheets_as_reported",
+            "cf_statements_as_reported",
+        )
+
 
 class CompanyUpdateLogManager(Manager):
     pass
