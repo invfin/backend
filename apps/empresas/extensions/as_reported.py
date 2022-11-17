@@ -26,9 +26,7 @@ class MapValuesFromDict:
                 self.match_field(field, field_name)
 
     def match_field(self, field: str, field_name: str):
-        slug_label_filtered = self.fields.all().annotate(
-            slug_label=slugify(F("label"))
-        ).filter(slug_label=field_name)
+        slug_label_filtered = self.fields.all().annotate(slug_label=slugify(F("label"))).filter(slug_label=field_name)
         if slug_label_filtered.exists():
             slug_label_filtered.update(corresponding_final_item=field)
 

@@ -1,4 +1,6 @@
-from typing import Dict, List
+import random
+
+from typing import Dict, List, Type, Optional
 
 from django.db.models import QuerySet
 
@@ -20,3 +22,8 @@ class BaseQuerySet(QuerySet):
                 all_checkings.update({f"checkings__has_{key}__state": state})
 
         return self.filter(**all_checkings)
+
+    def get_random(self, query: QuerySet = None) -> Optional[Type]:
+        query = query if query else self.all()
+        models_list = list(query)
+        return random.choice(models_list) if models_list else None
