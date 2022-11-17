@@ -10,28 +10,26 @@ from django.utils.translation import gettext_lazy as _
 from django.views.generic import DetailView, TemplateView
 
 from apps.public_blog.forms import WritterProfileForm
-
-from .forms import UserForm, UserProfileForm
-from .models import Profile
+from apps.users.forms import UserForm, UserProfileForm
+from apps.users.models import Profile
 
 User = get_user_model()
 
 
 class UserDetailView(LoginRequiredMixin, TemplateView):
+    template_name = "private/inicio.html"
 
-    template_name = 'private/inicio.html'
-    
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context["meta_desc"] = 'Todo lo que necesitas para invertir'
-        context["meta_tags"] = 'finanzas, blog financiero, blog el financiera, invertir'
-        context["meta_title"] = f'Bienvenido {self.request.user.username}'
-        context["meta_url"] = '/inicio/'
+        context["meta_desc"] = "Todo lo que necesitas para invertir"
+        context["meta_tags"] = "finanzas, blog financiero, blog el financiera, invertir"
+        context["meta_title"] = f"Bienvenido {self.request.user.username}"
+        context["meta_url"] = "/inicio/"
         return context
 
 
 class UserPublicProfileDetailView(DetailView):
-    template_name = 'public/profile.html'
+    template_name = "public/profile.html"
     model = User
     slug_field = "username"
     slug_url_kwarg = "username"
@@ -41,22 +39,16 @@ class UserPublicProfileDetailView(DetailView):
         context = super().get_context_data(**kwargs)
         user = self.get_object()
         context["meta_desc"] = user.user_profile.bio
-        context["meta_tags"] = 'finanzas, blog financiero, blog el financiera, invertir, excel'
+        context["meta_tags"] = "finanzas, blog financiero, blog el financiera, invertir, excel"
         context["meta_title"] = user.username
-        context["meta_url"] = f'perfil/{user.username}/'
+        context["meta_url"] = f"perfil/{user.username}/"
         return context
 
 
 def invitation_view(request, invitation_code):
-    perfil = Profile.objects.get(ref_code = invitation_code)        
-    request.session['recommender'] = perfil.id
-    context = {
-        'meta_desc': 'Todo lo que necesitas para invertir',
-        'meta_tags': 'finanzas, blog financiero, blog el financiera, invertir',
-        'meta_title': 'Dashboard',
-        'meta_url': '/inicio/',
-    }
-    return redirect('account_signup') 
+    perfil = Profile.objects.get(ref_code=invitation_code)
+    request.session["recommender"] = perfil.id
+    return redirect("account_signup")
 
 
 @login_required
@@ -64,7 +56,7 @@ def user_update_profile(request):
     writter_profile = None
     if request.user.is_writter:
         writter_profile = request.user.writter_profile
-    if request.method == 'POST':
+    if request.method == "POST":
         profile_form = UserProfileForm(request.POST, request.FILES, instance=request.user.user_profile)
         form = UserForm(request.POST, instance=request.user)
 
@@ -74,7 +66,6 @@ def user_update_profile(request):
         vieja_foto = request.user.user_profile.foto_perfil
 
         if profile_form.is_valid() and form.is_valid():
-            
             if request.user.is_writter:
                 if writter_form.is_valid():
                     writter_form.save()
@@ -83,12 +74,12 @@ def user_update_profile(request):
             new_foto = new_profile.foto_perfil
             if new_foto != vieja_foto:
                 new_profile.transform_photo(new_foto)
-                   
+
             new_profile.save()
-            
+
             form.save()
-            messages.success(request, f'Perfil actualizado.')
-            return redirect('users:update')
+            messages.success(request, "Perfil actualizado.")
+            return redirect("users:update")
 
     else:
         form = UserForm(instance=request.user)
@@ -96,51 +87,45 @@ def user_update_profile(request):
         writter_form = WritterProfileForm(instance=writter_profile)
 
         context = {
-            'profile_form': profile_form, 
-            'form': form, 
-            'writter_form':writter_form,
-            
-            'meta_title': 'Tu perfil',
-            
-            }
-   
-    return render(request, 'private/settings.html', context)
+            "profile_form": profile_form,
+            "form": form,
+            "writter_form": writter_form,
+            "meta_title": "Tu perfil",
+        }
+
+    return render(request, "private/settings.html", context)
 
 
 class UserHistorialView(LoginRequiredMixin, TemplateView):
-    template_name = 'private/historial.html'
+    template_name = "private/historial.html"
 
     def meta_information(self, slug):
         return {
-            "meta_desc": 'Tu historial en la plataforma',
-            "meta_tags": 'finanzas, blog financiero, blog el financiera, invertir',
-            "meta_title": f'Historial de {slug}',
-            "meta_url": f'/historial-perfil/{slug}'
+            "meta_desc": "Tu historial en la plataforma",
+            "meta_tags": "finanzas, blog financiero, blog el financiera, invertir",
+            "meta_title": f"Historial de {slug}",
+            "meta_url": f"/historial-perfil/{slug}",
         }
-    
+
     def get_object(self, slug):
         user = self.request.user
-        if slug == 'Aportes':
+        if slug == "Aportes":
             content = user.corrector.all()
-            url = 'escritos:glosario'
-        elif slug == 'Comentarios':
+            url = "escritos:glosario"
+        elif slug == "Comentarios":
             questions_coms = user.quesitoncomment_set.all()
             answers_coms = user.answercomment_set.all()
             content = list(chain(answers_coms, questions_coms))
-            url = 'preguntas_respuestas:list_questions'
+            url = "preguntas_respuestas:list_questions"
         else:
             content = user.usercompanyobservation_set.all()
-            url = 'screener:screener_inicio'
-        return {
-            'content': content,
-            'slug': slug,
-            'url': reverse(url)
-        }
-    
+            url = "screener:screener_inicio"
+        return {"content": content, "slug": slug, "url": reverse(url)}
+
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        slug = self.kwargs['slug']
+        slug = self.kwargs["slug"]
         context.update(self.meta_information(slug))
         if self.request.user.is_authenticated:
-            context.update(self.get_object(slug))        
+            context.update(self.get_object(slug))
         return context

@@ -139,9 +139,13 @@ def save_json_content(file, folder):
 
 def main():
     first_t = timeit.default_timer()
-    with concurrent.futures.ProcessPoolExecutor() as executor:
-        for directorio in tqdm(os.listdir(f"{MAIN_URL}")):
-            for json_f in tqdm(os.listdir(f"{MAIN_URL}/{directorio}")):
+    total_dirs = len(os.listdir(f"{MAIN_URL}"))
+    for index, directorio in enumerate(sorted(os.listdir(f"{MAIN_URL}"))):
+        path = f"{MAIN_URL}/{directorio}"
+        print(f"directorio {path} num {index} de {total_dirs}")
+        with concurrent.futures.ProcessPoolExecutor() as executor:
+            for json_f in tqdm(os.listdir(f"{path}")):
                 executor.submit(save_json_content, json_f, directorio)
+                # save_json_content(f"{path}/{json_f}")
     last_t = timeit.default_timer()
     print("it took:", last_t - first_t)
