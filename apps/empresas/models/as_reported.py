@@ -31,9 +31,14 @@ class StatementItemConcept(AbstractTimeStampedModel):
         null=True,
         related_name="unique_statements_items",
     )
+    corresponding_final_item = CharField(max_length=350, null=True, default="")
 
     class Meta:
         db_table = "assets_as_repoted_statements_items_concepts"
+
+    @property
+    def has_final_item_mapped(self) -> bool:
+        return bool(self.corresponding_final_item)
 
     @property
     def is_unique_for_company(self) -> bool:
@@ -75,6 +80,10 @@ class BaseStatement(AbstractTimeStampedModel):
     def __str__(self) -> str:
         period = self.period if self.period else self.date
         return f"{self.company} - {period}"
+
+    @property
+    def number_final_items_mapped(self) -> int:
+        return self.fields.filter(corresponding_final_item__isnull=False).count()
 
 
 class IncomeStatementAsReported(BaseStatement, IncomeStatementAsReportedExtended):

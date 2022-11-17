@@ -14,6 +14,7 @@ from apps.periods.models import Period
 from apps.currencies.models import Currency
 from apps.periods import constants
 
+
 pattern = re.compile(r"(?<!^)(?=[A-Z])")
 
 MAIN_URL = "/home/lucas/Downloads/kaggle-companies-data"
