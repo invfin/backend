@@ -106,7 +106,7 @@ class CreateStatements:
             company = DjangoTestingModel.create(Company)
             self.company = company
         current_year = timezone.now().year
-        for period_time in constants.PERIODS:
+        for period_time, period_name in constants.PERIODS:
             for index in range(3):
                 past_year = current_year - index
                 next_year = current_year + index
@@ -114,5 +114,5 @@ class CreateStatements:
                 period_object_next_year = self.create_period(year=next_year, period=period_time)
                 statement_past_year = self.create_statement(company, period_object_past_year)
                 statement_next_year = self.create_statement(company, period_object_next_year)
-                self.periods[period_time].append(period_object_past_year, period_object_next_year)
-                self.statements[period_time].append(statement_past_year, statement_next_year)
+                self.periods[period_time].extend([period_object_past_year, period_object_next_year])
+                self.statements[period_time].extend([statement_past_year, statement_next_year])

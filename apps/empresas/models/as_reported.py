@@ -15,6 +15,7 @@ from django.db.models import (
 
 from apps.empresas.extensions.as_reported import IncomeStatementAsReportedExtended
 from apps.empresas.managers import BaseStatementManager
+from apps.empresas.querysets import BaseStatementQuerySet
 from apps.general.abstracts import AbstractTimeStampedModel
 
 
@@ -69,7 +70,7 @@ class BaseStatement(AbstractTimeStampedModel):
     fields = ManyToManyField(StatementItem, blank=True)
     from_file = CharField(max_length=250, null=True, default="")
     from_folder = CharField(max_length=250, null=True, default="")
-    objects = BaseStatementManager()
+    objects = BaseStatementManager.from_queryset(BaseStatementQuerySet)()
 
     class Meta:
         abstract = True

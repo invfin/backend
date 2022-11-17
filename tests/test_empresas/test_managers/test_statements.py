@@ -1,4 +1,5 @@
 from django.test import TestCase
+from django.db.models import Q, QuerySet
 
 from apps.empresas.models import Company, IncomeStatement
 
@@ -11,9 +12,9 @@ class TestBaseStatementManager(TestCase):
     def setUpTestData(cls):
         cls.statements_data = CreateStatements().create_data()
 
-    # def test_quarterly(self, **kwargs) -> QuerySet:
-    #     assert 30 == IncomeStatement.objects.all().count()
-    #     return self.filter(~Q(period__period=constants.PERIOD_FOR_YEAR), **kwargs)
+    def test_quarterly(self):
+        assert 20 == IncomeStatement.objects.quarterly().count()
+
     #
     # def test_yearly(self, include_ttm: bool = True, **kwargs) -> QuerySet:
     #     yearly_filtered = self.filter(Q(is_ttm=include_ttm) | Q(period__period=constants.PERIOD_FOR_YEAR), **kwargs)
