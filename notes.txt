@@ -3,6 +3,3 @@ Add the following checks:
 - has_latest_financials_yfinance_info
 - has_latest_financials_yahooquery_info
 - added_json_financials_to_fields_yfinance
-
-
-Map the values of as reported with the fianl statements

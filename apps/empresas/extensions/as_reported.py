@@ -16,7 +16,6 @@ class MapValuesFromDict:
         return list(base_class.__annotations__.keys())
 
     def map_fields(self):
-        # TODO instead of running this each every time the mapping should be saved
         for field in self.get_own_field_to_map():
             field_name = field.replace("_field", "")
             field_filtered = self.fields.filter(slug=field_name)
@@ -40,8 +39,10 @@ class MapValuesFromDict:
 class IncomeStatementAsReportedExtended(AverageIncomeStatement, MapValuesFromDict):
     pass
 
+
 class BalanceSheetAsReportedExtended(AverageBalanceSheet, MapValuesFromDict):
     pass
+
 
 class CashflowStatementAsReportedExtended(AverageCashflowStatement, MapValuesFromDict):
     pass
