@@ -2,7 +2,6 @@ from django.db.models import SET_NULL, BooleanField, FloatField, ForeignKey, Int
 
 from apps.empresas.models import Company
 from apps.empresas.managers import BaseStatementManager
-from apps.empresas.querysets import BaseStatementQuerySet
 from apps.empresas.fields import AccountingField
 from apps.periods.models import Period
 from apps.general.mixins import BaseToAllMixin
@@ -14,7 +13,7 @@ class BaseStatement(Model, BaseToAllMixin):
     company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True)
     period = ForeignKey(Period, on_delete=SET_NULL, null=True, blank=True)
     reported_currency = ForeignKey("currencies.Currency", on_delete=SET_NULL, null=True, blank=True)
-    objects = BaseStatementManager.from_queryset(BaseStatementQuerySet)()
+    objects = BaseStatementManager()
 
     class Meta:
         abstract = True

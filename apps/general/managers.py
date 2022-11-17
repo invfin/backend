@@ -1,7 +1,4 @@
-import random
-from typing import Dict, List, Type, Optional
-
-from django.db.models import Manager, QuerySet
+from django.db.models import Manager
 from general.querysets import BaseQuerySet
 
 

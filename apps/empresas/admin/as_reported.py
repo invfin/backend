@@ -35,7 +35,7 @@ class IncomeStatementAsReportedAdmin(admin.ModelAdmin):
     ]
 
     def get_queryset(self, request):
-        return super().get_queryset(request).prefetch_related("period", "company")
+        return super().get_queryset(request).select_related("period", "company").prefetch_related("fields")
 
 
 class IncomeStatementAsReportedInline(BaseJSONWidgetInline):

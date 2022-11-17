@@ -1,6 +1,6 @@
 from typing import Any, Dict, Type
 
-from django.db.models import Count, F, Manager, Prefetch, Q, QuerySet
+from django.db.models import Count, F, Prefetch, Q, QuerySet
 
 from apps.general.managers import BaseQuerySet
 
@@ -261,4 +261,7 @@ class CompanyQuerySet(BaseQuerySet):
             "inc_statements_as_reported",
             "balance_sheets_as_reported",
             "cf_statements_as_reported",
+            "inc_statements_as_reported__fields",
+            "balance_sheets_as_reported__fields",
+            "cf_statements_as_reported__fields",
         )

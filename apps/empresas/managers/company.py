@@ -10,5 +10,10 @@ class CompanyManager(BaseManager.from_queryset(CompanyQuerySet)):
     pass
 
 
+class AsReportedManager(CompanyManager):
+    def get_queryset(self):
+        return super().get_queryset().prefetch_as_reported()
+
+
 class CompanyUpdateLogManager(Manager):
     pass

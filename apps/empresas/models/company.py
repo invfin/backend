@@ -18,7 +18,7 @@ from django.urls import reverse
 
 from apps.empresas import constants
 from apps.empresas.extensions.company import CompanyExtended
-from apps.empresas.managers import CompanyManager, CompanyUpdateLogManager
+from apps.empresas.managers import CompanyManager, CompanyUpdateLogManager, AsReportedManager
 from apps.periods.constants import PERIOD_FOR_YEAR
 from apps.general.mixins import BaseToAllMixin, CheckingsMixin
 
@@ -153,6 +153,8 @@ class Company(Model, BaseToAllMixin, CompanyExtended, CheckingsMixin):
 
 
 class CompanyAsReportedProxy(Company):
+    objects = AsReportedManager()
+
     class Meta:
         proxy = True
 
