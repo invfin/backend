@@ -1,36 +1,32 @@
-from django.test import TestCase
 from unittest import skip
 
-from bfet import DjangoTestingModel as dtm
+from django.test import TestCase
+from django.db.models import Q
+
+from bfet import DjangoTestingModel
 
 from apps.periods.constants import PERIOD_FOR_YEAR
 from apps.periods.models import Period
+from apps.currencies.models import Currency
 from apps.empresas.extensions.as_reported import IncomeStatementAsReportedExtended
+from apps.empresas.parse.parse_json import parse_json
 from apps.empresas.models import (
     Company,
     IncomeStatementAsReported,
-    BalanceSheetAsReported,
-    CashflowStatementAsReported,
 )
 
-from tests.data.empresas.as_reported.income_statement import AAPL_2020
+from tests.data.empresas.as_reported.income_statement import KFY_2022
 
 
-@skip("not ready")
 class TestAverageStatementsAsReported(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.company = dtm.create(Company)
-        cls.period = dtm.create(Period, year=2020, period=PERIOD_FOR_YEAR)
-        cls.inc_st_as_rep = dtm.create(
-            IncomeStatementAsReported,
-            company=cls.company,
-            period=cls.period,
-            financial_data=AAPL_2020,
-        )
+        cls.period = DjangoTestingModel.create(Period, year=2022, period=PERIOD_FOR_YEAR)
+        cls.currency = DjangoTestingModel.create(Currency, currency="USD", symbol="$")
+        parse_json(KFY_2022, "aqui", "file")
+        cls.inc_st_as_rep = IncomeStatementAsReported.objects.all().first()
 
     def test_get_own_field_to_map(self):
-        print(self.inc_st_as_rep.get_own_field_to_map())
         assert [
             "revenue_field",
             "cost_of_revenue_field",
@@ -55,4 +51,13 @@ class TestAverageStatementsAsReported(TestCase):
         ] == self.inc_st_as_rep.get_own_field_to_map()
 
     def test_map_fields(self):
-        pass
+        print(self.inc_st_as_rep.fields.count())
+        print(self.inc_st_as_rep.fields.filter(concept__corresponding_final_item="").count())
+        print(self.inc_st_as_rep.fields.filter(~Q(concept__corresponding_final_item="")).count())
+        print("*" * 100)
+        self.inc_st_as_rep.map_fields()
+        print("*" * 100)
+        print(self.inc_st_as_rep.fields.filter(concept__corresponding_final_item__isnull=True).count())
+        print(self.inc_st_as_rep.fields.filter(concept__corresponding_final_item__isnull=False).count())
+        print("*" * 100)
+        print("*" * 100)

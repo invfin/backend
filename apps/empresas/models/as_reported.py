@@ -21,7 +21,8 @@ from apps.general.abstracts import AbstractTimeStampedModel
 class StatementItemConcept(AbstractTimeStampedModel):
     concept = CharField(max_length=350)
     label = CharField(max_length=350)
-    slug = SlugField(max_length=350)
+    concept_slug = CharField(max_length=350)
+    label_slug = CharField(max_length=350)
     notes = TextField(null=True, default="")
     tooltip = TextField(null=True, default="")
     definition_path = SlugField(max_length=350)
@@ -35,6 +36,9 @@ class StatementItemConcept(AbstractTimeStampedModel):
 
     class Meta:
         db_table = "assets_as_repoted_statements_items_concepts"
+
+    def __str__(self) -> str:
+        return self.label
 
     @property
     def has_final_item_mapped(self) -> bool:
@@ -57,6 +61,9 @@ class StatementItem(AbstractTimeStampedModel):
 
     class Meta:
         db_table = "assets_as_repoted_statements_items"
+
+    def __str__(self) -> str:
+        return self.concept.label
 
 
 class BaseStatement(AbstractTimeStampedModel):

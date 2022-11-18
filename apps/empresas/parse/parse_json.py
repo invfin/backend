@@ -2,6 +2,8 @@ import os, json, re, concurrent.futures, datetime, timeit, random
 
 from tqdm import tqdm
 
+from django.template.defaultfilters import slugify
+
 from apps.empresas.models import (
     Company,
     IncomeStatementAsReported,
@@ -24,27 +26,37 @@ def camel_to_snake(word):
     return pattern.sub("_", word).lower().replace(":", "")
 
 
+def snake_label(label: str):
+    label = slugify(label)
+    label = label.replace("-", "_")
+    return label
+
+
 def save_item_concept(concept, label, company) -> StatementItemConcept:
-    slug = camel_to_snake(concept)
+    concept_slug = camel_to_snake(concept)
+    label_slug = snake_label(label)
     try:
         item_concept = StatementItemConcept.objects.get(
             concept=concept,
             label=label,
-            slug=slug,
+            label_slug=label_slug,
+            concept_slug=concept_slug,
         )
     except StatementItemConcept.DoesNotExist:
         if concept.startswith(company.ticker.lower()):
             item_concept = StatementItemConcept.objects.create(
                 concept=concept,
                 label=label,
-                slug=slug,
+                concept_slug=concept_slug,
+                label_slug=label_slug,
                 company=company,
             )
         else:
             item_concept = StatementItemConcept.objects.create(
                 concept=concept,
                 label=label,
-                slug=slug,
+                concept_slug=concept_slug,
+                label_slug=label_slug,
             )
     return item_concept
 
@@ -57,6 +69,10 @@ def retrieve_item(info, currency, company):
         use_currency = False
     currency = currency if use_currency else None
     value = info["value"]
+    try:
+        value = float(value)
+    except ValueError:
+        value = 0
     concept = save_item_concept(info["concept"], info["label"], company)
     return StatementItem.objects.create(concept=concept, value=value, unit=currency_str, currency=currency)
 
@@ -118,23 +134,27 @@ def get_period(quarter):
     return period
 
 
+def parse_json(principal_data, file, folder):
+    year = int(principal_data["year"])
+    start_date = datetime.datetime.strptime(principal_data["startDate"], "%Y-%m-%d").date()
+    end_date = datetime.datetime.strptime(principal_data["endDate"], "%Y-%m-%d").date()
+    data = principal_data["data"]
+    company, period_obj = None, None
+    company, created = Company.objects.get_or_create(
+        ticker=principal_data["symbol"], defaults={"name": "From-as-reported"}
+    )
+    period = get_period(principal_data["quarter"])
+    period_obj = Period.objects.get(year=year, period=period)
+
+    save_lists(data, company, period_obj, start_date, end_date, file, folder)
+
+
 def save_json_content(file, folder):
     # we open the json and access to the data
     json_info_file = f"{MAIN_URL}/{folder}/{file}"
     with open(f"{json_info_file}", "r") as f:
         principal_data = json.load(f)
-        year = int(principal_data["year"])
-        start_date = datetime.datetime.strptime(principal_data["startDate"], "%Y-%m-%d").date()
-        end_date = datetime.datetime.strptime(principal_data["endDate"], "%Y-%m-%d").date()
-        data = principal_data["data"]
-        company, period_obj = None, None
-        company, created = Company.objects.get_or_create(
-            ticker=principal_data["symbol"], defaults={"name": "From-as-reported"}
-        )
-        period = get_period(principal_data["quarter"])
-        period_obj = Period.objects.get(year=year, period=period)
-
-        save_lists(data, company, period_obj, start_date, end_date, file, folder)
+        parse_json(principal_data, file, folder)
 
 
 def main():
