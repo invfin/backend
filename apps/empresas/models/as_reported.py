@@ -19,10 +19,10 @@ from apps.general.abstracts import AbstractTimeStampedModel
 
 
 class StatementItemConcept(AbstractTimeStampedModel):
-    concept = CharField(max_length=350)
-    label = CharField(max_length=350)
-    concept_slug = CharField(max_length=350)
-    label_slug = CharField(max_length=350)
+    concept = CharField(max_length=2000)
+    label = CharField(max_length=2000)
+    concept_slug = CharField(max_length=2000)
+    label_slug = CharField(max_length=2000)
     notes = TextField(null=True, default="")
     tooltip = TextField(null=True, default="")
     definition_path = SlugField(max_length=350)

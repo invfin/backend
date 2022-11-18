@@ -51,13 +51,8 @@ class TestAverageStatementsAsReported(TestCase):
         ] == self.inc_st_as_rep.get_own_field_to_map()
 
     def test_map_fields(self):
-        print(self.inc_st_as_rep.fields.count())
-        print(self.inc_st_as_rep.fields.filter(concept__corresponding_final_item="").count())
-        print(self.inc_st_as_rep.fields.filter(~Q(concept__corresponding_final_item="")).count())
-        print("*" * 100)
+        assert 47 == self.inc_st_as_rep.fields.filter(concept__corresponding_final_item="").count()
+        assert 0 == self.inc_st_as_rep.fields.filter(~Q(concept__corresponding_final_item="")).count()
         self.inc_st_as_rep.map_fields()
-        print("*" * 100)
-        print(self.inc_st_as_rep.fields.filter(concept__corresponding_final_item__isnull=True).count())
-        print(self.inc_st_as_rep.fields.filter(concept__corresponding_final_item__isnull=False).count())
-        print("*" * 100)
-        print("*" * 100)
+        assert 37 == self.inc_st_as_rep.fields.filter(concept__corresponding_final_item="").count()
+        assert 10 == self.inc_st_as_rep.fields.filter(~Q(concept__corresponding_final_item="")).count()

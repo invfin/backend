@@ -152,20 +152,30 @@ def parse_json(principal_data, file, folder):
 def save_json_content(file, folder):
     # we open the json and access to the data
     json_info_file = f"{MAIN_URL}/{folder}/{file}"
-    with open(f"{json_info_file}", "r") as f:
-        principal_data = json.load(f)
-        parse_json(principal_data, file, folder)
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        with open(f"{json_info_file}", "r") as f:
+            principal_data = json.load(f)
+            executor.submit(parse_json, principal_data, file, folder)
+            # parse_json(principal_data, file, folder)
+
+
+def chunks(lst, n):
+    """Yield successive n-sized chunks from lst."""
+    for i in range(0, len(lst), n):
+        yield lst[i : i + n]
 
 
 def main():
     first_t = timeit.default_timer()
     total_dirs = len(os.listdir(f"{MAIN_URL}"))
-    for index, directorio in enumerate(sorted(os.listdir(f"{MAIN_URL}"))):
+    for index, directorio in enumerate(sorted(os.listdir(f"{MAIN_URL}"), reverse=True)):
         path = f"{MAIN_URL}/{directorio}"
         print(f"directorio {path} num {index} de {total_dirs}")
-        with concurrent.futures.ProcessPoolExecutor() as executor:
-            for json_f in tqdm(os.listdir(f"{path}")):
-                executor.submit(save_json_content, json_f, directorio)
-                # save_json_content(f"{path}/{json_f}")
+        for json_f in tqdm(os.listdir(f"{path}")):
+            save_json_content(json_f, directorio)
+        # with concurrent.futures.ThreadPoolExecutor() as executor:
+        #     for json_f in tqdm(os.listdir(f"{path}")):
+        #         executor.map()
+
     last_t = timeit.default_timer()
     print("it took:", last_t - first_t)

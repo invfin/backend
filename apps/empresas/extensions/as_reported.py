@@ -12,30 +12,35 @@ from .base_averages import (
 
 class MapValuesFromDict:
     def get_own_field_to_map(self) -> List:
-        base_class = self.__class__.__bases__[1]
-        return list(base_class.__annotations__.keys())
+        base_class, extended_class = self.__class__.__bases__
+        if extended_class.__name__.endswith("AsReportedExtended"):
+            return list(extended_class().__annotations__.keys())
+        else:
+            raise Exception("The class doesn't match with AsReportedExtended")
+
 
     def map_fields(self):
         for field in self.get_own_field_to_map():
             field_name = field.replace("_field", "")
             field_filtered = self.fields.filter(concept__concept_slug=field_name)
-            print(field_name)
-            print(field_filtered)
             if field_filtered.exists():
-                if field_filtered.filter(concept__corresponding_final_item__isnull=True).exists():
-                    field_filtered.update(concept__corresponding_final_item=field)
+                if field_filtered.filter(concept__corresponding_final_item="").exists():
+                    for item_field in field_filtered:
+                        item_field.concept.corresponding_final_item=field
+                        item_field.concept.save(update_fields=["corresponding_final_item"])
             else:
                 self.match_field(field, field_name)
 
     def match_field(self, field: str, field_name: str):
         label_slug_filtered = self.fields.filter(concept__label_slug=field_name)
-        print(label_slug_filtered)
         if label_slug_filtered.exists():
-            if label_slug_filtered.filter(concept__corresponding_final_item__isnull=True).exists():
-                label_slug_filtered.update(concept__corresponding_final_item=field)
+            if label_slug_filtered.filter(concept__corresponding_final_item="").exists():
+                for item_field in label_slug_filtered:
+                    item_field.concept.corresponding_final_item = field
+                    item_field.concept.save(update_fields=["corresponding_final_item"])
 
     def mapped_fields(self):
-        return self.fields.filter(concept__corresponding_final_item__isnull=False)
+        return self.fields.filter(concept__corresponding_final_item="")
 
 
 class IncomeStatementAsReportedExtended(AverageIncomeStatement, MapValuesFromDict):
