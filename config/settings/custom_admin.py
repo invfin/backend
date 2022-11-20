@@ -376,6 +376,12 @@ SIDE_MENU = [
             {
                 "model": "empresas.IncomeStatementAsReported",
             },
+            {
+                "model": "empresas.StatementItem",
+            },
+            {
+                "model": "empresas.StatementItemConcept",
+            },
         ),
     },
     {

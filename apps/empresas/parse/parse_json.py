@@ -171,11 +171,21 @@ def main():
     for index, directorio in enumerate(sorted(os.listdir(f"{MAIN_URL}"), reverse=True)):
         path = f"{MAIN_URL}/{directorio}"
         print(f"directorio {path} num {index} de {total_dirs}")
-        for json_f in tqdm(os.listdir(f"{path}")):
-            save_json_content(json_f, directorio)
-        # with concurrent.futures.ThreadPoolExecutor() as executor:
-        #     for json_f in tqdm(os.listdir(f"{path}")):
-        #         executor.map()
+        # for json_f in tqdm(os.listdir(f"{path}")):
+        #     save_json_content(json_f, directorio)
+        with concurrent.futures.ThreadPoolExecutor(max_workers=100) as executor:
+            for json_f in tqdm(os.listdir(f"{path}")):
+                executor.submit(save_json_content, json_f, directorio)
 
     last_t = timeit.default_timer()
     print("it took:", last_t - first_t)
+
+
+def parse_concept_final(concept):
+    pass
+
+
+def update_final():
+    with concurrent.futures.ThreadPoolExecutor(max_workers=100) as executor:
+        for concept in StatementItemConcept.objects.all():
+            executor.submit(parse_concept_final, concept)

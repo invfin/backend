@@ -9,7 +9,22 @@ from apps.empresas.models import (
     IncomeStatementAsReported,
     CashflowStatementAsReported,
     CompanyAsReportedProxy,
+    StatementItemConcept,
+    StatementItem,
 )
+
+
+@admin.register(StatementItemConcept)
+class StatementItemConceptAdmin(admin.ModelAdmin):
+    list_display = ["id", "concept", "corresponding_final_item"]
+
+
+@admin.register(StatementItem)
+class StatementItemAdmin(admin.ModelAdmin):
+    list_display = ["id", "concept"]
+
+    def get_object(self, request, object_id, from_field=None):
+        return StatementItem.objects.select_related("concept", "currency").get(id=object_id)
 
 
 @admin.register(IncomeStatementAsReported)
@@ -34,8 +49,20 @@ class IncomeStatementAsReportedAdmin(admin.ModelAdmin):
         "period",
     ]
 
+    def get_object(self, request, object_id, from_field=None):
+        return (
+            IncomeStatementAsReported.objects.select_related("period", "company")
+            .prefetch_related("fields", "fields__concept")
+            .get(id=object_id)
+        )
+
     def get_queryset(self, request):
-        return super().get_queryset(request).select_related("period", "company").prefetch_related("fields")
+        return (
+            super()
+            .get_queryset(request)
+            .select_related("period", "company")
+            .prefetch_related("fields", "fields__concept")
+        )
 
 
 class IncomeStatementAsReportedInline(BaseJSONWidgetInline):

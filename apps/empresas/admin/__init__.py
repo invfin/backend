@@ -52,9 +52,11 @@ from .finnhub import (
     CompanyFinnhubProxyAdmin,
     # StatementsFinnhubAdmin,
 )
-from .as_reported import CompanyAsReportedProxyAdmin
+from .as_reported import CompanyAsReportedProxyAdmin, StatementItemConceptAdmin, StatementItemAdmin
 
 __all__ = [
+    "StatementItemConceptAdmin",
+    "StatementItemAdmin",
     "CompanyAsReportedProxyAdmin",
     "CompanyYahooQueryProxy",
     "CompanyYFinanceProxy",
