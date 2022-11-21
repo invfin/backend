@@ -27,7 +27,7 @@ class ContactForm(Form):
         name = self.cleaned_data["name"]
         email = self.cleaned_data["email"]
         message = self.cleaned_data["message"]
-        EmailingSystem.simple_email(f"{name} con el email {email} ha enviado {message}", "Nuevo mensaje desde suport")
+        EmailingSystem.simple_email("Nuevo mensaje desde suport", f"{name} con el email {email} ha enviado {message}")
 
 
 class WebEmailForm(ModelForm):
