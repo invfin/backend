@@ -18,22 +18,20 @@ class CompanyTask:
         self.tasks_map_selector: str = tasks_map_selector
 
     def retrieve_company(self):
-        companies_without_info = Company.objects.filter_checking_not_seen(self.checking)
-        if companies_without_info.exists():
-            return companies_without_info.first()
-        return None
+        return Company.objects.filter_checking_not_seen(self.checking).first()
 
     def prepare_task(self):
         company = self.retrieve_company()
         if not company:
             return self.send_ending_message()
-        return RetrieveCompanyData(company)
+        return company
 
-    def select_task(self, retrieve_data):
+    def select_task(self, company):
+        retrieve_data = RetrieveCompanyData(company)
         tasks_map = {
             "financials_yfinance_info": self.yfinance_tasks,
             "financials_yahooquery_info": self.yahoo_query_tasks,
-            "financials_finprep_info": retrieve_data.create_financials_finprep,
+            "financials_finprep_info": UpdateCompany(company).create_financials_finprep(),
             "financials_finnhub_info": retrieve_data.create_financials_finnhub,
             "key_stats": retrieve_data.create_key_stats_yahooquery,
             "institutionals": retrieve_data.create_institutionals_yahooquery,
@@ -62,8 +60,8 @@ class CompanyTask:
         retrieve_data.create_financials_yfinance("q")
 
     def launch_task(self):
-        retrieve_data = self.prepare_task()
-        self.select_task(retrieve_data)
+        company = self.prepare_task()
+        self.select_task(company)
         # arrange_quarters_task.delay(company.id)
 
 
@@ -132,7 +130,7 @@ def update_company_institutionals_task():
 
 @shared_task()
 def update_company_financials_finprep_task():
-    CompanyTask("latest_financials_finprep_info", "financials_finprep_info").launch_task()
+    CompanyTask("fixed_last_finprep", "financials_finprep_info").launch_task()
 
 
 @shared_task()

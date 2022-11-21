@@ -113,7 +113,7 @@ class SEOViewMixin(RecommenderMixin):
 
         return meta_image
 
-    def get_meta_tags(self):
+    def get_meta_tags(self) -> str:
         meta_tags = self.meta_tags
         if not meta_tags:
             meta_tags = "finanzas, blog financiero, blog el financiera, invertir"
