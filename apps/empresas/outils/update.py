@@ -37,6 +37,7 @@ class UpdateCompany(CalculateCompanyFinancialRatios, AverageStatements):
                 company=cashflow_statement.company,
                 period=cashflow_statement.period,
             ).update(**cashflow_statement.return_standard)
+        # TODO add calculate ratios method
         return None
 
     @log_company()
