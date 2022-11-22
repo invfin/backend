@@ -13,7 +13,11 @@ from django.db.models import (
     TextField,
 )
 
-from apps.empresas.extensions.as_reported import IncomeStatementAsReportedExtended
+from apps.empresas.extensions.as_reported import (
+    IncomeStatementAsReportedExtended,
+    BalanceSheetAsReportedExtended,
+    CashflowStatementAsReportedExtended
+)
 from apps.empresas.managers import AsReportedStatementManager
 from apps.general.abstracts import AbstractTimeStampedModel
 
@@ -106,7 +110,7 @@ class IncomeStatementAsReported(BaseStatement, IncomeStatementAsReportedExtended
         db_table = "assets_income_statement_as_reported"
 
 
-class BalanceSheetAsReported(BaseStatement):
+class BalanceSheetAsReported(BaseStatement, BalanceSheetAsReportedExtended):
     company = ForeignKey(
         "empresas.Company",
         on_delete=SET_NULL,
@@ -119,7 +123,7 @@ class BalanceSheetAsReported(BaseStatement):
         db_table = "assets_balance_sheet_as_reported"
 
 
-class CashflowStatementAsReported(BaseStatement):
+class CashflowStatementAsReported(BaseStatement, CashflowStatementAsReportedExtended):
     company = ForeignKey(
         "empresas.Company",
         on_delete=SET_NULL,
