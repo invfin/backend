@@ -1,26 +1,8 @@
-from decimal import Decimal
 from typing import Dict, Union
 
+from .valuation_ratios import ValuationRatios
 
-class CalculateFinancialRatios:
-    @staticmethod
-    def divide_or_zero(numerator: Union[int, float], denominator: Union[int, float]):
-        """A method to calculate a divison that returns de product or 0 if the denominator is 0
-
-        Parameters
-        ----------
-        numerator : Union[int, float]
-            The numerator of the division
-        denominator : Union[int, float]
-            The denominator of the division
-
-        Returns
-        -------
-        Union[int, float]
-            The product of the division
-        """
-        return numerator / denominator if denominator != 0 else 0
-
+class CalculateFinancialRatios(ValuationRatios):
     def generate_current_data(
         self, income_statements: list, balance_sheets: list, cashflow_statements: list
     ) -> Dict[str, Union[int, float]]:
@@ -543,10 +525,14 @@ class CalculateFinancialRatios:
             "rd_expenses_growth": rd_expenses_growth,
         }
 
-    def calculate_eficiency_ratio(self, data: Dict[str, Union[int, float]]) -> Dict[str, Union[int, float]]:
-        days_inventory_outstanding = (
-            data["average_inventory"] / (data["cost_of_revenue"] * 360) if data["cost_of_revenue"] != 0 else 0
-        )
+    @classmethod
+    def calculate_average_inventory(cls, data: Dict[str, Union[int, float]]) -> Union[int, float]:
+        return (data["last_year_inventory"] + data["inventory"]) / 2
+    @classmethod
+    def calculate_efficiency_ratio(cls, data: Dict[str, Union[int, float]]) -> Dict[str, Union[int, float]]:
+        average_inventory = data.get("average_inventory", cls.calculate_average_inventory(data))
+        days_inventory_outstanding = cls.divide_or_zero(average_inventory, (data["cost_of_revenue"] * 360))
+
         days_payables_outstanding = (
             (data["account_payables"] * 360) / data["cost_of_revenue"] if data["cost_of_revenue"] != 0 else 0
         )
@@ -566,7 +552,6 @@ class CalculateFinancialRatios:
             if data["net_cash_provided_by_operating_activities"] != 0
             else 0
         )
-
         return {
             "days_inventory_outstanding": days_inventory_outstanding,
             "days_payables_outstanding": days_payables_outstanding,
@@ -580,27 +565,25 @@ class CalculateFinancialRatios:
             "fcf_to_operating_cf": fcf_to_operating_cf,
         }
 
-    def calculate_price_to_ratio(self, data: Dict[str, Union[int, float]]) -> Dict[str, Union[int, float]]:
-        price_book = data["current_price"] / data["book_ps"] if data["book_ps"] != 0 else 0
-        price_cf = data["current_price"] / data["cash_ps"] if data["cash_ps"] != 0 else 0
-        price_earnings = data["current_price"] / data["eps"] if data["eps"] != 0 else 0
-        price_earnings_growth = (
-            (price_earnings / data["net_income_growth"]).real if data["net_income_growth"] != 0 else 0
-        )
-        price_sales = data["current_price"] / data["sales_ps"] if data["sales_ps"] != 0 else 0
-        price_total_assets = data["current_price"] / data["total_assets_ps"] if data["total_assets_ps"] != 0 else 0
-        price_fcf = data["current_price"] / data["fcf_ps"] if data["fcf_ps"] != 0 else 0
-        price_operating_cf = data["current_price"] / data["operating_cf_ps"] if data["operating_cf_ps"] != 0 else 0
-        price_tangible_assets = data["current_price"] / data["tangible_ps"] if data["tangible_ps"] != 0 else 0
-
+    @classmethod
+    def calculate_price_to_ratio(cls, data: Dict[str, Union[int, float]]) -> Dict[str, Union[int, float]]:
+        price_to_book = cls.calculate_price_to_book(data.get("current_price",0), data.get("book_ps",0))
+        price_to_cf = cls.calculate_price_to_cash(data.get("current_price",0), data.get("cash_ps",0))
+        price_to_earnings = cls.calculate_price_to_earnings(data.get("current_price",0), data.get("eps",0))
+        price_to_earnings_growth = cls.calculate_price_to_earnings_growth(price_to_earnings, data.get("net_income_growth",0)).real
+        price_to_sales = cls.calculate_price_to_sales(data.get("current_price",0), data.get("sales_ps",0))
+        price_to_total_assets = cls.calculate_price_to_total_assets(data.get("current_price",0), data.get("total_assets_ps",0))
+        price_to_fcf = cls.calculate_price_to_fcf(data.get("current_price",0), data.get("fcf_ps",0))
+        price_to_operating_cf = cls.calculate_price_to_operating_cf(data.get("current_price",0), data.get("operating_cf_ps",0))
+        price_to_tangible_assets = cls.calculate_price_to_tangible_assets(data.get("current_price",0), data.get("tangible_ps",0))
         return {
-            "price_book": price_book,
-            "price_cf": price_cf,
-            "price_earnings": price_earnings,
-            "price_earnings_growth": price_earnings_growth,
-            "price_sales": price_sales,
-            "price_total_assets": price_total_assets,
-            "price_fcf": price_fcf,
-            "price_operating_cf": price_operating_cf,
-            "price_tangible_assets": price_tangible_assets,
+            "price_book": price_to_book,
+            "price_cf": price_to_cf,
+            "price_earnings": price_to_earnings,
+            "price_earnings_growth": price_to_earnings_growth,
+            "price_sales": price_to_sales,
+            "price_total_assets": price_to_total_assets,
+            "price_fcf": price_to_fcf,
+            "price_operating_cf": price_to_operating_cf,
+            "price_tangible_assets": price_to_tangible_assets,
         }

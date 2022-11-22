@@ -5,7 +5,7 @@ from django.db.models import Q
 
 from apps.translate.google_trans_new import google_translator
 from apps.empresas.utils import log_company
-from apps.empresas.outils.ratios import CalculateFinancialRatios
+from apps.empresas.outils.financial_ratios import CalculateFinancialRatios
 from apps.empresas.outils.average_statements import AverageStatements
 from apps.empresas.outils.retrieve_data import RetrieveCompanyData
 from apps.periods.constants import PERIOD_FOR_YEAR
