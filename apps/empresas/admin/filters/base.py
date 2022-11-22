@@ -1,7 +1,7 @@
 from django.contrib.admin import SimpleListFilter
 from django.db.models import Q
 
-from apps.general import constants
+from apps.periods import constants
 
 
 class PeriodFilter(SimpleListFilter):

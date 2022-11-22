@@ -4,189 +4,90 @@ from django.contrib.auth import get_user_model
 from django.db.models import (
     CASCADE,
     SET_NULL,
-    BooleanField,
     CharField,
     DateTimeField,
     ForeignKey,
     JSONField,
+    ManyToManyField,
     Model,
     PositiveIntegerField,
-    TextField,
 )
 
 from apps.empresas.models import Company
 from apps.escritos.models import Term
 from apps.preguntas_respuestas.models import Question
 from apps.public_blog.models import PublicBlog, WritterProfile
-from apps.web import constants as web_constants
-
-from .constants import FOR_CONTENT, POST_TYPE, SOCIAL_MEDIAS
-from .managers import EmojisManager, HashtagsManager, TitlesManager, DefaultContentManager
-
+from apps.general.mixins import BaseToAllMixin
+from apps.content_creation.models import DefaultContent, DefaultTilte, Emoji, Hashtag
+from apps.content_creation.constants import POST_TYPE
+from apps.socialmedias.constants import SOCIAL_MEDIAS
 User = get_user_model()
 
 
-class Hashtag(Model):        
-    title = TextField(default='')
-    platform = CharField(max_length=500, choices=SOCIAL_MEDIAS)
-    is_trending = BooleanField(default=False)
-    objects = HashtagsManager()
-
-    class Meta:
-        verbose_name = "Default hashtags"
-        db_table = 'socialmedia_hashtags'
-    
-    def __str__(self) -> str:
-        return str(self.title)
-
-
-class Emoji(Model):
-    emoji = CharField(max_length=500)
-    objects = EmojisManager()
-
-    class Meta:
-        verbose_name = "Default emojis"
-        db_table = 'socialmedia_emojis'
-    
-    def __str__(self) -> str:
-        return str(self.emoji)
-
-
-class DefaultTilte(Model):
-    title = TextField(default='')
-    for_content = PositiveIntegerField(
-        choices=FOR_CONTENT, 
-        blank=True, 
-        default=0
-    )
-    purpose = CharField(
-        max_length=500, 
-        choices=web_constants.CONTENT_PURPOSES, 
-        null=True,
-        blank=True
-    )
-    objects = TitlesManager()
-
-    class Meta:
-        verbose_name = "Default titles"
-        db_table = 'socialmedia_titles'
-    
-    def __str__(self) -> str:
-        return str(self.title)
-
-
-class DefaultContent(Model):
-    title = CharField(max_length=500)
-    for_content = PositiveIntegerField(
-        choices=FOR_CONTENT, 
-        blank=True, 
-        default=0
-    )
-    purpose = CharField(
-        max_length=500, 
-        choices=web_constants.CONTENT_PURPOSES, 
-        null=True,
-        blank=True
-    )
-    content = RichTextField()
-    objects = DefaultContentManager()
-
-    class Meta:
-        verbose_name = "Default content"
-        db_table = 'socialmedia_content'
-    
-    def __str__(self) -> str:
-        return str(self.title)  
-
-
-class BaseContentShared(Model):
+class AbstractContentShared(Model, BaseToAllMixin):
     user = ForeignKey(User, on_delete=SET_NULL, null=True, blank=True)
     date_shared = DateTimeField(auto_now_add=True)
     post_type = PositiveIntegerField(choices=POST_TYPE)
     platform_shared = CharField(max_length=500, choices=SOCIAL_MEDIAS)
     social_id = CharField(max_length=500)
     title = RichTextField(blank=True)
-    description = RichTextField(blank=True)
+    content = RichTextField(blank=True)
+    default_title = ForeignKey(DefaultTilte, on_delete=SET_NULL, null=True, blank=True)
+    default_content = ForeignKey(DefaultContent, on_delete=SET_NULL, null=True, blank=True)
+    title_emojis = ManyToManyField(Emoji, blank=True)
+    hashtags = ManyToManyField(Hashtag, blank=True)
     extra_description = RichTextField(blank=True)
-    inside_information = RichTextField(blank=True)
+    metadata = JSONField(default=dict)
 
     class Meta:
         abstract = True
 
 
-class TermSharedHistorial(BaseContentShared):
-    content_shared = ForeignKey(
-        Term,
-        on_delete=CASCADE,
-        null=True,
-        blank=True,
-        related_name = 'terms_shared')
+class TermSharedHistorial(AbstractContentShared):
+    content_shared = ForeignKey(Term, on_delete=CASCADE, null=True, blank=True, related_name="terms_shared")
 
     class Meta:
         verbose_name = "Term shared"
         db_table = "shared_terms"
 
 
-class QuestionSharedHistorial(BaseContentShared):
-    content_shared = ForeignKey(
-        Question,
-        on_delete=CASCADE,
-        null=True,
-        blank=True,
-        related_name = 'questions_shared')
+class QuestionSharedHistorial(AbstractContentShared):
+    content_shared = ForeignKey(Question, on_delete=CASCADE, null=True, blank=True, related_name="questions_shared")
 
     class Meta:
         verbose_name = "Question shared"
         db_table = "shared_questions"
 
 
-class BlogSharedHistorial(BaseContentShared):
-    content_shared = ForeignKey(
-        PublicBlog,
-        on_delete=CASCADE,
-        null=True,
-        blank=True,
-        related_name = 'blogs_shared')
+class BlogSharedHistorial(AbstractContentShared):
+    content_shared = ForeignKey(PublicBlog, on_delete=CASCADE, null=True, blank=True, related_name="blogs_shared")
 
     class Meta:
         verbose_name = "Blog shared"
         db_table = "shared_blogs"
 
 
-class ProfileSharedHistorial(BaseContentShared):
+class ProfileSharedHistorial(AbstractContentShared):
     content_shared = ForeignKey(
-        WritterProfile,
-        on_delete=CASCADE,
-        null=True,
-        blank=True,
-        related_name = 'profiles_shared')
-    
+        WritterProfile, on_delete=CASCADE, null=True, blank=True, related_name="profiles_shared"
+    )
+
     class Meta:
         verbose_name = "Profile shared"
         db_table = "shared_profiles"
 
 
-class CompanySharedHistorial(BaseContentShared):
-    content_shared = ForeignKey(
-        Company,
-        on_delete=CASCADE,
-        null=True,
-        blank=True,
-        related_name = 'company_shared')
-    
+class CompanySharedHistorial(AbstractContentShared):
+    content_shared = ForeignKey(Company, on_delete=CASCADE, null=True, blank=True, related_name="company_shared")
+
     class Meta:
         verbose_name = "Company shared"
         db_table = "shared_companies"
 
 
-class NewsSharedHistorial(BaseContentShared):
-    company_related = ForeignKey(
-        Company,
-        on_delete=CASCADE,
-        null=True,
-        blank=True,
-        related_name = 'news_shared')
-    
+class NewsSharedHistorial(AbstractContentShared):
+    company_related = ForeignKey(Company, on_delete=CASCADE, null=True, blank=True, related_name="news_shared")
+
     class Meta:
         verbose_name = "Company news shared"
         db_table = "shared_news"

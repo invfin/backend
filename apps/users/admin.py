@@ -17,11 +17,23 @@ from apps.preguntas_respuestas.admin import (
 from .models import (
     CreditUsageHistorial,
     MetaProfileInfo,
-    MetaProfileHistorial,
+    UsersCategory,
     Profile
 )
 
 User = get_user_model()
+
+
+@admin.register(UsersCategory)
+class UsersCategoryAdmin(admin.ModelAdmin):
+    list_display = [
+        "id",
+        "name",
+        "slug",
+    ]
+    filter_horizontal = [
+        "users",
+    ]
 
 
 class MetaProfileInfoInline(admin.StackedInline):

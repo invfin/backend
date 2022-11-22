@@ -1,56 +1,40 @@
 from .company import (
     Company,
+    CompanyFinnhubProxy,
+    CompanyFinprepProxy,
+    CompanyStatementsProxy,
     CompanyStockPrice,
     CompanyUpdateLog,
     CompanyYahooQueryProxy,
     CompanyYFinanceProxy,
-    CompanyFinprepProxy,
-    CompanyFinnhubProxy,
-    CompanyStatementsProxy
 )
-from .exchanges import (
-    Exchange,
-    ExchangeOrganisation,
-)
+from .exchanges import Exchange, ExchangeOrganisation
+from .finnhub import StatementsFinnhub
+from .finprep import BalanceSheetFinprep, CashflowStatementFinprep, IncomeStatementFinprep
+from .institutions import InstitutionalOrganization, TopInstitutionalOwnership
 from .statements import (
-    BaseStatement,
-    IncomeStatement,
     BalanceSheet,
+    BaseStatement,
     CashflowStatement,
-    RentabilityRatio,
-    LiquidityRatio,
-    MarginRatio,
-    FreeCashFlowRatio,
-    PerShareValue,
-    NonGaap,
-    OperationRiskRatio,
-    EnterpriseValueRatio,
     CompanyGrowth,
     EficiencyRatio,
+    EnterpriseValueRatio,
+    FreeCashFlowRatio,
+    IncomeStatement,
+    LiquidityRatio,
+    MarginRatio,
+    NonGaap,
+    OperationRiskRatio,
+    PerShareValue,
     PriceToRatio,
+    RentabilityRatio,
 )
-from .institutions import (
-    InstitutionalOrganization,
-    TopInstitutionalOwnership,
-)
-from .finprep import (
-    BalanceSheetFinprep,
-    CashflowStatementFinprep,
-    IncomeStatementFinprep,
-)
-from .y_finance import (
-    BalanceSheetYFinance,
-    CashflowStatementYFinance,
-    IncomeStatementYFinance,
-)
+from .y_finance import BalanceSheetYFinance, CashflowStatementYFinance, IncomeStatementYFinance
 from .yahoo_query import (
     BalanceSheetYahooQuery,
     CashflowStatementYahooQuery,
     IncomeStatementYahooQuery,
-    KeyStatsYahooQuery
-)
-from .finnhub import (
-    StatementsFinnhub
+    KeyStatsYahooQuery,
 )
 
 __all__ = [
@@ -59,13 +43,11 @@ __all__ = [
     "CompanyFinprepProxy",
     "CompanyFinnhubProxy",
     "CompanyStatementsProxy",
-
     "Company",
     "CompanyStockPrice",
     "CompanyUpdateLog",
     "Exchange",
     "ExchangeOrganisation",
-
     "IncomeStatement",
     "BalanceSheet",
     "CashflowStatement",
@@ -80,22 +62,17 @@ __all__ = [
     "CompanyGrowth",
     "EficiencyRatio",
     "PriceToRatio",
-
     "InstitutionalOrganization",
     "TopInstitutionalOwnership",
-
     "BalanceSheetFinprep",
     "CashflowStatementFinprep",
     "IncomeStatementFinprep",
-
     "BalanceSheetYFinance",
     "CashflowStatementYFinance",
     "IncomeStatementYFinance",
-
     "BalanceSheetYahooQuery",
     "CashflowStatementYahooQuery",
     "IncomeStatementYahooQuery",
     "KeyStatsYahooQuery",
-
     "StatementsFinnhub",
 ]

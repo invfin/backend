@@ -1,61 +1,60 @@
-from config import celery_app
+from celery import shared_task
 
 from apps.socialmedias import constants
 
-from .poster import SocialPosting
+from .outils.poster import SocialPosting
 
 
-@celery_app.task()
+@shared_task(autoretry_for=(Exception,), max_retries=3)
 def socialmedia_share_company():
     SocialPosting().share_content(
-        constants.COMPANY,
+        constants.COMPANY_FOR_CONTENT,
         [
-            {"platform": constants.FACEBOOK, "post_type": constants.POST_TYPE_TEXT},
-            {"platform": constants.TWITTER, "post_type": constants.POST_TYPE_TEXT}
-        ]
+            {"platform_shared": constants.FACEBOOK, "post_type": constants.POST_TYPE_TEXT_IMAGE},
+            {"platform_shared": constants.TWITTER, "post_type": constants.POST_TYPE_TEXT_IMAGE},
+        ],
     )
 
 
-@celery_app.task()
+@shared_task(autoretry_for=(Exception,), max_retries=3)
 def socialmedia_share_news():
     SocialPosting().share_content(
-        constants.NEWS,
+        constants.NEWS_FOR_CONTENT,
         [
-            {"platform": constants.FACEBOOK, "post_type": constants.POST_TYPE_TEXT},
-            {"platform": constants.TWITTER, "post_type": constants.POST_TYPE_TEXT}
-        ]
+            {"platform_shared": constants.FACEBOOK, "post_type": constants.POST_TYPE_TEXT_IMAGE},
+            {"platform_shared": constants.TWITTER, "post_type": constants.POST_TYPE_TEXT_IMAGE},
+        ],
     )
 
 
-@celery_app.task()
+@shared_task(autoretry_for=(Exception,), max_retries=3)
 def socialmedia_share_term():
     SocialPosting().share_content(
-        constants.TERM,
+        constants.TERM_FOR_CONTENT,
         [
-            {"platform": constants.FACEBOOK, "post_type": constants.POST_TYPE_TEXT},
-            {"platform": constants.TWITTER, "post_type": constants.POST_TYPE_TEXT}
-        ]
+            {"platform_shared": constants.FACEBOOK, "post_type": constants.POST_TYPE_TEXT_IMAGE},
+            {"platform_shared": constants.TWITTER, "post_type": constants.POST_TYPE_TEXT_IMAGE},
+        ],
     )
 
 
-@celery_app.task()
+@shared_task(autoretry_for=(Exception,), max_retries=3)
 def socialmedia_share_blog():
     SocialPosting().share_content(
-        constants.BLOG,
+        constants.PUBLIC_BLOG_FOR_CONTENT,
         [
-            {"platform": constants.FACEBOOK, "post_type": constants.POST_TYPE_TEXT_IMAGE},
-            {"platform": constants.TWITTER, "post_type": constants.POST_TYPE_TEXT_IMAGE}
-        ]
+            {"platform_shared": constants.FACEBOOK, "post_type": constants.POST_TYPE_TEXT_IMAGE},
+            {"platform_shared": constants.TWITTER, "post_type": constants.POST_TYPE_TEXT_IMAGE},
+        ],
     )
 
 
-@celery_app.task()
+@shared_task(autoretry_for=(Exception,), max_retries=3)
 def socialmedia_share_question():
-
     SocialPosting().share_content(
-        constants.QUESTION,
+        constants.QUESTION_FOR_CONTENT,
         [
-            {"platform": constants.FACEBOOK, "post_type": constants.POST_TYPE_TEXT},
-            {"platform": constants.TWITTER, "post_type": constants.POST_TYPE_TEXT}
-        ]
+            {"platform_shared": constants.FACEBOOK, "post_type": constants.POST_TYPE_TEXT_IMAGE},
+            {"platform_shared": constants.TWITTER, "post_type": constants.POST_TYPE_TEXT_IMAGE},
+        ],
     )

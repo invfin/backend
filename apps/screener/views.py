@@ -1,3 +1,4 @@
+from typing import Dict
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
@@ -95,16 +96,17 @@ class CompanyDetailsView(SEODetailView):
         ticker = self.kwargs.get("ticker")
         try:
             response = Company.objects.prefetch_yearly_historical_data(ticker=ticker)
+            self.object = response
+            return response
         except Company.DoesNotExist:
-            response, _ = Company.objects.get_or_create(name="Need-parsing", ticker=ticker)
-        except Exception as e:
+            response, created = Company.objects.get_or_create(name="Need-parsing", ticker=ticker)
+            return None
+        except Exception:
             """
             TODO
-            Use logger instead of print
+            Use logger to know the problem
             """
-            print(e)
-            response = None
-        return response
+            return None
 
     def save_company_in_session(self, empresa):
         if "companies_visited" not in self.request.session:
@@ -127,38 +129,52 @@ class CompanyDetailsView(SEODetailView):
             companies_visited.pop(0)
         self.request.session.modified = True
 
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        empresa = self.object
-        UpdateCompany(empresa).general_update()
-        self.save_company_in_session(empresa)
-        context["meta_desc"] = (
+    def check_company_for_updates(self, empresa) -> None:
+        if not empresa.has_checking("fixed_last_finprep"):
+            UpdateCompany(empresa).create_financials_finprep()
+
+    def get_meta_description(self, empresa) -> str:
+        return (
             f"Estudia a fondo la empresa {empresa.name}. Más de 30 años de información, noticias, análisis FODA y"
             " mucho más"
         )
-        context[
-            "meta_tags"
-        ] = f"finanzas, blog financiero, blog el financiera, invertir, {empresa.name}, {empresa.ticker}"
-        context["meta_title"] = f"Análisis completo de {empresa.name}"
+
+    def get_meta_tags(self) -> str:
+        return f"finanzas, blog financiero, blog el financiera, invertir, {self.object.name}, {self.object.ticker}"
+
+    def get_meta_title(self, empresa) -> str:
+        return f"Análisis completo de {empresa.name}"
+
+    def check_user_company_relation(self, object: Company, context: Dict) -> Dict:
         company_is_fav = False
-        limit_years = 10
+        limit_years = 5
         has_bought = False
         user = self.request.user
         if user.is_authenticated:
-            if empresa.ticker in user.fav_stocks.only("ticker"):
+            if object.ticker in user.fav_stocks.only("ticker"):
                 company_is_fav = True
-            if CompanyInformationBought.objects.filter(user=user, company=empresa).exists():
+            if CompanyInformationBought.objects.filter(user=user, company=object).exists():
                 limit_years = 0
                 has_bought = True
 
         context["has_bought"] = has_bought
         context["company_is_fav"] = company_is_fav
-        context["complete_info"] = empresa.complete_info(limit_years)
+        context["complete_info"] = object.complete_info(limit_years)
+        return context
+
+    def get_context_data(self, object, **kwargs):
+        context = super().get_context_data(**kwargs)
+        self.check_company_for_updates(object)
+        self.save_company_in_session(object)
+        self.get_meta_description(object)
+        self.get_meta_tags()
+        self.get_meta_title(object)
+        context = self.check_user_company_relation(object, context)
         return context
 
     def get(self, request, *args, **kwargs):
         self.object = self.get_object()
-        if not self.object or self.object.name == "Need-parsing":
+        if not self.object:
             messages.error(
                 self.request,
                 "Lo sentimos, esta empresa todavía no tiene información ahora mismo vamos a recabar información y"

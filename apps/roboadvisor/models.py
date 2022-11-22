@@ -20,7 +20,8 @@ from django.template.defaultfilters import slugify
 from django.urls import reverse
 
 from apps.empresas.models import Company
-from apps.general.models import Category, Currency, Tag
+from apps.classifications.models import Category, Tag
+from apps.currencies.models import Currency
 
 from .constants import (
     HORIZON,
@@ -54,7 +55,7 @@ class BaseInvestorProfile(Model):
 
     class Meta:
         abstract = True
-    
+
     @property
     def explanation(self):
         if self.risk_profile == 'very-agressive':
@@ -69,14 +70,14 @@ class BaseInvestorProfile(Model):
 
 
 class InvestorProfile(BaseInvestorProfile):
-    user = OneToOneField(User, on_delete=SET_NULL, null=True, related_name='user_investor_profile')
+    user = OneToOneField(User, on_delete=SET_NULL, null=True, related_name='investor_profile')
     updated_at = DateTimeField(auto_now_add=True)
 
     class Meta:
         verbose_name = "User investor profile"
         verbose_name_plural = 'Users investor profiles'
         db_table = "user_investor_profile"
-    
+
     def __str__(self) -> str:
         return self.user.username
 
@@ -98,17 +99,17 @@ class RoboAdvisorService(Model):
         verbose_name = "Roboadvisor service"
         verbose_name_plural = 'Roboadvisor services'
         db_table = "roboadvisor_services"
-    
+
     def __str__(self) -> str:
         return self.title
-    
+
     def save(self) -> None:
-        self.template_result = self.slug            
+        self.template_result = self.slug
         return super().save()
-    
+
     def get_absolute_url(self):
         return reverse("roboadvisor:robo-option", kwargs={"slug": self.slug})
-    
+
     @property
     def template_path(self):
         return f'results/{self.template_result}.html'
@@ -117,7 +118,7 @@ class RoboAdvisorService(Model):
 class RoboAdvisorServiceStep(Model):
     title = CharField(max_length=500, null=True, blank=True)
     slug = CharField(max_length=500, null=True, blank=True)
-    description = TextField(null=True, blank=True)    
+    description = TextField(null=True, blank=True)
     order = PositiveIntegerField(null=True, blank=True)
     url = CharField(max_length=500, null=True, blank=True, choices=ROBO_STEPS)
     template = CharField(max_length=500, null=True, blank=True)
@@ -128,21 +129,21 @@ class RoboAdvisorServiceStep(Model):
         verbose_name = "Roboadvisor service step"
         verbose_name_plural = 'Roboadvisor service steps'
         db_table = "roboadvisor_service_steps"
-    
+
     def __str__(self) -> str:
         return self.title
-    
+
     def save(self) -> None:
         if not self.slug:
             self.slug = slugify(f'{self.title}-{self.service_related.title}')
         if not self.template:
             self.template = self.url
         return super().save()
-    
+
     @property
     def template_path(self):
         return f'steps/{self.template}.html'
-    
+
     @property
     def url_path(self):
         return f'roboadvisor:{self.url}'
@@ -159,22 +160,22 @@ class RoboAdvisorUserServiceActivity(Model):
         verbose_name = 'RoboAdvisor Service Activity'
         verbose_name_plural = 'RoboAdvisor Service Activity'
         db_table = "roboadvisor_service_activity"
-    
+
     def __str__(self) -> str:
-        return f'{self.service.title} - {self.id}' 
-    
+        return f'{self.service.title} - {self.id}'
+
     @property
     def company_related(self):
         if self.service.slug == 'company-match' and RoboAdvisorQuestionCompanyAnalysis.objects.filter(service_activity = self).exists():
             return True
         return False
-    
+
     @property
     def temp_profile_related(self):
         if self.service.slug == 'investor-profile' and TemporaryInvestorProfile.objects.filter(service_activity = self).exists():
             return True
         return False
-    
+
     @property
     def service_result(self):
         if self.company_related:
@@ -219,7 +220,7 @@ class TemporaryInvestorProfile(BaseInvestorProfile):
         verbose_name = "Temporary investor profile"
         verbose_name_plural = 'Temporary investor profiles'
         db_table = "temporary_investor_profile"
-    
+
     def __str__(self) -> str:
         return self.profile_related.user.username
 
@@ -236,7 +237,7 @@ class RoboAdvisorUserServiceStepActivity(Model):
         verbose_name = 'RoboAdvisor Service Step Activity'
         verbose_name_plural = 'RoboAdvisor Service Steps Activity'
         db_table = "roboadvisor_service_step_activity"
-    
+
     def __str__(self) -> str:
         return self.step.title
 
@@ -248,7 +249,7 @@ class BaseRoboAdvisorQuestion(Model):
 
     class Meta:
         abstract = True
-    
+
     def __str__(self) -> str:
         # return f'{self.user.username} - {self.service_activity.service.title} - {self.service_step.step.title}'
         return f'{self.id}'
@@ -265,7 +266,7 @@ class RoboAdvisorQuestionFinancialSituation(BaseRoboAdvisorQuestion):
     saving_percentage = DecimalField(default = 0, blank=True, max_digits=10, decimal_places=2,validators=[MinValueValidator(0)])
     number_sources_income = IntegerField(default = 1, blank=True)
     currency = ForeignKey(Currency, null=True, blank=True, on_delete=SET_NULL)
-    
+
     class Meta:
         verbose_name = 'RoboAdvisor Financial Situation'
         verbose_name_plural = 'RoboAdvisor Financial Situations'
@@ -298,12 +299,12 @@ class BaseRoboAdvisorQuestionAsset(BaseRoboAdvisorHorizon):
 
 class RoboAdvisorQuestionInvestorExperience(BaseRoboAdvisorQuestion):
     age = PositiveIntegerField(null=True, blank=True, default=18)
-    objectif = IntegerField(choices=OBJECTIFS, null=True, blank=True, default=1) 
+    objectif = IntegerField(choices=OBJECTIFS, null=True, blank=True, default=1)
     investor_type_self_definition = CharField(max_length=500, null=True, blank=True, choices=INVESTOR_TYPE, default=INVESTOR_TYPE[1])
     percentage_invested = DecimalField(blank=True, default=0, max_digits=10, decimal_places=2, validators=[MinValueValidator(0), MaxValueValidator(100)])
     percentage_anualized_revenue = DecimalField (null=True, blank=True, default=0, max_digits=10, decimal_places=2)
     time_investing_exp = PositiveIntegerField(default = 0)
-    period_investing_exp = CharField(max_length=500, default=PERIODS[4], choices=PERIODS)  
+    period_investing_exp = CharField(max_length=500, default=PERIODS[4], choices=PERIODS)
 
     class Meta:
         verbose_name = "Pregunta: Experiencia como inversor"
@@ -311,7 +312,7 @@ class RoboAdvisorQuestionInvestorExperience(BaseRoboAdvisorQuestion):
         db_table = "roboadvisor_investor_experience"
 
 
-class RoboAdvisorQuestionRiskAversion(BaseRoboAdvisorHorizon):       
+class RoboAdvisorQuestionRiskAversion(BaseRoboAdvisorHorizon):
     volatilidad = IntegerField(choices=VOLATILIDAD,null=True, blank=True)
     percentage_for_onefive = IntegerField (null=True, blank=True)
     percentage_for_three = IntegerField (null=True, blank=True)
@@ -319,12 +320,12 @@ class RoboAdvisorQuestionRiskAversion(BaseRoboAdvisorHorizon):
     percentage_for_zerofive = IntegerField (null=True, blank=True)
     percentage_in_one_stock = IntegerField (null=True, blank=True)
     number_stocks = IntegerField(null=True, blank=True, choices=NUMBER_STOCKS)
-    
+
     class Meta:
         verbose_name = "Pregunta: Aversión al riesgo"
         verbose_name_plural = "Pregunta: Aversión al riesgo"
         db_table = "roboadvisor_risk_aversion"
-        
+
 
 class RoboAdvisorQuestionPortfolioAssetsWeight(BaseRoboAdvisorQuestion):
     etfs_percentage = DecimalField(blank=True, default=0, max_digits=10, decimal_places=2,  validators=[MinValueValidator(0), MaxValueValidator(100)])
@@ -333,7 +334,7 @@ class RoboAdvisorQuestionPortfolioAssetsWeight(BaseRoboAdvisorQuestion):
     real_estate_percentage = DecimalField(blank=True, default=0, max_digits=10, decimal_places=2,  validators=[MinValueValidator(0), MaxValueValidator(100)])
     sofipos_percentage = DecimalField(blank=True, default=0, max_digits=10, decimal_places=2,  validators=[MinValueValidator(0), MaxValueValidator(100)])
     cryptos_percentage = DecimalField(blank=True, default=0, max_digits=10, decimal_places=2, validators=[MinValueValidator(0), MaxValueValidator(100)])
-    
+
     class Meta:
         verbose_name = "Pregunta: Gusto por activos"
         verbose_name_plural = "Pregunta: Gusto por activos"
@@ -363,7 +364,7 @@ class RoboAdvisorQuestionPortfolioComposition(BaseRoboAdvisorQuestionAsset):
 
 class RoboAdvisorQuestionStocksPortfolio(BaseRoboAdvisorQuestion):
     stocks = ManyToManyField(RoboAdvisorQuestionPortfolioComposition)
-    
+
     class Meta:
         verbose_name = "Pregunta: Portfolio"
         verbose_name_plural = "Pregunta: Portfolio"

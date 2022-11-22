@@ -2,7 +2,7 @@ from typing import Dict
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 
-from apps.general.tasks import send_email_task
+from apps.emailing.tasks import send_email_task
 from apps.public_blog.models import (
     NewsletterFollowers,
     PublicBlog,

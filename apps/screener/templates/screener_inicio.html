@@ -59,7 +59,7 @@
 
 {% for org in organisations %}
 <div class="col-lg-3 col-md-6 col-sm-12 mt-4">
-    <div class="card card-lift--hover text-white h-75">
+    <div class="card text-white h-75">
         <a href="{% url 'screener:companies_by' org.name %}{% utm 'screener' 'select-market' org.name %}">
             <img src="{{org.image}}" class="card-img" alt="{{org.name}}" height="260px">
             <div class="card-img-overlay">

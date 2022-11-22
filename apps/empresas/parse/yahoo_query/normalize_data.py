@@ -2,7 +2,7 @@ from typing import Dict, Union, Any, Type, Callable
 import datetime
 import pandas as pd
 
-from apps.general.models import Currency
+from apps.currencies.models import Currency
 
 
 class NormalizeYahooQuery:
@@ -226,7 +226,7 @@ class NormalizeYahooQuery:
 
     def normalize_institutional_yahooquery(self, df_institution_ownership):
         df = df_institution_ownership.reset_index()
-        df = df.drop(columns=['symbol','row','maxAge'])
+        df = df.drop(columns=['symbol', 'row', 'maxAge'])
         return df
 
     def normalize_key_stats_yahooquery(self, key_stats):

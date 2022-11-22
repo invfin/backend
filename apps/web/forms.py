@@ -1,48 +1,57 @@
-from django.forms import (
-    CharField,
-    DateTimeField,
-    DateTimeInput,
-    EmailField,
-    Form,
-    ModelForm,
-    Textarea,
-)
+from django.contrib.admin import site
+from django.contrib.admin.widgets import RelatedFieldWidgetWrapper
+from django.forms import CharField, ChoiceField, DateTimeField, DateTimeInput, EmailField, Form, ModelForm, Textarea
 
-from apps.general.outils.emailing import EmailingSystem
-
+from apps.emailing.outils.emailing import EmailingSystem
+from apps.content_creation import constants as content_creation_constants
+from apps.web import constants
 from apps.web.models import WebsiteEmail
-from apps.web.tasks import send_website_email_task
+from apps.engagement_machine.outils.engagement import EngagementMachine
+
+
+class AutomaticNewsletterForm(Form):
+    web_email_type = ChoiceField(choices=constants.CONTENT_PURPOSES)
+    content_object = ChoiceField(choices=content_creation_constants.MODELS_FOR_CONTENT)
+    whom_to_send = ChoiceField(choices=constants.WHOM_TO_SEND_EMAIL)
+
+    def create_newsletter(self):
+        EngagementMachine().create_newsletter(**self.cleaned_data)
 
 
 class ContactForm(Form):
-    name = CharField(label='Nombre', required=True)
-    email = EmailField(label='Email', required=True)
-    message = CharField(widget=Textarea, label='Mensaje', required=True)
+    name = CharField(label="Nombre", required=True)
+    email = EmailField(label="Email", required=True)
+    message = CharField(widget=Textarea, label="Mensaje", required=True)
 
     def send_email(self):
-        name = self.cleaned_data['name']
-        email = self.cleaned_data['email']
-        message = self.cleaned_data['message']
-        EmailingSystem.simple_email(
-            f"{name} con el email {email} ha enviado {message}",
-            'Nuevo mensaje desde suport'
-        )
+        name = self.cleaned_data["name"]
+        email = self.cleaned_data["email"]
+        message = self.cleaned_data["message"]
+        EmailingSystem.simple_email("Nuevo mensaje desde suport", f"{name} con el email {email} ha enviado {message}")
 
 
 class WebEmailForm(ModelForm):
     date_to_send = DateTimeField(
-        input_formats=['%d/%m/%Y %H:%M'],
-        widget=DateTimeInput(attrs={
-            'class': 'form-control datetimepicker-input',
-            'id': 'datetimepicker1'
-        })
+        input_formats=["%d/%m/%Y %H:%M"],
+        widget=DateTimeInput(attrs={"class": "form-control datetimepicker-input"}),
+        required=False,
     )
 
     class Meta:
         model = WebsiteEmail
-        fields = ['title', 'content', 'date_to_send']
+        fields = [
+            "title",
+            "date_to_send",
+            "content",
+            "campaign",
+            "whom_to_send",
+            "users_selected",
+        ]
 
-    def save(self):
-        web_email = super(WebEmailForm, self).save()
-        send_website_email_task.delay()
-        return web_email
+    def __init__(self, *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.fields["campaign"].widget = RelatedFieldWidgetWrapper(
+            self.fields["campaign"].widget,
+            self.instance._meta.get_field("campaign").remote_field,
+            site,
+        )

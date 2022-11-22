@@ -15,10 +15,9 @@ if READ_DOT_ENV_FILE:
     env.read_env(str(ROOT_DIR / ".env"))
 
 IS_PROD = env.bool("IS_PROD", False)
+IS_TEST = env.bool("IS_TEST", False)
 
-PROTOCOL = "http://"
-if IS_PROD:
-    PROTOCOL = "https://"
+PROTOCOL = "https://" if IS_PROD else "http://"
 
 # GENERAL
 # ------------------------------------------------------------------------------
@@ -139,6 +138,16 @@ LOCAL_APPS = [
     "apps.api",
     "apps.business",
     "apps.recsys",
+    "apps.emailing",
+    "apps.classifications",
+    "apps.content_creation",
+    "apps.engagement_machine",
+    "apps.industries_sectors",
+    "apps.countries",
+    "apps.currencies",
+    "apps.notifications",
+    "apps.periods",
+    "apps.promotions",
 ]
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -196,8 +205,8 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.common.BrokenLinkEmailsMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "general.middleware.SubdomainURLRoutingMiddleware",
-    "seo.middleware.VisiteurMiddleware",
+    "apps.general.middleware.SubdomainURLRoutingMiddleware",
+    "apps.seo.middleware.VisiteurMiddleware",
 ]
 
 # SECURITY
@@ -214,6 +223,9 @@ CSRF_COOKIE_DOMAIN = f".{CURRENT_DOMAIN}"
 CSRF_TRUSTED_ORIGINS = [f".{CURRENT_DOMAIN}", f"{CURRENT_DOMAIN}"]
 # https://docs.djangoproject.com/en/dev/ref/settings/#secure-browser-xss-filter
 SECURE_BROWSER_XSS_FILTER = True
+
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
 # https://docs.djangoproject.com/en/dev/ref/settings/#x-frame-options
 X_FRAME_OPTIONS = "DENY"
 
@@ -293,14 +305,14 @@ EMAIL_BACKEND = env(
 # https://docs.djangoproject.com/en/dev/ref/settings/#email-timeout
 EMAIL_TIMEOUT = 5
 
-EMAIL_CONTACT = env("EMAIL_CONTACT", default="EMAIL_CONTACT@inversionesyfinanzas.xyz")
-EMAIL_SUBJECT_PREFIX = env("EMAIL_SUBJECT_PREFIX", default="EMAIL_SUBJECT_PREFIX@inversionesyfinanzas.xyz")
-DEFAULT_EMAIL = env("DEFAULT_EMAIL", default="DEFAULT_EMAIL@inversionesyfinanzas.xyz")
-EMAIL_NEWSLETTER = env("EMAIL_NEWSLETTER", default="EMAIL_NEWSLETTER@inversionesyfinanzas.xyz")
-MAIN_EMAIL = env("MAIN_EMAIL", default="MAIN_EMAIL@inversionesyfinanzas.xyz")
-EMAIL_ACCOUNTS = env("EMAIL_ACCOUNTS", default="EMAIL_ACCOUNTS@inversionesyfinanzas.xyz")
-EMAIL_DEFAULT = env("EMAIL_DEFAULT", default="EMAIL_DEFAULT@inversionesyfinanzas.xyz")
-EMAIL_SUGGESTIONS = env("EMAIL_SUGGESTIONS", default="EMAIL_SUGGESTIONS@inversionesyfinanzas.xyz")
+EMAIL_CONTACT = env("EMAIL_CONTACT", default=f"EMAIL_CONTACT@example.com")
+EMAIL_SUBJECT_PREFIX = env("EMAIL_SUBJECT_PREFIX", default=f"EMAIL_SUBJECT_PREFIX@example.com")
+DEFAULT_EMAIL = env("DEFAULT_EMAIL", default=f"DEFAULT_EMAIL@example.com")
+EMAIL_NEWSLETTER = env("EMAIL_NEWSLETTER", default=f"EMAIL_NEWSLETTER@example.com")
+MAIN_EMAIL = env("MAIN_EMAIL", default=f"MAIN_EMAIL@example.com")
+EMAIL_ACCOUNTS = env("EMAIL_ACCOUNTS", default=f"EMAIL_ACCOUNTS@example.com")
+EMAIL_DEFAULT = env("EMAIL_DEFAULT", default=f"EMAIL_DEFAULT@example.com")
+EMAIL_SUGGESTIONS = env("EMAIL_SUGGESTIONS", default=f"EMAIL_SUGGESTIONS@example.com")
 
 # ADMIN
 # ------------------------------------------------------------------------------

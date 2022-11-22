@@ -1,17 +1,17 @@
-from django.db.models import SET_NULL, BooleanField, FloatField, ForeignKey, IntegerField, DateField
+from django.db.models import SET_NULL, BooleanField, FloatField, ForeignKey, IntegerField, DateField, Model
 
 from apps.empresas.models import Company
 from apps.empresas.managers import BaseStatementManager
-from apps.general.models import Period
-from apps.general.mixins import BaseToAll
+from apps.periods.models import Period
+from apps.general.mixins import BaseToAllMixin
 
 
-class BaseStatement(BaseToAll):
+class BaseStatement(Model, BaseToAllMixin):
     date = IntegerField(default=0)
     year = DateField(null=True, blank=True)
     company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True)
     period = ForeignKey(Period, on_delete=SET_NULL, null=True, blank=True)
-    reported_currency = ForeignKey("general.Currency", on_delete=SET_NULL, null=True, blank=True)
+    reported_currency = ForeignKey("currencies.Currency", on_delete=SET_NULL, null=True, blank=True)
     objects = BaseStatementManager()
 
     class Meta:

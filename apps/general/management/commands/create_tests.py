@@ -1,7 +1,8 @@
 from django.core.management import BaseCommand
 from django.conf import settings
 import sys
-from bfet import Autotest
+
+# from bfet import Autotest
 
 
 class Command(BaseCommand):
@@ -13,4 +14,4 @@ class Command(BaseCommand):
         for local_app in settings.LOCAL_APPS:
             if "etfs" in local_app:
                 continue
-            Autotest.start(app=local_app)
+            # Autotest.start(app=local_app)

@@ -4,9 +4,9 @@
 
 {% block MasterBody %}
 {% block body %}{% endblock body%}
+{% block javascript %}{% include "complements/scripts.html" %}{% endblock javascript %}
+{% block extra_javascript %}{% endblock extra_javascript %}
 {% block modal %}
 {% include "modals/shared_modals.html" %}
 {% endblock modal %}
-{% block javascript %}{% include "complements/scripts.html" %}{% endblock javascript %}
-{% block extra_javascript %}{% endblock extra_javascript %}
 {% endblock MasterBody %}

@@ -1,7 +1,9 @@
 import vcr
-import pytest
 
+from unittest import skip
 from freezegun import freeze_time
+
+from django.test import TestCase
 
 from apps.business.models import (
     Product,
@@ -9,7 +11,7 @@ from apps.business.models import (
     ProductComplementaryPaymentLink,
 )
 from apps.business import constants
-from apps.general.models import Currency
+from apps.currencies.models import Currency
 
 
 business_vcr = vcr.VCR(
@@ -18,10 +20,10 @@ business_vcr = vcr.VCR(
 )
 
 
-@pytest.mark.django_db
-class TestBusinessSignal:
+@skip("Need to be better")
+class TestBusinessSignal(TestCase):
     @classmethod
-    def setup_class(cls):
+    def setUpTestData(cls):
         cls.currency = Currency.objects.create(
             currency="eur",
             symbol="€",

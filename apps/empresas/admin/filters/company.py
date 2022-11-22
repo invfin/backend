@@ -1,5 +1,4 @@
 from django.contrib.admin import SimpleListFilter
-from django.db.models import Q
 
 
 TASK_METHODS = (

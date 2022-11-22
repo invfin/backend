@@ -45,7 +45,7 @@ class CompanyIncomeStatementAPIView(BaseAPIView):
     serializer_class = IncomeStatementSerializer
     limited = True
     url_parameters = ["ticker"]
-    queryset = (IncomeStatement.objects.yearly, True)
+    queryset = (IncomeStatement.objects.yearly_exclude_ttm, True)
     fk_lookup_model = "company__ticker"
     model_to_track = Company
 
@@ -53,7 +53,7 @@ class CompanyIncomeStatementAPIView(BaseAPIView):
 class CompanyBalanceSheetAPIView(BaseAPIView):
     serializer_class = BalanceSheetSerializer
     limited = True
-    queryset = (BalanceSheet.objects.yearly, True)
+    queryset = (BalanceSheet.objects.yearly_exclude_ttm, True)
     url_parameters = ["ticker"]
     fk_lookup_model = "company__ticker"
     model_to_track = Company
@@ -62,7 +62,7 @@ class CompanyBalanceSheetAPIView(BaseAPIView):
 class CompanyCashflowStatementAPIView(BaseAPIView):
     serializer_class = CashflowStatementSerializer
     limited = True
-    queryset = (CashflowStatement.objects.yearly, True)
+    queryset = (CashflowStatement.objects.yearly_exclude_ttm, True)
     url_parameters = ["ticker"]
     fk_lookup_model = "company__ticker"
     model_to_track = Company

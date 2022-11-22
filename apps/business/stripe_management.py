@@ -6,7 +6,7 @@ from apps.business.models import (
     ProductComplementary,
     ProductComplementaryPaymentLink,
 )
-from apps.general.models import Currency
+from apps.currencies.models import Currency
 
 STRIPE_PRIVATE = settings.STRIPE_PRIVATE
 STRIPE_PUBLIC = settings.STRIPE_PUBLIC

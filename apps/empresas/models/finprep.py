@@ -13,7 +13,7 @@ class BaseFinprep(BaseStatement):
     filling_date = DateField(blank=True, null=True)
     final_link = CharField(max_length=1000, blank=True, null=True)
     link = CharField(max_length=1000, blank=True, null=True)
-    reported_currency = ForeignKey("general.Currency", on_delete=SET_NULL, null=True, blank=True)
+    reported_currency = ForeignKey("currencies.Currency", on_delete=SET_NULL, null=True, blank=True)
     calendar_year = IntegerField(blank=True, null=True)
     cik = CharField(max_length=100, blank=True, null=True)
     symbol = CharField(max_length=20, blank=True, null=True)

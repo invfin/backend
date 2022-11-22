@@ -1,7 +1,7 @@
 from typing import Dict, Union, Any
 
-from apps.general.models import Currency, Period
-
+from apps.periods.models import  Period
+from apps.currencies.models import Currency
 
 class NormalizeFinprep:
     company = None

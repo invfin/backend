@@ -1,16 +1,27 @@
-import random
-from typing import Type
+from typing import Any, Dict, Type
 
-from django.db.models import Count, F, Manager, Q, Subquery, OuterRef, QuerySet, Prefetch
+from django.db.models import Count, F, Manager, Prefetch, Q, QuerySet
+
+from apps.general.managers import BaseManager, BaseQuerySet
 
 
-class CompanyManager(Manager):
+class CompanyQuerySet(BaseQuerySet):
+    def existing_companies(self):
+        return self.exclude(name__contains="Need-parsing")
 
-    """
-    TODO
-    Create querysets or managers for statements to return quarters and for year separately
-    https://docs.djangoproject.com/en/dev/topics/db/managers/#don-t-filter-away-any-results-in-this-type-of-manager-subclass
-    """
+    def clean_companies(self):
+        return self.existing_companies().filter(no_incs=False, no_bs=False, no_cfs=False)
+
+    def complete_companies(self):
+        return self.clean_companies().filter(description_translated=True)
+
+    def existing_companies_by_exchange_importance(self):
+        return self.existing_companies().order_by("exchange__main_org__order")
+
+
+class CompanyManager(BaseManager):
+    def get_queryset(self):
+        return CompanyQuerySet(self.model, using=self._db)
 
     def only_essential(self) -> QuerySet:
         return self.only(
@@ -33,55 +44,60 @@ class CompanyManager(Manager):
             "ipoDate",
         )
 
-    def prefetch_yearly_historical_data(self, **kwargs) -> Type["Company"]:
-        """
-        TODO
-        Maybe create 3 different methods for prefetching data (or only 2 and one do the filter part on the statements side)
-        """
-        if "ticker" in kwargs:
-            lookup_filter = {"company__ticker": kwargs["ticker"]}
+    def prefetch_yearly_historical_data(self, **kwargs) -> Type:
+        lookup_filter = {"company__ticker": kwargs["ticker"]} if "ticker" in kwargs else {}
+
         return self.prefetch_related(
             Prefetch(
-                "inc_statements", queryset=self.model.inc_statements.rel.related_model.objects.yearly(**lookup_filter)
+                "inc_statements",
+                queryset=self.model.inc_statements.rel.related_model.objects.yearly(False, **lookup_filter),
             ),
             Prefetch(
-                "balance_sheets", queryset=self.model.balance_sheets.rel.related_model.objects.yearly(**lookup_filter)
+                "balance_sheets",
+                queryset=self.model.balance_sheets.rel.related_model.objects.yearly(False, **lookup_filter),
             ),
             Prefetch(
-                "cf_statements", queryset=self.model.cf_statements.rel.related_model.objects.yearly(**lookup_filter)
+                "cf_statements",
+                queryset=self.model.cf_statements.rel.related_model.objects.yearly(False, **lookup_filter),
             ),
             Prefetch(
                 "rentability_ratios",
-                queryset=self.model.rentability_ratios.rel.related_model.objects.yearly(**lookup_filter),
+                queryset=self.model.rentability_ratios.rel.related_model.objects.yearly(False, **lookup_filter),
             ),
             Prefetch(
                 "liquidity_ratios",
-                queryset=self.model.liquidity_ratios.rel.related_model.objects.yearly(**lookup_filter),
+                queryset=self.model.liquidity_ratios.rel.related_model.objects.yearly(False, **lookup_filter),
             ),
-            Prefetch("margins", queryset=self.model.margins.rel.related_model.objects.yearly(**lookup_filter)),
-            Prefetch("fcf_ratios", queryset=self.model.fcf_ratios.rel.related_model.objects.yearly(**lookup_filter)),
+            Prefetch("margins", queryset=self.model.margins.rel.related_model.objects.yearly(False, **lookup_filter)),
+            Prefetch(
+                "fcf_ratios", queryset=self.model.fcf_ratios.rel.related_model.objects.yearly(False, **lookup_filter)
+            ),
             Prefetch(
                 "per_share_values",
-                queryset=self.model.per_share_values.rel.related_model.objects.yearly(**lookup_filter),
+                queryset=self.model.per_share_values.rel.related_model.objects.yearly(False, **lookup_filter),
             ),
             Prefetch(
                 "non_gaap_figures",
-                queryset=self.model.non_gaap_figures.rel.related_model.objects.yearly(**lookup_filter),
+                queryset=self.model.non_gaap_figures.rel.related_model.objects.yearly(False, **lookup_filter),
             ),
             Prefetch(
                 "operation_risks_ratios",
-                queryset=self.model.operation_risks_ratios.rel.related_model.objects.yearly(**lookup_filter),
+                queryset=self.model.operation_risks_ratios.rel.related_model.objects.yearly(False, **lookup_filter),
             ),
-            Prefetch("ev_ratios", queryset=self.model.ev_ratios.rel.related_model.objects.yearly(**lookup_filter)),
             Prefetch(
-                "growth_rates", queryset=self.model.growth_rates.rel.related_model.objects.yearly(**lookup_filter)
+                "ev_ratios", queryset=self.model.ev_ratios.rel.related_model.objects.yearly(False, **lookup_filter)
+            ),
+            Prefetch(
+                "growth_rates",
+                queryset=self.model.growth_rates.rel.related_model.objects.yearly(False, **lookup_filter),
             ),
             Prefetch(
                 "efficiency_ratios",
-                queryset=self.model.efficiency_ratios.rel.related_model.objects.yearly(**lookup_filter),
+                queryset=self.model.efficiency_ratios.rel.related_model.objects.yearly(False, **lookup_filter),
             ),
             Prefetch(
-                "price_to_ratios", queryset=self.model.price_to_ratios.rel.related_model.objects.yearly(**lookup_filter)
+                "price_to_ratios",
+                queryset=self.model.price_to_ratios.rel.related_model.objects.yearly(False, **lookup_filter),
             ),
         ).get(**kwargs)
 
@@ -103,7 +119,7 @@ class CompanyManager(Manager):
             "price_to_ratios",
         )
 
-    def fast_full(self, **kwargs) -> QuerySet:
+    def fast_full(self, **kwargs) -> Type:
         return (
             self.prefetch_historical_data()
             .only(
@@ -127,10 +143,6 @@ class CompanyManager(Manager):
             )
             .get(**kwargs)
         )
-
-    def get_random(self, query=None) -> QuerySet:
-        query = query if query else self.all()
-        return random.choice(list(query))
 
     def companies_by_main_exchange(self, name=None) -> QuerySet:
         return self.filter(exchange__main_org__name=name).exclude(name__contains="Need-parsing")
@@ -158,13 +170,13 @@ class CompanyManager(Manager):
             industry_id=industry_id,
         ).exclude(name__contains="Need-parsing")
 
-    def random_clean_company(self) -> QuerySet:
+    def random_clean_company(self) -> Type:
         return self.get_random(self.clean_companies())
 
-    def random_clean_company_by_main_exchange(self, name=None) -> QuerySet:
+    def random_clean_company_by_main_exchange(self, name=None) -> Type:
         return self.get_random(self.clean_companies_by_main_exchange(name))
 
-    def random_complete_companies_by_main_exchange(self, name=None) -> QuerySet:
+    def random_complete_companies_by_main_exchange(self, name=None) -> Type:
         return self.get_random(self.complete_companies_by_main_exchange(name))
 
     def clean_companies_to_update(self, name=None) -> QuerySet:
@@ -172,10 +184,12 @@ class CompanyManager(Manager):
             no_incs=False, no_bs=False, no_cfs=False, exchange__main_org__name=name, updated=False, has_error=False
         )
 
-    def get_random_most_visited_clean_company(self) -> QuerySet:
+    def get_random_most_visited_clean_company(self, exclude: Dict[str, Any] = {}, filter: Dict[str, Any] = {}) -> Type:
         return self.get_random(
-            self.filter(no_incs=False, no_bs=False, no_cfs=False, has_error=False, description_translated=True)
-            .exclude(name__contains="Need-parsing")
+            self.filter(
+                no_incs=False, no_bs=False, no_cfs=False, has_error=False, description_translated=True, **filter
+            )
+            .exclude(name__contains="Need-parsing", **exclude)
             .annotate(
                 visited_by_user=Count("usercompanyvisited"),
                 visited_by_visiteur=Count("visiteurcompanyvisited"),
@@ -225,21 +239,17 @@ class CompanyManager(Manager):
             .order_by("total_visits")
         )
 
-    def filter_checkings(self, check: str, has_it: bool) -> QuerySet:
-        checking = f"has_{check}"
-        state = "yes" if has_it else "no"
+    def filter_checking(self, checking: str, has_it: bool) -> QuerySet:
         return (
-            self.filter(**{f"checkings__{checking}__state": state})
+            super()
+            .filter_checking(checking, has_it)
             .exclude(name__contains="Need-parsing")
             .order_by("exchange__main_org__order")
         )
 
-    def filter_checkings_not_seen(self, check: str) -> QuerySet:
-        return (
-            self.filter(**{f"checkings__has_{check}__state": "no", f"checkings__has_{check}__time": ""})
-            .exclude(name__contains="Need-parsing")
-            .order_by("exchange__main_org__order")
-        )
+    def filter_checking_not_seen(self, checking: str) -> QuerySet:
+        queryset = super().filter_checking_not_seen(checking)
+        return queryset.existing_companies_by_exchange_importance()
 
 
 class CompanyUpdateLogManager(Manager):

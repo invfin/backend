@@ -8,7 +8,9 @@ from apps.users.forms import UserAdminCreationForm
 from apps.users.models import User
 
 
-@pytest.mark.django_db
+from django.test import TestCase
+
+
 class TestUserAdminCreationForm:
     """
     Test class for all tests related to the UserAdminCreationForm

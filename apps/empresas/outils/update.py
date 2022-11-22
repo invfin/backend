@@ -7,12 +7,37 @@ from apps.translate.google_trans_new import google_translator
 from apps.empresas.utils import log_company
 from apps.empresas.outils.ratios import CalculateFinancialRatios
 from apps.empresas.outils.average_statements import AverageStatements
-from apps.general.constants import PERIOD_FOR_YEAR
+from apps.empresas.outils.retrieve_data import RetrieveCompanyData
+from apps.periods.constants import PERIOD_FOR_YEAR
+from apps.empresas.models import IncomeStatement, BalanceSheet, CashflowStatement
 
 
 class UpdateCompany(CalculateFinancialRatios, AverageStatements):
     def __init__(self, company: Type["Company"]) -> None:
         self.company: Type["Company"] = company
+
+    @log_company("fixed_last_finprep")
+    def create_financials_finprep(self) -> None:
+        finprep_data = RetrieveCompanyData(self.company).finprep.create_financials_finprep()
+        income_statements = finprep_data["income_statements"]
+        balance_sheets = finprep_data["balance_sheets"]
+        cashflow_statements = finprep_data["cashflow_statements"]
+        for income_statement in income_statements:
+            IncomeStatement.objects.filter(
+                company=income_statement.company,
+                period=income_statement.period,
+            ).update(**income_statement.return_standard)
+        for balance_sheet in balance_sheets:
+            BalanceSheet.objects.filter(
+                company=balance_sheet.company,
+                period=balance_sheet.period,
+            ).update(**balance_sheet.return_standard)
+        for cashflow_statement in cashflow_statements:
+            CashflowStatement.objects.filter(
+                company=cashflow_statement.company,
+                period=cashflow_statement.period,
+            ).update(**cashflow_statement.return_standard)
+        return None
 
     @log_company()
     def add_logo(self):

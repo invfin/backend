@@ -12,7 +12,7 @@ interactions:
       - Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML,
         like Gecko) Chrome/104.0.5112.81 Safari/537.36
     method: GET
-    uri: https://financialmodelingprep.com/api/v3/cash-flow-statement/AAPL?dict_params=%7B%27limit%27%3A+120%7D
+    uri: https://financialmodelingprep.com/api/v3/cash-flow-statement/AAPL?limit=120
   response:
     body:
       string: !!binary |

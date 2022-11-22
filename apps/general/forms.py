@@ -1,5 +1,25 @@
 from ckeditor.widgets import CKEditorWidget
-from django.forms import CharField, DateTimeField, Form, ModelForm, Textarea
+from django.forms import CharField, DateTimeField, Form, ModelForm
+
+
+class BaseEscritoForm(ModelForm):
+    class Meta:
+        fields = [
+            "title",
+            "slug",
+            "category",
+            "tags",
+            "status",
+            "resume",
+            "non_thumbnail_url",
+            "in_text_image",
+        ]
+
+    def clean_slug(self):
+        if "slug" in self.changed_data:
+            if self.instance.slug not in self.instance.checkings["previous_urls"]:
+                self.instance.checkings["previous_urls"].append(self.instance.slug)
+        return self.cleaned_data["slug"]
 
 
 class DefaultNewsletterForm(Form):

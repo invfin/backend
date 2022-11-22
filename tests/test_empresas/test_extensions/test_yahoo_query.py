@@ -1,9 +1,9 @@
-import pytest
+from django.test import TestCase
 
 from bfet import DjangoTestingModel as DTM
 
-from apps.general.constants import PERIOD_FOR_YEAR
-from apps.general.models import Period
+from apps.periods.constants import PERIOD_FOR_YEAR
+from apps.periods.models import Period
 from apps.empresas.models import (
     Company,
     IncomeStatementYahooQuery,
@@ -12,10 +12,9 @@ from apps.empresas.models import (
 )
 
 
-@pytest.mark.django_db
-class TestAverageStatementsYahooQuery:
+class TestAverageStatementsYahooQuery(TestCase):
     @classmethod
-    def setup_class(cls):
+    def setUpTestData(cls):
         cls.company = DTM.create(Company)
         cls.period = DTM.create(Period, year=2021, period=PERIOD_FOR_YEAR)
         cls.inc_st_yahooquery = DTM.create(IncomeStatementYahooQuery, company=cls.company, period=cls.period)
@@ -70,7 +69,7 @@ class TestAverageStatementsYahooQuery:
         assert bs_yahooquery_dict["tax_assets"] == None
         assert bs_yahooquery_dict["other_non_current_assets"] == self.bs_yahooquery.other_non_current_assets
         assert bs_yahooquery_dict["total_non_current_assets"] == self.bs_yahooquery.total_non_current_assets
-        assert (bs_yahooquery_dict["other_assets"], None)
+        assert bs_yahooquery_dict["other_assets"] == None
         assert bs_yahooquery_dict["total_assets"] == self.bs_yahooquery.total_assets
         assert bs_yahooquery_dict["account_payables"] == self.bs_yahooquery.payables_and_accrued_expenses
         assert bs_yahooquery_dict["short_term_debt"] == self.bs_yahooquery.current_debt_and_capital_lease_obligation

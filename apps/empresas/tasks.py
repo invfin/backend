@@ -1,20 +1,71 @@
-import time
-
 from django.conf import settings
 from django.core.mail import send_mail
-from django.db.models import OuterRef, Subquery, Q
+from django.db.models import OuterRef, Q, Subquery
 
-from config import celery_app
+from celery import shared_task
 
-from apps.general.constants import PERIOD_FOR_YEAR
-from apps.general.models import Period
-from apps.empresas.outils.update import UpdateCompany
+from apps.empresas.models import Company
 from apps.empresas.outils.retrieve_data import RetrieveCompanyData
+from apps.empresas.outils.update import UpdateCompany
 from apps.empresas.utils import arrange_quarters
-from apps.empresas.models import Company, BalanceSheetFinprep, IncomeStatementFinprep, CashflowStatementFinprep
+from apps.periods.constants import PERIOD_FOR_YEAR
+from apps.periods.models import Period
 
 
-@celery_app.task()
+class CompanyTask:
+    def __init__(self, checking: str, tasks_map_selector: str):
+        self.checking: str = checking
+        self.tasks_map_selector: str = tasks_map_selector
+
+    def retrieve_company(self):
+        return Company.objects.filter_checking_not_seen(self.checking).first()
+
+    def prepare_task(self):
+        company = self.retrieve_company()
+        if not company:
+            return self.send_ending_message()
+        return company
+
+    def select_task(self, company):
+        retrieve_data = RetrieveCompanyData(company)
+        tasks_map = {
+            "financials_yfinance_info": self.yfinance_tasks,
+            "financials_yahooquery_info": self.yahoo_query_tasks,
+            "financials_finprep_info": UpdateCompany(company).create_financials_finprep(),
+            "financials_finnhub_info": retrieve_data.create_financials_finnhub,
+            "key_stats": retrieve_data.create_key_stats_yahooquery,
+            "institutionals": retrieve_data.create_institutionals_yahooquery,
+        }
+        if (
+            self.tasks_map_selector == "financials_yfinance_info"
+            or self.tasks_map_selector == "financials_yahooquery_info"
+        ):
+            return tasks_map[self.tasks_map_selector](retrieve_data)
+        return tasks_map[self.tasks_map_selector]()
+
+    def send_ending_message(self):
+        return send_mail(
+            f"No companies left to check for {self.checking}",
+            f"All companies have info for {self.checking}",
+            f"InvFin - Automatic <{settings.EMAIL_DEFAULT}>",
+            [f"InvFin - Automatic <{settings.EMAIL_DEFAULT}>"],
+        )
+
+    def yahoo_query_tasks(self, retrieve_data):
+        retrieve_data.create_financials_yahooquery("a")
+        retrieve_data.create_financials_yahooquery("q")
+
+    def yfinance_tasks(self, retrieve_data):
+        retrieve_data.create_financials_yfinance("a")
+        retrieve_data.create_financials_yfinance("q")
+
+    def launch_task(self):
+        company = self.prepare_task()
+        self.select_task(company)
+        # arrange_quarters_task.delay(company.id)
+
+
+@shared_task()
 def create_averages_task(company_id):
     """
     Creates the average statement for a given company according to their last quarterly financials statements
@@ -25,51 +76,19 @@ def create_averages_task(company_id):
             UpdateCompany(company).update_average_financials_statements(period)
 
 
-@celery_app.task()
-def fix_information_incorrect_filed_task(company_id):
-    company = Company.objects.get(id=company_id)
-    for statement in company.inc_statements.all():
-        operating_expenses = statement.operating_expenses
-        statement.operating_expenses = statement.operating_income
-        statement.operating_income = operating_expenses
-        statement.save(update_fields=["operating_expenses", "operating_income"])
-    for statement in company.cf_statements.all():
-        net_income = statement.net_income
-        operating_activities_cf = statement.operating_activities_cf
-        investments_property_plant_equipment = statement.investments_property_plant_equipment
-        financing_activities_cf = statement.financing_activities_cf
-        investing_activities_cf = statement.investing_activities_cf
-        statement.net_income = operating_activities_cf
-        statement.financing_activities_cf = net_income
-        statement.operating_activities_cf = investing_activities_cf
-        statement.investments_property_plant_equipment = financing_activities_cf
-        statement.investing_activities_cf = investments_property_plant_equipment
-        statement.net_change_cash = statement.cash_beginning_period - statement.cash_end_period
-        statement.save(
-            update_fields=[
-                "net_income",
-                "financing_activities_cf",
-                "operating_activities_cf",
-                "investments_property_plant_equipment",
-                "investing_activities_cf",
-                "net_change_cash",
-            ]
-        )
-
-
-@celery_app.task()
+@shared_task()
 def create_ttm_task(company_id):
     company = Company.objects.get(id=company_id)
     UpdateCompany(company).create_or_update_ttm()
 
 
-@celery_app.task()
+@shared_task()
 def arrange_quarters_task(company_id):
     company = Company.objects.get(id=company_id)
     arrange_quarters(company)
 
 
-@celery_app.task()
+@shared_task()
 def update_periods_final_statements(company_id):
     """
     Loops over the company statements and update their period to match the FY acording to the statement year
@@ -99,226 +118,31 @@ def update_periods_final_statements(company_id):
         )
 
 
-@celery_app.task()
-def update_finprep_from_current(company_id):
-    company = Company.objects.get(id=company_id)
-    for company_data in company.inc_statements.all().values():
-        date = company_data["date"]
-        period, created = Period.objects.get_or_create(year=date, period=PERIOD_FOR_YEAR)
-        company_data.pop("id")
-        company_data.pop("from_average")
-        company_data.pop("is_ttm")
-        company_data["period_id"] = period.id
-        IncomeStatementFinprep.objects.update_or_create(
-            company=company,
-            period=period,
-            defaults={
-                "cost_and_expenses": company_data.pop("cost_and_expenses"),
-                "cost_of_revenue": company_data.pop("cost_of_revenue"),
-                "depreciation_and_amortization": company_data.pop("depreciation_amortization"),
-                "ebitda": company_data.pop("ebitda"),
-                "general_and_administrative_expenses": company_data.pop("general_administrative_expenses"),
-                "gross_profit": company_data.pop("gross_profit"),
-                "income_before_tax": company_data.pop("income_before_tax"),
-                "income_tax_expense": company_data.pop("income_tax_expenses"),
-                "interest_expense": company_data.pop("interest_expense"),
-                "net_income": company_data.pop("net_income"),
-                "operating_expenses": company_data.pop("operating_expenses"),
-                "operating_income": company_data.pop("operating_income"),
-                "other_expenses": company_data.pop("other_expenses"),
-                "research_and_development_expenses": company_data.pop("rd_expenses"),
-                "revenue": company_data.pop("revenue"),
-                "selling_and_marketing_expenses": company_data.pop("selling_marketing_expenses"),
-                "selling_general_and_administrative_expenses": company_data.pop("sga_expenses"),
-                "total_other_income_expenses_net": company_data.pop("net_total_other_income_expenses"),
-                "weighted_average_shs_out": company_data.pop("weighted_average_shares_outstanding"),
-                "weighted_average_shs_out_dil": company_data.pop("weighted_average_diluated_shares_outstanding"),
-                **company_data,
-            },
-        )
-    for company_data in company.balance_sheets.all().values():
-        date = company_data["date"]
-        period, created = Period.objects.get_or_create(year=date, period=PERIOD_FOR_YEAR)
-        company_data.pop("id")
-        company_data.pop("is_ttm")
-        company_data.pop("from_average")
-        company_data["period_id"] = period.id
-        BalanceSheetFinprep.objects.update_or_create(
-            company=company,
-            period=period,
-            defaults={
-                "property_plant_equipment_net": company_data.pop("property_plant_equipment"),
-                "common_stock": company_data.pop("common_stocks"),
-                **company_data,
-            },
-        )
-    for company_data in company.cf_statements.all().values():
-        date = company_data["date"]
-        period, created = Period.objects.get_or_create(year=date, period=PERIOD_FOR_YEAR)
-        company_data.pop("id")
-        company_data.pop("from_average")
-        company_data.pop("is_ttm")
-        company_data["period_id"] = period.id
-        CashflowStatementFinprep.objects.update_or_create(
-            company=company,
-            period=period,
-            defaults={
-                "depreciation_and_amortization": company_data.pop("depreciation_amortization"),
-                "stock_based_compensation": company_data.pop("stock_based_compesation"),
-                "accounts_payables": company_data.pop("accounts_payable"),
-                "operating_cash_flow": company_data.pop("operating_cf"),
-                "free_cash_flow": company_data.pop("fcf"),
-                "capital_expenditure": company_data.pop("capex"),
-                "net_cash_provided_by_operating_activities": company_data.pop("operating_activities_cf"),
-                "net_cash_used_for_investing_activites": company_data.pop("investing_activities_cf"),
-                "net_cash_used_provided_by_financing_activities": company_data.pop("financing_activities_cf"),
-                "investments_in_property_plant_and_equipment": company_data.pop("investments_property_plant_equipment"),
-                "purchases_of_investments": company_data.pop("purchases_investments"),
-                "sales_maturities_of_investments": company_data.pop("sales_maturities_investments"),
-                "effect_of_forex_changes_on_cash": company_data.pop("effect_forex_exchange"),
-                "other_financing_activites": company_data.pop("other_financing_activities"),
-                "net_change_in_cash": company_data.pop("net_change_cash"),
-                "cash_at_end_of_period": company_data.pop("cash_end_period"),
-                "cash_at_beginning_of_period": company_data.pop("cash_beginning_period"),
-                **company_data,
-            },
-        )
-
-
-@celery_app.task()
-def update_basic_info_company_task():
-    companies_without_info = Company.objects.filter(Q(has_logo=False) | Q(description_translated=False))
-    if companies_without_info.exists():
-        company = companies_without_info.first()
-        return UpdateCompany(company).general_update()
-    else:
-        return send_mail(
-            "No companies left", "All companies have info", settings.EMAIL_DEFAULT, [settings.EMAIL_DEFAULT]
-        )
-
-
-@celery_app.task()
+@shared_task()
 def update_company_key_stats_task():
-    companies_without_info = Company.objects.filter_checkings_not_seen("key_stats")
-    if companies_without_info.exists():
-        company = companies_without_info.first()
-        return RetrieveCompanyData(company).create_key_stats_yahooquery()
-    else:
-        return send_mail(
-            "No companies left to update key_stats",
-            f"All companies have info for key_stats",
-            settings.EMAIL_DEFAULT,
-            [settings.EMAIL_DEFAULT],
-        )
+    CompanyTask("key_stats", "key_stats").launch_task()
 
 
-@celery_app.task()
+@shared_task()
 def update_company_institutionals_task():
-    companies_without_info = Company.objects.filter_checkings_not_seen("institutionals")
-    if companies_without_info.exists():
-        company = companies_without_info.first()
-        return RetrieveCompanyData(company).create_institutionals_yahooquery()
-    else:
-        return send_mail(
-            "No companies left to update institutionals",
-            f"All companies have info for institutionals",
-            settings.EMAIL_DEFAULT,
-            [settings.EMAIL_DEFAULT],
-        )
+    CompanyTask("institutionals", "institutionals").launch_task()
 
 
-@celery_app.task()
+@shared_task()
 def update_company_financials_finprep_task():
-    companies_without_info = Company.objects.filter_checkings_not_seen("latest_financials_finprep_info")
-    if companies_without_info.exists():
-        company = companies_without_info.first()
-        return RetrieveCompanyData(company).create_financials_finprep()
-    else:
-        return send_mail(
-            "No companies left to update financials for latest_financials_finprep_info",
-            f"All companies have info for latest_financials_finprep_info",
-            settings.EMAIL_DEFAULT,
-            [settings.EMAIL_DEFAULT],
-        )
+    CompanyTask("fixed_last_finprep", "financials_finprep_info").launch_task()
 
 
-@celery_app.task()
+@shared_task()
 def update_company_financials_finnhub_task():
-    companies_without_info = Company.objects.filter_checkings_not_seen("first_financials_finnhub_info")
-    if companies_without_info.exists():
-        company = companies_without_info.first()
-        return RetrieveCompanyData(company).create_financials_finnhub()
-    else:
-        return send_mail(
-            "No companies left to update financials first_financials_finnhub_info",
-            f"All companies have info for first_financials_finnhub_info",
-            settings.EMAIL_DEFAULT,
-            [settings.EMAIL_DEFAULT],
-        )
+    CompanyTask("first_financials_finnhub_info", "financials_finnhub_info").launch_task()
 
 
-@celery_app.task()
-def update_company_financials_yfinance_task(company_id: int = None):
-    if company_id:
-        company = Company.objects.get(id=company_id)
-    else:
-        companies_without_info = Company.objects.filter_checkings_not_seen("first_financials_yfinance_info")
-        if companies_without_info.exists():
-            company = companies_without_info.first()
-    if company:
-        RetrieveCompanyData(company).create_financials_yfinance("a")
-        RetrieveCompanyData(company).create_financials_yfinance("q")
-        arrange_quarters_task.delay(company.id)
-    else:
-        return send_mail(
-            "No companies left to update financials for first_financials_yfinance_info",
-            f"All companies have info for first_financials_yfinance_info",
-            settings.EMAIL_DEFAULT,
-            [settings.EMAIL_DEFAULT],
-        )
+@shared_task()
+def update_company_financials_yfinance_task():
+    CompanyTask("first_financials_yfinance_info", "financials_yfinance_info").launch_task()
 
 
-@celery_app.task()
-def update_company_financials_yahooquery_task(company_id: int = None):
-    if company_id:
-        company = Company.objects.get(id=company_id)
-    else:
-        companies_without_info = Company.objects.filter_checkings_not_seen("first_financials_yahooquery_info")
-        if companies_without_info.exists():
-            company = companies_without_info.first()
-    if company:
-        RetrieveCompanyData(company).create_financials_yahooquery("a")
-        RetrieveCompanyData(company).create_financials_yahooquery("q")
-        arrange_quarters_task.delay(company.id)
-    else:
-        return send_mail(
-            "No companies left to update financials ofr first_financials_yahooquery_info",
-            f"All companies have info for first_financials_yahooquery_info",
-            settings.EMAIL_DEFAULT,
-            [settings.EMAIL_DEFAULT],
-        )
-
-
-@celery_app.task()
-def fix_update_financials_task(company_id):
-    company = Company.objects.get(id=company_id)
-    fix_information_incorrect_filed_task.delay(company.id)
-    update_periods_final_statements.delay(company.id)
-    update_finprep_from_current.delay(company.id)
-    if not company.check_checkings("first_financials_yfinance_info"):
-        update_company_financials_yfinance_task.delay(company.id)
-    if not company.check_checkings("first_financials_yahooquery_info"):
-        update_company_financials_yahooquery_task.delay(company.id)
-    if not company.check_checkings("first_financials_yfinance_info") and not company.check_checkings(
-        "first_financials_yahooquery_info"
-    ):
-        time.sleep(15)
-    create_averages_task.delay(company.id)
-    create_ttm_task.delay(company.id)
-
-
-@celery_app.task()
-def launch_fix_update_financials_task():
-    # for company in Company.objects.filter_checkings_not_seen("launch_fix_update"):
-    for company in Company.objects.filter(ticker="INTC"):
-        fix_update_financials_task.delay(company.id)
+@shared_task()
+def update_company_financials_yahooquery_task():
+    CompanyTask("first_financials_yahooquery_info", "financials_yahooquery_info").launch_task()

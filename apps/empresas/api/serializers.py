@@ -70,8 +70,6 @@ class BasicCompanySerializer(ModelSerializer):
             "isin",
             "description",
             "ipoDate",
-            "beta",
-            "last_div",
         ]
 
 

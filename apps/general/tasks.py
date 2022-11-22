@@ -2,13 +2,12 @@ from typing import Dict
 
 from config import celery_app
 
-from apps.general.constants import EMAIL_FOR_NOTIFICATION
-from apps.general.outils.emailing import EmailingSystem
-from apps.general.outils.notifications import NotificationSystem
+from apps.emailing.outils.emailing import EmailingSystem
+from apps.notifications.outils.notifications import NotificationSystem
 
 
 @celery_app.task()
-def send_email_task(email: Dict, receiver_id: int, is_for: str = None, web_objective: str = None):
+def send_email_task(email: Dict, receiver_id: int, is_for: str = "", web_objective: str = ""):
     return EmailingSystem(is_for, web_objective).enviar_email(email, receiver_id)
 
 

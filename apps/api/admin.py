@@ -6,7 +6,7 @@ from django.utils.html import format_html
 from import_export.admin import ImportExportModelAdmin
 from django_json_widget.widgets import JSONEditorWidget
 
-from .models import (
+from apps.api.models import (
     CompanyRequestAPI,
     Endpoint,
     EndpointsCategory,

@@ -30,7 +30,7 @@ class CompanyExtended(ChartSerializer):
         return "$"
 
     def all_income_statements(self, limit) -> list:
-        inc = self.inc_statements.all()
+        inc = self.inc_statements.yearly_exclude_ttm()
         if limit != 0:
             inc = inc[:limit]
         return inc

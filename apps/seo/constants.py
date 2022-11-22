@@ -1,12 +1,12 @@
 ADS = 'ads'
 EMAILS = 'email'
-INVFIN = 'invfin'
+WEB = 'web'
 SOCIAL_MEDIA_POSTS = 'social-media-posts'
 
 MEDIUMS = (
     (ADS, 'Ads'),
     (EMAILS, 'Email'),
-    (INVFIN, 'Web'),
+    (WEB, 'Web'),
     (SOCIAL_MEDIA_POSTS, 'Social media posts'),
 )
 
@@ -29,11 +29,11 @@ BANNER = 'banner'
 LISTA = 'lista'
 SOLO = 'solo'
 
-WEP_PROMOTION_TYPE = (
-    (POP_UP , 'Pop up'),
-    (BANNER , 'Big Banner'),
-    (LISTA , 'List'),
-    (SOLO , 'Solo'),
+WEP_PROMOTION_STYLE = (
+    (POP_UP, 'Pop up'),
+    (BANNER, 'Big Banner'),
+    (LISTA, 'List'),
+    (SOLO, 'Solo'),
 )
 
 WEB_INICIO = 'web-inicio'

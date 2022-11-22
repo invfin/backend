@@ -280,6 +280,7 @@ apps/media/
 
 geoip
 
+
 temp_venv
 .env
 backups
@@ -287,3 +288,6 @@ Notes
 checkout-single-subscription
 
 .idea
+*.sqlite3
+
+assets_*

@@ -16,8 +16,8 @@ TOP_MENU_LEFT = [
 
 TOP_MENU_RIGHT = [
     {"name": "Web", "url": FULL_DOMAIN, "new_window": True},
+    {"name": "Web management", "url": f"{FULL_DOMAIN}/manage-web/", "new_window": True},
     {"name": "API", "url": f"{FULL_DOMAIN}/api/api-documentacion", "new_window": True},
-    {"model": "users.user"},
 ]
 
 SIDE_MENU = [
@@ -60,6 +60,9 @@ SIDE_MENU = [
                 "model": "seo.UserJourney",
                 "label": "Journey",
             },
+{
+                "model": "users.UsersCategory",
+            },
             {"model": "seo.UserCompanyVisited", "label": "Company visited"},
             {"model": "seo.UserPublicBlogVisited", "label": "Blog visited"},
             {"model": "seo.UserQuestionVisited", "label": "Question visited"},
@@ -85,99 +88,86 @@ SIDE_MENU = [
         ),
     },
     {
-        "label": "Empresas",
-        "icon": "fas fa-building",
-        "models": (
-            {
-                "model": "empresas.Company",
-                "label": "Company",
-            },
-            {
-                "model": "empresas.CompanyStatementsProxy",
-                "label": "Average & Ratios",
-            },
-            {
-                "model": "empresas.CompanyFinprepProxy",
-                "label": "Finprep",
-            },
-            {
-                "model": "empresas.CompanyYahooQueryProxy",
-                "label": "YahooQuery",
-            },
-            {
-                "model": "empresas.CompanyYFinanceProxy",
-                "label": "YFinance",
-            },
-            {
-                "model": "empresas.CompanyFinnhubProxy",
-                "label": "Finnhub",
-            },
-        ),
-    },
-    {
-        "label": "Company Relateds",
-        "icon": "fas fa-copy",
-        "models": (
-            {
-                "model": "empresas.ExchangeOrganisation",
-                "label": "Exchanges",
-            },
-            {
-                "model": "empresas.InstitutionalOrganization",
-                "label": "Institutions",
-            },
-            {
-                "model": "super_investors.Superinvestor",
-                "label": "SuperInvestors",
-            },
-            {
-                "model": "general.Industry",
-            },
-            {
-                "model": "general.Sector",
-            },
-            {
-                "model": "general.Period",
-            },
-            {
-                "model": "empresas.CompanyUpdateLog",
-                "label": "Company Logs",
-            },
-        ),
-    },
-    {
         "label": "General",
         "icon": "fas fa-globe",
         "models": (
             {
-                "model": "general.Category",
+                "model": "classifications.Category",
             },
             {
-                "model": "general.Tag",
+                "model": "classifications.Tag",
             },
             {
-                "model": "general.Currency",
+                "model": "currencies.Currency",
             },
             {
-                "model": "general.Country",
+                "model": "countries.Country",
+            },
+            {
+                "model": "notifications.Notification",
             },
         ),
     },
     {
-        "label": "Superinvestors",
-        "icon": "fas fa-crown",
+        "label": "Socialmedia shared",
+        "icon": "fas fa-pen-nib",
         "models": (
             {
-                "model": "super_investors.Superinvestor",
-                "label": "SuperInvestors",
+                "model": "socialmedias.CompanySharedHistorial",
             },
             {
-                "model": "super_investors.SuperinvestorHistory",
-                "label": "SuperInvestors movements",
+                "model": "socialmedias.BlogSharedHistorial",
             },
             {
-                "model": "super_investors.SuperinvestorActivity",
-                "label": "SuperInvestors activity",
+                "model": "socialmedias.NewsSharedHistorial",
+            },
+            {
+                "model": "socialmedias.TermSharedHistorial",
+            },
+            {
+                "model": "socialmedias.ProfileSharedHistorial",
+            },
+            {
+                "model": "socialmedias.QuestionSharedHistorial",
+            },
+        ),
+    },
+    {
+        "label": "Content",
+        "icon": "fas fa-pen-nib",
+        "models": (
+            {
+                "model": "content_creation.DefaultTilte",
+            },
+            {
+                "model": "content_creation.DefaultContent",
+            },
+            {
+                "model": "content_creation.Emoji",
+            },
+            {
+                "model": "content_creation.Hashtag",
+            },
+        ),
+    },
+    {
+        "label": "Web",
+        "icon": "fas fa-sitemap",
+        "models": (
+            {
+                "model": "promotions.Campaign",
+            },
+            {
+                "model": "web.WebsiteEmail",
+            },
+            {
+                "model": "web.WebsiteEmailTrack",
+            },
+            {
+                "model": "promotions.Promotion",
+            },
+            {
+                "model": "web.WebsiteLegalPage",
             },
         ),
     },
@@ -239,7 +229,7 @@ SIDE_MENU = [
     },
     {
         "label": "Recsys",
-        "icon": "fas fa-globe",
+        "icon": "fas fa-microchip",
         "models": (
             {
                 "model": "recsys.VisiteurCompanyRecommended",
@@ -250,8 +240,65 @@ SIDE_MENU = [
         ),
     },
     {
-        "label": "Raw company data",
-        "icon": "fas fa-file-excel",
+        "label": "Empresas",
+        "icon": "fas fa-building",
+        "models": (
+            {
+                "model": "empresas.Company",
+                "label": "Company",
+            },
+            {
+                "model": "empresas.CompanyStatementsProxy",
+                "label": "Average & Ratios",
+            },
+            {
+                "model": "empresas.CompanyFinprepProxy",
+                "label": "Finprep",
+            },
+            {
+                "model": "empresas.CompanyYahooQueryProxy",
+                "label": "YahooQuery",
+            },
+            {
+                "model": "empresas.CompanyYFinanceProxy",
+                "label": "YFinance",
+            },
+            {
+                "model": "empresas.CompanyFinnhubProxy",
+                "label": "Finnhub",
+            },
+        ),
+    },
+    {
+        "label": "Empresas relateds",
+        "icon": "fas fa-copy",
+        "models": (
+            {
+                "model": "empresas.ExchangeOrganisation",
+                "label": "Exchanges",
+            },
+            {
+                "model": "empresas.InstitutionalOrganization",
+                "label": "Institutions",
+            },
+            {
+                "model": "industries_sectors.Industry",
+            },
+            {
+                "model": "industries_sectors.Sector",
+            },
+            {
+                "model": "periods.Period",
+            },
+            {
+                "model": "empresas.CompanyUpdateLog",
+                "label": "Company Logs",
+            },
+        ),
+    },
+    {
+        "label": "Raw empresas data",
+        "icon": "fas fa-database",
         "models": (
             {
                 "model": "empresas.IncomeStatement",
@@ -321,6 +368,24 @@ SIDE_MENU = [
             },
             {
                 "model": "empresas.CashflowStatementYFinance",
+            },
+        ),
+    },
+    {
+        "label": "Superinvestors",
+        "icon": "fas fa-crown",
+        "models": (
+            {
+                "model": "super_investors.Superinvestor",
+                "label": "SuperInvestors",
+            },
+            {
+                "model": "super_investors.SuperinvestorHistory",
+                "label": "SuperInvestors movements",
+            },
+            {
+                "model": "super_investors.SuperinvestorActivity",
+                "label": "SuperInvestors activity",
             },
         ),
     },

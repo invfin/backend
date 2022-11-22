@@ -1,6 +1,6 @@
 from django.core.management import BaseCommand
 
-from apps.socialmedias.models import Emoji, Hashtag
+from apps.content_creation.models import Emoji, Hashtag
 from apps.socialmedias.test_socialmedias.data import IG_HASHTAGS, ICONS, FB_HASHTAGS, TWITTER_HASHTAGS
 
 
