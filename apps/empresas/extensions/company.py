@@ -1702,6 +1702,8 @@ class CompanyExtended(ChartSerializer):
         all_operation_risks_ratios: list = None,
         all_ev_ratios: list = None,
     ) -> dict:
+        # TODO fix averages
+        return {}
         # Operation risk
         average_asset_coverage_ratio = all_operation_risks_ratios.aggregate(
             average_asset_coverage_ratio=Avg("asset_coverage_ratio")

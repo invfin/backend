@@ -1,3 +1,5 @@
+from typing import Optional
+
 from django.conf import settings
 from django.core.mail import send_mail
 from django.db.models import OuterRef, Q, Subquery
@@ -13,25 +15,22 @@ from apps.periods.models import Period
 
 
 class CompanyTask:
+    checking: str
+    tasks_map_selector: str
+
     def __init__(self, checking: str, tasks_map_selector: str):
         self.checking: str = checking
         self.tasks_map_selector: str = tasks_map_selector
 
-    def retrieve_company(self):
+    def retrieve_company(self) -> Optional[Company]:
         return Company.objects.filter_checking_not_seen(self.checking).first()
 
-    def prepare_task(self):
-        company = self.retrieve_company()
-        if not company:
-            return self.send_ending_message()
-        return company
-
-    def select_task(self, company):
+    def select_task(self, company: Company):
         retrieve_data = RetrieveCompanyData(company)
         tasks_map = {
             "financials_yfinance_info": self.yfinance_tasks,
             "financials_yahooquery_info": self.yahoo_query_tasks,
-            "financials_finprep_info": UpdateCompany(company).create_financials_finprep(),
+            "financials_finprep_info": UpdateCompany(company).create_financials_finprep,
             "financials_finnhub_info": retrieve_data.create_financials_finnhub,
             "key_stats": retrieve_data.create_key_stats_yahooquery,
             "institutionals": retrieve_data.create_institutionals_yahooquery,
@@ -60,7 +59,9 @@ class CompanyTask:
         retrieve_data.create_financials_yfinance("q")
 
     def launch_task(self):
-        company = self.prepare_task()
+        company = self.retrieve_company()
+        if not company:
+            return self.send_ending_message()
         self.select_task(company)
         # arrange_quarters_task.delay(company.id)
 
