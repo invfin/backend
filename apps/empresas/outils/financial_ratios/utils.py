@@ -14,6 +14,11 @@ def get_most_recent_price(ticker: str) -> float:
     return current_price
 
 
+def modify_for_percentage(value: Union[int, float], as_percentage: bool = True) -> float:
+    if as_percentage:
+        return round(value * 100, 2)
+    return value
+
 def divide_or_zero(numerator: Union[int, float], denominator: Union[int, float]):
     """A method to calculate a divison that returns de product or 0 if the denominator is 0
 

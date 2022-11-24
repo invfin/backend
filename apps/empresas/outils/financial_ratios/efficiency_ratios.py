@@ -10,8 +10,8 @@ class EfficiencyRatios:
         return divide_or_zero(average_inventory, cost_of_revenue)
 
     @classmethod
-    def calculate_days_payables_outstanding(cls,) -> Union[int, float]:
-        return divide_or_zero()
+    def calculate_days_payables_outstanding(cls, accounts_payable, cost_of_goods_sold) -> Union[int, float]:
+        return divide_or_zero((accounts_payable*360), cost_of_goods_sold)
 
     @classmethod
     def calculate_days_sales_outstanding(cls,) -> Union[int, float]:

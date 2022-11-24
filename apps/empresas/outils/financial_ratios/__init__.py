@@ -174,23 +174,14 @@ class CalculateFinancialRatios(ValuationRatios):
 
     def calculate_rentability_ratios(self, data: Dict[str, Union[int, float]]) -> Dict[str, Union[int, float]]:
         capital_employed = data["total_assets"] - data["total_current_liabilities"]
-        roa = (data["net_income"] / data["total_assets"]) * 100 if data["total_assets"] != 0 else 0
-        roe = (
-            (data["net_income"] / data["total_stockholders_equity"]) * 100
-            if data["total_stockholders_equity"] != 0
-            else 0
-        )
-        roc = (data["operating_income"] / data["total_assets"]) * 100 if data["total_assets"] != 0 else 0
-        roce = (data["operating_income"] / capital_employed) * 100 if capital_employed != 0 else 0
-        rota = (data["net_income"] / data["tangible_assets"]) * 100 if data["tangible_assets"] != 0 else 0
-        roic = (
-            ((data["net_income"] - data["dividends_paid"]) / data["invested_capital"]) * 100
-            if data["invested_capital"] != 0
-            else 0
-        )
-        nopat_roic = (data["nopat"] / data["invested_capital"]) * 100 if data["invested_capital"] != 0 else 0
-        rogic = (data["nopat"] / data["gross_invested_capital"]) * 100 if data["gross_invested_capital"] != 0 else 0
-
+        roa = calculate_roa(data.get("net_income", 0), data.get("total_assets", 0))
+        roe = calculate_roe(data.get("net_income", 0), data.get("total_assets", 0))
+        roc = calculate_roc(data.get("net_income", 0), data.get("total_assets", 0))
+        roce = calculate_roce(data.get("net_income", 0), data.get("total_assets", 0))
+        rota = calculate_rota(data.get("net_income", 0), data.get("total_assets", 0))
+        roic = calculate_roic(data.get("net_income", 0), data.get("total_assets", 0))
+        nopat_roic = calculate_nopat_roic(data.get("net_income", 0), data.get("total_assets", 0))
+        rogic = calculate_rogic(data.get("net_income", 0), data.get("total_assets", 0))
         return {
             "roa": roa,
             "roe": roe,
@@ -528,6 +519,7 @@ class CalculateFinancialRatios(ValuationRatios):
     @classmethod
     def calculate_average_inventory(cls, data: Dict[str, Union[int, float]]) -> Union[int, float]:
         return (data["last_year_inventory"] + data["inventory"]) / 2
+
     @classmethod
     def calculate_efficiency_ratio(cls, data: Dict[str, Union[int, float]]) -> Dict[str, Union[int, float]]:
         average_inventory = data.get("average_inventory", cls.calculate_average_inventory(data))
