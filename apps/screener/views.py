@@ -130,6 +130,7 @@ class CompanyDetailsView(SEODetailView):
         self.request.session.modified = True
 
     def check_company_for_updates(self, empresa) -> None:
+        return None
         if not empresa.has_checking("fixed_last_finprep"):
             UpdateCompany(empresa).create_financials_finprep()
 
