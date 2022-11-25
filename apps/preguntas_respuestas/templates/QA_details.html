@@ -17,12 +17,15 @@
                             <div>
                                 <form method="POST" action="{% url 'general:create_vote_view' object.encoded_url_up %}">
                                     {% csrf_token %}
-                                    <button class="btn btn-sm"><i class="fas fa-caret-up" style="font-size: 50px;"></i></button>
+                                    <button class="btn btn-sm"><i class="fas fa-caret-up"
+                                            style="font-size: 50px;"></i></button>
                                 </form>
-                                        <div style="width: 100%;text-align: center;" >{{object.total_votes}}</div>
-                                <form method="POST" action="{% url 'general:create_vote_view' object.encoded_url_down %}">
+                                <div style="width: 100%;text-align: center;">{{object.total_votes}}</div>
+                                <form method="POST"
+                                    action="{% url 'general:create_vote_view' object.encoded_url_down %}">
                                     {% csrf_token %}
-                                    <button class="btn btn-sm"><i class="fas fa-caret-down" style="font-size: 50px;"></i></button>
+                                    <button class="btn btn-sm"><i class="fas fa-caret-down"
+                                            style="font-size: 50px;"></i></button>
                                 </form>
 
                             </div>
@@ -60,54 +63,67 @@
             <div class="accordion mt-1" id="accordionExample">
                 <div class="accordion-item">
                     <h2 class="accordion-header" id="headingOne">
-                    <button style="padding: 10px;" class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
-                        <i style=" font-size: 16px;" class="far fa-comment me-1"> </i> Comentarios
-                        <!-- for comments in comments -->
-                    </button>
+                        <button style="padding: 10px;" class="accordion-button" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapseOne" aria-expanded="true" aria-controls="collapseOne">
+                            <i style=" font-size: 16px;" class="far fa-comment me-1"> </i> Comentarios
+                            <!-- for comments in comments -->
+                        </button>
                     </h2>
-                    <div id="collapseOne" class="accordion-collapse" aria-labelledby="headingOne" data-bs-parent="#accordionExample">
-                    <div class="row">
-                        <div class="panel panel-default widget">
-                            <div class="panel-body">
-                                <ul class="list-group">
-                                    {% if user.is_authenticated%}
-                                    <li style="text-align: center;" class="list-group-item">
-                                        <form method="POST" action="{% url 'general:create_comment_view' object.encoded_url_comment %}">
-                                            {% csrf_token %}
+                    <div id="collapseOne" class="accordion-collapse" aria-labelledby="headingOne"
+                        data-bs-parent="#accordionExample">
+                        <div class="row">
+                            <div class="panel panel-default widget">
+                                <div class="panel-body">
+                                    <ul class="list-group">
+                                        {% if user.is_authenticated%}
+                                        <li style="text-align: center;" class="list-group-item">
+                                            <form method="POST"
+                                                action="{% url 'general:create_comment_view' object.encoded_url_comment %}">
+                                                {% csrf_token %}
+                                                <div class="input-group mb-3">
+                                                    <input type="text" name="comment_content" class="form-control"
+                                                        placeholder="Deja un comentario al autor para que pueda mejorar su pregunta"
+                                                        aria-label="Deja un comentario al autor para que pueda mejorar su pregunta"
+                                                        aria-describedby="button-addon2">
+                                                    <div class="input-group-append">
+                                                        <button class="btn btn-twitter" type="submit"
+                                                            id="button-addon2">Publicar</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </li>
+                                        {% else %}
+                                        <li style="text-align: center;" class="list-group-item">
                                             <div class="input-group mb-3">
-                                                <input type="text" name="comment_content" class="form-control" placeholder="Deja un comentario al autor para que pueda mejorar su pregunta" aria-label="Deja un comentario al autor para que pueda mejorar su pregunta" aria-describedby="button-addon2">
+                                                <input type="text" name="question_content" class="form-control"
+                                                    placeholder="Deja un comentario al autor para que pueda mejorar su pregunta"
+                                                    aria-label="Deja un comentario al autor para que pueda mejorar su pregunta"
+                                                    aria-describedby="button-addon2">
                                                 <div class="input-group-append">
-                                                    <button class="btn btn-twitter" type="submit" id="button-addon2">Publicar</button>
+                                                    <button class="btn btn-twitter" data-bs-toggle="modal"
+                                                        data-bs-target="#exampleModal" type="button"
+                                                        id="button-addon2">Publicar</button>
                                                 </div>
                                             </div>
-                                        </form>
-                                    </li>
-                                    {% else %}
-                                    <li style="text-align: center;" class="list-group-item">
-                                        <div class="input-group mb-3">
-                                            <input type="text" name="question_content" class="form-control" placeholder="Deja un comentario al autor para que pueda mejorar su pregunta" aria-label="Deja un comentario al autor para que pueda mejorar su pregunta" aria-describedby="button-addon2">
-                                            <div class="input-group-append">
-                                                <button class="btn btn-twitter" data-bs-toggle="modal" data-bs-target="#exampleModal" type="button" id="button-addon2">Publicar</button>
+                                        </li>
+                                        {% endif %}
+                                        {% for question_comment in object.related_comments %}
+                                        <li class="list-group-item" style="font-size: 11px;">
+                                            <div>
+                                                <div class="mic-info">
+                                                    Por: <a href="#">{{question_comment.author.username}}</a>
+                                                    {{question_comment.created_at}}
+                                                </div>
                                             </div>
-                                        </div>
-                                    </li>
-                                    {% endif %}
-                                    {% for question_comment in object.related_comments %}
-                                    <li class="list-group-item" style="font-size: 11px;">
-                                        <div>
-                                            <div class="mic-info">
-                                                Por: <a href="#">{{question_comment.author.username}}</a> {{question_comment.created_at}}
+                                            <div class="comment-text">
+                                                {{question_comment.content}}
                                             </div>
-                                        </div>
-                                        <div class="comment-text">
-                                            {{question_comment.content}}
-                                        </div>
-                                    </li>
-                                    {% endfor%}
-                                </ul>
+                                        </li>
+                                        {% endfor%}
+                                    </ul>
+                                </div>
                             </div>
                         </div>
-                    </div>
                     </div>
                 </div>
             </div>
@@ -124,12 +140,15 @@
                             <div>
                                 <form method="POST" action="{% url 'general:create_vote_view' answer.encoded_url_up %}">
                                     {% csrf_token %}
-                                    <button class="btn btn-sm"><i class="fas fa-caret-up" style="font-size: 50px;"></i></button>
+                                    <button class="btn btn-sm"><i class="fas fa-caret-up"
+                                            style="font-size: 50px;"></i></button>
                                 </form>
-                                        <div style="width: 100%;text-align: center;" >{{answer.total_votes}}</div>
-                                <form method="POST" action="{% url 'general:create_vote_view' answer.encoded_url_down %}">
+                                <div style="width: 100%;text-align: center;">{{answer.total_votes}}</div>
+                                <form method="POST"
+                                    action="{% url 'general:create_vote_view' answer.encoded_url_down %}">
                                     {% csrf_token %}
-                                    <button class="btn btn-sm"><i class="fas fa-caret-down" style="font-size: 50px;"></i></button>
+                                    <button class="btn btn-sm"><i class="fas fa-caret-down"
+                                            style="font-size: 50px;"></i></button>
                                 </form>
                             </div>
                         </div>
@@ -137,7 +156,9 @@
                     <div class="col-10">
                         {% if object.has_accepted_answer == False and request.user == object.author%}
                         <span style="font-size: 12px;">
-                            ¿Esta respuesta responde exactamente a tu pregunta?<a href="{% url 'preguntas_respuestas:is_accepted' object.id answer.id %}" style="font-size: 14px;text-decoration: underline;"> ¡Accéptala!</a>
+                            ¿Esta respuesta responde exactamente a tu pregunta?<a
+                                href="{% url 'preguntas_respuestas:is_accepted' object.id answer.id %}"
+                                style="font-size: 14px;text-decoration: underline;"> ¡Accéptala!</a>
                         </span>
                         {% endif %}
                         <div class="mb-2 mt-2 text-dark text-justify font-weight-bolder">
@@ -153,65 +174,81 @@
 
                     {% if answer.is_accepted %}
                     <div class="col-1">
-                        <div style="width: 100%;text-align: center;" class="pt-1 pb-1" ><i class="fa fa-check-circle" style="color: green;font-size:36px;" ></i></div>
+                        <div style="width: 100%;text-align: center;" class="pt-1 pb-1"><i class="fa fa-check-circle"
+                                style="color: green;font-size:36px;"></i></div>
                     </div>
                     {% endif %}
                 </div>
             </div>
             <div class="accordion mt-1" id="accordion{{answer.id}}">
                 <div class="accordion-item">
-                <h2 class="accordion-header" id="heading{{answer.id}}">
-                    <button style="padding: 10px;" class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{answer.id}}" aria-expanded="true" aria-controls="collapse{{answer.id}}">
-                        <i style=" font-size: 16px;" class="far fa-comment me-1"></i> Comentarios
-                        <!-- for comments in comments -->
-                    </button>
-                </h2>
-                <div id="collapse{{answer.id}}" class="accordion-collapse" aria-labelledby="heading{{answer.id}}" data-bs-parent="#accordion{{answer.id}}">
-                    <div class="row">
-                        <div class="panel panel-default widget">
-                            <div class="panel-body">
-                                <ul class="list-group">
-                                    {% if user.is_authenticated%}
-                                    <li style="text-align: center;" class="list-group-item">
-                                        <form method="POST" action="{% url 'general:create_comment_view' answer.encoded_url_comment %}">
-                                            {% csrf_token %}
+                    <h2 class="accordion-header" id="heading{{answer.id}}">
+                        <button style="padding: 10px;" class="accordion-button" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#collapse{{answer.id}}" aria-expanded="true"
+                            aria-controls="collapse{{answer.id}}">
+                            <i style=" font-size: 16px;" class="far fa-comment me-1"></i> Comentarios
+                            <!-- for comments in comments -->
+                        </button>
+                    </h2>
+                    <div id="collapse{{answer.id}}" class="accordion-collapse" aria-labelledby="heading{{answer.id}}"
+                        data-bs-parent="#accordion{{answer.id}}">
+                        <div class="row">
+                            <div class="panel panel-default widget">
+                                <div class="panel-body">
+                                    <ul class="list-group">
+                                        {% if user.is_authenticated%}
+                                        <li style="text-align: center;" class="list-group-item">
+                                            <form method="POST"
+                                                action="{% url 'general:create_comment_view' answer.encoded_url_comment %}">
+                                                {% csrf_token %}
+                                                <div class="input-group mb-3">
+                                                    <input type="text" name="comment_content" class="form-control"
+                                                        placeholder="Deja un comentario al autor para que pueda mejorar su respuesta"
+                                                        aria-label="Deja un comentario al autor para que pueda mejorar su respuesta"
+                                                        aria-describedby="button-addon2">
+                                                    <div class="input-group-append">
+                                                        <button class="btn btn-twitter" type="submit"
+                                                            id="button-addon2">Publicar</button>
+                                                    </div>
+                                                </div>
+                                            </form>
+                                        </li>
+                                        {% else %}
+                                        <li style="text-align: center;" class="list-group-item">
                                             <div class="input-group mb-3">
-                                                <input type="text" name="comment_content" class="form-control" placeholder="Deja un comentario al autor para que pueda mejorar su respuesta" aria-label="Deja un comentario al autor para que pueda mejorar su respuesta" aria-describedby="button-addon2">
+                                                <input type="text" name="comment_content-{{answer.id}}"
+                                                    class="form-control"
+                                                    placeholder="Deja un comentario al autor para que pueda mejorar su pregunta"
+                                                    aria-label="Deja un comentario al autor para que pueda mejorar su respuesta"
+                                                    aria-describedby="button-addon3">
                                                 <div class="input-group-append">
-                                                <button class="btn btn-twitter" type="submit" id="button-addon2">Publicar</button>
+                                                    <button class="btn btn-twitter" data-bs-toggle="modal"
+                                                        data-bs-target="#exampleModal" type="button"
+                                                        id="button-addon3">Publicar</button>
                                                 </div>
                                             </div>
-                                        </form>
-                                    </li>
-                                    {% else %}
-                                    <li style="text-align: center;" class="list-group-item">
-                                        <div class="input-group mb-3">
-                                            <input type="text" name="comment_content-{{answer.id}}" class="form-control" placeholder="Deja un comentario al autor para que pueda mejorar su pregunta" aria-label="Deja un comentario al autor para que pueda mejorar su respuesta" aria-describedby="button-addon3">
-                                            <div class="input-group-append">
-                                            <button class="btn btn-twitter" data-bs-toggle="modal" data-bs-target="#exampleModal" type="button" id="button-addon3">Publicar</button>
-                                            </div>
-                                        </div>
-                                    </li>
-                                    {% endif %}
-                                    {% for answer_comment in answer.related_comments %}
-                                    <li class="list-group-item" style="font-size: 11px;">
+                                        </li>
+                                        {% endif %}
+                                        {% for answer_comment in answer.related_comments %}
+                                        <li class="list-group-item" style="font-size: 11px;">
 
-                                        <div>
-                                            <div class="mic-info">
-                                                Por: <a>{{answer_comment.author.username}}</a> {{answer_comment.created_at}}
+                                            <div>
+                                                <div class="mic-info">
+                                                    Por: <a>{{answer_comment.author.username}}</a>
+                                                    {{answer_comment.created_at}}
+                                                </div>
                                             </div>
-                                        </div>
-                                        <div class="comment-text">
-                                            {{answer_comment.content}}
-                                        </div>
-                                    </li>
-                                    {% endfor%}
-                                    <div id="q_com"></div>
-                                </ul>
+                                            <div class="comment-text">
+                                                {{answer_comment.content}}
+                                            </div>
+                                        </li>
+                                        {% endfor%}
+                                        <div id="q_com"></div>
+                                    </ul>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
                 </div>
             </div>
         </div>

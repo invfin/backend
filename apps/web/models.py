@@ -1,15 +1,14 @@
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
+from django.contrib.auth import get_user_model
 from django.db.models import (
     SET_NULL,
-    BooleanField,
+    IntegerField,
     CharField,
-    DateTimeField,
     ForeignKey,
     ManyToManyField,
     PositiveBigIntegerField,
     SlugField,
-    TextField,
     Model,
     CASCADE,
 )
@@ -17,10 +16,13 @@ from django.urls import reverse
 
 from ckeditor.fields import RichTextField
 
-from apps.general.mixins import BaseToAllMixin
+from apps.general.mixins import BaseToAllMixin, CommentsMixin, VotesMixin
+from apps.general.abstracts import AbstractTimeStampedModel, AbstractComment
 from apps.emailing.abstracts import AbstractTrackEmail, AbstractEmail
-from apps.users.models import User
 from apps.web import constants
+from apps.web.managers import RoadmapManager
+
+User = get_user_model()
 
 
 class WebsiteLegalPage(Model, BaseToAllMixin):
@@ -114,7 +116,7 @@ class WebsiteEmail(AbstractEmail):
 
 class WebsiteEmailTrack(AbstractTrackEmail):
     email_related = ForeignKey(
-        WebsiteEmail,
+        "web.WebsiteEmail",
         null=True,
         blank=True,
         on_delete=SET_NULL,
@@ -127,3 +129,56 @@ class WebsiteEmailTrack(AbstractTrackEmail):
 
     def __str__(self) -> str:
         return self.email_related.title
+
+
+class Roadmap(AbstractTimeStampedModel, CommentsMixin, VotesMixin):
+    author = ForeignKey(User, on_delete=SET_NULL, null=True)
+    title = CharField(max_length=800)
+    slug = SlugField(max_length=800, blank=True)
+    content = RichTextField()
+    total_votes = IntegerField(default=0)
+    total_views = PositiveBigIntegerField(default=0)
+    tags = ManyToManyField("classifications.Tag", blank=True)
+    status = CharField(max_length=30, choices=constants.ROADMAP_STATUS, default=constants.ROADMAP_STATUS_PENDING)
+    upvotes = ManyToManyField(
+        User,
+        blank=True,
+        related_name="user_upvote_roadmap",
+    )
+    downvotes = ManyToManyField(
+        User,
+        blank=True,
+        related_name="user_downvote_roadmap",
+    )
+    objects = RoadmapManager()
+
+    class Meta:
+        verbose_name = "Roadmap"
+        db_table = "website_roadmap"
+
+    def __str__(self) -> str:
+        return self.title
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = self.save_unique_field("slug", self.title)
+        return super().save(*args, **kwargs)
+
+    def get_absolute_url(self):
+        return reverse("web:roadmap", kwargs={"slug": self.slug})
+
+    @property
+    def icon_color(self):
+        return constants.ROADMAP_STATUS_MAP_COLOR_ICON[self.status]
+
+    @property
+    def spanish_status(self):
+        return constants.ROADMAP_STATUS_MAP[self.status]
+
+
+class RoadmapComment(AbstractComment):
+    content_related = ForeignKey("web.Roadmap", on_delete=CASCADE, null=True, related_name="comments_related")
+
+    class Meta:
+        verbose_name = "Roadmap's comment"
+        db_table = "website_roadmap_comments"

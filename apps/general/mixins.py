@@ -151,6 +151,7 @@ class VotesMixin:
         return urlsafe_base64_encode(force_bytes(f"{self.base_url_to_encode}-down"))
 
     def vote(self, user, action):
+        # TODO change user in for a filter
         user_already_upvoted = user in self.upvotes.all()
         user_already_downvoted = user in self.downvotes.all()
         vote_result = 0

@@ -60,7 +60,7 @@ SIDE_MENU = [
                 "model": "seo.UserJourney",
                 "label": "Journey",
             },
-{
+            {
                 "model": "users.UsersCategory",
             },
             {"model": "seo.UserCompanyVisited", "label": "Company visited"},
@@ -168,6 +168,9 @@ SIDE_MENU = [
             },
             {
                 "model": "web.WebsiteLegalPage",
+            },
+            {
+                "model": "web.Roadmap",
             },
         ),
     },

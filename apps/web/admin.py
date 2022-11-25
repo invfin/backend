@@ -4,7 +4,37 @@ from apps.web.models import (
     WebsiteEmail,
     WebsiteEmailTrack,
     WebsiteLegalPage,
+    Roadmap,
+    RoadmapComment,
 )
+
+
+class RoadmapCommentInline(admin.StackedInline):
+    model = RoadmapComment
+    fields = [
+        "author",
+        "content",
+    ]
+    extra = 0
+    jazzmin_tab_id = "comments"
+
+
+@admin.register(Roadmap)
+class RoadmapAdmin(admin.ModelAdmin):
+    inlines = [RoadmapCommentInline]
+    list_display = [
+        "title",
+        "slug",
+        "author",
+        "status",
+    ]
+    list_editable = [
+        "status",
+    ]
+    jazzmin_form_tabs = [
+        ("general", "Roadmap"),
+        ("comments", "Comments"),
+    ]
 
 
 @admin.register(WebsiteLegalPage)

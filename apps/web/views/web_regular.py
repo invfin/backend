@@ -5,13 +5,13 @@ from django.conf import settings
 from django.contrib import messages
 from django.shortcuts import redirect, render
 from django.urls import reverse
-from django.views.generic import DetailView, RedirectView
+from django.views.generic import RedirectView
 
 from apps.general.utils import HostChecker
 from apps.public_blog.models import WritterProfile
-from apps.seo.views import SEOTemplateView, SEODetailView
+from apps.seo.views import SEOTemplateView, SEODetailView, SEOListView
 from apps.web.forms import ContactForm
-from apps.web.models import WebsiteLegalPage
+from apps.web.models import WebsiteLegalPage, Roadmap
 
 
 class HomePage(SEOTemplateView):
@@ -42,6 +42,22 @@ class HomePage(SEOTemplateView):
             using=self.template_engine,
             **response_kwargs,
         )
+
+
+class RoadmapListView(SEOListView):
+    template_name = "roadmap.html"
+    model = Roadmap
+    context_object_name = "objects"
+    meta_title = "Roadmap"
+    meta_description = "Conoce el desarrollo y pide lo que necesites"
+    meta_tags = "finanzas, blog financiero, blog el financiera, invertir"
+
+
+class RoadmapDetailView(SEODetailView):
+    template_name = "roadmap_details.html"
+    model = Roadmap
+    context_object_name = "object"
+    meta_description = "Conoce el desarrollo y pide lo que necesites"
 
 
 class LegalPages(SEODetailView):

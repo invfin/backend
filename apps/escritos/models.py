@@ -56,7 +56,7 @@ class Term(AbstractPublishableContent):
 
 
 class TermContent(Model):
-    term_related = ForeignKey(Term, on_delete=SET_NULL, null=True, related_name="term_content_parts")
+    term_related = ForeignKey("escritos.Term", on_delete=SET_NULL, null=True, related_name="term_content_parts")
     title = CharField(max_length=3000)
     order = PositiveIntegerField(default=0)
     content = RichTextField()
@@ -79,7 +79,7 @@ class TermContent(Model):
 
 
 class TermCorrection(Model):
-    term_content_related = ForeignKey(TermContent, null=True, blank=True, on_delete=SET_NULL)
+    term_content_related = ForeignKey("escritos.TermContent", null=True, blank=True, on_delete=SET_NULL)
     title = CharField(max_length=3000, null=True, blank=True)
     date_suggested = DateTimeField(default=timezone.now)
     is_approved = BooleanField(default=False)
@@ -112,20 +112,17 @@ class TermCorrection(Model):
 
 
 class TermsComment(AbstractComment):
-    content_related = ForeignKey(Term, on_delete=CASCADE, null=True, related_name="comments_related")
+    content_related = ForeignKey("escritos.Term", on_delete=CASCADE, null=True, related_name="comments_related")
 
     class Meta:
         verbose_name = "Term's comment"
         db_table = "term_comments"
 
-    def get_absolute_url(self):
-        return self.content_related.get_absolute_url()
-
 
 class TermsRelatedToResume(Model):
-    term_to_keep = ForeignKey(Term, on_delete=CASCADE, null=True, related_name="term_to_keep")
+    term_to_keep = ForeignKey("escritos.Term", on_delete=CASCADE, null=True, related_name="term_to_keep")
 
-    term_to_delete = ForeignKey(Term, on_delete=CASCADE, null=True, related_name="term_to_delete")
+    term_to_delete = ForeignKey("escritos.Term", on_delete=CASCADE, null=True, related_name="term_to_delete")
 
     class Meta:
         verbose_name = "Terms to resume"
@@ -133,7 +130,7 @@ class TermsRelatedToResume(Model):
 
 
 class FavoritesTermsHistorial(AbstractFavoritesHistorial):
-    term = ForeignKey(Term, on_delete=SET_NULL, null=True, blank=True)
+    term = ForeignKey("escritos.Term", on_delete=SET_NULL, null=True, blank=True)
 
     class Meta:
         verbose_name = "Término favorito"
@@ -146,7 +143,7 @@ class FavoritesTermsHistorial(AbstractFavoritesHistorial):
 
 class FavoritesTermsList(Model):
     user = OneToOneField(User, on_delete=SET_NULL, null=True, blank=True, related_name="favorites_terms")
-    term = ManyToManyField(Term, blank=True)
+    term = ManyToManyField("escritos.Term", blank=True)
 
     class Meta:
         verbose_name = "Lista de términos favoritos"

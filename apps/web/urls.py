@@ -13,6 +13,8 @@ from apps.web.views import (
     ManageTermListView,
     ManageTermUpdateView,
     ManageWebView,
+    RoadmapListView,
+    RoadmapDetailView,
     soporte_view,
 )
 
@@ -23,6 +25,8 @@ urlpatterns = [
     path("excel-analisis/", ExcelRedirectView.as_view(), name="excel"),
     path("soporte/", soporte_view, name="soporte"),
     path("manage-web/", ManageWebView.as_view(), name="manage_web"),
+    path("roadmap/", RoadmapListView.as_view(), name="roadmap"),
+    path("roadmap-item/<slug>/", RoadmapDetailView.as_view(), name="roadmap_item"),
     path("manage-list-emails-engament/", ManageEmailEngagementListView.as_view(), name="list_emails_engagement"),
     path("manage-create-email-engament/", ManageEmailEngagementCreateView.as_view(), name="create_email_engagement"),
     path(

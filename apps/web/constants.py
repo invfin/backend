@@ -77,3 +77,30 @@ WHOM_TO_SEND_EMAIL = (
 )
 
 COMMENT_PURCHASED_PRODUCT = "Comenta tu úlitma compra"
+
+
+ROADMAP_STATUS_FINISHED = "finished"
+ROADMAP_STATUS_PENDING = "pending"
+ROADMAP_STATUS_DOING = "doing"
+ROADMAP_STATUS_TESTING = "testing"
+
+ROADMAP_STATUS = (
+    (ROADMAP_STATUS_FINISHED, "Finished"),
+    (ROADMAP_STATUS_PENDING, "Pending"),
+    (ROADMAP_STATUS_DOING, "Doing"),
+    (ROADMAP_STATUS_TESTING, "Testing"),
+)
+
+ROADMAP_STATUS_MAP = {
+    ROADMAP_STATUS_FINISHED: "Acabado",
+    ROADMAP_STATUS_PENDING: "En espera",
+    ROADMAP_STATUS_DOING: "En desarrollo",
+    ROADMAP_STATUS_TESTING: "Testeando",
+}
+
+ROADMAP_STATUS_MAP_COLOR_ICON = {
+    ROADMAP_STATUS_FINISHED: {"color": "success", "icon": "fas fa-check"},
+    ROADMAP_STATUS_PENDING: {"color": "warning", "icon": "fas fa-clock"},
+    ROADMAP_STATUS_DOING: {"color": "primary", "icon": "fa fa-vial"},
+    ROADMAP_STATUS_TESTING: {"color": "danger", "icon": "fa fa-spinner"},
+}
