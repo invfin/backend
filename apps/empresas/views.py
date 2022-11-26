@@ -10,6 +10,7 @@ from .api.serializers import (
 )
 from .api.views import BaseAPIView
 from .models import BalanceSheet, CashflowStatement, Company, IncomeStatement
+from apps.empresas.utils import FinprepRequestCheck
 
 
 def companies_searcher(request):

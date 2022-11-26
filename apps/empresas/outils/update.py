@@ -4,7 +4,7 @@ from datetime import datetime
 from django.db.models import Q
 
 from apps.translate.google_trans_new import google_translator
-from apps.empresas.utils import log_company
+from apps.empresas.utils import log_company, FinprepRequestCheck
 from apps.empresas.outils.ratios import CalculateCompanyFinancialRatios
 from apps.empresas.outils.average_statements import AverageStatements
 from apps.empresas.outils.retrieve_data import RetrieveCompanyData
@@ -18,26 +18,27 @@ class UpdateCompany(CalculateCompanyFinancialRatios, AverageStatements):
 
     @log_company("fixed_last_finprep")
     def create_financials_finprep(self) -> None:
-        finprep_data = RetrieveCompanyData(self.company).finprep.create_financials_finprep()
-        income_statements = finprep_data["income_statements"]
-        balance_sheets = finprep_data["balance_sheets"]
-        cashflow_statements = finprep_data["cashflow_statements"]
-        for income_statement in income_statements:
-            IncomeStatement.objects.filter(
-                company=income_statement.company,
-                period=income_statement.period,
-            ).update(**income_statement.return_standard)
-        for balance_sheet in balance_sheets:
-            BalanceSheet.objects.filter(
-                company=balance_sheet.company,
-                period=balance_sheet.period,
-            ).update(**balance_sheet.return_standard)
-        for cashflow_statement in cashflow_statements:
-            CashflowStatement.objects.filter(
-                company=cashflow_statement.company,
-                period=cashflow_statement.period,
-            ).update(**cashflow_statement.return_standard)
-        # TODO add calculate ratios method
+        if FinprepRequestCheck().manage_track_requests(3):
+            finprep_data = RetrieveCompanyData(self.company).finprep.create_financials_finprep()
+            income_statements = finprep_data["income_statements"]
+            balance_sheets = finprep_data["balance_sheets"]
+            cashflow_statements = finprep_data["cashflow_statements"]
+            for income_statement in income_statements:
+                IncomeStatement.objects.filter(
+                    company=income_statement.company,
+                    period=income_statement.period,
+                ).update(**income_statement.return_standard)
+            for balance_sheet in balance_sheets:
+                BalanceSheet.objects.filter(
+                    company=balance_sheet.company,
+                    period=balance_sheet.period,
+                ).update(**balance_sheet.return_standard)
+            for cashflow_statement in cashflow_statements:
+                CashflowStatement.objects.filter(
+                    company=cashflow_statement.company,
+                    period=cashflow_statement.period,
+                ).update(**cashflow_statement.return_standard)
+            # TODO add calculate ratios method
         return None
 
     @log_company()

@@ -18,3 +18,5 @@ DATA_SOURCES = (
 )
 
 DEFAULT_JSON_CHECKS_FILE = "apps/empresas/company-checks.json"
+
+MAX_REQUESTS_FINPREP = 120

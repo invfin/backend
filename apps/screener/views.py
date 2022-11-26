@@ -6,8 +6,8 @@ from django.urls import reverse
 from django.views.generic import DetailView, ListView, RedirectView
 
 from apps.empresas.outils.update import UpdateCompany
-from apps.empresas.models import Company, ExchangeOrganisation, IncomeStatement
-from apps.empresas.utils import company_searched
+from apps.empresas.models import Company, ExchangeOrganisation
+from apps.empresas.utils import company_searched, FinprepRequestCheck
 from apps.etfs.models import Etf
 from apps.seo.views import SEODetailView, SEOListView
 from apps.users import constants as users_constants
@@ -130,9 +130,9 @@ class CompanyDetailsView(SEODetailView):
         self.request.session.modified = True
 
     def check_company_for_updates(self, empresa) -> None:
-        return None
-        if not empresa.has_checking("fixed_last_finprep"):
-            UpdateCompany(empresa).create_financials_finprep()
+        if FinprepRequestCheck().manage_track_requests(3):
+            if not empresa.has_checking("fixed_last_finprep"):
+                UpdateCompany(empresa).create_financials_finprep()
 
     def get_meta_description(self, empresa) -> str:
         return (

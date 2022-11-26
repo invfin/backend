@@ -59,8 +59,8 @@ class WebsiteEmail(AbstractEmail):
         related_name="emails",
     )
     users_selected = ManyToManyField(User, blank=True)
-    content_type = ForeignKey(ContentType, on_delete=CASCADE, null=True)
-    object_id = PositiveBigIntegerField(null=True)
+    content_type = ForeignKey(ContentType, on_delete=CASCADE, null=True, blank=True)
+    object_id = PositiveBigIntegerField(null=True, blank=True)
     object = GenericForeignKey("content_type", "object_id")
 
     class Meta:

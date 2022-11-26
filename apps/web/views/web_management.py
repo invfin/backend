@@ -73,7 +73,7 @@ class ManageEmailEngagementUpdateView(PrivateWebUpdateView):
     template_name = "engagement/form_email.html"
     pk_url_kwarg = "pk"
 
-    def successful_return(self):
+    def successful_return(self) -> HttpResponse:
         messages.success(self.request, "Guardado correctamente")
         return HttpResponse(status=204, headers={"HX-Trigger": "showMessageSuccess"})
 
@@ -81,9 +81,8 @@ class ManageEmailEngagementUpdateView(PrivateWebUpdateView):
         return reverse("web:manage_web")
 
     def form_valid(self, form) -> HttpResponse:
-        seguir = dict(form.data).pop("seguir", None)
         form.save()
-        if seguir:
+        if self.request.META.get("HTTP_HX_REQUEST"):
             return self.successful_return()
         return HttpResponseRedirect(self.get_success_url())
 

@@ -1,14 +1,15 @@
 {% extends "bases/base_forms.html" %}
-{% load static i18n extra crispy_forms_tags %}
+{% load static i18n extra admin_urls admin_modify jazzmin crispy_forms_tags %}
 
 {% block extra %}
 <script type="text/javascript" src="{% static 'general/assets/vendor/moment.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'general/assets/vendor/bootstrap-datetimepicker.js' %}"></script>
-<script type="text/javascript" src="/admin/jsi18n/"></script>
+
 
 {% endblock extra %}
 {% block header %}{% include "headers/inicio.html" %}{% endblock header%}
 {% block FormContent %}
+
 <style>
     .invalid-feedback {
         display: block;
@@ -18,6 +19,7 @@
     <form method="POST">
         {% csrf_token %}
         {{form.media}}
+
         {% for field in form %}
         {% if field.errors %}
         <div class="alert alert-danger" role="alert">
@@ -52,13 +54,15 @@
                     })
                 </script>
                 <input hidden name="seguir" value="true">
+                {% if object %}
                 <div class="col-12 mb-4">
                     <a href="{{object.previsualization_url}}" target="_blank" class="btn btn-success col-12">Preview</a>
                 </div>
                 <div class="col-12 mb-4">
-                    <button hx-post="" hx-headers='{"X-CSRFToken":"{{ csrf_token }}"}' hx-include="[name='seguir']"
+                    <button hx-post="" hx-headers='{"X-CSRFToken":"{{ csrf_token }}"}'
                         class="btn btn-primary col-12">Guardar y seguir</button>
                 </div>
+                {% endif %}
                 <div class="col-12">
                     <button type="submit" class="btn btn-primary col-12">Guardar</button>
                 </div>

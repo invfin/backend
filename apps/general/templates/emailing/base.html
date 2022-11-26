@@ -1,11 +1,17 @@
-<!DOCTYPE html>
-<html lang="es">
+<!DOCTYPE html
+    PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="es">
 
 <head>
     <meta charset="UTF-8">
     <meta name="author" content="Inversiones y Finanzas">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="x-apple-disable-message-reformatting" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="supported-color-schemes" content="light dark" />
+    {% include "emailing/style.html" %}
 </head>
 
 <body>
@@ -15,4 +21,5 @@
     <img src="https://inversionesyfinanzas.xyz{% url 'general:email_opened_view' image_tag%}" width=1 height=1>
     {% endif %}
 </body>
+
 </html>

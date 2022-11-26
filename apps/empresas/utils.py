@@ -1,14 +1,52 @@
 import json
 
-from django.utils import timezone
+from typing import Tuple
+from dateutil.relativedelta import relativedelta
+from datetime import datetime
 
 import numpy as np
-from dateutil.relativedelta import relativedelta
+
+from django.utils import timezone
 
 from apps.general import constants
 from apps.periods.models import Period
-
+from apps.empresas.constants import MAX_REQUESTS_FINPREP
 from apps.empresas.models import Company, CompanyUpdateLog
+
+
+class FinprepRequestCheck:
+    # TODO see if convert that to a decorator to save some seconds
+    def check_remaining_requests(
+        self,
+        number_requests_to_do: int,
+        last_request_time_timestamp: float,
+        number_requests_done: int,
+    ) -> Tuple:
+        now = timezone.now()
+        my_tmz = timezone.get_default_timezone()
+        if (now - datetime.fromtimestamp(last_request_time_timestamp, tz=my_tmz)).total_seconds() > 86400:
+            requests_done = number_requests_to_do
+            is_auth = True
+        else:
+            remianing_requests = MAX_REQUESTS_FINPREP - number_requests_done
+            is_auth = number_requests_to_do <= remianing_requests
+            requests_done = number_requests_to_do + number_requests_done
+
+        return is_auth, datetime.timestamp(now), requests_done
+
+    def manage_track_requests(self, number_requests_to_do: int) -> bool:
+        with open("apps/empresas/parse/finprep_requests.json", "r") as read_checks_json:
+            checks_json = json.load(read_checks_json)
+            is_auth, last_request, requests_done = self.check_remaining_requests(
+                number_requests_to_do,
+                checks_json["last_request"],
+                checks_json["requests_done"],
+            )
+            checks_json["requests_done"] = requests_done
+            checks_json["last_request"] = last_request
+        with open("apps/empresas/parse/finprep_requests.json", "w") as writte_checks_json:
+            json.dump(checks_json, writte_checks_json, indent=2, separators=(",", ": "))
+        return is_auth
 
 
 def detect_outlier(list_data):
