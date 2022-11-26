@@ -40,6 +40,9 @@ class AbstractEmail(AbstractTimeStampedModel):
     class Meta:
         abstract = True
 
+    def __str__(self) -> str:
+        return self.title
+
     @property
     def email_serialized(self):
         return {

@@ -68,9 +68,6 @@ class WebsiteEmail(AbstractEmail):
         verbose_name = "Website emails"
         db_table = "website_emails"
 
-    def __str__(self) -> str:
-        return self.title
-
     @property
     def edit_url(self):
         return reverse("web:update_email_engagement", args=[self.pk])
@@ -131,7 +128,7 @@ class WebsiteEmailTrack(AbstractTrackEmail):
         db_table = "website_emails_track"
 
     def __str__(self) -> str:
-        return self.email_related.title
+        return f"{self.email_related}" if self.email_related else f"{self.id}"
 
 
 class Roadmap(AbstractTimeStampedModel, CommentsMixin, VotesMixin):
