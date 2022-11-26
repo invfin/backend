@@ -62,19 +62,6 @@ class TestCompanyTask(TestCase):
         assert self.apple == CompanyTask("first_financials_yahooquery_info", "key_stats").retrieve_company()
         assert CompanyTask("key_stats", "key_stats").retrieve_company() is None
 
-    @patch("apps.empresas.outils.retrieve_data.RetrieveCompanyData")
-    def test_prepare_task(self, mock_retrieve_data):
-        checking = "key_stats"
-        CompanyTask(checking, "key_stats").prepare_task()
-        assert len(mail.outbox) == 1
-        assert mail.outbox[0].subject == f"No companies left to check for {checking}"
-        assert mail.outbox[0].body == f"All companies have info for {checking}"
-        assert mail.outbox[0].from_email == "InvFin - Automatic <EMAIL_DEFAULT@example.com>"
-        assert mail.outbox[0].to == ["InvFin - Automatic <EMAIL_DEFAULT@example.com>"]
-        with self.subTest("company found"):
-            CompanyTask("first_financials_yahooquery_info", "key_stats").prepare_task()
-            mock_retrieve_data.called_with(self.apple)
-
     @patch("apps.empresas.outils.retrieve_data.RetrieveCompanyData.create_financials_finprep")
     @patch("apps.empresas.outils.retrieve_data.RetrieveCompanyData.create_financials_finnhub")
     @patch("apps.empresas.outils.retrieve_data.RetrieveCompanyData.create_key_stats_yahooquery")
