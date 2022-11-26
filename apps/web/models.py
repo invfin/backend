@@ -40,6 +40,9 @@ class WebsiteLegalPage(Model, BaseToAllMixin):
             self.slug = self.save_unique_field("slug", self.title)
         return super().save(*args, **kwargs)
 
+    def get_absolute_url(self):
+        return reverse("web:asuntos_legales", kwargs={"slug": self.slug})
+
 
 class WebsiteEmail(AbstractEmail):
     content = RichTextField()

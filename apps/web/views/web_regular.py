@@ -32,6 +32,7 @@ class HomePage(SEOTemplateView):
             context["escritor1"] = escritores[0]
             context["escritor2"] = escritores[1]
             context["escritor3"] = escritores[2]
+            context["legal_links"] = WebsiteLegalPage.objects.all()
             template_name = "home_page.html"
 
         response_kwargs.setdefault("content_type", self.content_type)
@@ -52,6 +53,11 @@ class RoadmapListView(SEOListView):
     meta_description = "Conoce el desarrollo y pide lo que necesites"
     meta_tags = "finanzas, blog financiero, blog el financiera, invertir"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["legal_links"] = WebsiteLegalPage.objects.all()
+        return context
+
 
 class RoadmapDetailView(SEODetailView):
     template_name = "roadmap_details.html"
@@ -61,12 +67,18 @@ class RoadmapDetailView(SEODetailView):
 
 
 class LegalPages(SEODetailView):
+    no_index: bool = True
     template_name = "legals.html"
     model = WebsiteLegalPage
     context_object_name = "object"
     slug_field = "slug"
     meta_description = "Todo lo que necesitas para ser un mejor inversor"
     meta_tags = "finanzas, blog financiero, blog el financiera, invertir"
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["legal_links"] = WebsiteLegalPage.objects.all()
+        return context
 
 
 def soporte_view(request):
