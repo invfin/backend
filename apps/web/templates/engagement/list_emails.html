@@ -38,8 +38,8 @@
                         class="btn btn-sm btn-success mb-1">Preview</a>
                     {% endif %}
                     {% if web_email.status_waiting %}
-                    <button hx-get="{% url 'web:send_email_engagement' web_email.id %}"
-                        class="btn btn-sm btn-danger mb-1">Send</button>
+                    <button hx-put="{% url 'web:send_email_engagement' web_email.id %}"
+                        hx-headers='{"X-CSRFToken":"{{ csrf_token }}"}' class="btn btn-sm btn-danger mb-1">Send</button>
                     {% endif %}
                 </div>
             </div>

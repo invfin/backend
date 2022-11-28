@@ -9,13 +9,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="x-apple-disable-message-reformatting" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    {% include "complements/style_email.html" %}
 </head>
 
 <body>
     {% block content %}
     {% endblock content %}
     {% if not preview and image_tag %}
-    <img src="https://inversionesyfinanzas.xyz{% url 'general:email_opened_view' image_tag%}" width=1 height=1>
+    <img src="{{full_domain}}{% url 'general:email_opened_view' image_tag%}" width=1 height=1>
     {% endif %}
 </body>
 

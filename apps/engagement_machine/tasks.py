@@ -32,8 +32,9 @@ def send_email_engagement_task(email_id: int):
         users_to_send_to = email.users_selected.all()
 
     email_content_serialized = {"sender": "InvFin", **email.email_serialized}
+    template = email.campaign.slug.split("-")[0]
     for user in users_to_send_to:
-        send_email_task.delay(email_content_serialized, user.id, EMAIL_FOR_WEB, web_constants.CONTENT_FOR_NEWSLETTER)
+        send_email_task.delay(email_content_serialized, user.id, EMAIL_FOR_WEB, template)
     email.sent = True
     email.save(update_fields=["sent"])
 

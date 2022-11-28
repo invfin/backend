@@ -79,7 +79,7 @@ class WebsiteEmail(AbstractEmail):
     @property
     def previsualization_template(self):
         template = self.campaign.slug.split("-")[0]
-        return f"emailing/web/{template}.html"
+        return f"web/{template}.html"
 
     @property
     def status_draft(self):

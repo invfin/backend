@@ -1,15 +1,13 @@
-from typing import Dict, List, Tuple, Type, Any, Union
+from typing import Any, Dict, List, Tuple, Type, Union
 
 from django.apps import apps
 from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.core.mail import EmailMessage, send_mail
+from django.core.mail import EmailMessage
 from django.template.loader import render_to_string
-from django.utils.safestring import mark_safe
 
 from apps.emailing import constants
 from apps.web import constants as web_constants
-
 
 User = get_user_model()
 
@@ -41,7 +39,7 @@ class EmailingSystem:
             raise NotImplementedError("You must set a web_objective")
         self.web_objective = web_objective.split("-")[0]
         template = f"{is_for}/{web_objective}" if web_objective else is_for
-        self.email_template = f"emailing/{template}.html"
+        self.email_template = f"{template}.html"
 
     def _prepare_email_track(self, email_specifications: Dict[str, Any], receiver: Type) -> str:
         """
@@ -108,6 +106,7 @@ class EmailingSystem:
         receiver = User.objects.get(id=receiver_id)
         subject = email.pop("subject")
         sender, content = self._prepare_email(email, receiver)
+        content.update({"full_domain": settings.FULL_DOMAIN})
         final_content = render_to_string(self.email_template, content)
         self.send_email(subject, final_content, sender, [receiver.email])
 
