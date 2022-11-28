@@ -193,31 +193,22 @@ class CalculateFinancialRatios(ValuationRatios):
             "rogic": rogic,
         }
 
-    def calculate_liquidity_ratio(self, data: Dict[str, Union[int, float]]) -> Dict[str, Union[int, float]]:
-        cash_ratio = (
-            data["cash_and_cash_equivalents"] / data["total_current_liabilities"]
-            if data["total_current_liabilities"] != 0
-            else 0
+    @classmethod
+    def calculate_liquidity_ratio(cls, data: Dict[str, Union[int, float]]) -> Dict[str, Union[int, float]]:
+        cash_ratio = cls.calculate_cash_ratio(
+            data.get("cash_and_cash_equivalents",0), data.get("total_current_liabilities",0)
         )
-        current_ratio = (
-            data["total_current_assets"] / data["total_current_liabilities"]
-            if data["total_current_liabilities"] != 0
-            else 0
+        current_ratio = cls.calculate_current_ratio(
+            data.get("total_current_assets",0) , data.get("total_current_liabilities",0)
         )
-        quick_ratio = (
-            (data["netReceivables"] + data["cash_and_short_term_investments"]) / data["total_current_liabilities"]
-            if data["total_current_liabilities"] != 0
-            else 0
+        quick_ratio = cls.calculate_quick_ratio(
+            data.get("netReceivables",0) , data.get("cash_and_short_term_investments",0), data.get("total_current_liabilities",0)
         )
-        operating_cashflow_ratio = (
-            data["net_cash_provided_by_operating_activities"] / data["total_current_liabilities"]
-            if data["total_current_liabilities"] != 0
-            else 0
+        operating_cashflow_ratio = cls.calculate_operating_cashflow_ratio(
+            data.get("net_cash_provided_by_operating_activities",0) , data.get("total_current_liabilities",0)
         )
-        debt_to_equity = (
-            data["total_liabilities"] / data["total_stockholders_equity"]
-            if data["total_stockholders_equity"] != 0
-            else 0
+        debt_to_equity = cls.calculate_debt_to_equity(
+            data.get("total_liabilities",0) , data.get("total_stockholders_equity",0)
         )
 
         return {
@@ -282,47 +273,34 @@ class CalculateFinancialRatios(ValuationRatios):
             "owners_earnings": owners_earnings,
         }
 
-    def calculate_ps_value(self, data: Dict[str, Union[int, float]]) -> Dict[str, Union[int, float]]:
-        sales_ps = (
-            data["revenue"] / data["weighted_average_shares_out"] if data["weighted_average_shares_out"] != 0 else 0
+    @classmethod
+    def calculate_ps_value(cls, data: Dict[str, Union[int, float]]) -> Dict[str, Union[int, float]]:
+        sales_ps = cls.calculate_sales_ps(
+            data.get("revenue",0) , data.get("weighted_average_shares_out",0)
         )
-        book_ps = (
-            data["total_stockholders_equity"] / data["weighted_average_shares_out"]
-            if data["weighted_average_shares_out"] != 0
-            else 0
+        book_ps = cls.calculate_book_ps(
+            data.get("total_stockholders_equity",0) , data.get("weighted_average_shares_out",0)
         )
-        tangible_ps = (
-            data["net_tangible_equity"] / data["weighted_average_shares_out"]
-            if data["weighted_average_shares_out"] != 0
-            else 0
+        tangible_ps = cls.calculate_tangible_ps(
+            data.get("net_tangible_equity",0) , data.get("weighted_average_shares_out",0)
         )
-        fcf_ps = (
-            data["free_cash_flow"] / data["weighted_average_shares_out"]
-            if data["weighted_average_shares_out"] != 0
-            else 0
+        fcf_ps = cls.calculate_fcf_ps(
+            data.get("free_cash_flow",0) , data.get("weighted_average_shares_out",0)
         )
-        eps = (
-            data["net_income"] / data["weighted_average_shares_out"] if data["weighted_average_shares_out"] != 0 else 0
+        eps = cls.calculate_eps(
+            data.get("net_income",0) , data.get("weighted_average_shares_out",0)
         )
-        cash_ps = (
-            data["cash_and_short_term_investments"] / data["weighted_average_shares_out"]
-            if data["weighted_average_shares_out"] != 0
-            else 0
+        cash_ps = cls.calculate_cash_ps(
+            data.get("cash_and_short_term_investments",0) , data.get("weighted_average_shares_out",0)
         )
-        operating_cf_ps = (
-            data["net_cash_provided_by_operating_activities"] / data["weighted_average_shares_out"]
-            if data["weighted_average_shares_out"] != 0
-            else 0
+        operating_cf_ps = cls.calculate_operating_cf_ps(
+            data.get("net_cash_provided_by_operating_activities",0) , data.get("weighted_average_shares_out",0)
         )
-        capex_ps = (
-            data["capital_expenditure"] / data["weighted_average_shares_out"]
-            if data["weighted_average_shares_out"] != 0
-            else 0
+        capex_ps = cls.calculate_capex_ps(
+            data.get("capital_expenditure",0) , data.get("weighted_average_shares_out",0)
         )
-        total_assets_ps = (
-            data["total_assets"] / data["weighted_average_shares_out"]
-            if data["weighted_average_shares_out"] != 0
-            else 0
+        total_assets_ps = cls.calculate_total_assets_ps(
+            data.get("total_assets",0) , data.get("weighted_average_shares_out",0)
         )
 
         return {

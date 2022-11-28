@@ -1,7 +1,5 @@
 from django.test import TestCase
 
-from bfet import DjangoTestingModel, DataCreator
-
 from apps.empresas.outils.financial_ratios import CalculateFinancialRatios
 
 

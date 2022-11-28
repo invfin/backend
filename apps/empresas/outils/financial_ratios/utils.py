@@ -19,7 +19,7 @@ def modify_for_percentage(value: Union[int, float], as_percentage: bool = True) 
         return round(value * 100, 2)
     return value
 
-def divide_or_zero(numerator: Union[int, float], denominator: Union[int, float]):
+def divide_or_zero(numerator: Union[int, float], denominator: Union[int, float], numbers_after_coma: int = 2) -> Union[int, float]:
     """A method to calculate a divison that returns de product or 0 if the denominator is 0
 
     Parameters
@@ -34,4 +34,4 @@ def divide_or_zero(numerator: Union[int, float], denominator: Union[int, float])
     Union[int, float]
         The product of the division
     """
-    return round(numerator / denominator, 2) if denominator != 0 else 0
+    return round(numerator / denominator, numbers_after_coma) if denominator != 0 else 0
