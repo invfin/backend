@@ -130,7 +130,7 @@ class EmailingSystem:
 
     @classmethod
     def simple_email(cls, subject: str, message: str, sent_by: str = "Web-automation"):
-        body = render_to_string("emailing/web/internal.html", {"content": message})
+        body = render_to_string("web/internal.html", {"content": message})
         return cls.send_email(subject, body, f"{sent_by} <{settings.EMAIL_DEFAULT}>", [settings.EMAIL_DEFAULT])
 
     @classmethod

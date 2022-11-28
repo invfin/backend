@@ -62,7 +62,7 @@ class TestCompanyTask(TestCase):
         assert self.apple == CompanyTask("first_financials_yahooquery_info", "key_stats").retrieve_company()
         assert CompanyTask("key_stats", "key_stats").retrieve_company() is None
 
-    @patch("apps.empresas.outils.retrieve_data.RetrieveCompanyData.create_financials_finprep")
+    @patch("apps.empresas.outils.update.UpdateCompany.create_financials_finprep")
     @patch("apps.empresas.outils.retrieve_data.RetrieveCompanyData.create_financials_finnhub")
     @patch("apps.empresas.outils.retrieve_data.RetrieveCompanyData.create_key_stats_yahooquery")
     @patch("apps.empresas.outils.retrieve_data.RetrieveCompanyData.create_institutionals_yahooquery")
@@ -88,7 +88,7 @@ class TestCompanyTask(TestCase):
         for key, value in tasks_map.items():
             with self.subTest(key):
                 retrieve_data = RetrieveCompanyData(self.intc)
-                CompanyTask("key_stats", key).select_task(retrieve_data)
+                CompanyTask("key_stats", key).select_task(self.intc)
                 if "financials_yfinance_info" == key or "financials_yahooquery_info" == key:
                     assert value.called_with(retrieve_data)
                 else:
