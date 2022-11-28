@@ -1,19 +1,20 @@
 from typing import Dict
+
+from django.conf import settings
 from django.contrib import messages
 from django.http import HttpResponseRedirect
 from django.shortcuts import get_object_or_404, redirect
 from django.urls import reverse
 from django.views.generic import DetailView, ListView, RedirectView
 
-from apps.empresas.outils.update import UpdateCompany
 from apps.empresas.models import Company, ExchangeOrganisation
-from apps.empresas.utils import company_searched, FinprepRequestCheck
+from apps.empresas.outils.update import UpdateCompany
+from apps.empresas.utils import FinprepRequestCheck, company_searched
 from apps.etfs.models import Etf
+from apps.screener.models import CompanyInformationBought, YahooScreener
 from apps.seo.views import SEODetailView, SEOListView
 from apps.users import constants as users_constants
 from apps.users.models import CreditUsageHistorial
-
-from apps.screener.models import CompanyInformationBought, YahooScreener
 
 
 class CompanyLookUpView(RedirectView):
@@ -130,9 +131,14 @@ class CompanyDetailsView(SEODetailView):
         self.request.session.modified = True
 
     def check_company_for_updates(self, empresa) -> None:
-        if FinprepRequestCheck().manage_track_requests(3):
-            if not empresa.has_checking("fixed_last_finprep"):
-                UpdateCompany(empresa).create_financials_finprep()
+        if all(
+            [
+                settings.IS_PROD,
+                FinprepRequestCheck().manage_track_requests(3),
+                not empresa.has_checking("fixed_last_finprep"),
+            ]
+        ):
+            UpdateCompany(empresa).create_financials_finprep()
 
     def get_meta_description(self, empresa) -> str:
         return (

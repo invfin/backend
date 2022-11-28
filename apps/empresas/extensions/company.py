@@ -1927,6 +1927,7 @@ class CompanyExtended(ChartSerializer):
             "current_value": current,
             "average_value": average,
         }
+
         if current > max_high or min_high_operator(current, 0):
             valuation_result["current_veredict"] = "Sobrevalorado"
             valuation_result["current_color"] = "danger"
