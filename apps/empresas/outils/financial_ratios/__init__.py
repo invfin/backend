@@ -501,14 +501,14 @@ class CalculateFinancialRatios(ValuationRatios):
     @classmethod
     def calculate_efficiency_ratio(cls, data: Dict[str, Union[int, float]]) -> Dict[str, Union[int, float]]:
         average_inventory = data.get("average_inventory", cls.calculate_average_inventory(data))
-        days_inventory_outstanding = cls.divide_or_zero(average_inventory, (data["cost_of_revenue"] * 360))
+        # days_inventory_outstanding = cls.divide_or_zero(average_inventory, (data["cost_of_revenue"] * 360))
 
-        days_payables_outstanding = (
-            (data["account_payables"] * 360) / data["cost_of_revenue"] if data["cost_of_revenue"] != 0 else 0
-        )
-        days_sales_outstanding = (
-            (data["accounts_receivables"] * 360) / data["account_payables"] if data["account_payables"] != 0 else 0
-        )
+        # days_payables_outstanding = (
+        #     (data["account_payables"] * 360) / data["cost_of_goods_sold"] if data["cost_of_goods_sold"] != 0 else 0
+        # )
+        # days_sales_outstanding = (
+        #     (data["accounts_receivables"] * 360) / data["account_payables"] if data["account_payables"] != 0 else 0
+        # )
         operating_cycle = days_inventory_outstanding + days_sales_outstanding
         cash_conversion_cycle = days_inventory_outstanding + days_sales_outstanding - days_sales_outstanding
         asset_turnover = data["revenue"] / data["average_assets"] if data["average_assets"] != 0 else 0
