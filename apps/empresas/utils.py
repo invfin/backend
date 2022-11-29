@@ -35,7 +35,8 @@ class FinprepRequestCheck:
         return is_auth, datetime.timestamp(now), requests_done
 
     def manage_track_requests(self, number_requests_to_do: int) -> bool:
-        with open("apps/empresas/parse/finprep_requests.json", "r") as read_checks_json:
+        finprep_requests_done_file = "apps/empresas/parse/finprep_requests_done.json"
+        with open(finprep_requests_done_file, "r") as read_checks_json:
             checks_json = json.load(read_checks_json)
             is_auth, last_request, requests_done = self.check_remaining_requests(
                 number_requests_to_do,
@@ -44,7 +45,7 @@ class FinprepRequestCheck:
             )
             checks_json["requests_done"] = requests_done
             checks_json["last_request"] = last_request
-        with open("apps/empresas/parse/finprep_requests.json", "w") as writte_checks_json:
+        with open(finprep_requests_done_file, "w") as writte_checks_json:
             json.dump(checks_json, writte_checks_json, indent=2, separators=(",", ": "))
         return is_auth
 

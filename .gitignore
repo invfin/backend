@@ -291,3 +291,4 @@ checkout-single-subscription
 *.sqlite3
 
 assets_*
+apps/empresas/parse/finprep_requests_done.json
