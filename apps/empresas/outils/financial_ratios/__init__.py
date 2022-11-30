@@ -1,8 +1,20 @@
 from typing import Dict, Union
 
 from .valuation_ratios import ValuationRatios
+from .efficiency_ratios import EfficiencyRatios
+from .liquidity_ratios import LiquidityRatios
+from .operation_risk_ratios import OperationRiskRatios
+from .per_share_values import PerShareValues
+from .rentability_ratios import RentabilityRatios
 
-class CalculateFinancialRatios(ValuationRatios):
+class CalculateFinancialRatios(
+    ValuationRatios,
+EfficiencyRatios,
+LiquidityRatios,
+OperationRiskRatios,
+PerShareValues,
+RentabilityRatios,
+):
     def generate_current_data(
         self, income_statements: list, balance_sheets: list, cashflow_statements: list
     ) -> Dict[str, Union[int, float]]:
@@ -172,16 +184,17 @@ class CalculateFinancialRatios(ValuationRatios):
             "invested_capital": invested_capital,
         }
 
-    def calculate_rentability_ratios(self, data: Dict[str, Union[int, float]]) -> Dict[str, Union[int, float]]:
+    @classmethod
+    def calculate_rentability_ratios(cls, data: Dict[str, Union[int, float]]) -> Dict[str, Union[int, float]]:
         capital_employed = data["total_assets"] - data["total_current_liabilities"]
-        roa = calculate_roa(data.get("net_income", 0), data.get("total_assets", 0))
-        roe = calculate_roe(data.get("net_income", 0), data.get("total_assets", 0))
-        roc = calculate_roc(data.get("net_income", 0), data.get("total_assets", 0))
-        roce = calculate_roce(data.get("net_income", 0), data.get("total_assets", 0))
-        rota = calculate_rota(data.get("net_income", 0), data.get("total_assets", 0))
-        roic = calculate_roic(data.get("net_income", 0), data.get("total_assets", 0))
-        nopat_roic = calculate_nopat_roic(data.get("net_income", 0), data.get("total_assets", 0))
-        rogic = calculate_rogic(data.get("net_income", 0), data.get("total_assets", 0))
+        roa = cls.calculate_roa(data.get("net_income", 0), data.get("total_assets", 0))
+        roe = cls.calculate_roe(data.get("net_income", 0), data.get("total_stockholders_equity", 0))
+        roc = cls.calculate_roc(data.get("operating_income", 0), data.get("total_assets", 0))
+        roce = cls.calculate_roce(data.get("operating_income", 0), data.get("capital_employed", 0))
+        rota = cls.calculate_rota(data.get("net_income", 0), data.get("tangible_assets", 0))
+        roic = cls.calculate_roic(data.get("net_income", 0), data.get("dividends_paid", 0), data.get("invested_capital", 0),)
+        nopat_roic = cls.calculate_nopat_roic(data.get("nopat", 0), data.get("invested_capital", 0))
+        rogic = cls.calculate_rogic(data.get("nopat", 0), data.get("gross_invested_capital", 0))
         return {
             "roa": roa,
             "roe": roe,
@@ -501,27 +514,16 @@ class CalculateFinancialRatios(ValuationRatios):
     @classmethod
     def calculate_efficiency_ratio(cls, data: Dict[str, Union[int, float]]) -> Dict[str, Union[int, float]]:
         average_inventory = data.get("average_inventory", cls.calculate_average_inventory(data))
-        # days_inventory_outstanding = cls.divide_or_zero(average_inventory, (data["cost_of_revenue"] * 360))
-
-        # days_payables_outstanding = (
-        #     (data["account_payables"] * 360) / data["cost_of_goods_sold"] if data["cost_of_goods_sold"] != 0 else 0
-        # )
-        # days_sales_outstanding = (
-        #     (data["accounts_receivables"] * 360) / data["account_payables"] if data["account_payables"] != 0 else 0
-        # )
-        operating_cycle = days_inventory_outstanding + days_sales_outstanding
-        cash_conversion_cycle = days_inventory_outstanding + days_sales_outstanding - days_sales_outstanding
-        asset_turnover = data["revenue"] / data["average_assets"] if data["average_assets"] != 0 else 0
-        inventory_turnover = (
-            data["cost_of_revenue"] / data["average_inventory"] if data["average_inventory"] != 0 else 0
-        )
-        fixed_asset_turnover = data["revenue"] / data["average_fixed_assets"] if data["average_fixed_assets"] != 0 else 0
-        payables_turnover = data["account_payables"] / data["average_payables"] if data["average_payables"] != 0 else 0
-        fcf_to_operating_cf = (
-            data["free_cash_flow"] / data["net_cash_provided_by_operating_activities"]
-            if data["net_cash_provided_by_operating_activities"] != 0
-            else 0
-        )
+        days_inventory_outstanding = cls.calculate_days_inventory_outstanding(average_inventory, data.get("cost_of_revenue",0),)
+        days_payables_outstanding = cls.calculate_days_payables_outstanding(data.get("account_payables",0), data.get("cost_of_goods_sold",0),)
+        days_sales_outstanding = cls.calculate_days_sales_outstanding(data.get("accounts_receivables",0), data.get("account_payables",0),)
+        operating_cycle = cls.calculate_operating_cycle(days_inventory_outstanding, days_sales_outstanding)
+        cash_conversion_cycle = cls.calculate_cash_conversion_cycle(days_inventory_outstanding, days_sales_outstanding, days_payables_outstanding,)
+        asset_turnover = cls.calculate_asset_turnover(data.get("revenue", 0), data.get("average_assets", 0))
+        inventory_turnover = cls.calculate_inventory_turnover(data.get("cost_of_revenue", 0), average_inventory)
+        fixed_asset_turnover = cls.calculate_fixed_asset_turnover(data.get("revenue", 0), data.get("average_fixed_assets", 0),)
+        payables_turnover = cls.calculate_payables_turnover(data.get("account_payables", 0), data.get("average_payables", 0),)
+        fcf_to_operating_cf = cls.calculate_fcf_to_operating_cf(data.get("free_cash_flow", 0), data.get("net_cash_provided_by_operating_activities", 0),)
         return {
             "days_inventory_outstanding": days_inventory_outstanding,
             "days_payables_outstanding": days_payables_outstanding,
