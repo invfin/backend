@@ -46,7 +46,7 @@ class HomePage(SEOTemplateView):
 
 
 class RoadmapListView(SEOListView):
-    template_name = "roadmap.html"
+    template_name = "roadmap/roadmap.html"
     model = Roadmap
     context_object_name = "objects"
     meta_title = "Roadmap"
@@ -60,7 +60,7 @@ class RoadmapListView(SEOListView):
 
 
 class RoadmapDetailView(SEODetailView):
-    template_name = "roadmap_details.html"
+    template_name = "roadmap/roadmap_details.html"
     model = Roadmap
     context_object_name = "object"
     meta_description = "Conoce el desarrollo y pide lo que necesites"

@@ -3,7 +3,6 @@ from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth import get_user_model
 from django.db.models import (
     SET_NULL,
-    IntegerField,
     CharField,
     ForeignKey,
     ManyToManyField,
@@ -16,8 +15,9 @@ from django.urls import reverse
 
 from ckeditor.fields import RichTextField
 
-from apps.general.mixins import BaseToAllMixin, CommentsMixin, VotesMixin
-from apps.general.abstracts import AbstractTimeStampedModel, AbstractComment
+from apps.general.mixins import BaseToAllMixin
+from apps.general.abstracts import AbstractComment
+from apps.escritos.abstracts import AbstractWrittenContent
 from apps.emailing.abstracts import AbstractTrackEmail, AbstractEmail
 from apps.web import constants
 from apps.web.managers import RoadmapManager
@@ -131,14 +131,8 @@ class WebsiteEmailTrack(AbstractTrackEmail):
         return f"{self.email_related}" if self.email_related else f"{self.id}"
 
 
-class Roadmap(AbstractTimeStampedModel, CommentsMixin, VotesMixin):
-    author = ForeignKey(User, on_delete=SET_NULL, null=True)
-    title = CharField(max_length=800)
-    slug = SlugField(max_length=800, blank=True)
+class Roadmap(AbstractWrittenContent):
     content = RichTextField()
-    total_votes = IntegerField(default=0)
-    total_views = PositiveBigIntegerField(default=0)
-    tags = ManyToManyField("classifications.Tag", blank=True)
     status = CharField(max_length=30, choices=constants.ROADMAP_STATUS, default=constants.ROADMAP_STATUS_PENDING)
     upvotes = ManyToManyField(
         User,
@@ -155,14 +149,6 @@ class Roadmap(AbstractTimeStampedModel, CommentsMixin, VotesMixin):
     class Meta:
         verbose_name = "Roadmap"
         db_table = "website_roadmap"
-
-    def __str__(self) -> str:
-        return self.title
-
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = self.save_unique_field("slug", self.title)
-        return super().save(*args, **kwargs)
 
     def get_absolute_url(self):
         return reverse("web:roadmap", kwargs={"slug": self.slug})

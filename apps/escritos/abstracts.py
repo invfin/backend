@@ -12,6 +12,7 @@ from django.db.models import (
     JSONField,
     TextField,
     ImageField,
+    SlugField,
 )
 
 from apps.general.abstracts import AbstractTimeStampedModel
@@ -27,11 +28,9 @@ def default_dict():
 
 
 class AbstractWrittenContent(AbstractTimeStampedModel, CommentsMixin, VotesMixin, CheckingsMixin):
-    title = CharField(max_length=500, null=True, blank=True)
-    slug = CharField(max_length=500, null=True, blank=True)  # TODO change to slug field and allow blank but not null
-    total_votes = IntegerField(default=0)
-    total_views = PositiveIntegerField(default=0)
-    times_shared = PositiveIntegerField(default=0)
+    author = ForeignKey(User, on_delete=SET_NULL, null=True)
+    title = CharField(max_length=800, null=True, blank=True)
+    slug = SlugField(max_length=800, null=True, blank=True)
     category = ForeignKey(
         "classifications.Category",
         on_delete=SET_NULL,
@@ -39,8 +38,10 @@ class AbstractWrittenContent(AbstractTimeStampedModel, CommentsMixin, VotesMixin
         null=True,
     )
     tags = ManyToManyField("classifications.Tag", blank=True)
-    author = ForeignKey(User, on_delete=SET_NULL, null=True)
     checkings = JSONField(default=default_dict)
+    total_votes = IntegerField(default=0)
+    total_views = PositiveIntegerField(default=0)
+    times_shared = PositiveIntegerField(default=0)
     website_email = GenericRelation(
         "web.WebsiteEmail",
         related_query_name="website_email",
