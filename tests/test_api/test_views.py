@@ -6,18 +6,17 @@ from django.db.models import QuerySet
 from rest_framework.test import APITestCase
 
 from rest_framework import status
-from rest_framework.exceptions import ParseError
 
 from apps.api.views import BaseAPIView
 from apps.api.models import CompanyRequestAPI, Key
-from apps.empresas.api.serializers import IncomeStatementSerializer, BasicCompanySerializer
+from apps.empresas.api.serializers import IncomeStatementSerializer
 from apps.empresas.models import Company, IncomeStatement
 from apps.escritos.models import Term, TermContent
 from apps.escritos.api.serializers import AllTermsSerializer
 from apps.super_investors.models import Superinvestor, SuperinvestorHistory
 from apps.users.models import User
 from apps.business.models import ProductSubscriber
-from apps.api.exceptions import WrongParameterException, ParameterNotSetException, QueryNotFoundException, ServerError
+from apps.api.exceptions import WrongParameterException, ParameterNotSetException
 
 
 class MockRequest(MagicMock):
@@ -47,13 +46,9 @@ class TestBaseAPIView(APITestCase):
             category=None,
             author=cls.user,
             in_text_image=False,
-            non_thumbnail_url=None
+            non_thumbnail_url=None,
         )
-        cls.company = DjangoTestingModel.create(
-            Company,
-            ticker="INTC",
-            name="Intel"
-        )
+        cls.company = DjangoTestingModel.create(Company, ticker="INTC", name="Intel")
         cls.superinvestor = DjangoTestingModel.create(Superinvestor)
         cls.request = MockRequest(auth=cls.key, user=cls.user)
         for index in range(15):
