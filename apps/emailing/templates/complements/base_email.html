@@ -16,7 +16,7 @@
     {% block content %}
     {% endblock content %}
     {% if not preview and image_tag %}
-    <img src="{{full_domain}}{% url 'general:email_opened_view' image_tag%}" width=1 height=1>
+    <img src="{{full_domain}}{% url 'emailing:email_opened_view' image_tag%}" width=1 height=1>
     {% endif %}
 </body>
 

@@ -7,26 +7,19 @@ from django.views import defaults as default_views
 from rest_framework.documentation import include_docs_urls
 
 from apps.api.views import obtain_auth_key
-from apps.seo.sitemaps import (
-    CompanySitemap,
-    PublicBlogSitemap,
-    QuestionSitemap,
-    TermSitemap,
-    SuperinvestorSitemap
-)
+from apps.seo.sitemaps import CompanySitemap, PublicBlogSitemap, QuestionSitemap, TermSitemap, SuperinvestorSitemap
 
 sitemaps = {
-    'blogs':PublicBlogSitemap,
-    'preguntas':QuestionSitemap,
-    'empresas':CompanySitemap,
-    'glosario':TermSitemap,
-    'superinversores':SuperinvestorSitemap
+    "blogs": PublicBlogSitemap,
+    "preguntas": QuestionSitemap,
+    "empresas": CompanySitemap,
+    "glosario": TermSitemap,
+    "superinversores": SuperinvestorSitemap,
 }
 
 urlpatterns = [
-    # Django Admin, use {% url 'admin:index' %}
     path(settings.ADMIN_URL, admin.site.urls),
-    path(settings.SECOND_ADMIN_URL, include('admin_honeypot.urls', namespace='admin_honeypot')),
+    path(settings.SECOND_ADMIN_URL, include("admin_honeypot.urls", namespace="admin_honeypot")),
     path("", include("apps.general.urls", namespace="general")),
     path("", include("apps.web.urls", namespace="web")),
     path("", include("apps.users.urls", namespace="users")),
@@ -43,8 +36,8 @@ urlpatterns = [
     path("", include("apps.roboadvisor.urls", namespace="roboadvisor")),
     path("", include("apps.business.urls", namespace="business")),
     path("", include("apps.recsys.urls", namespace="recsys")),
-
-    path('sitemap.xml', sitemap, {'sitemaps': sitemaps}, name='django.contrib.sitemaps.views.sitemap'),
+    path("", include("apps.emailing.urls", namespace="emailing")),
+    path("sitemap.xml", sitemap, {"sitemaps": sitemaps}, name="django.contrib.sitemaps.views.sitemap"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # API URLS
@@ -60,17 +53,17 @@ handler404 = "apps.general.views.handler404"
 handler500 = "apps.general.views.handler500"
 
 if settings.DEBUG:
-
     if "drf_spectacular" in settings.INSTALLED_APPS:
         from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
+
         urlpatterns += [
-        path("api/schema/", SpectacularAPIView.as_view(), name="api-schema"),
-        path(
-            "api/docs/",
-            SpectacularSwaggerView.as_view(url_name="api-schema"),
-            name="api-docs",
-        )
-    ]
+            path("api/schema/", SpectacularAPIView.as_view(), name="api-schema"),
+            path(
+                "api/docs/",
+                SpectacularSwaggerView.as_view(url_name="api-schema"),
+                name="api-docs",
+            ),
+        ]
 
     urlpatterns += [
         path(
@@ -89,7 +82,7 @@ if settings.DEBUG:
             kwargs={"exception": Exception("Page not Found")},
         ),
         path("500/", default_views.server_error),
-    ]+ static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 
     if "debug_toolbar" in settings.INSTALLED_APPS:
         import debug_toolbar

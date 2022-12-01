@@ -1,0 +1,13 @@
+<div style="flex:0.1;display: flex; justify-content: center;" class="pt-2">
+    <div>
+        <form method="POST" action="{% url 'general:create_vote_view' object.encoded_url_up %}">
+            {% csrf_token %}
+            <button class="btn btn-sm"><i class="fas fa-caret-up" style="font-size: 50px;"></i></button>
+        </form>
+        <div style="width: 100%;text-align: center;">{{object.total_votes}}</div>
+        <form method="POST" action="{% url 'general:create_vote_view' object.encoded_url_down %}">
+            {% csrf_token %}
+            <button class="btn btn-sm"><i class="fas fa-caret-down" style="font-size: 50px;"></i></button>
+        </form>
+    </div>
+</div>

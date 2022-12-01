@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, List
 
 import time
 
@@ -40,7 +40,7 @@ class NotificationSystem:
             "id": notification.pk,
         }
 
-    def notify(self, object_related: Dict, notif_type: str):
+    def notify(self, object_related: Dict, notif_type: str) -> List:
         time.sleep(10)
         app_label = object_related["app_label"]
         object_name = object_related["object_name"]
@@ -127,7 +127,9 @@ class NotificationSystem:
                     "content": question.content,
                 },
             )
-            notif_info.append({"email": email, "receiver_id": user.id, "is_for": emailing_constants.EMAIL_FOR_NOTIFICATION})
+            notif_info.append(
+                {"email": email, "receiver_id": user.id, "is_for": emailing_constants.EMAIL_FOR_NOTIFICATION}
+            )
         return notif_info
 
     def announce_new_blog(self, blog, notif_type):
@@ -143,7 +145,9 @@ class NotificationSystem:
                     "content": blog.resume,
                 },
             )
-            notif_info.append({"email": email, "receiver_id": user.id, "is_for": emailing_constants.EMAIL_FOR_NOTIFICATION})
+            notif_info.append(
+                {"email": email, "receiver_id": user.id, "is_for": emailing_constants.EMAIL_FOR_NOTIFICATION}
+            )
         return notif_info
 
     def announce_new_answer(self, answer, notif_type):
@@ -166,7 +170,9 @@ class NotificationSystem:
                         "content": answer.content,
                     },
                 )
-                notif_info.append({"email": email, "receiver_id": user.id, "is_for": emailing_constants.EMAIL_FOR_NOTIFICATION})
+                notif_info.append(
+                    {"email": email, "receiver_id": user.id, "is_for": emailing_constants.EMAIL_FOR_NOTIFICATION}
+                )
 
         return notif_info
 
@@ -189,5 +195,7 @@ class NotificationSystem:
                     "content": content,
                 },
             )
-            notif_info.append({"email": email, "receiver_id": user.id, "is_for": emailing_constants.EMAIL_FOR_NOTIFICATION})
+            notif_info.append(
+                {"email": email, "receiver_id": user.id, "is_for": emailing_constants.EMAIL_FOR_NOTIFICATION}
+            )
         return notif_info

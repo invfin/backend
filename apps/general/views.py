@@ -1,4 +1,3 @@
-import base64
 import json
 
 from django.apps import apps
@@ -8,7 +7,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.http.response import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
-from django.utils import timezone
+
 from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
 from django.views.generic import ListView, TemplateView, RedirectView
@@ -22,9 +21,7 @@ from apps.super_investors.models import (
     Superinvestor,
 )
 
-from apps.notifications import constants
 from apps.notifications.models import Notification
-from apps.notifications.tasks import prepare_notification_task
 
 
 class MessagesTemplateview(TemplateView):
@@ -41,41 +38,6 @@ def handler404(request, exception):
 
 def handler500(request):
     return render(request, "errors/500.html")
-
-
-@login_required
-def create_comment_view(request, url_encoded):
-    if request.method == "POST":
-        user = request.user
-        if user.is_authenticated:
-            content = request.POST.get("comment_content")
-            decoded_url = force_text(urlsafe_base64_decode(url_encoded)).split("-")
-            id, app_label, object_name = decoded_url[0], decoded_url[1], decoded_url[2]
-            modelo = apps.get_model(app_label, object_name, require_ready=True).objects.get(id=id)
-            comment = modelo.comments_related.create(author=user, content=content, content_related=modelo)
-            prepare_notification_task.delay(comment.dict_for_task, constants.NEW_COMMENT)
-            messages.success(request, "Comentario agregado")
-        return redirect(modelo.get_absolute_url())
-
-
-@login_required
-def create_vote_view(request, url_encoded):
-    if request.method == "POST":
-        user = request.user
-        if user.is_authenticated:
-            decoded_url = force_text(urlsafe_base64_decode(url_encoded)).split("-")
-            id, app_label, object_name, vote = decoded_url[0], decoded_url[1], decoded_url[2], decoded_url[3]
-            modelo = apps.get_model(app_label, object_name, require_ready=True).objects.get(id=id)
-            if modelo.author == user:
-                messages.error(request, "No puedes votarte a ti mismo")
-                return redirect(modelo.get_absolute_url())
-            vote_result = modelo.vote(user, vote)
-            if vote_result == 0:
-                messages.error(request, "Ya has votado")
-                return redirect(modelo.get_absolute_url())
-            prepare_notification_task.delay(modelo.dict_for_task, constants.NEW_VOTE)
-            messages.success(request, "Voto aportado")
-        return redirect(modelo.get_absolute_url())
 
 
 def suggest_list_search(request):
@@ -198,22 +160,8 @@ def update_favorites(request):
         return JsonResponse({"is_favorite": is_favorite})
 
 
-def coming_soon(request):
-    return render(request, "complements/coming_soon.html")
-
-
-def email_opened_view(request, uidb64):
-    pixel_gif = base64.b64decode(
-        b"iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII="
-    )
-    if request.method == "GET":
-        decoded_url = force_text(urlsafe_base64_decode(uidb64)).split("-")
-        id, app_label, object_name = decoded_url[0], decoded_url[1], decoded_url[2]
-        modelo = apps.get_model(app_label, object_name, require_ready=True).objects.get(id=id)
-        modelo.opened = True
-        modelo.date_opened = timezone.now()
-        modelo.save(update_fields=["opened", "date_opened"])
-        return HttpResponse(pixel_gif, content_type="image/gif")
+class ComingSoonview(TemplateView):
+    template_name = "complements/coming_soon.html"
 
 
 class NotificationsListView(LoginRequiredMixin, ListView):
