@@ -6,14 +6,18 @@ from .liquidity_ratios import LiquidityRatios
 from .operation_risk_ratios import OperationRiskRatios
 from .per_share_values import PerShareValues
 from .rentability_ratios import RentabilityRatios
+from .margins import Margins
+from .free_cashflow_ratios import FreeCashFlowRatios
 
 class CalculateFinancialRatios(
     ValuationRatios,
-EfficiencyRatios,
-LiquidityRatios,
-OperationRiskRatios,
-PerShareValues,
-RentabilityRatios,
+    EfficiencyRatios,
+    LiquidityRatios,
+    OperationRiskRatios,
+    PerShareValues,
+    RentabilityRatios,
+    Margins,
+    FreeCashFlowRatios,
 ):
     def generate_current_data(
         self, income_statements: list, balance_sheets: list, cashflow_statements: list
@@ -55,7 +59,7 @@ RentabilityRatios,
 
     def calculate_all_ratios(
         self, income_statements: list, balance_sheets: list, cashflow_statements: list
-    ) -> Dict[str, Union[int, float]]:
+    ) -> Dict[str, Dict[str, Union[int, float]]]:
         current_data = self.generate_current_data(income_statements, balance_sheets, cashflow_statements)
         ly_data = self.generate_last_year_data(income_statements, balance_sheets, cashflow_statements)
 
@@ -232,18 +236,19 @@ RentabilityRatios,
             "debt_to_equity": debt_to_equity,
         }
 
-    def calculate_margin_ratio(self, data: Dict[str, Union[int, float]]) -> Dict[str, Union[int, float]]:
-        gross_margin = data["gross_profit"] / data["revenue"] * 100 if data["revenue"] != 0 else 0
-        ebitda_margin = data["ebitda"] / data["revenue"] * 100 if data["revenue"] != 0 else 0
-        net_income_margin = data["net_income"] / data["revenue"] * 100 if data["revenue"] != 0 else 0
-        fcf_margin = data["free_cash_flow"] / data["revenue"] * 100 if data["revenue"] != 0 else 0
-        fcf_equity_to_net_income = data["fcf_equity"] / data["net_income"] * 100 if data["net_income"] != 0 else 0
-        unlevered_fcf_to_net_income = data["unlevered_fcf"] / data["net_income"] * 100 if data["net_income"] != 0 else 0
-        unlevered_fcf_ebit_to_net_income = (
-            data["unlevered_fcf_ebit"] / data["net_income"] * 100 if data["net_income"] != 0 else 0
+    @classmethod
+    def calculate_margin_ratio(cls, data: Dict[str, Union[int, float]]) -> Dict[str, Union[int, float]]:
+        gross_margin = cls.calculate_gross_margin(data.get("gross_profit", 0) , data.get("revenue",0))
+        ebitda_margin = cls.calculate_ebitda_margin(data.get("ebitda", 0) , data.get("revenue",0))
+        net_income_margin = cls.calculate_net_income_margin(data.get("net_income", 0) , data.get("revenue",0))
+        fcf_margin = cls.calculate_fcf_margin(data.get("free_cash_flow", 0) , data.get("revenue",0))
+        fcf_equity_to_net_income = cls.calculate_fcf_equity_to_net_income(data.get("fcf_equity", 0) , data.get("net_income",0))
+        unlevered_fcf_to_net_income = cls.calculate_unlevered_fcf_to_net_income(data.get("unlevered_fcf", 0) , data.get("net_income",0))
+        unlevered_fcf_ebit_to_net_income = cls.calculate_unlevered_fcf_ebit_to_net_income(
+            data.get("unlevered_fcf_ebit",0) , data.get("net_income",0)
         )
-        owners_earnings_to_net_income = (
-            data["owners_earnings"] / data["net_income"] * 100 if data["net_income"] != 0 else 0
+        owners_earnings_to_net_income = cls.calculate_owners_earnings_to_net_income(
+            data.get("owners_earnings",0) , data.get("net_income",0)
         )
 
         return {
@@ -257,26 +262,27 @@ RentabilityRatios,
             "owners_earnings_to_net_income": owners_earnings_to_net_income,
         }
 
-    def calculate_fcf_ratio(self, data: Dict[str, Union[int, float]]) -> Dict[str, Union[int, float]]:
-        fcf_equity = data["net_cash_provided_by_operating_activities"] + data["capital_expenditure"] + data["debt_repayment"]
-        unlevered_fcf = (
-            data["nopat"]
-            + data["depreciation_and_amortization"]
-            + data["change_in_working_capital"]
-            + data["capital_expenditure"]
+    @classmethod
+    def calculate_fcf_ratio(cls, data: Dict[str, Union[int, float]]) -> Dict[str, Union[int, float]]:
+        fcf_equity = cls.calculate_fcf_equity(data.get("net_cash_provided_by_operating_activities",0) , data.get("capital_expenditure",0) , data.get("debt_repayment",0))
+        unlevered_fcf = cls.calculate_unlevered_fcf(
+            data.get("nopat", 0)
+            ,data.get("depreciation_and_amortization", 0)
+            ,data.get("change_in_working_capital", 0)
+            ,data.get("capital_expenditure", 0)
         )
-        unlevered_fcf_ebit = (
-            data["operating_income"]
-            + data["depreciation_and_amortization"]
-            + data["deferred_income_tax"]
-            + data["change_in_working_capital"]
-            + data["capital_expenditure"]
+        unlevered_fcf_ebit = cls.calculate_unlevered_fcf_ebit(
+            data.get("operating_income", 0)
+            ,data.get("depreciation_and_amortization", 0)
+            ,data.get("deferred_income_tax", 0)
+            ,data.get("change_in_working_capital", 0)
+            ,data.get("capital_expenditure", 0)
         )
-        owners_earnings = (
-            data["net_income"]
-            + data["depreciation_and_amortization"]
-            + data["change_in_working_capital"]
-            + data["capital_expenditure"]
+        owners_earnings = cls.calculate_owners_earnings(
+            data.get("net_income", 0)
+            ,data.get("depreciation_and_amortization", 0)
+            ,data.get("change_in_working_capital", 0)
+            ,data.get("capital_expenditure", 0)
         )
 
         return {
@@ -378,35 +384,30 @@ RentabilityRatios,
             "retention_ratio": retention_ratio,
         }
 
-    def calculate_operation_risk_ratio(self, data: Dict[str, Union[int, float]]) -> Dict[str, Union[int, float]]:
-        asset_coverage_ratio = (
-            (
-                data["total_assets"]
-                - data["goodwill_and_intangible_assets"]
-                - data["total_current_liabilities"]
-                - data["short_term_debt"]
+    @classmethod
+    def calculate_operation_risk_ratio(cls, data: Dict[str, Union[int, float]]) -> Dict[str, Union[int, float]]:
+        asset_coverage_ratio = cls.calculate_asset_coverage_ratio(
+                data.get("total_assets", 0),
+                data.get("goodwill_and_intangible_assets", 0),
+                data.get("total_current_liabilities", 0),
+                data.get("short_term_debt", 0),
+                data.get("interest_expense", 0),
             )
-            / data["interest_expense"]
-            if data["interest_expense"] != 0
-            else 0
+        cash_flow_coverage_ratios = cls.calculate_cash_flow_coverage_ratios(
+            data.get("net_cash_provided_by_operating_activities",0) , data.get("total_debt",0)
         )
-        cash_flow_coverage_ratios = (
-            data["net_cash_provided_by_operating_activities"] / data["total_debt"] if data["total_debt"] != 0 else 0
+        cash_coverage = cls.calculate_cash_coverage(
+            data.get("cash_and_short_term_investments",0) , data.get("interest_expense",0)
         )
-        cash_coverage = (
-            data["cash_and_short_term_investments"] / data["interest_expense"] if data["interest_expense"] != 0 else 0
+        debt_service_coverage = cls.calculate_debt_service_coverage(data.get("operating_income",0) , data.get("total_debt",0),)
+        interest_coverage = cls.calculate_interest_coverage(data.get("operating_income",0) , data.get("interest_expense",0),)
+        operating_cashflow_ratio = cls.calculate_operating_cashflow_ratio(
+            data.get("net_cash_provided_by_operating_activities", 0) , data.get("total_current_liabilities",0),
+
         )
-        debt_service_coverage = data["operating_income"] / data["total_debt"] if data["total_debt"] != 0 else 0
-        interest_coverage = data["operating_income"] / data["interest_expense"] if data["interest_expense"] != 0 else 0
-        operating_cashflow_ratio = (
-            data["net_cash_provided_by_operating_activities"] / data["total_current_liabilities"]
-            if data["total_current_liabilities"] != 0
-            else 0
-        )
-        debt_ratio = data["total_debt"] / data["total_assets"] if data["total_assets"] != 0 else 0
-        long_debt_and_com_stock = data["long_term_debt"] + data["common_stock"]
-        long_term_debt_to_capitalization = data["long_term_debt"] / long_debt_and_com_stock if long_debt_and_com_stock != 0 else 0
-        total_debt_to_capitalization = data["total_debt"] / data["debt_and_equity"] if data["debt_and_equity"] != 0 else 0
+        debt_ratio = cls.calculate_debt_ratio(data.get("total_debt",0) , data.get("total_assets",0))
+        long_term_debt_to_capitalization = cls.calculate_long_term_debt_to_capitalization(data.get("long_term_debt",0), data.get("common_stock", 0),)
+        total_debt_to_capitalization = cls.calculate_total_debt_to_capitalization(data.get("total_debt",0) , data.get("debt_and_equity",0),)
 
         return {
             "asset_coverage_ratio": asset_coverage_ratio,
