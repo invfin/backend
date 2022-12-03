@@ -1,4 +1,3 @@
-from ckeditor.fields import RichTextField
 from django.contrib.auth import get_user_model
 from django.db.models import (
     SET_NULL,
@@ -18,13 +17,15 @@ from django.db.models import (
 from django.template.defaultfilters import slugify
 from django.urls import reverse
 
+from ckeditor.fields import RichTextField
+
 from src.empresas.models import Company
 from src.etfs.models import Etf
 
 User = get_user_model()
 
-from src.general.abstracts import AbstractFavoritesHistorial
 from src.classifications.models import Category, Tag
+from src.general.abstracts import AbstractFavoritesHistorial
 
 from . import constants
 

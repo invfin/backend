@@ -1,13 +1,12 @@
-import vcr
-
 from unittest import skip
 
 from django.conf import settings
 from django.test import TestCase
 
+import vcr
+
 from src.content_creation.constants import POST_TYPE_TEXT
 from src.socialmedias.outils.socialposter.facepy import Facebook
-
 
 facebook_vcr = vcr.VCR(
     cassette_library_dir="cassettes/facebook/",

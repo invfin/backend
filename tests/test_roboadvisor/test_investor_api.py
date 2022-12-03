@@ -2,9 +2,10 @@ from unittest import skip
 
 from django.contrib.auth import get_user_model
 from django.test import RequestFactory
-from rest_framework.test import APITestCase
 
 from bfet import DjangoTestingModel
+from rest_framework.test import APITestCase
+
 from src.empresas.models import Company
 from src.roboadvisor.api.views import (
     RoboAdvisorQuestionCompanyAnalysisAPIView,
@@ -16,7 +17,6 @@ from src.roboadvisor.api.views import (
     RoboAdvisorQuestionStocksPortfolioAPIView,
 )
 from src.roboadvisor.views import RoboAdvisorResultView
-
 
 User = get_user_model()
 

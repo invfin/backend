@@ -1,7 +1,7 @@
 from django.core.management import BaseCommand
 
 from src.content_creation.models import Emoji, Hashtag
-from src.socialmedias.test_socialmedias.data import IG_HASHTAGS, ICONS, FB_HASHTAGS, TWITTER_HASHTAGS
+from src.socialmedias.test_socialmedias.data import FB_HASHTAGS, ICONS, IG_HASHTAGS, TWITTER_HASHTAGS
 
 
 class Command(BaseCommand):

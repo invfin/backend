@@ -1,10 +1,9 @@
 import json
 
-from bfet import DjangoTestingModel
-
-from rest_framework.test import APITestCase
-
 from django.contrib.auth import get_user_model
+
+from bfet import DjangoTestingModel
+from rest_framework.test import APITestCase
 
 from src.classifications.models import Category
 from src.escritos.models import Term, TermContent

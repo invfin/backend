@@ -1,20 +1,17 @@
-from unittest.mock import patch
 from datetime import timedelta
+from unittest.mock import patch
 
-from django.utils import timezone
 from django.test import TestCase
+from django.utils import timezone
 
 from bfet import DjangoTestingModel
 
 from src.emailing.constants import EMAIL_FOR_WEB
-from src.users.models import User, UsersCategory
-from src.engagement_machine.tasks import (
-    check_and_start_send_email_engagement_task,
-    send_email_engagement_task,
-)
-from src.web.models import WebsiteEmail
+from src.engagement_machine.tasks import check_and_start_send_email_engagement_task, send_email_engagement_task
 from src.promotions.models import Campaign
+from src.users.models import User, UsersCategory
 from src.web import constants as web_constants
+from src.web.models import WebsiteEmail
 
 
 class TestTask(TestCase):

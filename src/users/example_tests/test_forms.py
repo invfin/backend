@@ -1,14 +1,13 @@
 """
 Module for all Form Tests.
 """
-import pytest
+from django.test import TestCase
 from django.utils.translation import gettext_lazy as _
+
+import pytest
 
 from src.users.forms import UserAdminCreationForm
 from src.users.models import User
-
-
-from django.test import TestCase
 
 
 class TestUserAdminCreationForm:

@@ -1,8 +1,9 @@
 from django.test import TestCase
 
 from bfet import DjangoTestingModel
-from src.periods.models import Period
+
 from src.periods import constants
+from src.periods.models import Period
 
 
 class TestPeriodManager(TestCase):

@@ -2,6 +2,7 @@ from django.contrib import admin
 from django.contrib.sessions.models import Session
 from django.urls import reverse
 from django.utils.html import format_html
+
 from import_export.admin import ImportExportActionModelAdmin
 from import_export.resources import ModelResource
 

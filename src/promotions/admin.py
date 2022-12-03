@@ -1,9 +1,6 @@
 from django.contrib import admin
 
-from .models import (
-    Promotion,
-    Campaign,
-)
+from .models import Campaign, Promotion
 
 
 @admin.register(Campaign)

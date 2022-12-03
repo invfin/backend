@@ -1,4 +1,4 @@
-from typing import Type, Callable, Union
+from typing import Callable, Type, Union
 
 import pandas as pd
 

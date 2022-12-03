@@ -1,6 +1,6 @@
+from django.contrib.auth.models import AbstractUser
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.auth.models import AbstractUser
 from django.db.models import (
     CASCADE,
     SET_NULL,
@@ -12,22 +12,22 @@ from django.db.models import (
     ImageField,
     IntegerField,
     JSONField,
+    ManyToManyField,
     Model,
     OneToOneField,
     PositiveBigIntegerField,
-    TextField,
     SlugField,
-    ManyToManyField,
+    TextField,
 )
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
+
 from django_countries.fields import CountryField
 
 from src.general.mixins import BaseToAllMixin, ResizeImageMixin
-
-from src.users.user_extension import UserExtended
 from src.users.constants import MOVE_SOURCES, MOVEMENTS
 from src.users.managers import CreditHistorialManager, ProfileManager, UserExtraManager
+from src.users.user_extension import UserExtended
 from src.web.constants import CONTENT_PURPOSES
 
 

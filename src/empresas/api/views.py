@@ -10,13 +10,7 @@ from src.empresas.api.serializers import (
     ExchangeSerializer,
     IncomeStatementSerializer,
 )
-from src.empresas.models import (
-    BalanceSheet,
-    CashflowStatement,
-    Company,
-    Exchange,
-    IncomeStatement,
-)
+from src.empresas.models import BalanceSheet, CashflowStatement, Company, Exchange, IncomeStatement
 
 User = get_user_model()
 

@@ -5,7 +5,6 @@ from import_export.admin import ImportExportActionModelAdmin
 from .models import Answer, AnswerComment, QuesitonComment, Question
 
 
-
 class QuestionInline(admin.StackedInline):
     model = Question
     extra = 0
@@ -50,48 +49,30 @@ class AnswerInline(admin.StackedInline):
 
 @admin.register(Question)
 class QuestionAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
-    list_display = [
-        'id',
-        'title',
-        'author',
-        "hide_question"
-        ]
+    list_display = ["id", "title", "author", "hide_question"]
 
-    list_editable = [
-        "hide_question"
-    ]
+    list_editable = ["hide_question"]
 
-    search_fields = ['author_username']
+    search_fields = ["author_username"]
 
 
 @admin.register(QuesitonComment)
 class QuesitonCommentAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
-    list_display = [
-        'id',
-        'author',
-        'created_at']
+    list_display = ["id", "author", "created_at"]
 
-    search_fields = ['author_username']
+    search_fields = ["author_username"]
 
 
 @admin.register(Answer)
 class AnswerAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
-    list_display = [
-        'id',
-        'author'
-        ]
+    list_display = ["id", "author"]
 
-    list_editable = [
-        'author'
-    ]
-    search_fields = ['author_username']
+    list_editable = ["author"]
+    search_fields = ["author_username"]
 
 
 @admin.register(AnswerComment)
 class AnswerCommentAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
-    list_display = [
-        'id',
-        'author',
-        'created_at']
+    list_display = ["id", "author", "created_at"]
 
-    search_fields = ['author_username']
+    search_fields = ["author_username"]

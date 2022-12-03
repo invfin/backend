@@ -3,8 +3,8 @@ from django.db import models
 from django.urls import reverse
 from django.utils.html import format_html
 
-from import_export.admin import ImportExportModelAdmin
 from django_json_widget.widgets import JSONEditorWidget
+from import_export.admin import ImportExportModelAdmin
 
 from src.api.models import (
     CompanyRequestAPI,

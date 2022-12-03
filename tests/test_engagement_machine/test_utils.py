@@ -1,6 +1,5 @@
 from datetime import datetime, timedelta
 
-
 from src.engagement_machine.utils import more_than_month
 
 

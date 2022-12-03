@@ -6,19 +6,19 @@ from django.db.models import (
     CharField,
     DateTimeField,
     ForeignKey,
-    ManyToManyField,
-    IntegerField,
-    PositiveIntegerField,
-    JSONField,
-    TextField,
     ImageField,
+    IntegerField,
+    JSONField,
+    ManyToManyField,
+    PositiveIntegerField,
     SlugField,
+    TextField,
 )
 
-from src.general.abstracts import AbstractTimeStampedModel
-from src.general.mixins import CommentsMixin, VotesMixin, CheckingsMixin
 from src.classifications.models import Tag
 from src.escritos import constants
+from src.general.abstracts import AbstractTimeStampedModel
+from src.general.mixins import CheckingsMixin, CommentsMixin, VotesMixin
 
 User = get_user_model()
 

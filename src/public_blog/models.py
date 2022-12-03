@@ -15,11 +15,10 @@ from django.urls import reverse
 
 from ckeditor.fields import RichTextField
 
+from src.emailing.abstracts import AbstractEmail
 from src.escritos.abstracts import AbstractPublishableContent
 from src.general.abstracts import AbstractComment
-from src.emailing.abstracts import AbstractEmail
 from src.public_blog.managers import PublicBlogManager
-
 
 User = get_user_model()
 

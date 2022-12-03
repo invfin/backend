@@ -1,8 +1,4 @@
-from rest_framework.serializers import (
-    ModelSerializer,
-    SerializerMethodField,
-    StringRelatedField,
-)
+from rest_framework.serializers import ModelSerializer, SerializerMethodField, StringRelatedField
 
 from src.empresas.models import (
     BalanceSheet,

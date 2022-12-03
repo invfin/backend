@@ -11,20 +11,15 @@ from django.shortcuts import redirect, render
 from django.utils import timezone
 from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
-from django.views.generic import ListView, TemplateView, RedirectView
+from django.views.generic import ListView, RedirectView, TemplateView
 
 from src.empresas.models import Company
 from src.escritos.models import FavoritesTermsHistorial, FavoritesTermsList, Term
-from src.screener.models import FavoritesStocksHistorial
-from src.super_investors.models import (
-    FavoritesSuperinvestorsHistorial,
-    FavoritesSuperinvestorsList,
-    Superinvestor,
-)
-
 from src.notifications import constants
 from src.notifications.models import Notification
 from src.notifications.tasks import prepare_notification_task
+from src.screener.models import FavoritesStocksHistorial
+from src.super_investors.models import FavoritesSuperinvestorsHistorial, FavoritesSuperinvestorsList, Superinvestor
 
 
 class MessagesTemplateview(TemplateView):

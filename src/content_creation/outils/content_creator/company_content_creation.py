@@ -1,13 +1,12 @@
-from typing import Type, Dict
+from typing import Dict, Type
 
-from src.translate.google_trans_new import google_translator
-
+from src.content_creation import constants
+from src.content_creation.outils.content_creator import ContentCreation
 from src.empresas.models import Company
 from src.empresas.outils.retrieve_data import RetrieveCompanyData
-from src.content_creation.outils.content_creator import ContentCreation
-from src.socialmedias.models import NewsSharedHistorial
 from src.socialmedias import constants as socialmedias_constants
-from src.content_creation import constants
+from src.socialmedias.models import NewsSharedHistorial
+from src.translate.google_trans_new import google_translator
 
 
 class CompanyContentCreation(ContentCreation):

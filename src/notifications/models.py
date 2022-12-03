@@ -1,15 +1,10 @@
 from django.contrib.auth import get_user_model
-from django.db.models import (
-    CASCADE,
-    SET_NULL,
-    BooleanField,
-    CharField,
-    ForeignKey,
-)
+from django.db.models import CASCADE, SET_NULL, BooleanField, CharField, ForeignKey
+
+from src.emailing.abstracts import AbstractTrackEmail
+from src.general.abstracts import AbstractGenericModels
 
 from . import constants
-from src.general.abstracts import AbstractGenericModels
-from src.emailing.abstracts import AbstractTrackEmail
 
 User = get_user_model()
 

@@ -1,10 +1,9 @@
-import pytest
+from django.test import TestCase
 from django.urls import reverse
 
+import pytest
+
 from src.users.models import User
-
-
-from django.test import TestCase
 
 
 class TestUserAdmin(TestCase):

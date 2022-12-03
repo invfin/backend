@@ -1,9 +1,6 @@
 from django.contrib import admin
 
-from src.empresas.models import (
-    Exchange,
-    ExchangeOrganisation,
-)
+from src.empresas.models import Exchange, ExchangeOrganisation
 
 
 class ExchangeInline(admin.StackedInline):

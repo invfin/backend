@@ -3,7 +3,6 @@ from django.db.models import CharField, Model
 
 from src.general.mixins import BaseToAllMixin
 
-
 User = get_user_model()
 
 

@@ -1,5 +1,4 @@
 import random
-
 from typing import Type
 
 from django.db.models import Manager

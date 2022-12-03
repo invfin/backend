@@ -1,24 +1,24 @@
+from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
-from django.contrib.auth import get_user_model
 from django.db.models import (
+    CASCADE,
     SET_NULL,
     CharField,
     ForeignKey,
     ManyToManyField,
+    Model,
     PositiveBigIntegerField,
     SlugField,
-    Model,
-    CASCADE,
 )
 from django.urls import reverse
 
 from ckeditor.fields import RichTextField
 
-from src.general.mixins import BaseToAllMixin
-from src.general.abstracts import AbstractComment
+from src.emailing.abstracts import AbstractEmail, AbstractTrackEmail
 from src.escritos.abstracts import AbstractWrittenContent
-from src.emailing.abstracts import AbstractTrackEmail, AbstractEmail
+from src.general.abstracts import AbstractComment
+from src.general.mixins import BaseToAllMixin
 from src.web import constants
 from src.web.managers import RoadmapManager
 

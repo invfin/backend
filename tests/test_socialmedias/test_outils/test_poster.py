@@ -1,31 +1,30 @@
-import vcr
-
 from unittest.mock import patch
 
-from bfet import DjangoTestingModel
-
-from django.contrib.auth import get_user_model
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 
-from src.empresas.models import Company, IncomeStatement
-from src.escritos.models import Term
-from src.public_blog.models import PublicBlog, WritterProfile
-from src.preguntas_respuestas.models import Question
-from src.content_creation.models import Hashtag, Emoji, DefaultTilte
-from src.socialmedias.models import TermSharedHistorial
-from src.socialmedias.outils.socialposter.facepy import Facebook
-from src.socialmedias.outils.socialposter.tweetpy import Twitter
+from bfet import DjangoTestingModel
+import vcr
+
+from src.content_creation import constants as content_creation_constants
+from src.content_creation.models import DefaultTilte, Emoji, Hashtag
 from src.content_creation.outils.content_creator import (
     CompanyContentCreation,
     CompanyNewsContentCreation,
-    TermContentCreation,
-    QuestionContentCreation,
     PublicBlogContentCreation,
+    QuestionContentCreation,
+    TermContentCreation,
 )
-from src.socialmedias.outils.poster import SocialPosting
+from src.empresas.models import Company, IncomeStatement
+from src.escritos.models import Term
+from src.preguntas_respuestas.models import Question
+from src.public_blog.models import PublicBlog, WritterProfile
 from src.socialmedias import constants
-from src.content_creation import constants as content_creation_constants
+from src.socialmedias.models import TermSharedHistorial
+from src.socialmedias.outils.poster import SocialPosting
+from src.socialmedias.outils.socialposter.facepy import Facebook
+from src.socialmedias.outils.socialposter.tweetpy import Twitter
 
 FULL_DOMAIN = settings.FULL_DOMAIN
 

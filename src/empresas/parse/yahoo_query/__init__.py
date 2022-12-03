@@ -1,19 +1,19 @@
-from typing import Type, Callable
 from datetime import datetime
+from typing import Callable, Type
 
 import pandas as pd
 
-from src.general.outils.save_from_df import DFInfoCreator
 from src.empresas.models import (
     BalanceSheetYahooQuery,
-    IncomeStatementYahooQuery,
     CashflowStatementYahooQuery,
+    IncomeStatementYahooQuery,
     InstitutionalOrganization,
-    TopInstitutionalOwnership,
     KeyStatsYahooQuery,
+    TopInstitutionalOwnership,
 )
 from src.empresas.parse.yahoo_query.normalize_data import NormalizeYahooQuery
 from src.empresas.parse.yahoo_query.parse_data import ParseYahooQuery
+from src.general.outils.save_from_df import DFInfoCreator
 
 
 class YahooQueryInfo(DFInfoCreator, NormalizeYahooQuery, ParseYahooQuery):

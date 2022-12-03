@@ -2,14 +2,9 @@ from django.test import TestCase
 
 from bfet import DjangoTestingModel as DTM
 
+from src.empresas.models import BalanceSheetFinprep, CashflowStatementFinprep, Company, IncomeStatementFinprep
 from src.periods.constants import PERIOD_FOR_YEAR
 from src.periods.models import Period
-from src.empresas.models import (
-    Company,
-    IncomeStatementFinprep,
-    BalanceSheetFinprep,
-    CashflowStatementFinprep,
-)
 
 
 class TestAverageStatementsFinprep(TestCase):

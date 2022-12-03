@@ -5,7 +5,6 @@ from django.db.models import Manager
 
 
 class KeyManager(Manager):
-
     def key_is_active(self, key):
         return self.filter(key=key, in_use=True).exists()
 
@@ -20,7 +19,7 @@ class KeyManager(Manager):
     def key_for_docs(self, user):
         key = self.return_if_key(user)
         if not key:
-            key = '*****************'
+            key = "*****************"
         return key
 
     def cuota_remainig(self, key):
@@ -28,6 +27,7 @@ class KeyManager(Manager):
         TODO: use a backward lookup and use aggregate to get the limit
         """
         from .models import CompanyRequestAPI, TermRequestAPI
+
         companies = CompanyRequestAPI.objects.count_use_today(key)
         terms = TermRequestAPI.objects.count_use_today(key)
         limit = self.get(key=key, in_use=True).limit
@@ -45,4 +45,3 @@ class KeyManager(Manager):
         if self.filter(key=key).exists():
             return self.create_unique_key()
         return key
-

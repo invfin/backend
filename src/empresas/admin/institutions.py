@@ -3,11 +3,7 @@ from django.db import models
 
 from django_json_widget.widgets import JSONEditorWidget
 
-
-from src.empresas.models import (
-    InstitutionalOrganization,
-    TopInstitutionalOwnership,
-)
+from src.empresas.models import InstitutionalOrganization, TopInstitutionalOwnership
 
 
 class TopInstitutionalOwnershipInline(admin.StackedInline):

@@ -1,11 +1,11 @@
 from django.db.models import FloatField, JSONField
 
-from src.empresas.models import BaseStatement
 from src.empresas.extensions.y_finance import (
     BalanceSheetYFinanceExtended,
     CashflowStatementYFinanceExtended,
     IncomeStatementYFinanceExtended,
 )
+from src.empresas.models import BaseStatement
 
 
 class BaseUnknownField(BaseStatement):

@@ -1,4 +1,3 @@
-from datetime import datetime
 import json
 
 from django.db.models import (
@@ -19,8 +18,8 @@ from django.urls import reverse
 from src.empresas import constants
 from src.empresas.extensions.company import CompanyExtended
 from src.empresas.managers import CompanyManager, CompanyUpdateLogManager
-from src.periods.constants import PERIOD_FOR_YEAR
 from src.general.mixins import BaseToAllMixin, CheckingsMixin
+from src.periods.constants import PERIOD_FOR_YEAR
 
 
 def default_dict():

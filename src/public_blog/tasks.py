@@ -1,14 +1,11 @@
 from typing import Dict
+
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 
-from src.emailing.tasks import send_email_task
-from src.public_blog.models import (
-    NewsletterFollowers,
-    PublicBlog,
-    PublicBlogAsNewsletter,
-)
 from config import celery_app
+from src.emailing.tasks import send_email_task
+from src.public_blog.models import NewsletterFollowers, PublicBlog, PublicBlogAsNewsletter
 
 User = get_user_model()
 

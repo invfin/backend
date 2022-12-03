@@ -1,7 +1,6 @@
 from typing import Dict
 
 from config import celery_app
-
 from src.emailing.outils.emailing import EmailingSystem
 from src.notifications.outils.notifications import NotificationSystem
 

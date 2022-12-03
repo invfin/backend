@@ -9,7 +9,7 @@ User = get_user_model()
 import json
 import urllib
 
-from src.seo.views import SEODetailView, SEOListView, SEOCreateView
+from src.seo.views import SEOCreateView, SEODetailView, SEOListView
 
 from .forms import CreateCorrectionForm
 from .models import Term, TermContent

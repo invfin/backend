@@ -1,6 +1,7 @@
 from django.test import TestCase
 
 from bfet import DjangoTestingModel
+
 from src.escritos.models import Term
 
 

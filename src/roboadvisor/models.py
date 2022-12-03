@@ -19,9 +19,9 @@ from django.db.models import (
 from django.template.defaultfilters import slugify
 from django.urls import reverse
 
-from src.empresas.models import Company
 from src.classifications.models import Category, Tag
 from src.currencies.models import Currency
+from src.empresas.models import Company
 
 from .constants import (
     HORIZON,

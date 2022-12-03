@@ -1,22 +1,14 @@
+from django.contrib.auth import get_user_model
+from django.db.models import BooleanField, CharField, Model, PositiveIntegerField, TextField
+
 from ckeditor.fields import RichTextField
 
-from django.contrib.auth import get_user_model
-from django.db.models import (
-    CASCADE,
-    SET_NULL,
-    BooleanField,
-    CharField,
-    Model,
-    PositiveIntegerField,
-    TextField,
-)
-
-from src.web import constants as web_constants
 from src.general.mixins import BaseToAllMixin
-
 from src.socialmedias.constants import SOCIAL_MEDIAS
-from .constants import FOR_CONTENT, ALL
-from .managers import EmojisManager, HashtagsManager, TitlesManager, DefaultContentManager
+from src.web import constants as web_constants
+
+from .constants import ALL, FOR_CONTENT
+from .managers import DefaultContentManager, EmojisManager, HashtagsManager, TitlesManager
 
 User = get_user_model()
 

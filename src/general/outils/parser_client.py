@@ -1,7 +1,8 @@
-from typing import Union, Dict, Any
-import requests
 import time
+from typing import Any, Dict, Union
 import urllib
+
+import requests
 
 from src.general.constants import HEADERS, REQUESTS_MAX_RETRIES
 

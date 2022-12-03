@@ -1,8 +1,5 @@
 from django.contrib.auth import get_user_model
-from django.db.models import (
-    CharField,
-    Model,
-)
+from django.db.models import CharField, Model
 
 User = get_user_model()
 

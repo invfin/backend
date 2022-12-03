@@ -1,19 +1,18 @@
 from typing import Dict, Type
 
-from src.content_creation.outils.content_creator import (
-    QuestionContentCreation,
-    CompanyNewsContentCreation,
-    TermContentCreation,
-    PublicBlogContentCreation,
-    CompanyContentCreation,
-)
-from src.web.models import WebsiteEmailTrack
-from src.engagement_machine.utils import more_than_month
-from src.web import constants
-from src.web.models import WebsiteEmail
-from src.promotions.models import Campaign
 from src.content_creation import constants as content_creation_constants
+from src.content_creation.outils.content_creator import (
+    CompanyContentCreation,
+    CompanyNewsContentCreation,
+    PublicBlogContentCreation,
+    QuestionContentCreation,
+    TermContentCreation,
+)
+from src.engagement_machine.utils import more_than_month
+from src.promotions.models import Campaign
 from src.users.models import User
+from src.web import constants
+from src.web.models import WebsiteEmail, WebsiteEmailTrack
 
 
 class EngagementMachine:

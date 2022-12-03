@@ -1,7 +1,7 @@
-from typing import Dict, Union, Any
+from typing import Any, Dict, Union
 
-from src.periods.models import Period
 from src.currencies.models import Currency
+from src.periods.models import Period
 
 
 class NormalizeFinprep:

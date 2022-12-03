@@ -3,11 +3,9 @@ from django.db import models
 
 from django_json_widget.widgets import JSONEditorWidget
 
-from src.empresas.utils import arrange_quarters
+from src.empresas.admin.filters.base import NewCompanyToParseFilter
 from src.empresas.outils.retrieve_data import RetrieveCompanyData
-from src.empresas.admin.filters.base import (
-    NewCompanyToParseFilter,
-)
+from src.empresas.utils import arrange_quarters
 
 
 class BaseJSONWidgetInline(admin.StackedInline):

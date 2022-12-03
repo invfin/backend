@@ -1,20 +1,16 @@
-from typing import Union, Tuple, Optional, Type
+from typing import Optional, Tuple, Type, Union
 
-from django.utils import timezone
 from django.apps import apps
 from django.conf import settings
+from django.utils import timezone
 
 from src.empresas.models import Company
 from src.escritos.models import Term
 from src.preguntas_respuestas.models import Question
 from src.public_blog.models import PublicBlog
-from src.users.models import User
+from src.seo.models import UserJourney, Visiteur, VisiteurJourney
 from src.seo.outils.visiteur_meta import SeoInformation
-from src.seo.models import (
-    UserJourney,
-    Visiteur,
-    VisiteurJourney,
-)
+from src.users.models import User
 
 
 class JourneyClassifier:

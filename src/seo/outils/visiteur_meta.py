@@ -1,4 +1,4 @@
-from typing import Optional, Dict, Any
+from typing import Any, Dict, Optional
 
 from django.conf import settings
 from django.contrib.gis.geoip2 import GeoIP2

@@ -3,13 +3,13 @@ from django.db import models
 
 from django_json_widget.widgets import JSONEditorWidget
 
-from src.empresas.tasks import update_periods_final_statements
-from src.periods.models import Period
-from src.empresas.outils.update import UpdateCompany
-from src.empresas.utils import arrange_quarters
 from src.empresas.admin.base import BaseJSONWidgetInline, update_financials
-from src.empresas.models import Company, TopInstitutionalOwnership, CompanyUpdateLog
 from src.empresas.admin.filters.company import CompanyLogsFilter
+from src.empresas.models import Company, CompanyUpdateLog, TopInstitutionalOwnership
+from src.empresas.outils.update import UpdateCompany
+from src.empresas.tasks import update_periods_final_statements
+from src.empresas.utils import arrange_quarters
+from src.periods.models import Period
 
 
 @admin.register(CompanyUpdateLog)

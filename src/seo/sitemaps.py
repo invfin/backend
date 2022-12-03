@@ -1,5 +1,5 @@
-from django.contrib.sitemaps import Sitemap
 from django.conf import settings
+from django.contrib.sitemaps import Sitemap
 
 from src.empresas.models import Company
 from src.escritos.models import Term

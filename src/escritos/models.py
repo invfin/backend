@@ -18,8 +18,8 @@ from django.utils import timezone
 
 from ckeditor.fields import RichTextField
 
-from src.general.abstracts import AbstractComment, AbstractFavoritesHistorial
 from src.escritos.abstracts import AbstractPublishableContent
+from src.general.abstracts import AbstractComment, AbstractFavoritesHistorial
 
 from .managers import TermManager
 

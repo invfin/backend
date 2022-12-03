@@ -1,6 +1,5 @@
 from django.contrib.admin import SimpleListFilter
 
-
 TASK_METHODS = (
     ("create_financials_yfinance", "create_financials_yfinance"),
     ("create_financials_finnhub", "create_financials_finnhub"),

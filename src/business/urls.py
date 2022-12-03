@@ -1,11 +1,6 @@
 from django.urls import path
 
-from .views import (
-    CheckoutRedirectView,
-    CreateCheckoutView,
-    ProductDetailView,
-    ProductsListView,
-)
+from .views import CheckoutRedirectView, CreateCheckoutView, ProductDetailView, ProductsListView
 from .webhooks import stripe_webhook
 
 app_name = "business"

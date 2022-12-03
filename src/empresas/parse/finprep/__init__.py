@@ -1,12 +1,13 @@
-from typing import Dict, Type, List, Callable, Union
-from src.empresas.models import BalanceSheetFinprep, IncomeStatementFinprep, CashflowStatementFinprep
+from typing import Callable, Dict, List, Type, Union
+
+from src.empresas.models import BalanceSheetFinprep, CashflowStatementFinprep, IncomeStatementFinprep
 from src.empresas.parse.finprep.normalize_data import NormalizeFinprep
 from src.empresas.parse.finprep.parse_data import ParseFinprep
 
 
 class FinprepInfo(NormalizeFinprep, ParseFinprep):
-    def __init__(self, company: Type["Company"]) -> None:
-        self.company: Type["Company"] = company
+    def __init__(self, company) -> None:
+        self.company = company
 
     def create_statement_finprep(
         self,

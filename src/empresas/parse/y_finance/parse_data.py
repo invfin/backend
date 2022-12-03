@@ -1,4 +1,4 @@
-from typing import List, Dict, Any
+from typing import Any, Dict, List
 
 import yfinance as yf
 
@@ -76,6 +76,7 @@ class ParseYFinance:
     @property
     def request_earnings_yfinance(self):
         return self.yfcompany.earnings
+
     @property
     def request_quarterly_earnings_yfinance(self):
         return self.yfcompany.quarterly_earnings
@@ -120,8 +121,7 @@ class ParseYFinance:
     # data available via: opt.calls, opt.puts
     @property
     def request_option_chain_yfinance(self):
-        return self.yfcompany.option_chain('YYYY-MM-DD')
-
+        return self.yfcompany.option_chain("YYYY-MM-DD")
 
     @property
     def request_current_price_yfinance(self):

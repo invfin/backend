@@ -1,4 +1,3 @@
-import stripe
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import get_user_model
@@ -7,10 +6,11 @@ from django.shortcuts import redirect
 from django.urls import reverse
 from django.views.generic import RedirectView
 
+import stripe
+
+from src.business.models import Customer, Product, ProductComplementary, TransactionHistorial
 from src.currencies.models import Currency
 from src.seo.views import SEODetailView, SEOListView, SEOTemplateView
-from src.business.models import Customer, Product, ProductComplementary, TransactionHistorial
-
 
 User = get_user_model()
 stripe.api_key = settings.STRIPE_PRIVATE

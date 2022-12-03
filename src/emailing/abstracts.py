@@ -1,19 +1,10 @@
 from django.contrib.auth import get_user_model
+from django.db.models import CASCADE, SET_NULL, BooleanField, CharField, DateTimeField, ForeignKey, ManyToManyField
 from django.utils import timezone
-from django.db.models import (
-    CASCADE,
-    SET_NULL,
-    BooleanField,
-    CharField,
-    ForeignKey,
-    DateTimeField,
-    ManyToManyField,
-)
 
 from ckeditor.fields import RichTextField
 
 from src.general.abstracts import AbstractTimeStampedModel
-
 
 User = get_user_model()
 

@@ -1,5 +1,5 @@
-from .views import SEOViewMixin
 from .models import SeoMetaMixin
+from .views import SEOViewMixin
 
 __all__ = [
     "SEOViewMixin",

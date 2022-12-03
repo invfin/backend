@@ -1,5 +1,6 @@
-import pytest
 from django.urls import resolve, reverse
+
+import pytest
 
 from src.users.models import User
 

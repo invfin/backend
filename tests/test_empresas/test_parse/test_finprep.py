@@ -1,15 +1,13 @@
-import vcr
-
 from django.test import TestCase
 
 from bfet import DjangoTestingModel as DTM
+import vcr
 
-from src.empresas.models import BalanceSheetFinprep, IncomeStatementFinprep, CashflowStatementFinprep, Company
+from src.empresas.models import BalanceSheetFinprep, CashflowStatementFinprep, Company, IncomeStatementFinprep
 from src.empresas.parse.finprep import FinprepInfo
 from src.empresas.parse.finprep.normalize_data import NormalizeFinprep
 from src.empresas.parse.finprep.parse_data import ParseFinprep
 from tests.data.empresas.finprep import finprep_data
-
 
 parse_vcr = vcr.VCR(
     cassette_library_dir="cassettes/company/parse/finprep/",

@@ -1,5 +1,4 @@
-BLACK_FOLDERS=apps
-MYPY_FOLDERS=apps
+FOLDERS=src tests
 
 .PHONY: requirements
 
@@ -135,25 +134,28 @@ pycov:
 
 # Style
 format:
-	isort . black ${BLACK_FOLDERS} flake8 mypy ${MYPY_FOLDERS}
+	isort ${FOLDERS} 
+	black ${FOLDERS} 
+	flake8 ${FOLDERS}
+	mypy ${FOLDERS}
 
 isort_check:
-	isort --df -c .
+	isort --df -c ${FOLDERS}
 
 black_check:
 	black ${BLACK_FOLDERS} --check
 
 flake8:
-	flake8
+	flake8 ${FOLDERS}
 
 isort:
-	isort .
+	isort ${FOLDERS}
 
 black:
-	black ${BLACK_FOLDERS}
+	black ${FOLDERS}
 
 mypy:
-	mypy ${MYPY_FOLDERS}
+	mypy ${FOLDERS}
 
 deploy:
 	./deployment.sh

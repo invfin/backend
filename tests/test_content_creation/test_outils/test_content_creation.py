@@ -1,12 +1,12 @@
-from bfet import DjangoTestingModel, DataCreator
-
 from django.test import TestCase
 
+from bfet import DataCreator, DjangoTestingModel
+
+from src.content_creation import constants
+from src.content_creation.models import DefaultContent, DefaultTilte, Emoji, Hashtag
 from src.content_creation.outils.content_creator import ContentCreation
 from src.socialmedias import constants as social_constants
 from src.socialmedias.models import TermSharedHistorial
-from src.content_creation.models import Emoji, DefaultTilte, DefaultContent, Hashtag
-from src.content_creation import constants
 
 
 class TestContentCreation(TestCase):

@@ -18,15 +18,15 @@ from django.db.models import (
     TextField,
 )
 
+from src.currencies.models import Currency
 from src.empresas.models import Company
 from src.etfs.models import Etf
-from src.currencies.models import Currency
 from src.general.utils import ChartSerializer
 
 User = get_user_model()
 
-import random
 from decimal import Decimal
+import random
 
 
 class Asset(Model):

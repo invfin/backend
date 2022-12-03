@@ -1,13 +1,9 @@
 from django.contrib.auth import get_user_model
-from django.db.models import (
-    CharField,
-    IntegerField,
-    ManyToManyField,
-)
+from django.db.models import CharField, IntegerField, ManyToManyField
 
-from src.general.abstracts import AbstractTimeStampedModel
-from src.currencies.managers import CurrencyManager
 from src.countries.models import Country
+from src.currencies.managers import CurrencyManager
+from src.general.abstracts import AbstractTimeStampedModel
 
 User = get_user_model()
 

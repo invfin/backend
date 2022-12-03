@@ -1,10 +1,11 @@
-from typing import Type, Callable
+from typing import Callable, Type
+
 import pandas as pd
 
-from src.general.outils.save_from_df import DFInfoCreator
 from src.empresas.models import BalanceSheetYFinance, CashflowStatementYFinance, IncomeStatementYFinance
 from src.empresas.parse.y_finance.normalize_data import NormalizeYFinance
 from src.empresas.parse.y_finance.parse_data import ParseYFinance
+from src.general.outils.save_from_df import DFInfoCreator
 
 
 class YFinanceInfo(DFInfoCreator, NormalizeYFinance, ParseYFinance):

@@ -11,6 +11,6 @@ def update_users_last_time_seen():
         try:
             last_journey_date = user.journeys.all().latest().date
             user.last_time_seen = last_journey_date
-            user.save(update_fields=['last_time_seen'])
+            user.save(update_fields=["last_time_seen"])
         except:
             continue

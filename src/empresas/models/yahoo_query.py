@@ -1,11 +1,11 @@
-from django.db.models import FloatField, DateTimeField, CharField, JSONField, DateTimeField
+from django.db.models import CharField, DateTimeField, FloatField, JSONField
 
-from src.empresas.models import BaseStatement
 from src.empresas.extensions.yahoo_query import (
-    IncomeStatementYahooQueryExtended,
     BalanceSheetYahooQueryExtended,
     CashflowStatementYahooQueryExtended,
+    IncomeStatementYahooQueryExtended,
 )
+from src.empresas.models import BaseStatement
 
 
 class BaseUnknownField(BaseStatement):

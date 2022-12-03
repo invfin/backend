@@ -1,5 +1,6 @@
-from typing import Dict, Union, Any, Type, Callable
 import datetime
+from typing import Any, Callable, Dict, Type, Union
+
 import pandas as pd
 
 from src.currencies.models import Currency

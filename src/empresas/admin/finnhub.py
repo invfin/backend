@@ -3,7 +3,7 @@ from django.db import models
 
 from django_json_widget.widgets import JSONEditorWidget
 
-from src.empresas.models import StatementsFinnhub, CompanyFinnhubProxy
+from src.empresas.models import CompanyFinnhubProxy, StatementsFinnhub
 
 
 class StatementsFinnhubInline(admin.StackedInline):

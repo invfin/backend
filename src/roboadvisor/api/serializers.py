@@ -26,10 +26,11 @@ class BaseRoboAdvisorSerializer(ModelSerializer):
     def update(self, instance, validated_data):
         return super().update(instance, validated_data)
 
+
 class RoboAdvisorQuestionCompanyAnalysisSerializer(ModelSerializer):
     class Meta:
         model = RoboAdvisorQuestionCompanyAnalysis
-        fields = '__all__'
+        fields = "__all__"
 
     def create(self, validated_data):
         instance = super().create(validated_data)
@@ -42,36 +43,34 @@ class RoboAdvisorQuestionCompanyAnalysisSerializer(ModelSerializer):
 class RoboAdvisorQuestionFinancialSituationSerializer(ModelSerializer):
     class Meta:
         model = RoboAdvisorQuestionFinancialSituation
-        fields = '__all__'
+        fields = "__all__"
 
 
 class RoboAdvisorQuestionInvestorExperienceSerializer(ModelSerializer):
     class Meta:
         model = RoboAdvisorQuestionInvestorExperience
-        fields = '__all__'
+        fields = "__all__"
 
 
 class RoboAdvisorQuestionPortfolioAssetsWeightSerializer(ModelSerializer):
     class Meta:
         model = RoboAdvisorQuestionPortfolioAssetsWeight
-        fields = '__all__'
+        fields = "__all__"
 
 
 class RoboAdvisorQuestionPortfolioCompositionSerializer(ModelSerializer):
     class Meta:
         model = RoboAdvisorQuestionPortfolioComposition
-        fields = '__all__'
+        fields = "__all__"
 
 
 class RoboAdvisorQuestionRiskAversionSerializer(ModelSerializer):
     class Meta:
         model = RoboAdvisorQuestionRiskAversion
-        fields = '__all__'
+        fields = "__all__"
 
 
 class RoboAdvisorQuestionStocksPortfolioSerializer(ModelSerializer):
     class Meta:
         model = RoboAdvisorQuestionStocksPortfolio
-        fields = '__all__'
-
-
+        fields = "__all__"

@@ -1,12 +1,11 @@
 from typing import Tuple
 
-from rest_framework.authentication import BaseAuthentication
-
 from django.contrib.auth import get_user_model
 
-from src.api.models import Key
-from src.api.exceptions import KeyNotFoundException, WrongKeyException, KeyRemovedException
+from rest_framework.authentication import BaseAuthentication
 
+from src.api.exceptions import KeyNotFoundException, KeyRemovedException, WrongKeyException
+from src.api.models import Key
 
 User = get_user_model()
 

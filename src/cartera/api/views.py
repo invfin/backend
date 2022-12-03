@@ -4,8 +4,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
 from django.shortcuts import redirect
 
-from src.seo.views import SEOFormView
 from src.empresas.models import Company
+from src.seo.views import SEOFormView
 
 from ..forms import (
     AddCategoriesForm,

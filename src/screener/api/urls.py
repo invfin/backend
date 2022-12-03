@@ -9,9 +9,9 @@ from .views import (
     medium_valuation_view,
     retreive_top_lists,
     retreive_yahoo_screener_info,
+    return_similar_companies_screener,
     simple_valuation_view,
     suggest_list_search_companies,
-    return_similar_companies_screener,
 )
 
 urlpatterns = [

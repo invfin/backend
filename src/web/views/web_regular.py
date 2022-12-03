@@ -9,9 +9,9 @@ from django.views.generic import RedirectView
 
 from src.general.utils import HostChecker
 from src.public_blog.models import WritterProfile
-from src.seo.views import SEOTemplateView, SEODetailView, SEOListView
+from src.seo.views import SEODetailView, SEOListView, SEOTemplateView
 from src.web.forms import ContactForm
-from src.web.models import WebsiteLegalPage, Roadmap
+from src.web.models import Roadmap, WebsiteLegalPage
 
 
 class HomePage(SEOTemplateView):

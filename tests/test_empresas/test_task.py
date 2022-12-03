@@ -7,8 +7,8 @@ from django.test import TestCase
 from bfet import DjangoTestingModel
 
 from src.empresas.models import Company
-from src.empresas.tasks import CompanyTask
 from src.empresas.outils.retrieve_data import RetrieveCompanyData
+from src.empresas.tasks import CompanyTask
 
 
 class TestCompanyTask(TestCase):

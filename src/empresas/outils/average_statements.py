@@ -1,6 +1,6 @@
-from statistics import mean
-from typing import Type, List, Dict, Union, Any
 from collections import Counter
+from statistics import mean
+from typing import Any, Dict, List, Optional, Type, Union
 
 
 class AverageStatements:
@@ -9,7 +9,7 @@ class AverageStatements:
 
     Attributes
     ----------
-        company: Type["Company"]
+        company
             The company to get the statements from. Set it when initializing the class.
 
     Methods
@@ -41,10 +41,10 @@ class AverageStatements:
             It returns the result of return_averaged_data
     """
 
-    def __init__(self, company: Type["Company"]) -> None:
+    def __init__(self, company) -> None:
         self.company = company
 
-    def return_averaged_data(self, period: Type["Period"], statements: List[Type]) -> Union[Dict[str, Any], None]:
+    def return_averaged_data(self, period, statements: List[Type]) -> Optional[Dict[str, Any]]:
         reunited_data = self.prepare_data(statements)
         if reunited_data:
             currency = self.find_correct_currency(reunited_data)
@@ -53,7 +53,7 @@ class AverageStatements:
             return reunited_data
         return None
 
-    def find_correct_currency(self, reunited_data: dict) -> Dict[str, int]:
+    def find_correct_currency(self, reunited_data: dict) -> Dict[str, Any]:
         currency = reunited_data.pop("reported_currency_id", None)
         if currency:
             counter = Counter(currency)
@@ -65,8 +65,8 @@ class AverageStatements:
             reunited_data[key] = mean(reunited_data[key])
         return reunited_data
 
-    def prepare_data(self, statements: list) -> Union[Dict[str, Any], None]:
-        reunited_data = {}
+    def prepare_data(self, statements: list) -> Optional[Dict[str, Any]]:
+        reunited_data = {}  # type: ignore
         for statement in statements:
             if statement:
                 for key, value in statement.return_standard.items():
@@ -78,7 +78,7 @@ class AverageStatements:
                             reunited_data[key] = [value]
         return reunited_data
 
-    def calculate_average_income_statement(self, period: Type["Period"]) -> Union[Dict[str, Any], None]:
+    def calculate_average_income_statement(self, period) -> Optional[Dict[str, Any]]:
         income_statement_finprep = self.company.incomestatementfinprep_set.filter(period=period).first()
         income_statement_yfinance = self.company.incomestatementyfinance_set.filter(period=period).first()
         income_statement_yahooquery = self.company.incomestatementyahooquery_set.filter(period=period).first()
@@ -86,7 +86,7 @@ class AverageStatements:
             period, [income_statement_finprep, income_statement_yfinance, income_statement_yahooquery]
         )
 
-    def calculate_average_balance_sheet(self, period: Type["Period"]) -> Union[Dict[str, Any], None]:
+    def calculate_average_balance_sheet(self, period) -> Optional[Dict[str, Any]]:
         balance_sheet_finprep = self.company.balancesheetfinprep_set.filter(period=period).first()
         balance_sheet_yfinance = self.company.balancesheetyfinance_set.filter(period=period).first()
         balance_sheet_yahooquery = self.company.balancesheetyahooquery_set.filter(period=period).first()
@@ -94,7 +94,7 @@ class AverageStatements:
             period, [balance_sheet_finprep, balance_sheet_yfinance, balance_sheet_yahooquery]
         )
 
-    def calculate_average_cashflow_statement(self, period: Type["Period"]) -> Union[Dict[str, Any], None]:
+    def calculate_average_cashflow_statement(self, period) -> Optional[Dict[str, Any]]:
         cashflow_statement_finprep = self.company.cashflowstatementfinprep_set.filter(period=period).first()
         cashflow_statement_yfinance = self.company.cashflowstatementyfinance_set.filter(period=period).first()
         cashflow_statement_yahooquery = self.company.cashflowstatementyahooquery_set.filter(period=period).first()

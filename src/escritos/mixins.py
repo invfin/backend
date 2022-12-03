@@ -1,6 +1,6 @@
-from bs4 import BeautifulSoup as bs
-
 from django.conf import settings
+
+from bs4 import BeautifulSoup as bs
 
 FULL_DOMAIN = settings.FULL_DOMAIN
 

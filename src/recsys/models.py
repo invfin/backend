@@ -1,23 +1,15 @@
 from django.contrib.auth import get_user_model
-from django.db.models import (
-    SET_NULL,
-    BooleanField,
-    CharField,
-    DateTimeField,
-    ForeignKey,
-    JSONField,
-    Model,
-)
+from django.db.models import SET_NULL, BooleanField, CharField, DateTimeField, ForeignKey, JSONField, Model
 from django.urls import reverse
 
-from src.general.mixins import BaseToAllMixin
 from src.business.models import ProductComplementary
 from src.empresas.models import Company
 from src.escritos.models import Term
+from src.general.mixins import BaseToAllMixin
 from src.preguntas_respuestas.models import Question
+from src.promotions.models import Promotion
 from src.public_blog.models import PublicBlog
 from src.seo import constants
-from src.promotions.models import Promotion
 from src.seo.models import Visiteur
 
 User = get_user_model()

@@ -6,12 +6,11 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.shortcuts import redirect
 from django.views.generic import CreateView, UpdateView
 
-from src.notifications.tasks import prepare_notification_task
 from src.notifications import constants
-from src.seo.views import SEODetailView, SEOListView
+from src.notifications.tasks import prepare_notification_task
 from src.preguntas_respuestas.forms import CreateQuestionForm
 from src.preguntas_respuestas.models import Answer, Question
-
+from src.seo.views import SEODetailView, SEOListView
 
 User = get_user_model()
 

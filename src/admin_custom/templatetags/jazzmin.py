@@ -8,17 +8,14 @@ from django.contrib.admin.models import LogEntry
 from django.template import Context
 from django.urls import reverse
 from django.utils.text import capfirst
-# from django.utils.translation import gettext
 
 from jazzmin.settings import get_settings
-from jazzmin.templatetags.jazzmin import (
-    # action_message_to_list as jazzmin_action_message_to_list,
-    register,
-)
+from jazzmin.templatetags.jazzmin import register  # action_message_to_list as jazzmin_action_message_to_list,
+
+# from django.utils.translation import gettext
 
 
-
-@register.simple_tag(name='get_side_menu', takes_context=True)
+@register.simple_tag(name="get_side_menu", takes_context=True)
 def get_side_menu(context: Context, using: str = "available_apps") -> List[Dict]:
     """
     Overrides Django Jazzmin get_side_menu templatetag.
@@ -33,30 +30,34 @@ def get_side_menu(context: Context, using: str = "available_apps") -> List[Dict]
     available_apps = copy.deepcopy(context.get(using, []))
 
     for element in side_menu_config:
-        menu_label = element['label']
-        menu_icon = element.get('icon', options["default_icon_parents"])
+        menu_label = element["label"]
+        menu_icon = element.get("icon", options["default_icon_parents"])
         second_menu = []
 
-        for model in element.get('models', []):
-            object_app, settings_model_name = model['model'].split(".")
-            model_icon = model.get('icon', menu_icon)
-            model_label = model.get('label')
+        for model in element.get("models", []):
+            object_app, settings_model_name = model["model"].split(".")
+            model_icon = model.get("icon", menu_icon)
+            model_label = model.get("label")
 
             model_name, model_url = get_model_data(object_app, settings_model_name, available_apps)
 
             if model_name and model_url:
-                second_menu.append({
-                    'name': model_label or model_name,
-                    'url': model_url,
-                    'icon': model_icon or options["default_icon_children"],
-                })
+                second_menu.append(
+                    {
+                        "name": model_label or model_name,
+                        "url": model_url,
+                        "icon": model_icon or options["default_icon_children"],
+                    }
+                )
 
         if second_menu:
-            first_menu.append({
-                'name': menu_label,
-                'icon': menu_icon,
-                'models': second_menu,
-            })
+            first_menu.append(
+                {
+                    "name": menu_label,
+                    "icon": menu_icon,
+                    "models": second_menu,
+                }
+            )
     return first_menu
 
 
@@ -66,7 +67,7 @@ def get_menu_config(context: Context, options) -> list:
     user = context.get("user")
     if not user or user.is_anonymous:
         return []
-    return options.get('side_menu_models', [])
+    return options.get("side_menu_models", [])
 
 
 def get_model_data(object_app, object_name, available_apps):
@@ -79,17 +80,12 @@ def get_model_data(object_app, object_name, available_apps):
     """
 
     for app in available_apps:
-        if app.get('app_label') == object_app:
-            for model in app.get('models', []):
-                model_name = model.get('object_name')
-                if (model_name and
-                    (
-                        model_name.lower() == object_name or
-                        model_name == object_name
-                    )
-                ):
-                    model_url = model.get('admin_url')
-                    return model.get('name'), model_url
+        if app.get("app_label") == object_app:
+            for model in app.get("models", []):
+                model_name = model.get("object_name")
+                if model_name and (model_name.lower() == object_name or model_name == object_name):
+                    model_url = model.get("admin_url")
+                    return model.get("name"), model_url
 
     return None, None
 
@@ -102,7 +98,7 @@ class CustomTab:
         self.template = template
 
 
-@register.simple_tag(name='get_tabs')
+@register.simple_tag(name="get_tabs")
 def get_tabs(
     admin_form: AdminForm,
     inline_admin_formsets: List[InlineAdminFormSet],
@@ -122,15 +118,15 @@ def get_tabs(
 
     tabs = []
 
-    if hasattr(admin_form.model_admin, 'jazzmin_form_tabs'):
+    if hasattr(admin_form.model_admin, "jazzmin_form_tabs"):
         items_dict = defaultdict(list)
 
         # Fieldsets
         for fieldset in admin_form:
-            if fieldset.classes.startswith('jazzmin-tab'):
-                jazzmin_tab_id = fieldset.classes.replace('jazzmin-tab-', '')
+            if fieldset.classes.startswith("jazzmin-tab"):
+                jazzmin_tab_id = fieldset.classes.replace("jazzmin-tab-", "")
             else:
-                jazzmin_tab_id = 'general'
+                jazzmin_tab_id = "general"
             items_dict[jazzmin_tab_id].append(fieldset)
 
         # Inlines
@@ -140,27 +136,29 @@ def get_tabs(
             items_dict[jazzmin_tab_id].append(inline)
 
         # Custom Tabs
-        if hasattr(admin_form.model_admin, 'jazzmin_custom_tabs'):
+        if hasattr(admin_form.model_admin, "jazzmin_custom_tabs"):
             for tab_id, template in admin_form.model_admin.jazzmin_custom_tabs:
                 tab = CustomTab(template)
                 items_dict[tab_id].append(tab)
 
         # Form includes
-        if hasattr(admin_form.model_admin, 'jazzmin_form_includes'):
+        if hasattr(admin_form.model_admin, "jazzmin_form_includes"):
             for template, position, tab_id in admin_form.model_admin.jazzmin_form_includes:
                 tab = CustomTab(template)
-                if position == 'top':
+                if position == "top":
                     items_dict[tab_id].insert(0, tab)
                 else:
                     items_dict[tab_id].append(tab)
 
         jazzmin_form_tabs = admin_form.model_admin.jazzmin_form_tabs
         for tab_id, tab_name in jazzmin_form_tabs:
-            tabs.append({
-                'id': tab_id,
-                'name': tab_name,
-                'items': items_dict[tab_id],
-            })
+            tabs.append(
+                {
+                    "id": tab_id,
+                    "name": tab_name,
+                    "items": items_dict[tab_id],
+                }
+            )
     else:
         fieldsets = [x for x in admin_form]
 
@@ -170,11 +168,13 @@ def get_tabs(
             fieldset.is_inline = True
             fieldsets.append(fieldset)
 
-        tabs.append({
-            'id': 'general',
-            'name': "General",
-            'items': fieldsets,
-        })
+        tabs.append(
+            {
+                "id": "general",
+                "name": "General",
+                "items": fieldsets,
+            }
+        )
 
     return tabs
 

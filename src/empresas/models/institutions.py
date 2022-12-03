@@ -1,12 +1,4 @@
-from django.db.models import (
-    SET_NULL,
-    CharField,
-    DateField,
-    FloatField,
-    ForeignKey,
-    IntegerField,
-    Model,
-)
+from django.db.models import SET_NULL, CharField, DateField, FloatField, ForeignKey, IntegerField, Model
 
 from src.empresas.models import Company
 

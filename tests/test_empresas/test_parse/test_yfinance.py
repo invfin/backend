@@ -1,13 +1,11 @@
-import vcr
-
 from django.test import TestCase
 
 from bfet import DjangoTestingModel
-from src.periods.models import Period
-from src.empresas.models import Company
-from src.empresas.parse.y_finance import YFinanceInfo
-from src.empresas.models import BalanceSheetYFinance, CashflowStatementYFinance, IncomeStatementYFinance
+import vcr
 
+from src.empresas.models import BalanceSheetYFinance, CashflowStatementYFinance, Company, IncomeStatementYFinance
+from src.empresas.parse.y_finance import YFinanceInfo
+from src.periods.models import Period
 
 parse_vcr = vcr.VCR(
     cassette_library_dir="cassettes/company/parse/yfinance/",

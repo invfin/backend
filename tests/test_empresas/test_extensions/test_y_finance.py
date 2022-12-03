@@ -2,14 +2,9 @@ from django.test import TestCase
 
 from bfet import DjangoTestingModel as DTM
 
+from src.empresas.models import BalanceSheetYFinance, CashflowStatementYFinance, Company, IncomeStatementYFinance
 from src.periods.constants import PERIOD_FOR_YEAR
 from src.periods.models import Period
-from src.empresas.models import (
-    Company,
-    IncomeStatementYFinance,
-    BalanceSheetYFinance,
-    CashflowStatementYFinance,
-)
 
 
 class TestAverageStatementsYFinance(TestCase):

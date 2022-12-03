@@ -1,5 +1,6 @@
-from typing import Dict, Union, Any, Type, Callable
 import datetime
+from typing import Any, Callable, Dict, Type, Union
+
 import pandas as pd
 
 
@@ -7,22 +8,14 @@ class NormalizeYFinance:
     company = None
 
     def initial_data(
-        self,
-        column: Type[pd.Timestamp],
-        period: Callable
+        self, column: Type[pd.Timestamp], period: Callable
     ) -> Dict[str, Union[int, datetime.datetime, Callable, Type["Company"]]]:
         return dict(
-            date=column.year,
-            year=column.to_pydatetime().date(),
-            company=self.company,
-            period=period(int(column.year))
+            date=column.year, year=column.to_pydatetime().date(), company=self.company, period=period(int(column.year))
         )
 
     def normalize_balance_sheets_yfinance(
-        self,
-        yfinance_serie: pd.Series,
-        column: Type[pd.Timestamp],
-        period: Callable
+        self, yfinance_serie: pd.Series, column: Type[pd.Timestamp], period: Callable
     ) -> Dict[str, Union[float, int, str, Any]]:
         return dict(
             **self.initial_data(column, period),
@@ -36,7 +29,9 @@ class NormalizeYFinance:
             retained_earnings=yfinance_serie.get("Retained Earnings"),
             other_liab=yfinance_serie.get("Other Liab"),
             good_will=yfinance_serie.get("Good Will"),
-            gains_losses_not_affecting_retained_earnings=yfinance_serie.get("Gains Losses Not Affecting Retained Earnings"),
+            gains_losses_not_affecting_retained_earnings=yfinance_serie.get(
+                "Gains Losses Not Affecting Retained Earnings"
+            ),
             other_assets=yfinance_serie.get("Other Assets"),
             cash=yfinance_serie.get("Cash"),
             total_current_liabilities=yfinance_serie.get("Total Current Liabilities"),
@@ -51,14 +46,11 @@ class NormalizeYFinance:
             net_receivables=yfinance_serie.get("Net Receivables"),
             long_term_debt=yfinance_serie.get("Long Term Debt"),
             inventory=yfinance_serie.get("Inventory"),
-            accounts_payable=yfinance_serie.get("Accounts Payable")
+            accounts_payable=yfinance_serie.get("Accounts Payable"),
         )
 
     def normalize_cashflow_statements_yfinance(
-        self,
-        yfinance_serie: pd.Series,
-        column: Type[pd.Timestamp],
-        period: Callable
+        self, yfinance_serie: pd.Series, column: Type[pd.Timestamp], period: Callable
     ) -> Dict[str, Union[float, int, str, Any]]:
         return dict(
             **self.initial_data(column, period),
@@ -85,10 +77,7 @@ class NormalizeYFinance:
         )
 
     def normalize_income_statements_yfinance(
-        self,
-        yfinance_serie: pd.Series,
-        column: Type[pd.Timestamp],
-        period: Callable
+        self, yfinance_serie: pd.Series, column: Type[pd.Timestamp], period: Callable
     ) -> Dict[str, Union[float, int, str, Any]]:
         return dict(
             **self.initial_data(column, period),

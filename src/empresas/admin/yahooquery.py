@@ -5,9 +5,9 @@ from src.empresas.admin.filters.base import HasQuarterFilter
 from src.empresas.models import (
     BalanceSheetYahooQuery,
     CashflowStatementYahooQuery,
+    CompanyYahooQueryProxy,
     IncomeStatementYahooQuery,
     KeyStatsYahooQuery,
-    CompanyYahooQueryProxy,
 )
 
 

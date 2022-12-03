@@ -18,14 +18,7 @@ from django.forms import (
 
 from src.currencies.models import Currency
 
-from .models import (
-    Asset,
-    CashflowMovementCategory,
-    FinancialObjectif,
-    Income,
-    PositionMovement,
-    Spend,
-)
+from .models import Asset, CashflowMovementCategory, FinancialObjectif, Income, PositionMovement, Spend
 
 User = get_user_model()
 

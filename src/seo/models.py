@@ -13,9 +13,8 @@ from django.db.models import (
 )
 from django.utils import timezone
 
-from src.general.mixins import BaseToAllMixin
-
 from src.escritos.models import Term
+from src.general.mixins import BaseToAllMixin
 from src.preguntas_respuestas.models import Question
 from src.public_blog.models import PublicBlog
 from src.seo.managers import VisiteurManager

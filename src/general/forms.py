@@ -1,5 +1,6 @@
-from ckeditor.widgets import CKEditorWidget
 from django.forms import CharField, DateTimeField, Form, ModelForm
+
+from ckeditor.widgets import CKEditorWidget
 
 
 class BaseEscritoForm(ModelForm):

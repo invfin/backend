@@ -2,12 +2,12 @@ from typing import Type
 
 from django.utils.html import format_html, strip_tags
 
+from src.content_creation import constants as socialmedias_constants
+from src.content_creation.outils.content_creator import ContentCreation
 from src.escritos.models import Term
 from src.preguntas_respuestas.models import Question
 from src.public_blog.models import PublicBlog
-from src.content_creation import constants as socialmedias_constants
 from src.socialmedias.models import BlogSharedHistorial
-from src.content_creation.outils.content_creator import ContentCreation
 
 
 class PublicBlogContentCreation(ContentCreation):

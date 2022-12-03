@@ -1,7 +1,7 @@
 from django.conf import settings
 
-from src.general.outils.parser_client import ParserClient
 from src.empresas import constants
+from src.general.outils.parser_client import ParserClient
 
 
 class ParseFinnhub(ParserClient):

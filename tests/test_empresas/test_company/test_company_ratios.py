@@ -1,15 +1,14 @@
 import time
-import vcr
-
 from unittest import skip
-from bfet import DjangoTestingModel
 
 from django.test import TestCase
 
-from src.empresas.outils.update import UpdateCompany
-from src.empresas.models import Company
-from tests.data.empresas.finprep import finprep_data as data
+from bfet import DjangoTestingModel
+import vcr
 
+from src.empresas.models import Company
+from src.empresas.outils.update import UpdateCompany
+from tests.data.empresas.finprep import finprep_data as data
 
 company_vcr = vcr.VCR(
     cassette_library_dir="cassettes/company/",

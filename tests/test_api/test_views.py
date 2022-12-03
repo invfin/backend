@@ -1,23 +1,22 @@
 from unittest.mock import MagicMock, patch
 
-from bfet import DjangoTestingModel
-
 from django.db.models import QuerySet
-from rest_framework.test import APITestCase
 
+from bfet import DjangoTestingModel
 from rest_framework import status
 from rest_framework.exceptions import ParseError
+from rest_framework.test import APITestCase
 
-from src.api.views import BaseAPIView
+from src.api.exceptions import ParameterNotSetException, QueryNotFoundException, ServerError, WrongParameterException
 from src.api.models import CompanyRequestAPI, Key
-from src.empresas.api.serializers import IncomeStatementSerializer, BasicCompanySerializer
+from src.api.views import BaseAPIView
+from src.business.models import ProductSubscriber
+from src.empresas.api.serializers import BasicCompanySerializer, IncomeStatementSerializer
 from src.empresas.models import Company, IncomeStatement
-from src.escritos.models import Term, TermContent
 from src.escritos.api.serializers import AllTermsSerializer
+from src.escritos.models import Term, TermContent
 from src.super_investors.models import Superinvestor, SuperinvestorHistory
 from src.users.models import User
-from src.business.models import ProductSubscriber
-from src.api.exceptions import WrongParameterException, ParameterNotSetException, QueryNotFoundException, ServerError
 
 
 class MockRequest(MagicMock):

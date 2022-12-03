@@ -23,7 +23,7 @@ class CompanyManager(BaseManager):
     def get_queryset(self):
         return CompanyQuerySet(self.model, using=self._db)
 
-    def only_essential(self) -> QuerySet:
+    def only_essential(self):
         return self.only(
             "ticker",
             "name",
@@ -44,7 +44,7 @@ class CompanyManager(BaseManager):
             "ipoDate",
         )
 
-    def prefetch_yearly_historical_data(self, **kwargs) -> Type:
+    def prefetch_yearly_historical_data(self, **kwargs):
         lookup_filter = {"company__ticker": kwargs["ticker"]} if "ticker" in kwargs else {}
 
         return self.prefetch_related(
@@ -101,7 +101,7 @@ class CompanyManager(BaseManager):
             ),
         ).get(**kwargs)
 
-    def prefetch_historical_data(self) -> QuerySet:
+    def prefetch_historical_data(self):
         return self.prefetch_related(
             "inc_statements",
             "balance_sheets",
@@ -119,7 +119,7 @@ class CompanyManager(BaseManager):
             "price_to_ratios",
         )
 
-    def fast_full(self, **kwargs) -> Type:
+    def fast_full(self, **kwargs):
         return (
             self.prefetch_historical_data()
             .only(
@@ -144,23 +144,23 @@ class CompanyManager(BaseManager):
             .get(**kwargs)
         )
 
-    def companies_by_main_exchange(self, name=None) -> QuerySet:
+    def companies_by_main_exchange(self, name=None):
         return self.filter(exchange__main_org__name=name).exclude(name__contains="Need-parsing")
 
-    def clean_companies(self) -> QuerySet:
+    def clean_companies(self):
         return self.filter(no_incs=False, no_bs=False, no_cfs=False).exclude(name__contains="Need-parsing")
 
-    def clean_companies_by_main_exchange(self, name=None) -> QuerySet:
+    def clean_companies_by_main_exchange(self, name=None):
         return self.filter(no_incs=False, no_bs=False, no_cfs=False, exchange__main_org__name=name).exclude(
             name__contains="Need-parsing"
         )
 
-    def complete_companies_by_main_exchange(self, name=None) -> QuerySet:
+    def complete_companies_by_main_exchange(self, name=None):
         return self.filter(
             no_incs=False, no_bs=False, no_cfs=False, description_translated=True, exchange__main_org__name=name
         ).exclude(name__contains="Need-parsing")
 
-    def get_similar_companies(self, sector_id, industry_id) -> QuerySet:
+    def get_similar_companies(self, sector_id, industry_id):
         return self.filter(
             no_incs=False,
             no_bs=False,
@@ -170,21 +170,21 @@ class CompanyManager(BaseManager):
             industry_id=industry_id,
         ).exclude(name__contains="Need-parsing")
 
-    def random_clean_company(self) -> Type:
+    def random_clean_company(self):
         return self.get_random(self.clean_companies())
 
-    def random_clean_company_by_main_exchange(self, name=None) -> Type:
+    def random_clean_company_by_main_exchange(self, name=None):
         return self.get_random(self.clean_companies_by_main_exchange(name))
 
-    def random_complete_companies_by_main_exchange(self, name=None) -> Type:
+    def random_complete_companies_by_main_exchange(self, name=None):
         return self.get_random(self.complete_companies_by_main_exchange(name))
 
-    def clean_companies_to_update(self, name=None) -> QuerySet:
+    def clean_companies_to_update(self, name=None):
         return self.filter(
             no_incs=False, no_bs=False, no_cfs=False, exchange__main_org__name=name, updated=False, has_error=False
         )
 
-    def get_random_most_visited_clean_company(self, exclude: Dict[str, Any] = {}, filter: Dict[str, Any] = {}) -> Type:
+    def get_random_most_visited_clean_company(self, exclude: Dict[str, Any] = {}, filter: Dict[str, Any] = {}):
         return self.get_random(
             self.filter(
                 no_incs=False, no_bs=False, no_cfs=False, has_error=False, description_translated=True, **filter
@@ -198,7 +198,7 @@ class CompanyManager(BaseManager):
             .order_by("total_visits")
         )
 
-    def get_most_visited_companies(self) -> QuerySet:
+    def get_most_visited_companies(self):
         """
         Based on most visited companies
         """
@@ -219,7 +219,7 @@ class CompanyManager(BaseManager):
         exchage,
         industry,
         country,
-    ) -> QuerySet:
+    ):
         return (
             self.filter(
                 Q(sector__id__in=sector)
@@ -239,7 +239,7 @@ class CompanyManager(BaseManager):
             .order_by("total_visits")
         )
 
-    def filter_checking(self, checking: str, has_it: bool) -> QuerySet:
+    def filter_checking(self, checking: str, has_it: bool):
         return (
             super()
             .filter_checking(checking, has_it)
@@ -247,7 +247,7 @@ class CompanyManager(BaseManager):
             .order_by("exchange__main_org__order")
         )
 
-    def filter_checking_not_seen(self, checking: str) -> QuerySet:
+    def filter_checking_not_seen(self, checking: str):
         queryset = super().filter_checking_not_seen(checking)
         return queryset.existing_companies_by_exchange_importance()
 

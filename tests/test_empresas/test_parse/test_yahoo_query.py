@@ -1,20 +1,21 @@
+from datetime import datetime
+from unittest import skip
+from unittest.mock import patch
+
 from django.test import TestCase
 
-from unittest.mock import patch
-from unittest import skip
-from datetime import datetime
-
 from bfet import DjangoTestingModel
-from src.periods.models import Period
+
 from src.empresas.models import (
-    Company,
     BalanceSheetYahooQuery,
-    IncomeStatementYahooQuery,
     CashflowStatementYahooQuery,
+    Company,
+    IncomeStatementYahooQuery,
     InstitutionalOrganization,
     TopInstitutionalOwnership,
 )
 from src.empresas.parse.yahoo_query import YahooQueryInfo
+from src.periods.models import Period
 
 # TODO patch the requests and responses
 # class TestYahooQueryInfo(TestCase):

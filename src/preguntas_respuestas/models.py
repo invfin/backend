@@ -1,13 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.contrib.sites.models import Site
-from django.db.models import (
-    CASCADE,
-    SET_NULL,
-    BooleanField,
-    ForeignKey,
-    IntegerField,
-    ManyToManyField,
-)
+from django.db.models import CASCADE, SET_NULL, BooleanField, ForeignKey, IntegerField, ManyToManyField
 from django.urls import reverse
 
 User = get_user_model()

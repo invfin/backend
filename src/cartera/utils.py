@@ -4,13 +4,13 @@ from .models import Income, PositionMovement, Spend
 
 #     def add_asset():
 
-            
+
 #             Spend.objects.create()
-        
+
 #     def sell_asset():
 
 #             Income.objects.create()
-    
+
 
 #     def assets_management():
 #         movement = PositionMovement.objects.create(

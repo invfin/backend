@@ -1,11 +1,11 @@
-from django.db.models import SET_NULL, FloatField, ForeignKey, DateField, DateTimeField, IntegerField, CharField
+from django.db.models import SET_NULL, CharField, DateField, DateTimeField, FloatField, ForeignKey, IntegerField
 
-from src.empresas.models.statements import BaseStatement
 from src.empresas.extensions.finprep import (
     BalanceSheetFinprepExtended,
     CashflowStatementFinprepExtended,
     IncomeStatementFinprepExtended,
 )
+from src.empresas.models.statements import BaseStatement
 
 
 class BaseFinprep(BaseStatement):

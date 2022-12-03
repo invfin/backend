@@ -1,8 +1,4 @@
-from .base_averages import (
-    AverageIncomeStatement,
-    AverageBalanceSheet,
-    AverageCashflowStatement,
-)
+from .base_averages import AverageBalanceSheet, AverageCashflowStatement, AverageIncomeStatement
 
 
 class IncomeStatementYahooQueryExtended(AverageIncomeStatement):

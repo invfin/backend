@@ -1,6 +1,7 @@
 from django.urls import path
 
 from .views import (
+    MessagesTemplateview,
     NotificationsListView,
     coming_soon,
     create_comment_view,
@@ -10,7 +11,6 @@ from .views import (
     search_results,
     suggest_list_search,
     update_favorites,
-    MessagesTemplateview,
 )
 
 app_name = "general"

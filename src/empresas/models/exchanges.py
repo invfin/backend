@@ -1,12 +1,6 @@
-from src.empresas import constants
+from django.db.models import SET_NULL, CharField, ForeignKey, Model, PositiveIntegerField
 
-from django.db.models import (
-    SET_NULL,
-    CharField,
-    ForeignKey,
-    Model,
-    PositiveIntegerField,
-)
+from src.empresas import constants
 
 
 class ExchangeOrganisation(Model):

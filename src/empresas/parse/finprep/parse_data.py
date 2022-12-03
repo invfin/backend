@@ -1,11 +1,11 @@
-from typing import List, Dict
-import time
 import random
+import time
+from typing import Dict, List
 
 from django.conf import settings
 
-from src.general.outils.parser_client import ParserClient
 from src.empresas import constants
+from src.general.outils.parser_client import ParserClient
 
 
 class ParseFinprep(ParserClient):

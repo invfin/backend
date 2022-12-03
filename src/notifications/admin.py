@@ -3,7 +3,6 @@ from django.contrib import admin
 from .models import EmailNotification, Notification
 
 
-
 @admin.register(EmailNotification)
 class EmailNotificationAdmin(admin.ModelAdmin):
     list_display = ["id", "email_related"]

@@ -3,6 +3,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import render
 
 from src.seo.views import SEOTemplateView
+
 from .models import Patrimonio
 
 User = get_user_model()

@@ -4,10 +4,11 @@ from django.contrib import admin
 from django.contrib.sitemaps.views import sitemap
 from django.urls import include, path
 from django.views import defaults as default_views
+
 from rest_framework.documentation import include_docs_urls
 
 from src.api.views import obtain_auth_key
-from src.seo.sitemaps import CompanySitemap, PublicBlogSitemap, QuestionSitemap, TermSitemap, SuperinvestorSitemap
+from src.seo.sitemaps import CompanySitemap, PublicBlogSitemap, QuestionSitemap, SuperinvestorSitemap, TermSitemap
 
 sitemaps = {
     "blogs": PublicBlogSitemap,

@@ -1,10 +1,10 @@
 from unittest import skip
 from unittest.mock import patch
 
-from bfet import DjangoTestingModel
-
-from django.test import TestCase, RequestFactory
 from django.contrib.sessions.middleware import SessionMiddleware
+from django.test import RequestFactory, TestCase
+
+from bfet import DjangoTestingModel
 
 from src.seo.models import Visiteur
 from src.seo.outils.visiteur_meta import SeoInformation

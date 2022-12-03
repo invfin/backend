@@ -1,6 +1,5 @@
-from django.test import TestCase
-
 from django.contrib.auth import get_user_model
+from django.test import TestCase
 
 from bfet import DjangoTestingModel
 
@@ -8,16 +7,8 @@ from src.empresas.models import Company
 from src.escritos.models import Term
 from src.preguntas_respuestas.models import Question
 from src.public_blog.models import PublicBlog
-
-from src.seo.models import (
-    Visiteur,
-    UserJourney,
-    VisiteurJourney,
-    UserCompanyVisited,
-    VisiteurQuestionVisited,
-)
+from src.seo.models import UserCompanyVisited, UserJourney, Visiteur, VisiteurJourney, VisiteurQuestionVisited
 from src.seo.outils.save_journey import JourneyClassifier
-
 
 User = get_user_model()
 

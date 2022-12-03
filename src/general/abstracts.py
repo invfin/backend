@@ -14,7 +14,6 @@ from django.db.models import (
 
 from src.general.mixins import BaseToAllMixin
 
-
 User = get_user_model()
 
 

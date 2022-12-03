@@ -1,1 +1,1 @@
-from src.preguntas_respuestas.models import Question, Answer
+from src.preguntas_respuestas.models import Answer, Question

@@ -1,6 +1,6 @@
 import math
-import time
 import textwrap
+import time
 from typing import Dict
 
 import tweepy

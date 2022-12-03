@@ -3,7 +3,6 @@ from django.db import connection
 
 
 class Command(BaseCommand):
-
     def handle(self, *args, **options):
         print("Truncates django_migrations table")
         cursor = connection.cursor()

@@ -2,12 +2,11 @@ from django.contrib import admin
 
 from src.empresas.admin.base import BaseCompanyAdmin, BaseJSONWidgetInline, BaseStatementAdmin
 from src.empresas.admin.filters.base import HasQuarterFilter
-
 from src.empresas.models import (
     BalanceSheetFinprep,
     CashflowStatementFinprep,
-    IncomeStatementFinprep,
     CompanyFinprepProxy,
+    IncomeStatementFinprep,
 )
 
 

@@ -1,6 +1,7 @@
-from django.core.management import BaseCommand
-from django.conf import settings
 import sys
+
+from django.conf import settings
+from django.core.management import BaseCommand
 
 # from bfet import Autotest
 

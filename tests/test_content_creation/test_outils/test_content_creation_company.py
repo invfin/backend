@@ -1,18 +1,13 @@
 from unittest import skip
 
-from bfet import DjangoTestingModel, DataCreator
-
 from django.test import TestCase
 
-from src.socialmedias.models import CompanySharedHistorial
-from src.socialmedias import constants as socialmedias_constants
+from bfet import DataCreator, DjangoTestingModel
+
 from src.content_creation.outils.content_creator import CompanyContentCreation
-from src.empresas.models import (
-    Company,
-    IncomeStatement,
-    BalanceSheet,
-    CashflowStatement,
-)
+from src.empresas.models import BalanceSheet, CashflowStatement, Company, IncomeStatement
+from src.socialmedias import constants as socialmedias_constants
+from src.socialmedias.models import CompanySharedHistorial
 from tests.data.empresas.empresas_data import AAPL
 
 from .base_content_creation_mixin import BaseTestContentCreation

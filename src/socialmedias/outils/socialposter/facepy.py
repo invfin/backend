@@ -1,8 +1,9 @@
 import datetime
 from typing import Dict
 
-import requests
 from django.conf import settings
+
+import requests
 
 from src.socialmedias import constants
 

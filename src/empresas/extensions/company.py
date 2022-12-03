@@ -1,10 +1,10 @@
 import math
 import operator
 
-import yfinance as yf
-import yahooquery as yq
-
 from django.db.models import Avg
+
+import yahooquery as yq
+import yfinance as yf
 
 from src.empresas.outils.valuations import discounted_cashflow
 from src.general.utils import ChartSerializer

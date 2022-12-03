@@ -1,4 +1,3 @@
-from ckeditor.fields import RichTextField
 from django.contrib.auth import get_user_model
 from django.db.models import (
     CASCADE,
@@ -10,19 +9,20 @@ from django.db.models import (
     ForeignKey,
     IntegerField,
     JSONField,
+    Model,
     OneToOneField,
     SlugField,
-    Model,
 )
 from django.urls import reverse
 
+from ckeditor.fields import RichTextField
+
 from src.business import constants
-from src.general.abstracts import AbstractComment
+from src.business.managers import ProductManager
 from src.currencies.models import Currency
+from src.general.abstracts import AbstractComment
 from src.general.mixins import BaseToAllMixin
 from src.promotions.models import Promotion
-
-from src.business.managers import ProductManager
 
 User = get_user_model()
 

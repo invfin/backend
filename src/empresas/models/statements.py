@@ -1,9 +1,9 @@
-from django.db.models import SET_NULL, BooleanField, FloatField, ForeignKey, IntegerField, DateField, Model
+from django.db.models import SET_NULL, BooleanField, DateField, FloatField, ForeignKey, IntegerField, Model
 
-from src.empresas.models import Company
 from src.empresas.managers import BaseStatementManager
-from src.periods.models import Period
+from src.empresas.models import Company
 from src.general.mixins import BaseToAllMixin
+from src.periods.models import Period
 
 
 class BaseStatement(Model, BaseToAllMixin):

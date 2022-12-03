@@ -1,15 +1,16 @@
 from datetime import datetime
 
-import pandas as pd
-import requests
-from bs4 import BeautifulSoup as bs
 from django.utils import timezone
 
-from src.empresas.models import Company
-from src.periods.models import Period
-from src.general.constants import HEADERS
-from .models import Superinvestor, SuperinvestorActivity, SuperinvestorHistory
+from bs4 import BeautifulSoup as bs
+import pandas as pd
+import requests
 
+from src.empresas.models import Company
+from src.general.constants import HEADERS
+from src.periods.models import Period
+
+from .models import Superinvestor, SuperinvestorActivity, SuperinvestorHistory
 
 SITE = "https://www.dataroma.com"
 

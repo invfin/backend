@@ -1,6 +1,7 @@
 from typing import Any, Sequence
 
 from django.contrib.auth import get_user_model
+
 from factory import Faker, post_generation
 from factory.django import DjangoModelFactory
 from model_bakery import baker
@@ -10,16 +11,17 @@ User = get_user_model()
 super_user = baker.make(User, is_superuser=True)
 regular_user = baker.make(User, is_superuser=False)
 
+
 class ExampleUser:
     pass
 
 
 class UserFactory(DjangoModelFactory):
     id = 1
-    username = 'Lucas'
-    email = 'test@example.com'
-    first_name = 'Lucas'
-    last_name = 'Montes'
+    username = "Lucas"
+    email = "test@example.com"
+    first_name = "Lucas"
+    last_name = "Montes"
 
     @post_generation
     def password(self, create: bool, extracted: Sequence[Any], **kwargs):

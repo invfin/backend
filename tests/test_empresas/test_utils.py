@@ -6,47 +6,47 @@ from django.utils import timezone
 
 from bfet import DjangoTestingModel
 
-from src.empresas.utils import arrange_quarters, FinprepRequestCheck
 from src.empresas.models import (
+    BalanceSheet,
+    BalanceSheetFinprep,
+    BalanceSheetYahooQuery,
+    BalanceSheetYFinance,
+    BaseStatement,
+    CashflowStatement,
+    CashflowStatementFinprep,
+    CashflowStatementYahooQuery,
+    CashflowStatementYFinance,
     Company,
+    CompanyFinnhubProxy,
+    CompanyFinprepProxy,
+    CompanyGrowth,
+    CompanyStatementsProxy,
     CompanyStockPrice,
     CompanyUpdateLog,
     CompanyYahooQueryProxy,
     CompanyYFinanceProxy,
-    CompanyFinprepProxy,
-    CompanyFinnhubProxy,
-    CompanyStatementsProxy,
+    EficiencyRatio,
+    EnterpriseValueRatio,
     Exchange,
     ExchangeOrganisation,
-    BaseStatement,
+    FreeCashFlowRatio,
     IncomeStatement,
-    BalanceSheet,
-    CashflowStatement,
-    RentabilityRatio,
+    IncomeStatementFinprep,
+    IncomeStatementYahooQuery,
+    IncomeStatementYFinance,
+    InstitutionalOrganization,
+    KeyStatsYahooQuery,
     LiquidityRatio,
     MarginRatio,
-    FreeCashFlowRatio,
-    PerShareValue,
     NonGaap,
     OperationRiskRatio,
-    EnterpriseValueRatio,
-    CompanyGrowth,
-    EficiencyRatio,
+    PerShareValue,
     PriceToRatio,
-    InstitutionalOrganization,
-    TopInstitutionalOwnership,
-    BalanceSheetFinprep,
-    CashflowStatementFinprep,
-    IncomeStatementFinprep,
-    BalanceSheetYFinance,
-    CashflowStatementYFinance,
-    IncomeStatementYFinance,
-    BalanceSheetYahooQuery,
-    CashflowStatementYahooQuery,
-    IncomeStatementYahooQuery,
-    KeyStatsYahooQuery,
+    RentabilityRatio,
     StatementsFinnhub,
+    TopInstitutionalOwnership,
 )
+from src.empresas.utils import FinprepRequestCheck, arrange_quarters
 from src.periods.models import Period
 
 
@@ -111,9 +111,9 @@ class TestFinprepRequestCheck(TestCase):
         assert is_auth is True
         assert 120 == requests_done
 
-        is_auth, last_request, requests_done = FinprepRequestCheck().check_remaining_requests(3, now, 118)
+        is_auth, last_request, requests_done = FinprepRequestCheck().check_remaining_requests(3, now, 248)
         assert is_auth is False
-        assert 121 == requests_done
+        assert 251 == requests_done
 
         is_auth, last_request, requests_done = FinprepRequestCheck().check_remaining_requests(20, now, 40)
         assert is_auth is True

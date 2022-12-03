@@ -1,6 +1,6 @@
 import datetime
 
-from src.users.constants import ROBOADVISOR_USAGE, ADD
+from src.users.constants import ADD, ROBOADVISOR_USAGE
 from src.users.models import CreditUsageHistorial
 
 from .brain.investor import get_investor_type

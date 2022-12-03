@@ -1,16 +1,10 @@
-import vcr
-from model_bakery import baker
-
-import pytest
-
 from django.test import TestCase
 
+from model_bakery import baker
+import pytest
+import vcr
 
-from src.users.managers import (
-    CreditHistorialManager,
-    ProfileManager,
-    UserExtraManager,
-)
+from src.users.managers import CreditHistorialManager, ProfileManager, UserExtraManager
 
 users_vcr = vcr.VCR(
     cassette_library_dir="cassettes/users/managers/",

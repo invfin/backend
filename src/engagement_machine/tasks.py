@@ -3,9 +3,9 @@ from django.utils import timezone
 
 from celery import shared_task
 
-from src.emailing.tasks import send_email_task
 from src.emailing.constants import EMAIL_FOR_WEB
 from src.emailing.outils.emailing import EmailingSystem
+from src.emailing.tasks import send_email_task
 from src.web import constants as web_constants
 from src.web.models import WebsiteEmail
 

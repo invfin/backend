@@ -3,6 +3,8 @@ import json
 from django.db.models import Q
 from django.http.response import HttpResponse
 
+from src.empresas.utils import FinprepRequestCheck
+
 from .api.serializers import (
     ExcelBalanceSheetSerializer,
     ExcelCashflowStatementSerializer,
@@ -10,7 +12,6 @@ from .api.serializers import (
 )
 from .api.views import BaseAPIView
 from .models import BalanceSheet, CashflowStatement, Company, IncomeStatement
-from src.empresas.utils import FinprepRequestCheck
 
 
 def companies_searcher(request):

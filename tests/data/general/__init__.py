@@ -1,1 +1,1 @@
-from src.classifications.models import Tag, Category
+from src.classifications.models import Category, Tag

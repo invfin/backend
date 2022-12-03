@@ -1,16 +1,15 @@
 from typing import Dict, Tuple
-
 from unittest.mock import patch
 
+from django.contrib.auth import get_user_model
 from django.core import mail
 from django.test import TestCase, override_settings
-from django.contrib.auth import get_user_model
 
 from bfet import DjangoTestingModel
 
+from src.emailing import constants
 from src.emailing.outils.emailing import EmailingSystem
 from src.escritos.models import Term
-from src.emailing import constants
 from src.web.models import WebsiteEmail, WebsiteEmailTrack
 
 User = get_user_model()

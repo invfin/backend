@@ -2,11 +2,11 @@ from django.contrib.admin import site
 from django.contrib.admin.widgets import RelatedFieldWidgetWrapper
 from django.forms import CharField, ChoiceField, DateTimeField, DateTimeInput, EmailField, Form, ModelForm, Textarea
 
-from src.emailing.outils.emailing import EmailingSystem
 from src.content_creation import constants as content_creation_constants
+from src.emailing.outils.emailing import EmailingSystem
+from src.engagement_machine.outils.engagement import EngagementMachine
 from src.web import constants
 from src.web.models import WebsiteEmail
-from src.engagement_machine.outils.engagement import EngagementMachine
 
 
 class AutomaticNewsletterForm(Form):

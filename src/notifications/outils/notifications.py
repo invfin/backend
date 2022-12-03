@@ -1,6 +1,5 @@
-from typing import Dict
-
 import time
+from typing import Dict
 
 from django.apps import apps
 from django.contrib.auth import get_user_model

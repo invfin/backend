@@ -1,5 +1,3 @@
-from ckeditor.fields import RichTextField
-
 from django.contrib.auth import get_user_model
 from django.db.models import (
     CASCADE,
@@ -13,13 +11,15 @@ from django.db.models import (
     PositiveIntegerField,
 )
 
+from ckeditor.fields import RichTextField
+
+from src.content_creation.constants import POST_TYPE
+from src.content_creation.models import DefaultContent, DefaultTilte, Emoji, Hashtag
 from src.empresas.models import Company
 from src.escritos.models import Term
+from src.general.mixins import BaseToAllMixin
 from src.preguntas_respuestas.models import Question
 from src.public_blog.models import PublicBlog, WritterProfile
-from src.general.mixins import BaseToAllMixin
-from src.content_creation.models import DefaultContent, DefaultTilte, Emoji, Hashtag
-from src.content_creation.constants import POST_TYPE
 from src.socialmedias.constants import SOCIAL_MEDIAS
 
 User = get_user_model()

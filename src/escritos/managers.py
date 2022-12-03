@@ -1,6 +1,6 @@
 from typing import Type
 
-from django.db.models import QuerySet, Count
+from django.db.models import Count, QuerySet
 
 from src.escritos.constants import BASE_ESCRITO_PUBLISHED
 from src.general.managers import BaseManager, BaseQuerySet

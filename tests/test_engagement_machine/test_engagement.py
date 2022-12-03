@@ -2,19 +2,19 @@ from django.test import TestCase
 
 from bfet import DjangoTestingModel
 
-from src.web import constants
-from src.content_creation.outils.content_creator import (
-    QuestionContentCreation,
-    CompanyNewsContentCreation,
-    TermContentCreation,
-    PublicBlogContentCreation,
-    CompanyContentCreation,
-)
-from src.escritos.models import Term
-from src.engagement_machine.outils.engagement import EngagementMachine
-from src.web.models import WebsiteEmail
 from src.content_creation import constants as content_creation_constants
-from src.content_creation.models import Emoji, DefaultTilte
+from src.content_creation.models import DefaultTilte, Emoji
+from src.content_creation.outils.content_creator import (
+    CompanyContentCreation,
+    CompanyNewsContentCreation,
+    PublicBlogContentCreation,
+    QuestionContentCreation,
+    TermContentCreation,
+)
+from src.engagement_machine.outils.engagement import EngagementMachine
+from src.escritos.models import Term
+from src.web import constants
+from src.web.models import WebsiteEmail
 
 
 class TestEngagementMachine(TestCase):

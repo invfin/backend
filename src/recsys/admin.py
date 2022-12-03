@@ -1,31 +1,32 @@
 from django.contrib import admin
+
 from .models import (
+    UserCompanyRecommended,
+    UserProductComplementaryRecommended,
+    UserPromotionRecommended,
+    UserPublicBlogRecommended,
+    UserQuestionRecommended,
+    UserTermRecommended,
     VisiteurCompanyRecommended,
     VisiteurProductComplementaryRecommended,
     VisiteurPromotionRecommended,
     VisiteurPublicBlogRecommended,
     VisiteurQuestionRecommended,
     VisiteurTermRecommended,
-    UserCompanyRecommended,
-    UserProductComplementaryRecommended,
-    UserPromotionRecommended,
-    UserPublicBlogRecommended,
-    UserQuestionRecommended,
-    UserTermRecommended
 )
 
 
 class BaseModelRecommendededAdmin(admin.ModelAdmin):
     list_display = [
-        'user',
-        'model_recommended',
+        "user",
+        "model_recommended",
         "clicked",
         "recommendation_personalized",
         "recommendation_explained",
         "place",
         "location",
         "style",
-        'date',
+        "date",
     ]
 
 

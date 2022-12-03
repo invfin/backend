@@ -1,11 +1,11 @@
-from allauth.account.forms import SignupForm
-from allauth.socialaccount.forms import SignupForm as SocialSignupForm
-
 from django import forms
 from django.conf import settings
 from django.contrib.auth import forms as admin_forms, get_user_model
-from django.utils.translation import gettext_lazy as _
 from django.urls import reverse
+from django.utils.translation import gettext_lazy as _
+
+from allauth.account.forms import SignupForm
+from allauth.socialaccount.forms import SignupForm as SocialSignupForm
 
 from .models import Profile
 

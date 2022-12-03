@@ -1,21 +1,20 @@
 import random
-from typing import List, Dict, Type
+from typing import Dict, List, Type
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
 
-
-from src.socialmedias.outils.socialposter.facepy import Facebook
-from src.socialmedias.outils.socialposter.tweetpy import Twitter
+from src.content_creation import constants as content_creation_constants
 from src.content_creation.outils.content_creator import (
     CompanyContentCreation,
     CompanyNewsContentCreation,
-    TermContentCreation,
-    QuestionContentCreation,
     PublicBlogContentCreation,
+    QuestionContentCreation,
+    TermContentCreation,
 )
-from src.content_creation import constants as content_creation_constants
 from src.socialmedias import constants
+from src.socialmedias.outils.socialposter.facepy import Facebook
+from src.socialmedias.outils.socialposter.tweetpy import Twitter
 
 User = get_user_model()
 

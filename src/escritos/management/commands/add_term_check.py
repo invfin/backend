@@ -1,7 +1,7 @@
 from django.core.management import BaseCommand
 
-from src.escritos.models import Term
 from src.escritos.constants import DEFAULT_JSON_CHECKS_FILE
+from src.escritos.models import Term
 from src.general.utils import add_new_default_check
 
 

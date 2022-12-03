@@ -1,18 +1,16 @@
-import pytest
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.models import AnonymousUser
 from django.contrib.messages.middleware import MessageMiddleware
 from django.contrib.sessions.middleware import SessionMiddleware
 from django.http import HttpRequest, HttpResponseRedirect
-from django.test import RequestFactory
+from django.test import RequestFactory, TestCase
 from django.urls import reverse
+
+import pytest
 
 from src.users.forms import UserAdminChangeForm
 from src.users.models import User
-
-
-from django.test import TestCase
 
 
 class TestUserUpdateView:

@@ -1,17 +1,16 @@
-import json
-
-from typing import Tuple
-from dateutil.relativedelta import relativedelta
 from datetime import datetime
-
-import numpy as np
+import json
+from typing import Tuple
 
 from django.utils import timezone
 
-from src.periods import constants
-from src.periods.models import Period
+from dateutil.relativedelta import relativedelta
+import numpy as np
+
 from src.empresas.constants import MAX_REQUESTS_FINPREP
 from src.empresas.models import Company, CompanyUpdateLog
+from src.periods import constants
+from src.periods.models import Period
 
 
 class FinprepRequestCheck:

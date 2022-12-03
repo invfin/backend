@@ -18,8 +18,7 @@ from django.urls import reverse
 from src.empresas.models import Company
 from src.general.abstracts import AbstractFavoritesHistorial
 from src.periods.models import Period
-
-from src.super_investors.managers import SuperinvestorManager, SuperinvestorHistoryManager
+from src.super_investors.managers import SuperinvestorHistoryManager, SuperinvestorManager
 
 User = get_user_model()
 

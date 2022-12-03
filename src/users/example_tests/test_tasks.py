@@ -1,5 +1,5 @@
-import pytest
 from celery.result import EagerResult
+import pytest
 
 from src.users.tasks import get_users_count
 

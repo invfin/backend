@@ -1,10 +1,4 @@
-from rest_framework.serializers import (
-    CharField,
-    IntegerField,
-    ModelSerializer,
-    StringRelatedField,
-    URLField,
-)
+from rest_framework.serializers import CharField, IntegerField, ModelSerializer, StringRelatedField, URLField
 
 from src.api.serializers import RichTextField
 

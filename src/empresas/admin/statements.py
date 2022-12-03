@@ -2,23 +2,22 @@ from django.contrib import admin
 
 from src.empresas.admin.base import BaseCompanyAdmin, BaseJSONWidgetInline, BaseStatementAdmin
 from src.empresas.admin.filters.base import HasQuarterFilter
-
 from src.empresas.models import (
-    CompanyStatementsProxy,
-    IncomeStatement,
     BalanceSheet,
     CashflowStatement,
-    RentabilityRatio,
+    CompanyGrowth,
+    CompanyStatementsProxy,
+    EficiencyRatio,
+    EnterpriseValueRatio,
+    FreeCashFlowRatio,
+    IncomeStatement,
     LiquidityRatio,
     MarginRatio,
-    FreeCashFlowRatio,
-    PerShareValue,
     NonGaap,
     OperationRiskRatio,
-    EnterpriseValueRatio,
-    CompanyGrowth,
-    EficiencyRatio,
+    PerShareValue,
     PriceToRatio,
+    RentabilityRatio,
 )
 
 

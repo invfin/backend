@@ -13,8 +13,8 @@ from src.web.views import (
     ManageTermListView,
     ManageTermUpdateView,
     ManageWebView,
-    RoadmapListView,
     RoadmapDetailView,
+    RoadmapListView,
     soporte_view,
 )
 

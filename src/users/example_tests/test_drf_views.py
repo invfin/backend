@@ -1,11 +1,9 @@
+from django.test import RequestFactory, TestCase
+
 import pytest
-from django.test import RequestFactory
 
 from src.users.api.views import UserViewSet
 from src.users.models import User
-
-
-from django.test import TestCase
 
 
 class TestUserViewSet(TestCase):

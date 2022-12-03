@@ -2,7 +2,7 @@ from django.shortcuts import render
 
 from src.seo.views import SEODetailView, SEOListView
 
-from .models import Superinvestor, SuperinvestorActivity, FavoritesSuperinvestorsList, SuperinvestorHistory
+from .models import FavoritesSuperinvestorsList, Superinvestor, SuperinvestorActivity, SuperinvestorHistory
 
 
 class AllSuperinvestorsView(SEOListView):

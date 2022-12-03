@@ -1,9 +1,8 @@
 from django.test import TestCase
 
 from src.empresas.models import Company, IncomeStatement
-
-from tests.data.empresas import CreateStatements
 from src.periods import constants
+from tests.data.empresas import CreateStatements
 
 
 class TestBaseStatementManager(TestCase):

@@ -1,7 +1,8 @@
 from django.forms import ModelForm, models
 
 from src.general.forms import BaseEscritoForm
-from .models import TermCorrection, Term, TermContent
+
+from .models import Term, TermContent, TermCorrection
 
 
 class CreateCorrectionForm(ModelForm):

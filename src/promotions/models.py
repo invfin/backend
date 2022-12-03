@@ -4,19 +4,19 @@ from django.db.models import (
     SET_NULL,
     BooleanField,
     CharField,
-    ForeignKey,
     DateTimeField,
-    TextField,
-    SlugField,
+    ForeignKey,
     ManyToManyField,
     Model,
     PositiveBigIntegerField,
+    SlugField,
+    TextField,
 )
 
 from ckeditor.fields import RichTextField
 
-from src.promotions import constants
 from src.general.abstracts import AbstractTimeStampedModel
+from src.promotions import constants
 from src.seo import constants as seo_constants
 from src.seo.models import Visiteur
 from src.socialmedias.constants import SOCIAL_MEDIAS

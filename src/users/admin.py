@@ -1,17 +1,14 @@
 from django.contrib import admin
 from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
+
 from import_export.admin import ImportExportActionModelAdmin
 
+from src.business.admin import ProductCommentInline
+from src.preguntas_respuestas.admin import AnswerInline, QuestionInline
 from src.users.forms import UserAdminChangeForm, UserAdminCreationForm
 
-from src.business.admin import (
-    ProductCommentInline,
-)
-
-from src.preguntas_respuestas.admin import QuestionInline, AnswerInline
-
-from .models import CreditUsageHistorial, MetaProfileInfo, UsersCategory, Profile
+from .models import CreditUsageHistorial, MetaProfileInfo, Profile, UsersCategory
 
 User = get_user_model()
 

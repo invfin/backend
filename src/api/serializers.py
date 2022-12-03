@@ -1,12 +1,8 @@
 from django.contrib.auth import authenticate
 from django.utils.html import strip_tags
 from django.utils.translation import gettext_lazy as _
-from rest_framework.serializers import (
-    CharField,
-    ModelSerializer,
-    Serializer,
-    ValidationError,
-)
+
+from rest_framework.serializers import CharField, ModelSerializer, Serializer, ValidationError
 
 from src.api.models import Key
 

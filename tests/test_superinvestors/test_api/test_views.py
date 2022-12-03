@@ -1,16 +1,14 @@
 import json
-
 from unittest import skip
 
-from bfet import DjangoTestingModel
-
-from rest_framework.test import APITestCase
 from django.contrib.auth import get_user_model
 
+from bfet import DjangoTestingModel
+from rest_framework.test import APITestCase
 
-from tests.utils import BaseAPIViewTestMixin
 from src.super_investors.models import Superinvestor
 from tests.data.superinvestors.superinvestors_data import LIST_SUPERINVESTORS, SINGLE_SUPERINVESTOR
+from tests.utils import BaseAPIViewTestMixin
 
 User = get_user_model()
 

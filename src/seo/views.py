@@ -1,14 +1,13 @@
 from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect
-from django.views.generic import DetailView, FormView, ListView, RedirectView, TemplateView, View, CreateView
+from django.views.generic import CreateView, DetailView, FormView, ListView, RedirectView, TemplateView, View
 
 from src.escritos.models import Term, TermsRelatedToResume
 from src.preguntas_respuestas.models import Question
-from src.public_blog.models import PublicBlog
-
-from src.seo.mixins import SEOViewMixin
 from src.promotions.models import Promotion
+from src.public_blog.models import PublicBlog
+from src.seo.mixins import SEOViewMixin
 
 
 class UrlShorterRedirectView(RedirectView):

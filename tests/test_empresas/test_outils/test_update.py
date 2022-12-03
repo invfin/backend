@@ -2,27 +2,27 @@ from unittest import skip
 
 from django.test import TestCase
 
-from bfet import DjangoTestingModel, DataCreator
+from bfet import DataCreator, DjangoTestingModel
 
-from src.periods import constants
 from src.currencies.models import Currency
-from src.periods.models import Period
-from src.empresas.outils.update import UpdateCompany
 from src.empresas.models import (
-    Company,
-    IncomeStatementYahooQuery,
-    IncomeStatementYFinance,
-    IncomeStatementFinprep,
+    BalanceSheet,
+    BalanceSheetFinprep,
     BalanceSheetYahooQuery,
     BalanceSheetYFinance,
-    BalanceSheetFinprep,
+    CashflowStatement,
+    CashflowStatementFinprep,
     CashflowStatementYahooQuery,
     CashflowStatementYFinance,
-    CashflowStatementFinprep,
+    Company,
     IncomeStatement,
-    BalanceSheet,
-    CashflowStatement,
+    IncomeStatementFinprep,
+    IncomeStatementYahooQuery,
+    IncomeStatementYFinance,
 )
+from src.empresas.outils.update import UpdateCompany
+from src.periods import constants
+from src.periods.models import Period
 
 
 class TestUpdateCompany(TestCase):

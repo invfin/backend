@@ -7,13 +7,13 @@ from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views.generic import CreateView, UpdateView
 
-from src.notifications import constants as notifications_constants
+from src.escritos import constants as escritos_constants
 from src.general.forms import DefaultNewsletterForm
+from src.notifications import constants as notifications_constants
 from src.notifications.tasks import prepare_notification_task
 from src.public_blog.forms import PublicBlogForm
 from src.public_blog.models import NewsletterFollowers, PublicBlog, PublicBlogAsNewsletter, WritterProfile
 from src.seo.views import SEODetailView, SEOListView
-from src.escritos import constants as escritos_constants
 
 User = get_user_model()
 

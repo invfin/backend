@@ -2,16 +2,10 @@ from django.contrib import admin
 from django.db import models
 from django.utils.html import format_html
 
-from import_export.admin import ImportExportActionModelAdmin
 from django_json_widget.widgets import JSONEditorWidget
+from import_export.admin import ImportExportActionModelAdmin
 
-from .models import (
-    Term,
-    TermContent,
-    TermCorrection,
-    TermsComment,
-    TermsRelatedToResume,
-)
+from .models import Term, TermContent, TermCorrection, TermsComment, TermsRelatedToResume
 
 
 @admin.action(description="Look for images")

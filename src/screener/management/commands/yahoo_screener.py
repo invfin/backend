@@ -1,6 +1,7 @@
-import yahooquery as yq
 from django.core.management import BaseCommand
 from django.template.defaultfilters import slugify
+
+import yahooquery as yq
 
 from src.translate.google_trans_new import google_translator
 

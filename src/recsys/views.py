@@ -1,13 +1,13 @@
 from typing import Dict, List, Union
 
-from django.db.models import QuerySet, Model
-from django.views.generic import TemplateView, RedirectView
 from django.apps import apps
+from django.db.models import Model, QuerySet
+from django.views.generic import RedirectView, TemplateView
 
+from src.countries.models import Country
 from src.empresas.models import Company, Exchange
 from src.escritos.models import Term
 from src.industries_sectors.models import Industry, Sector
-from src.countries.models import Country
 from src.public_blog.models import PublicBlog
 from src.seo import constants
 

@@ -11,11 +11,11 @@ def jazzmin_menu_check(app_configs, **kwargs):
 
     errors = []
 
-    for menu_name in ['side_menu_models']:
+    for menu_name in ["side_menu_models"]:
         menu = settings.JAZZMIN_SETTINGS.get(menu_name)
         for menu_elem in menu:
-            for model in menu_elem.get('models', []):
-                app_label, model_name = model['model'].split(".")
+            for model in menu_elem.get("models", []):
+                app_label, model_name = model["model"].split(".")
                 try:
                     apps.get_model(app_label, model_name)
                 except LookupError:

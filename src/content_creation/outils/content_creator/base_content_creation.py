@@ -1,15 +1,13 @@
 import random
-
-from typing import Dict, List, Type, Any, Tuple, Union
+from typing import Any, Dict, List, Tuple, Type, Union
 
 from django.apps import apps
 from django.conf import settings
 
-from src.content_creation.models import DefaultContent, DefaultTilte, Emoji, Hashtag
 from src.content_creation import constants
-from src.socialmedias import constants as socialmedias_constants
+from src.content_creation.models import DefaultContent, DefaultTilte, Emoji, Hashtag
 from src.seo.utils import generate_url_with_utm
-
+from src.socialmedias import constants as socialmedias_constants
 
 FULL_DOMAIN = settings.FULL_DOMAIN
 

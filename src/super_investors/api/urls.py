@@ -1,10 +1,6 @@
 from django.urls import path
 
-from .views import (
-    AllSuperinvestorsAPIView,
-    SuperinvestorActivityAPIView,
-    SuperinvestorHistoryAPIView,
-)
+from .views import AllSuperinvestorsAPIView, SuperinvestorActivityAPIView, SuperinvestorHistoryAPIView
 
 urlpatterns = [
     path("lista-movimientos/", SuperinvestorActivityAPIView.as_view(), name="superinvestors_lista_movimientos"),

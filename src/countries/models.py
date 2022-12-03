@@ -3,7 +3,6 @@ from django.db.models import CharField
 
 from src.general.abstracts import AbstractTimeStampedModel
 
-
 User = get_user_model()
 
 
