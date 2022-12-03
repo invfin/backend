@@ -56,22 +56,7 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-1">
-                        <div style="flex:0.1;display: flex; justify-content: center;" class="pt-2">
-                            <div>
-                                <form method="POST" action="{% url 'general:create_vote_view' answer.encoded_url_up %}">
-                                    {% csrf_token %}
-                                    <button class="btn btn-sm"><i class="fas fa-caret-up"
-                                            style="font-size: 50px;"></i></button>
-                                </form>
-                                <div style="width: 100%;text-align: center;">{{answer.total_votes}}</div>
-                                <form method="POST"
-                                    action="{% url 'general:create_vote_view' answer.encoded_url_down %}">
-                                    {% csrf_token %}
-                                    <button class="btn btn-sm"><i class="fas fa-caret-down"
-                                            style="font-size: 50px;"></i></button>
-                                </form>
-                            </div>
-                        </div>
+                        {% include "votes.html" with object=answer %}
                     </div>
                     <div class="col-10">
                         {% if object.has_accepted_answer == False and request.user == object.author%}

@@ -106,24 +106,21 @@ class PublicBlog(AbstractPublishableContent):
         verbose_name = "Public blog post"
         db_table = "blog_post"
 
-    def get_absolute_url(self):
-        return reverse("public_blog:blog_details", kwargs={"slug": self.slug})
+    def get_absolute_url(self) -> str:
+        return self.custom_url
 
     @property
-    def custom_url(self):
-        return f"{self.author.custom_url}{self.get_absolute_url()}"
+    def custom_url(self) -> str:
+        absolute_url = reverse("public_blog:blog_details", kwargs={"slug": self.slug})
+        return f"{self.author.custom_url}{absolute_url}"
 
     @property
-    def has_newsletter(self):
-        has_newsletter = False
-        if self.public_blog_newsletter.exists():
-            has_newsletter = True
-        return has_newsletter
+    def has_newsletter(self) -> bool:
+        return self.public_blog_newsletter.exists()
 
     @property
-    def number_comments(self):
-        number_comments = self.comments_related.all().count()
-        return number_comments
+    def number_comments(self) -> int:
+        return self.comments_related.all().count()
 
     @property
     def opening_rate(self):

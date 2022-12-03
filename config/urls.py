@@ -8,13 +8,7 @@ from django.views import defaults as default_views
 from rest_framework.documentation import include_docs_urls
 
 from src.api.views import obtain_auth_key
-from src.seo.sitemaps import (
-    CompanySitemap,
-    PublicBlogSitemap,
-    QuestionSitemap,
-    TermSitemap,
-    SuperinvestorSitemap
-)
+from src.seo.sitemaps import CompanySitemap, PublicBlogSitemap, QuestionSitemap, TermSitemap, SuperinvestorSitemap
 
 sitemaps = {
     "blogs": PublicBlogSitemap,
@@ -43,7 +37,7 @@ urlpatterns = [
     path("", include("src.roboadvisor.urls", namespace="roboadvisor")),
     path("", include("src.business.urls", namespace="business")),
     path("", include("src.recsys.urls", namespace="recsys")),
-    path("", include("apps.emailing.urls", namespace="emailing")),
+    path("", include("src.emailing.urls", namespace="emailing")),
     path("sitemap.xml", sitemap, {"sitemaps": sitemaps}, name="django.contrib.sitemaps.views.sitemap"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 

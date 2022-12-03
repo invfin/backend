@@ -135,18 +135,29 @@ class CommentsMixin:
         return self.comments_related.all()
 
     @property
-    def encoded_url_comment(self):
-        return self.encoded_url
+    def encoded_url_comment(self) -> str:
+        comment_url = reverse("general:create_comment_view", kwargs={"url_encoded": self.encoded_url})
+        return f"{FULL_DOMAIN}{comment_url}"
 
 
 class VotesMixin:
     @property
-    def encoded_url_up(self):
+    def base_encoded_url_up(self):
         return urlsafe_base64_encode(force_bytes(f"{self.base_url_to_encode}-up"))
 
     @property
-    def encoded_url_down(self):
+    def encoded_url_up(self):
+        comment_url = reverse("general:create_vote_view", kwargs={"url_encoded": self.base_encoded_url_up})
+        return f"{FULL_DOMAIN}{comment_url}"
+
+    @property
+    def base_encoded_url_down(self):
         return urlsafe_base64_encode(force_bytes(f"{self.base_url_to_encode}-down"))
+
+    @property
+    def encoded_url_down(self):
+        comment_url = reverse("general:create_vote_view", kwargs={"url_encoded": self.base_encoded_url_down})
+        return f"{FULL_DOMAIN}{comment_url}"
 
     def vote(self, user, action):
         # TODO change user in for a filter
