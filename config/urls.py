@@ -4,10 +4,17 @@ from django.contrib import admin
 from django.contrib.sitemaps.views import sitemap
 from django.urls import include, path
 from django.views import defaults as default_views
+
 from rest_framework.documentation import include_docs_urls
 
-from apps.api.views import obtain_auth_key
-from apps.seo.sitemaps import CompanySitemap, PublicBlogSitemap, QuestionSitemap, TermSitemap, SuperinvestorSitemap
+from src.api.views import obtain_auth_key
+from src.seo.sitemaps import (
+    CompanySitemap,
+    PublicBlogSitemap,
+    QuestionSitemap,
+    TermSitemap,
+    SuperinvestorSitemap
+)
 
 sitemaps = {
     "blogs": PublicBlogSitemap,
@@ -20,22 +27,22 @@ sitemaps = {
 urlpatterns = [
     path(settings.ADMIN_URL, admin.site.urls),
     path(settings.SECOND_ADMIN_URL, include("admin_honeypot.urls", namespace="admin_honeypot")),
-    path("", include("apps.general.urls", namespace="general")),
-    path("", include("apps.web.urls", namespace="web")),
-    path("", include("apps.users.urls", namespace="users")),
+    path("", include("src.general.urls", namespace="general")),
+    path("", include("src.web.urls", namespace="web")),
+    path("", include("src.users.urls", namespace="users")),
     path("accounts/", include("allauth.urls")),
-    path("", include("apps.preguntas_respuestas.urls", namespace="preguntas_respuestas")),
-    path("", include("apps.escritos.urls", namespace="escritos")),
-    path("", include("apps.public_blog.urls", namespace="public_blog")),
-    path("screener/", include("apps.screener.urls", namespace="screener")),
-    path("", include("apps.super_investors.urls", namespace="super_investors")),
-    path("", include("apps.empresas.urls", namespace="empresas")),
-    # path("", include("apps.etfs.urls", namespace="etfs")),
-    path("", include("apps.cartera.urls", namespace="cartera")),
-    path("", include("apps.seo.urls", namespace="seo")),
-    path("", include("apps.roboadvisor.urls", namespace="roboadvisor")),
-    path("", include("apps.business.urls", namespace="business")),
-    path("", include("apps.recsys.urls", namespace="recsys")),
+    path("", include("src.preguntas_respuestas.urls", namespace="preguntas_respuestas")),
+    path("", include("src.escritos.urls", namespace="escritos")),
+    path("", include("src.public_blog.urls", namespace="public_blog")),
+    path("screener/", include("src.screener.urls", namespace="screener")),
+    path("", include("src.super_investors.urls", namespace="super_investors")),
+    path("", include("src.empresas.urls", namespace="empresas")),
+    # path("", include("src.etfs.urls", namespace="etfs")),
+    path("", include("src.cartera.urls", namespace="cartera")),
+    path("", include("src.seo.urls", namespace="seo")),
+    path("", include("src.roboadvisor.urls", namespace="roboadvisor")),
+    path("", include("src.business.urls", namespace="business")),
+    path("", include("src.recsys.urls", namespace="recsys")),
     path("", include("apps.emailing.urls", namespace="emailing")),
     path("sitemap.xml", sitemap, {"sitemaps": sitemaps}, name="django.contrib.sitemaps.views.sitemap"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
@@ -43,14 +50,14 @@ urlpatterns = [
 # API URLS
 urlpatterns += [
     # API base url
-    path("api/", include("apps.api.urls")),
+    path("api/", include("src.api.urls")),
     # DRF auth token
     path("api/obtener-clave/", obtain_auth_key),
 ]
 
-handler403 = "apps.general.views.handler403"
-handler404 = "apps.general.views.handler404"
-handler500 = "apps.general.views.handler500"
+handler403 = "src.general.views.handler403"
+handler404 = "src.general.views.handler404"
+handler500 = "src.general.views.handler500"
 
 if settings.DEBUG:
     if "drf_spectacular" in settings.INSTALLED_APPS:

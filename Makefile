@@ -1,5 +1,4 @@
-BLACK_FOLDERS=apps
-MYPY_FOLDERS=apps
+FOLDERS=src tests
 
 .PHONY: requirements
 
@@ -135,22 +134,28 @@ pycov:
 
 # Style
 format:
-	isort . black ${BLACK_FOLDERS} flake8 mypy ${MYPY_FOLDERS}
+	isort ${FOLDERS} 
+	black ${FOLDERS} 
+	flake8 ${FOLDERS}
+	mypy ${FOLDERS}
 
 isort_check:
-	docker compose -f local.yml run --rm invfin make isort --df -c .
+	isort --df -c ${FOLDERS}
 
 black_check:
-	docker compose -f local.yml run --rm invfin make black ${BLACK_FOLDERS} --check
+	black ${BLACK_FOLDERS} --check
 
 flake8:
-	docker compose -f local.yml run --rm invfin make flake8
+	flake8 ${FOLDERS}
 
 isort:
-	docker compose -f local.yml run --rm invfin make isort .
+	isort ${FOLDERS}
 
 black:
-	docker compose -f local.yml run --rm invfin make black ${BLACK_FOLDERS}
+	black ${FOLDERS}
 
 mypy:
-	docker compose -f local.yml run --rm invfin make mypy ${MYPY_FOLDERS}
+	mypy ${FOLDERS}
+
+deploy:
+	./deployment.sh

@@ -1,14 +1,13 @@
 from unittest import skip
 from unittest.mock import patch
 
+from django.contrib.sessions.middleware import SessionMiddleware
+from django.test import RequestFactory, TestCase
+
 from bfet import DjangoTestingModel
 
-from django.test import TestCase, RequestFactory
-from django.contrib.sessions.middleware import SessionMiddleware
-
-from apps.seo.models import Visiteur
-from apps.seo.outils.visiteur_meta import SeoInformation
-
+from src.seo.models import Visiteur
+from src.seo.outils.visiteur_meta import SeoInformation
 
 
 class TestSeoInformation(TestCase):
@@ -55,7 +54,7 @@ class TestSeoInformation(TestCase):
     def test_add_visiteur_id_into_session(self):
         assert self.request.session.get("visiteur_id") is None
         SeoInformation.add_visiteur_id_into_session(self.request, self.visiteur)
-        assert self.request.session['visiteur_id'] == self.visiteur.id
+        assert self.request.session["visiteur_id"] == self.visiteur.id
 
     @patch("django.contrib.gis.geoip2.base.GeoIP2.city")
     def test_meta_information(self, mock_city):
@@ -65,10 +64,8 @@ class TestSeoInformation(TestCase):
             "http_user_agent": None,
             "ip": "150.172.238.178",
             **self.expected_location,
-
         }
         assert expected_result == meta_information
-
 
     def test_update_visiteur_session(self):
         visiteur = SeoInformation().update_visiteur_session(self.visiteur, self.request)

@@ -1,15 +1,13 @@
-import vcr
-
 from django.test import TestCase
 
 from bfet import DjangoTestingModel as DTM
+import vcr
 
-from apps.empresas.models import BalanceSheetFinprep, IncomeStatementFinprep, CashflowStatementFinprep, Company
-from apps.empresas.parse.finprep import FinprepInfo
-from apps.empresas.parse.finprep.normalize_data import NormalizeFinprep
-from apps.empresas.parse.finprep.parse_data import ParseFinprep
+from src.empresas.models import BalanceSheetFinprep, CashflowStatementFinprep, Company, IncomeStatementFinprep
+from src.empresas.parse.finprep import FinprepInfo
+from src.empresas.parse.finprep.normalize_data import NormalizeFinprep
+from src.empresas.parse.finprep.parse_data import ParseFinprep
 from tests.data.empresas.finprep import finprep_data
-
 
 parse_vcr = vcr.VCR(
     cassette_library_dir="cassettes/company/parse/finprep/",
@@ -208,7 +206,7 @@ class TestFinprepInfo(TestCase):
         for statement in finprep_data.INCOME_STATEMENT:
             IncomeStatementFinprep.objects.create(**self.normalizer.normalize_income_statements_finprep(statement))
         assert 5 == IncomeStatementFinprep.objects.all().count()
-        assert (old_number_statements_created== IncomeStatementFinprep.objects.all().count())
+        assert old_number_statements_created == IncomeStatementFinprep.objects.all().count()
         for statement in previous_list_data:
             new_statement = IncomeStatementFinprep.objects.get(date=statement.date)
             with self.subTest(statement):

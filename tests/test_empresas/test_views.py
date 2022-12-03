@@ -1,22 +1,17 @@
 import json
-from bfet import DjangoTestingModel
 
-from django.test import TestCase
-from django.urls import reverse
 from django.db import connection
+from django.test import TestCase
 from django.test.utils import CaptureQueriesContext
+from django.urls import reverse
 
+from bfet import DjangoTestingModel
 from rest_framework.test import APITestCase
 
-from apps.periods import constants
+from src.empresas.models import BalanceSheet, CashflowStatement, Company, IncomeStatement
+from src.periods import constants
+from src.periods.models import Period
 from tests.utils import BaseAPIViewTestMixin
-from apps.empresas.models import (
-    Company,
-    IncomeStatement,
-    BalanceSheet,
-    CashflowStatement,
-)
-from apps.periods.models import Period
 
 
 class TestExcelAPIIncome(BaseAPIViewTestMixin, APITestCase):

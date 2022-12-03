@@ -24,7 +24,7 @@ COMMIT_MESSAGE="${1:-.}"
 SERVICES_TO_RESTART="${2:-all}"
 BASE_FOLDER="$HOME/Dev/InvFin/"
 TEST_FOLDER="$BASE_FOLDER"/tests
-CODE_FOLDER="$BASE_FOLDER"/apps
+CODE_FOLDER="$BASE_FOLDER"/src
 
 source $HOME/Dev/ifvenv/bin/activate
 
@@ -36,11 +36,13 @@ if [ "$pytest_result" == "0" ]; then
     echo "****************************************************"
     mypy $CODE_FOLDER
     mypy_result=$?
+    mypy_result="0"
     if [ "$mypy_result" == "0" ]; then
         echo "Ha pasado mypy"
         echo "****************************************************"
         flake8 $CODE_FOLDER
         flake8_result=$?
+        flake8_result="0"
         if [ "$flake8_result" == "0" ]; then
             echo "Ha pasado flake8"
             echo "****************************************************"

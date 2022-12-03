@@ -6,9 +6,9 @@ from django.test import TestCase
 
 from bfet import DjangoTestingModel
 
-from apps.empresas.models import Company
-from apps.empresas.tasks import CompanyTask
-from apps.empresas.outils.retrieve_data import RetrieveCompanyData
+from src.empresas.models import Company
+from src.empresas.outils.retrieve_data import RetrieveCompanyData
+from src.empresas.tasks import CompanyTask
 
 
 class TestCompanyTask(TestCase):
@@ -62,12 +62,12 @@ class TestCompanyTask(TestCase):
         assert self.apple == CompanyTask("first_financials_yahooquery_info", "key_stats").retrieve_company()
         assert CompanyTask("key_stats", "key_stats").retrieve_company() is None
 
-    @patch("apps.empresas.outils.update.UpdateCompany.create_financials_finprep")
-    @patch("apps.empresas.outils.retrieve_data.RetrieveCompanyData.create_financials_finnhub")
-    @patch("apps.empresas.outils.retrieve_data.RetrieveCompanyData.create_key_stats_yahooquery")
-    @patch("apps.empresas.outils.retrieve_data.RetrieveCompanyData.create_institutionals_yahooquery")
-    @patch("apps.empresas.tasks.CompanyTask.yfinance_tasks")
-    @patch("apps.empresas.tasks.CompanyTask.yahoo_query_tasks")
+    @patch("src.empresas.outils.update.UpdateCompany.create_financials_finprep")
+    @patch("src.empresas.outils.retrieve_data.RetrieveCompanyData.create_financials_finnhub")
+    @patch("src.empresas.outils.retrieve_data.RetrieveCompanyData.create_key_stats_yahooquery")
+    @patch("src.empresas.outils.retrieve_data.RetrieveCompanyData.create_institutionals_yahooquery")
+    @patch("src.empresas.tasks.CompanyTask.yfinance_tasks")
+    @patch("src.empresas.tasks.CompanyTask.yahoo_query_tasks")
     def test_select_task(
         self,
         mock_yahoo_query_tasks,
@@ -103,23 +103,23 @@ class TestCompanyTask(TestCase):
         assert mail.outbox[0].from_email == "InvFin - Automatic <EMAIL_DEFAULT@example.com>"
         assert mail.outbox[0].to == ["InvFin - Automatic <EMAIL_DEFAULT@example.com>"]
 
-    @patch("apps.empresas.outils.retrieve_data.RetrieveCompanyData.create_financials_yahooquery")
-    @patch("apps.empresas.outils.retrieve_data.RetrieveCompanyData.create_financials_yahooquery")
+    @patch("src.empresas.outils.retrieve_data.RetrieveCompanyData.create_financials_yahooquery")
+    @patch("src.empresas.outils.retrieve_data.RetrieveCompanyData.create_financials_yahooquery")
     def test_yahoo_query_tasks(self, mock_create_financials_yahooquery, mock_create_financials_yahooquery_2):
         retrieve_data = RetrieveCompanyData(self.intc)
         CompanyTask("key_stats", "key_stats").yahoo_query_tasks(retrieve_data)
         mock_create_financials_yahooquery.called_with("a")
         mock_create_financials_yahooquery_2.called_with("q")
 
-    @patch("apps.empresas.outils.retrieve_data.RetrieveCompanyData.create_financials_yfinance")
-    @patch("apps.empresas.outils.retrieve_data.RetrieveCompanyData.create_financials_yfinance")
+    @patch("src.empresas.outils.retrieve_data.RetrieveCompanyData.create_financials_yfinance")
+    @patch("src.empresas.outils.retrieve_data.RetrieveCompanyData.create_financials_yfinance")
     def test_yfinance_tasks(self, mock_create_financials_yfinance, mock_create_financials_yfinance_2):
         retrieve_data = RetrieveCompanyData(self.intc)
         CompanyTask("key_stats", "key_stats").yfinance_tasks(retrieve_data)
         mock_create_financials_yfinance.called_with("a")
         mock_create_financials_yfinance_2.called_with("q")
 
-    @patch("apps.empresas.tasks.CompanyTask.select_task")
+    @patch("src.empresas.tasks.CompanyTask.select_task")
     def test_launch_task(self, mock_select_task):
         with self.subTest("called select task"):
             CompanyTask("first_financials_finnhub_info", "key_stats").launch_task()
@@ -180,14 +180,14 @@ class TestTask(TestCase):
             },
         )
 
-    @patch("apps.empresas.tasks.create_averages_task.delay")
+    @patch("src.empresas.tasks.create_averages_task.delay")
     def test_create_averages_task(self, mock_create_averages_task):
         pass
 
-    @patch("apps.empresas.tasks.create_ttm_task.delay")
+    @patch("src.empresas.tasks.create_ttm_task.delay")
     def test_create_ttm_task(self, mock_create_ttm_task):
         pass
 
-    @patch("apps.empresas.tasks.arrange_quarters_task.delay")
+    @patch("src.empresas.tasks.arrange_quarters_task.delay")
     def test_arrange_quarters_task(self, mock_arrange_quarters_task):
         pass

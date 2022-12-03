@@ -1,17 +1,16 @@
 from unittest import skip
 
+from django.contrib.auth import get_user_model
 from django.test import TestCase
 
 from bfet import DjangoTestingModel
 
-from django.contrib.auth import get_user_model
-
-from apps.notifications import constants
-from apps.notifications.outils.notifications import NotificationSystem
-from apps.notifications.models import Notification
-from apps.users.models import Profile
-from apps.preguntas_respuestas.models import Question, QuesitonComment, AnswerComment, Answer
-from apps.public_blog.models import PublicBlog, NewsletterFollowers
+from src.notifications import constants
+from src.notifications.models import Notification
+from src.notifications.outils.notifications import NotificationSystem
+from src.preguntas_respuestas.models import Answer, AnswerComment, QuesitonComment, Question
+from src.public_blog.models import NewsletterFollowers, PublicBlog
+from src.users.models import Profile
 
 User = get_user_model()
 

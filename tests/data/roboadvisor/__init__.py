@@ -1,1 +1,1 @@
-from apps.roboadvisor.models import RoboAdvisorService
+from src.roboadvisor.models import RoboAdvisorService

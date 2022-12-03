@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from apps.general.outils.parser_client import ParserClient
+from src.general.outils.parser_client import ParserClient
 
 
 class TestParserClient(TestCase):

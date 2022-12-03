@@ -1,53 +1,51 @@
 from typing import Dict, List
-from bfet import DjangoTestingModel
 
 from django.utils import timezone
 
-from apps.empresas.models import (
-    CompanyYahooQueryProxy,
-    CompanyYFinanceProxy,
-    CompanyFinprepProxy,
-    CompanyFinnhubProxy,
-    CompanyStatementsProxy,
+from bfet import DjangoTestingModel
+
+from src.empresas.models import (
+    BalanceSheet,
+    BalanceSheetFinprep,
+    BalanceSheetYahooQuery,
+    BalanceSheetYFinance,
+    CashflowStatement,
+    CashflowStatementFinprep,
+    CashflowStatementYahooQuery,
+    CashflowStatementYFinance,
     Company,
+    CompanyFinnhubProxy,
+    CompanyFinprepProxy,
+    CompanyGrowth,
+    CompanyStatementsProxy,
     CompanyStockPrice,
     CompanyUpdateLog,
+    CompanyYahooQueryProxy,
+    CompanyYFinanceProxy,
+    EficiencyRatio,
+    EnterpriseValueRatio,
     Exchange,
     ExchangeOrganisation,
+    FreeCashFlowRatio,
     IncomeStatement,
-    BalanceSheet,
-    CashflowStatement,
-    RentabilityRatio,
+    IncomeStatementFinprep,
+    IncomeStatementYahooQuery,
+    IncomeStatementYFinance,
+    InstitutionalOrganization,
+    KeyStatsYahooQuery,
     LiquidityRatio,
     MarginRatio,
-    FreeCashFlowRatio,
-    PerShareValue,
     NonGaap,
     OperationRiskRatio,
-    EnterpriseValueRatio,
-    CompanyGrowth,
-    EficiencyRatio,
+    PerShareValue,
     PriceToRatio,
-    InstitutionalOrganization,
-    TopInstitutionalOwnership,
-    BalanceSheetFinprep,
-    CashflowStatementFinprep,
-    IncomeStatementFinprep,
-    BalanceSheetYFinance,
-    CashflowStatementYFinance,
-    IncomeStatementYFinance,
-    BalanceSheetYahooQuery,
-    CashflowStatementYahooQuery,
-    IncomeStatementYahooQuery,
-    KeyStatsYahooQuery,
+    RentabilityRatio,
     StatementsFinnhub,
+    TopInstitutionalOwnership,
 )
-from apps.industries_sectors.models import (
-    Industry,
-    Sector,
-)
-from apps.periods.models import Period
-from apps.periods import constants
+from src.industries_sectors.models import Industry, Sector
+from src.periods import constants
+from src.periods.models import Period
 
 
 class CreateExchanges:

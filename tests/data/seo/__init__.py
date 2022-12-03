@@ -1,1 +1,1 @@
-from apps.seo.models import Visiteur
+from src.seo.models import Visiteur

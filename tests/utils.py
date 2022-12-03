@@ -1,25 +1,19 @@
+import datetime
+from typing import Any, Dict
+from unittest import skip
 import urllib
 
-import datetime
-from typing import Dict, Any
-from unittest import skip
+from django.conf import settings
+from django.contrib.auth import get_user_model
+from django.shortcuts import resolve_url
 
 from bfet import DjangoTestingModel
-
-from django.shortcuts import resolve_url
-from django.contrib.auth import get_user_model
-from django.conf import settings
-
-from rest_framework.exceptions import ErrorDetail, server_error
 from rest_framework import status
+from rest_framework.exceptions import ErrorDetail, server_error
 
-from apps.api.models import Key
-from apps.business.models import (
-    Product,
-    ProductComplementary,
-    ProductSubscriber,
-)
-from apps.currencies.models import Currency
+from src.api.models import Key
+from src.business.models import Product, ProductComplementary, ProductSubscriber
+from src.currencies.models import Currency
 
 User = get_user_model()
 

@@ -1,23 +1,23 @@
 from django.test import TestCase
 
-from bfet import DjangoTestingModel, DataCreator
+from bfet import DataCreator, DjangoTestingModel
 
-from apps.periods.constants import PERIOD_FOR_YEAR
-from apps.currencies.models import Currency
-from apps.periods.models import Period
-from apps.empresas.outils.average_statements import AverageStatements
-from apps.empresas.models import (
-    Company,
-    IncomeStatementYahooQuery,
-    IncomeStatementYFinance,
-    IncomeStatementFinprep,
+from src.currencies.models import Currency
+from src.empresas.models import (
+    BalanceSheetFinprep,
     BalanceSheetYahooQuery,
     BalanceSheetYFinance,
-    BalanceSheetFinprep,
+    CashflowStatementFinprep,
     CashflowStatementYahooQuery,
     CashflowStatementYFinance,
-    CashflowStatementFinprep,
+    Company,
+    IncomeStatementFinprep,
+    IncomeStatementYahooQuery,
+    IncomeStatementYFinance,
 )
+from src.empresas.outils.average_statements import AverageStatements
+from src.periods.constants import PERIOD_FOR_YEAR
+from src.periods.models import Period
 
 
 class TestAverageStatements(TestCase):

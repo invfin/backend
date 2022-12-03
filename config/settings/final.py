@@ -1,5 +1,4 @@
 from .base import IS_PROD, IS_TEST
-
 from .ckeditor import *
 from .custom_admin import *
 

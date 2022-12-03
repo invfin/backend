@@ -1,7 +1,8 @@
 from django.test import TestCase
 
 from bfet import DjangoTestingModel
-from apps.escritos.models import Term
+
+from src.escritos.models import Term
 
 
 class TestMixins(TestCase):

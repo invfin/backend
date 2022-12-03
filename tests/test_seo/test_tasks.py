@@ -1,11 +1,10 @@
 from unittest import skip
 
-from apps.seo.models import Visiteur
-from apps.seo.outils.visiteur_meta import SeoInformation
-from apps.seo.tasks import clean_journeys, loop_over_journeys
-
-
 from django.test import TestCase
+
+from src.seo.models import Visiteur
+from src.seo.outils.visiteur_meta import SeoInformation
+from src.seo.tasks import clean_journeys, loop_over_journeys
 
 
 class TestTasks(TestCase):

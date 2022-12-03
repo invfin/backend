@@ -2,19 +2,19 @@ from django.test import TestCase
 
 from bfet import DjangoTestingModel
 
-from apps.web import constants
-from apps.content_creation.outils.content_creator import (
-    QuestionContentCreation,
-    CompanyNewsContentCreation,
-    TermContentCreation,
-    PublicBlogContentCreation,
+from src.content_creation import constants as content_creation_constants
+from src.content_creation.models import DefaultTilte, Emoji
+from src.content_creation.outils.content_creator import (
     CompanyContentCreation,
+    CompanyNewsContentCreation,
+    PublicBlogContentCreation,
+    QuestionContentCreation,
+    TermContentCreation,
 )
-from apps.escritos.models import Term
-from apps.engagement_machine.outils.engagement import EngagementMachine
-from apps.web.models import WebsiteEmail
-from apps.content_creation import constants as content_creation_constants
-from apps.content_creation.models import Emoji, DefaultTilte
+from src.engagement_machine.outils.engagement import EngagementMachine
+from src.escritos.models import Term
+from src.web import constants
+from src.web.models import WebsiteEmail
 
 
 class TestEngagementMachine(TestCase):
@@ -29,10 +29,17 @@ class TestEngagementMachine(TestCase):
         cls.term = DjangoTestingModel.create(Term, title="term default")
 
     def test_get_creator(self):
-        assert EngagementMachine().get_creator(content_creation_constants.QUESTION_FOR_CONTENT) == QuestionContentCreation
-        assert EngagementMachine().get_creator(content_creation_constants.NEWS_FOR_CONTENT) == CompanyNewsContentCreation
+        assert (
+            EngagementMachine().get_creator(content_creation_constants.QUESTION_FOR_CONTENT) == QuestionContentCreation
+        )
+        assert (
+            EngagementMachine().get_creator(content_creation_constants.NEWS_FOR_CONTENT) == CompanyNewsContentCreation
+        )
         assert EngagementMachine().get_creator(content_creation_constants.TERM_FOR_CONTENT) == TermContentCreation
-        assert EngagementMachine().get_creator(content_creation_constants.PUBLIC_BLOG_FOR_CONTENT) == PublicBlogContentCreation
+        assert (
+            EngagementMachine().get_creator(content_creation_constants.PUBLIC_BLOG_FOR_CONTENT)
+            == PublicBlogContentCreation
+        )
         assert EngagementMachine().get_creator(content_creation_constants.COMPANY_FOR_CONTENT) == CompanyContentCreation
 
     def test_send_website_email_engagement(self):

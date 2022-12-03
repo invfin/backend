@@ -1,7 +1,6 @@
 from datetime import datetime, timedelta
 
-
-from apps.engagement_machine.utils import more_than_month
+from src.engagement_machine.utils import more_than_month
 
 
 class TestUtils:

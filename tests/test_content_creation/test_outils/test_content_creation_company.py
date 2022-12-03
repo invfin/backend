@@ -1,18 +1,13 @@
 from unittest import skip
 
-from bfet import DjangoTestingModel, DataCreator
-
 from django.test import TestCase
 
-from apps.socialmedias.models import CompanySharedHistorial
-from apps.socialmedias import constants as socialmedias_constants
-from apps.content_creation.outils.content_creator import CompanyContentCreation
-from apps.empresas.models import (
-    Company,
-    IncomeStatement,
-    BalanceSheet,
-    CashflowStatement,
-)
+from bfet import DataCreator, DjangoTestingModel
+
+from src.content_creation.outils.content_creator import CompanyContentCreation
+from src.empresas.models import BalanceSheet, CashflowStatement, Company, IncomeStatement
+from src.socialmedias import constants as socialmedias_constants
+from src.socialmedias.models import CompanySharedHistorial
 from tests.data.empresas.empresas_data import AAPL
 
 from .base_content_creation_mixin import BaseTestContentCreation
@@ -26,9 +21,14 @@ class TestCompanyContentCreation(BaseTestContentCreation, TestCase):
     @classmethod
     def setUpTestData(cls) -> None:
         company = DjangoTestingModel.create(
-            Company, **AAPL, no_incs=False, no_bs=False,
-                                            no_cfs=False, has_error=False,
-                                            description_translated=True, )
+            Company,
+            **AAPL,
+            no_incs=False,
+            no_bs=False,
+            no_cfs=False,
+            has_error=False,
+            description_translated=True,
+        )
         DjangoTestingModel.create(IncomeStatement, company=company)
         DjangoTestingModel.create(BalanceSheet, company=company)
         DjangoTestingModel.create(CashflowStatement, company=company)

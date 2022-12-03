@@ -1,4 +1,4 @@
-from apps.empresas.outils.valuations import discounted_cashflow
+from src.empresas.outils.valuations import discounted_cashflow
 
 
 class TestValuation:

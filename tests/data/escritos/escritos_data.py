@@ -24,23 +24,25 @@ TERM = {
 }
 
 BALANCE_SHEET_TERM = {
-                "id": 2,
-                "title": "El balance sheet",
-                "slug": "el-balance-sheet-en-espanol",
-                "resume": (
-                    "El balance general es el estado financiero que muestra los activos, los pasivos y el patrimonio de"
-                    " los accionistas."
-                ),
-                "total_votes": 0,
-                "total_views": 180,
-                "times_shared": 0,
-"status": 1,
+    "id": 2,
+    "title": "El balance sheet",
+    "slug": "el-balance-sheet-en-espanol",
+    "resume": (
+        "El balance general es el estado financiero que muestra los activos, los pasivos y el patrimonio de"
+        " los accionistas."
+    ),
+    "total_votes": 0,
+    "total_views": 180,
+    "times_shared": 0,
+    "status": 1,
     "thumbnail": "",
-                # "categoria": None,
-                # "autor": "Lucas Montes",
-"non_thumbnail_url": "https://cdn.wallstreetmojo.com/wp-content/uploads/2019/11/Comparative-Balance-Sheet-Example-1.1-1.png",
+    # "categoria": None,
+    # "autor": "Lucas Montes",
+    "non_thumbnail_url": (
+        "https://cdn.wallstreetmojo.com/wp-content/uploads/2019/11/Comparative-Balance-Sheet-Example-1.1-1.png"
+    ),
     "in_text_image": True,
-            }
+}
 
 EMPTY_TERM = {
     "id": 3,
