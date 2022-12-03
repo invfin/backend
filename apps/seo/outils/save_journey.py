@@ -1,7 +1,6 @@
 from typing import Union, Tuple, Optional, Type
 
 from django.utils import timezone
-from django.contrib.auth import get_user_model
 from django.apps import apps
 from django.conf import settings
 
@@ -9,7 +8,7 @@ from apps.empresas.models import Company
 from apps.escritos.models import Term
 from apps.preguntas_respuestas.models import Question
 from apps.public_blog.models import PublicBlog
-
+from apps.users.models import User
 from apps.seo.outils.visiteur_meta import SeoInformation
 from apps.seo.models import (
     UserJourney,
@@ -18,17 +17,11 @@ from apps.seo.models import (
 )
 
 
-User = get_user_model()
-
-
 class JourneyClassifier:
     def get_user_or_visiteur(
-        self, request
-    ) -> Tuple[
-        Optional[Union[Type[Visiteur], Type[User]]],
-        Optional[str],
-        Optional[Union[Type[VisiteurJourney], Type[UserJourney]]],
-    ]:
+        self,
+        request,
+    ) -> Tuple[Optional[Union[Visiteur, User]], Optional[str], Optional[Union[VisiteurJourney, UserJourney]]]:
         default_journey_model = None
         user_str = ""
         user = None
@@ -66,12 +59,19 @@ class JourneyClassifier:
                     user=user, visit=journey, model_visited=model_visited, date=timezone.now()
                 )
 
+    def get_model_visited(
+        self,
+        model: Union[Company, Term, Question, PublicBlog],
+        lookup_value: str,
+        lookup_field: str = "slug",
+    ) -> Optional[Union[Type[Company], Type[Term], Type[Question], Type[PublicBlog]]]:
+        return model.objects.filter(**{lookup_field: lookup_value}).first()
+
     def get_specific_journey(
-        self, current_path
+        self,
+        current_path: str,
     ) -> Tuple[Optional[Union[Type[Company], Type[Term], Type[Question], Type[PublicBlog]]], Optional[str]]:
         splited_path = current_path.split("/")
-
-        model_visited, journey_model = None, None
 
         if all(
             [
@@ -90,23 +90,24 @@ class JourneyClassifier:
                 return None, None
 
             if "/screener/analisis-de/" in current_path:
-                journey_model = "CompanyVisited"
-                model_visited = Company.objects.get(ticker=info)
+                model_visited = self.get_model_visited(Company, info, "ticker")
+                return model_visited, "CompanyVisited"
 
             elif "/p/" in current_path:
                 journey_model = "PublicBlogVisited"
-                model_visited = PublicBlog.objects.get(slug=info)
+                model = PublicBlog
 
             elif "/question/" in current_path:
                 journey_model = "QuestionVisited"
-                model_visited = Question.objects.get(slug=info)
+                model = Question
 
             elif "/definicion/" in current_path:
                 journey_model = "TermVisited"
-                model_visited = Term.objects.filter(slug=info)
-                if model_visited.exists():
-                    model_visited = model_visited.first()
-                else:
-                    model_visited, journey_model = None, None
+                model = Term
+            else:
+                return None, None
 
-        return model_visited, journey_model
+            model_visited = self.get_model_visited(model, info)
+            return model_visited, journey_model
+
+        return None, None
