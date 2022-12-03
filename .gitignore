@@ -272,7 +272,7 @@ Session.vim
 tags
 
 ### Project template
-apps/media/
+src/media/
 
 .pytest_cache/
 .ipython/
@@ -291,4 +291,4 @@ checkout-single-subscription
 *.sqlite3
 
 assets_*
-apps/empresas/parse/finprep_requests_done.json
+src/empresas/parse/finprep_requests_done.json
