@@ -3,10 +3,10 @@ import vcr
 from django.test import TestCase
 
 from bfet import DjangoTestingModel
-from apps.periods.models import Period
-from apps.empresas.models import Company
-from apps.empresas.parse.y_finance import YFinanceInfo
-from apps.empresas.models import BalanceSheetYFinance, CashflowStatementYFinance, IncomeStatementYFinance
+from src.periods.models import Period
+from src.empresas.models import Company
+from src.empresas.parse.y_finance import YFinanceInfo
+from src.empresas.models import BalanceSheetYFinance, CashflowStatementYFinance, IncomeStatementYFinance
 
 
 parse_vcr = vcr.VCR(

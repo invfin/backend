@@ -4,10 +4,10 @@ from bfet import DjangoTestingModel, DataCreator
 
 from django.test import TestCase
 
-from apps.socialmedias.models import CompanySharedHistorial
-from apps.socialmedias import constants as socialmedias_constants
-from apps.content_creation.outils.content_creator import CompanyContentCreation
-from apps.empresas.models import (
+from src.socialmedias.models import CompanySharedHistorial
+from src.socialmedias import constants as socialmedias_constants
+from src.content_creation.outils.content_creator import CompanyContentCreation
+from src.empresas.models import (
     Company,
     IncomeStatement,
     BalanceSheet,
@@ -26,9 +26,14 @@ class TestCompanyContentCreation(BaseTestContentCreation, TestCase):
     @classmethod
     def setUpTestData(cls) -> None:
         company = DjangoTestingModel.create(
-            Company, **AAPL, no_incs=False, no_bs=False,
-                                            no_cfs=False, has_error=False,
-                                            description_translated=True, )
+            Company,
+            **AAPL,
+            no_incs=False,
+            no_bs=False,
+            no_cfs=False,
+            has_error=False,
+            description_translated=True,
+        )
         DjangoTestingModel.create(IncomeStatement, company=company)
         DjangoTestingModel.create(BalanceSheet, company=company)
         DjangoTestingModel.create(CashflowStatement, company=company)

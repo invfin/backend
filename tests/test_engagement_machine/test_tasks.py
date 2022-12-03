@@ -6,15 +6,15 @@ from django.test import TestCase
 
 from bfet import DjangoTestingModel
 
-from apps.emailing.constants import EMAIL_FOR_WEB
-from apps.users.models import User, UsersCategory
-from apps.engagement_machine.tasks import (
+from src.emailing.constants import EMAIL_FOR_WEB
+from src.users.models import User, UsersCategory
+from src.engagement_machine.tasks import (
     check_and_start_send_email_engagement_task,
     send_email_engagement_task,
 )
-from apps.web.models import WebsiteEmail
-from apps.promotions.models import Campaign
-from apps.web import constants as web_constants
+from src.web.models import WebsiteEmail
+from src.promotions.models import Campaign
+from src.web import constants as web_constants
 
 
 class TestTask(TestCase):
@@ -22,8 +22,8 @@ class TestTask(TestCase):
     def setUpTestData(cls) -> None:
         pass
 
-    @patch("apps.engagement_machine.tasks.send_email_engagement_task.delay")
-    @patch("apps.emailing.outils.emailing.EmailingSystem.simple_email")
+    @patch("src.engagement_machine.tasks.send_email_engagement_task.delay")
+    @patch("src.emailing.outils.emailing.EmailingSystem.simple_email")
     def test_check_and_start_send_email_engagement_task(self, mock_send_email_engagement_task, mock_simple_email):
         check_and_start_send_email_engagement_task()
         mock_simple_email.called_with("There are no website emails ready", "Create newsletters")
@@ -39,7 +39,7 @@ class TestTask(TestCase):
         DjangoTestingModel.create(WebsiteEmail, sent=False, date_to_send=tomorrow)
         assert check_and_start_send_email_engagement_task() is None
 
-    @patch("apps.emailing.tasks.send_email_task.delay")
+    @patch("src.emailing.tasks.send_email_task.delay")
     def test_send_email_engagement_task(self, mock_send_email_task):
         with self.subTest(web_constants.WHOM_TO_SEND_EMAIL_CAMPAIGN_RELATED):
             users_category = DjangoTestingModel.create(UsersCategory)

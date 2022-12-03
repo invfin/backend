@@ -5,13 +5,13 @@ from freezegun import freeze_time
 
 from django.test import TestCase
 
-from apps.business.models import (
+from src.business.models import (
     Product,
     ProductComplementary,
     ProductComplementaryPaymentLink,
 )
-from apps.business import constants
-from apps.currencies.models import Currency
+from src.business import constants
+from src.currencies.models import Currency
 
 
 business_vcr = vcr.VCR(

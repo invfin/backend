@@ -3,7 +3,7 @@ from bfet import DjangoTestingModel
 
 from django.utils import timezone
 
-from apps.empresas.models import (
+from src.empresas.models import (
     CompanyYahooQueryProxy,
     CompanyYFinanceProxy,
     CompanyFinprepProxy,
@@ -42,12 +42,12 @@ from apps.empresas.models import (
     KeyStatsYahooQuery,
     StatementsFinnhub,
 )
-from apps.industries_sectors.models import (
+from src.industries_sectors.models import (
     Industry,
     Sector,
 )
-from apps.periods.models import Period
-from apps.periods import constants
+from src.periods.models import Period
+from src.periods import constants
 
 
 class CreateExchanges:

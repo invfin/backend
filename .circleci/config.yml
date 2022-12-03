@@ -44,16 +44,16 @@ jobs:
           pip-dependency-file: local.txt  # if you have a different name for your requirements file, maybe one that combines your runtime and test requirements.
       # - run:
           # name: Run flake8
-          # command: flake8 apps/
+          # command: flake8 src/
       # - run:
           # name: Run black
-          # command: black apps/
+          # command: black src/
       # - run:
           # name: Run mypy
-          # command: mypy apps/
+          # command: mypy src/
       # - run:
           # name: Run isort
-          # command: isort apps/
+          # command: isort src/
       - run:
           name: Run tests
           command: pytest -x

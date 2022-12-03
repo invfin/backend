@@ -138,19 +138,22 @@ format:
 	isort . black ${BLACK_FOLDERS} flake8 mypy ${MYPY_FOLDERS}
 
 isort_check:
-	docker compose -f local.yml run --rm invfin make isort --df -c .
+	isort --df -c .
 
 black_check:
-	docker compose -f local.yml run --rm invfin make black ${BLACK_FOLDERS} --check
+	black ${BLACK_FOLDERS} --check
 
 flake8:
-	docker compose -f local.yml run --rm invfin make flake8
+	flake8
 
 isort:
-	docker compose -f local.yml run --rm invfin make isort .
+	isort .
 
 black:
-	docker compose -f local.yml run --rm invfin make black ${BLACK_FOLDERS}
+	black ${BLACK_FOLDERS}
 
 mypy:
-	docker compose -f local.yml run --rm invfin make mypy ${MYPY_FOLDERS}
+	mypy ${MYPY_FOLDERS}
+
+deploy:
+	./deployment.sh

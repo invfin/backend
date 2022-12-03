@@ -8,15 +8,15 @@ from django.test.utils import CaptureQueriesContext
 
 from rest_framework.test import APITestCase
 
-from apps.periods import constants
+from src.periods import constants
 from tests.utils import BaseAPIViewTestMixin
-from apps.empresas.models import (
+from src.empresas.models import (
     Company,
     IncomeStatement,
     BalanceSheet,
     CashflowStatement,
 )
-from apps.periods.models import Period
+from src.periods.models import Period
 
 
 class TestExcelAPIIncome(BaseAPIViewTestMixin, APITestCase):

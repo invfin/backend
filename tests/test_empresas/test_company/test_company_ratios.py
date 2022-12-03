@@ -6,8 +6,8 @@ from bfet import DjangoTestingModel
 
 from django.test import TestCase
 
-from apps.empresas.outils.update import UpdateCompany
-from apps.empresas.models import Company
+from src.empresas.outils.update import UpdateCompany
+from src.empresas.models import Company
 from tests.data.empresas.finprep import finprep_data as data
 
 
@@ -29,12 +29,12 @@ class TestScrapCompanyInfo(TestCase):
     @company_vcr.use_cassette
     def test_need_update(self):
         need_update = self.company_update.check_last_filing()
-        assert (need_update == "need update")
+        assert need_update == "need update"
 
         company2_update = UpdateCompany(self.company)
         self.company.inc_statements.create(date=2021)
         need_update2 = company2_update.check_last_filing()
-        assert (need_update2== "updated")
+        assert need_update2 == "updated"
 
     def test_all_data(self):
         current_data = self.company_update.generate_current_data(
@@ -101,7 +101,7 @@ class TestScrapCompanyInfo(TestCase):
         created_eficiency_ratio = self.company_update.create_eficiency_ratio(eficiency_ratio)
         created_company_growth = self.company_update.create_company_growth(company_growth)
 
-        assert (created_current_stock_price.price== current_data["currentPrice"])
+        assert created_current_stock_price.price == current_data["currentPrice"]
 
         assert self.company.stock_prices.latest().price == current_data["currentPrice"]
         assert self.company.rentability_ratios.latest() == created_rentability_ratios

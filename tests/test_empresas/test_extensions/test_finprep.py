@@ -2,9 +2,9 @@ from django.test import TestCase
 
 from bfet import DjangoTestingModel as DTM
 
-from apps.periods.constants import PERIOD_FOR_YEAR
-from apps.periods.models import Period
-from apps.empresas.models import (
+from src.periods.constants import PERIOD_FOR_YEAR
+from src.periods.models import Period
+from src.empresas.models import (
     Company,
     IncomeStatementFinprep,
     BalanceSheetFinprep,

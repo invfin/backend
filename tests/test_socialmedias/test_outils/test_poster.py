@@ -8,24 +8,24 @@ from django.contrib.auth import get_user_model
 from django.conf import settings
 from django.test import TestCase
 
-from apps.empresas.models import Company, IncomeStatement
-from apps.escritos.models import Term
-from apps.public_blog.models import PublicBlog, WritterProfile
-from apps.preguntas_respuestas.models import Question
-from apps.content_creation.models import Hashtag, Emoji, DefaultTilte
-from apps.socialmedias.models import TermSharedHistorial
-from apps.socialmedias.outils.socialposter.facepy import Facebook
-from apps.socialmedias.outils.socialposter.tweetpy import Twitter
-from apps.content_creation.outils.content_creator import (
+from src.empresas.models import Company, IncomeStatement
+from src.escritos.models import Term
+from src.public_blog.models import PublicBlog, WritterProfile
+from src.preguntas_respuestas.models import Question
+from src.content_creation.models import Hashtag, Emoji, DefaultTilte
+from src.socialmedias.models import TermSharedHistorial
+from src.socialmedias.outils.socialposter.facepy import Facebook
+from src.socialmedias.outils.socialposter.tweetpy import Twitter
+from src.content_creation.outils.content_creator import (
     CompanyContentCreation,
     CompanyNewsContentCreation,
     TermContentCreation,
     QuestionContentCreation,
     PublicBlogContentCreation,
 )
-from apps.socialmedias.outils.poster import SocialPosting
-from apps.socialmedias import constants
-from apps.content_creation import constants as content_creation_constants
+from src.socialmedias.outils.poster import SocialPosting
+from src.socialmedias import constants
+from src.content_creation import constants as content_creation_constants
 
 FULL_DOMAIN = settings.FULL_DOMAIN
 
@@ -50,7 +50,9 @@ class TestSocialPosting(TestCase):
         cls.blog = DjangoTestingModel.create(PublicBlog, title="blog title", resume="blog resume", author=user)
         cls.question = DjangoTestingModel.create(Question, title="question title", author=user)
         cls.fb_emoji = DjangoTestingModel.create(Emoji)
-        cls.default_title = DjangoTestingModel.create(DefaultTilte, title="Default title", for_content=content_creation_constants.ALL)
+        cls.default_title = DjangoTestingModel.create(
+            DefaultTilte, title="Default title", for_content=content_creation_constants.ALL
+        )
 
     def test_get_creator(self):
         for content, content_creator in [
@@ -67,8 +69,8 @@ class TestSocialPosting(TestCase):
         assert isinstance(SocialPosting().get_socialmedia(constants.FACEBOOK), Facebook)
         assert isinstance(SocialPosting().get_socialmedia(constants.TWITTER), Twitter)
 
-    @patch("apps.socialmedias.outils.socialposter.tweetpy.Twitter.post")
-    @patch("apps.socialmedias.outils.socialposter.facepy.Facebook.post")
+    @patch("src.socialmedias.outils.socialposter.tweetpy.Twitter.post")
+    @patch("src.socialmedias.outils.socialposter.facepy.Facebook.post")
     def test_share_content(self, mock_facepy, mock_tweetpy):
         assert 0 == TermSharedHistorial.objects.all().count()
         self.term.checkings.update({"has_information_clean": {"state": "yes", "time": ""}})
@@ -125,7 +127,9 @@ class TestSocialPosting(TestCase):
         assert 3 == TermSharedHistorial.objects.all().count()
         assert 1 == TermSharedHistorial.objects.filter(platform_shared=constants.FACEBOOK).count()
         assert 2 == TermSharedHistorial.objects.filter(platform_shared=constants.TWITTER).count()
-        assert 2 == TermSharedHistorial.objects.filter(post_type=content_creation_constants.POST_TYPE_TEXT_IMAGE).count()
+        assert (
+            2 == TermSharedHistorial.objects.filter(post_type=content_creation_constants.POST_TYPE_TEXT_IMAGE).count()
+        )
         assert (
             1
             == TermSharedHistorial.objects.filter(

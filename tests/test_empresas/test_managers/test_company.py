@@ -2,12 +2,12 @@ from django.test import TestCase
 
 from bfet import DjangoTestingModel
 
-from apps.empresas.models import (
+from src.empresas.models import (
     Company,
     Exchange,
     ExchangeOrganisation,
 )
-from apps.industries_sectors.models import (
+from src.industries_sectors.models import (
     Industry,
     Sector,
 )

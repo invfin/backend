@@ -1,1 +1,1 @@
-from apps.empresas.models import Company
+from src.empresas.models import Company

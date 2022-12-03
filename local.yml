@@ -21,7 +21,7 @@ services:
     volumes:
       - .:/app:z
       - invfin_local_static_files:/app/staticfiles/:z
-      - invfin_local_media_files:/app/apps/media/:z
+      - invfin_local_media_files:/app/src/media/:z
     env_file:
       - ./.envs/.local/.django
       - ./.envs/.local/.postgres

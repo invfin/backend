@@ -9,7 +9,7 @@ from django.contrib.auth import get_user_model
 
 
 from tests.utils import BaseAPIViewTestMixin
-from apps.super_investors.models import Superinvestor
+from src.super_investors.models import Superinvestor
 from tests.data.superinvestors.superinvestors_data import LIST_SUPERINVESTORS, SINGLE_SUPERINVESTOR
 
 User = get_user_model()
@@ -46,6 +46,7 @@ class TestAllSuperinvestorsAPIView(BaseAPIViewTestMixin, APITestCase):
         ]
         assert json.loads(json.dumps(response.data)) == expected_data
 
+
 @skip("Not ready")
 class TestSuperinvestorActivityAPIView(BaseAPIViewTestMixin, APITestCase):
     path_name = "api:superinvestors_lista_movimientos"
@@ -63,6 +64,7 @@ class TestSuperinvestorActivityAPIView(BaseAPIViewTestMixin, APITestCase):
         print(response.data)
         expected_data = []
         assert json.loads(json.dumps(response.data))[0] == expected_data
+
 
 @skip("Not ready")
 class TestSuperinvestorHistoryAPIView(BaseAPIViewTestMixin, APITestCase):

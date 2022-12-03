@@ -1,8 +1,8 @@
 from django.test import TestCase
 
 from bfet import DjangoTestingModel
-from apps.periods.models import Period
-from apps.periods import constants
+from src.periods.models import Period
+from src.periods import constants
 
 
 class TestPeriodManager(TestCase):
@@ -36,4 +36,3 @@ class TestPeriodManager(TestCase):
         period = Period.objects.fourth_quarter_period(2021)
         assert 2021 == period.year
         assert constants.PERIOD_4_QUARTER == period.period
-

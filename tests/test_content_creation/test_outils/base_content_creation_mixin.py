@@ -2,12 +2,12 @@ from typing import Type, Dict, List, Union, Optional
 
 from bfet import DjangoTestingModel, DataCreator
 
-from apps.escritos.models import Term
-from apps.content_creation.outils.content_creator import ContentCreation
-from apps.socialmedias import constants as social_constants
-from apps.socialmedias.models import TermSharedHistorial
-from apps.content_creation.models import Emoji, DefaultTilte, DefaultContent, Hashtag
-from apps.content_creation import constants
+from src.escritos.models import Term
+from src.content_creation.outils.content_creator import ContentCreation
+from src.socialmedias import constants as social_constants
+from src.socialmedias.models import TermSharedHistorial
+from src.content_creation.models import Emoji, DefaultTilte, DefaultContent, Hashtag
+from src.content_creation import constants
 
 
 class BaseTestContentCreation:
@@ -123,8 +123,7 @@ class BaseTestContentCreation:
             content_creator_all = ContentCreation
             content_creator_all.model_class = self.model_class
             content_creator_all.for_content = []
-            assert content_creator_all().create_default_title_filter() == {
-                "for_content__in": [constants.ALL]}
+            assert content_creator_all().create_default_title_filter() == {"for_content__in": [constants.ALL]}
         with self.subTest("content with Web"):
             content_creator_web = ContentCreation
             content_creator_web.model_class = self.model_class

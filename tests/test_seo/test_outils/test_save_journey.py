@@ -4,19 +4,19 @@ from django.contrib.auth import get_user_model
 
 from bfet import DjangoTestingModel
 
-from apps.empresas.models import Company
-from apps.escritos.models import Term
-from apps.preguntas_respuestas.models import Question
-from apps.public_blog.models import PublicBlog
+from src.empresas.models import Company
+from src.escritos.models import Term
+from src.preguntas_respuestas.models import Question
+from src.public_blog.models import PublicBlog
 
-from apps.seo.models import (
+from src.seo.models import (
     Visiteur,
     UserJourney,
     VisiteurJourney,
     UserCompanyVisited,
     VisiteurQuestionVisited,
 )
-from apps.seo.outils.save_journey import JourneyClassifier
+from src.seo.outils.save_journey import JourneyClassifier
 
 
 User = get_user_model()

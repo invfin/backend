@@ -6,12 +6,12 @@ from bfet import DjangoTestingModel
 
 from django.contrib.auth import get_user_model
 
-from apps.notifications import constants
-from apps.notifications.outils.notifications import NotificationSystem
-from apps.notifications.models import Notification
-from apps.users.models import Profile
-from apps.preguntas_respuestas.models import Question, QuesitonComment, AnswerComment, Answer
-from apps.public_blog.models import PublicBlog, NewsletterFollowers
+from src.notifications import constants
+from src.notifications.outils.notifications import NotificationSystem
+from src.notifications.models import Notification
+from src.users.models import Profile
+from src.preguntas_respuestas.models import Question, QuesitonComment, AnswerComment, Answer
+from src.public_blog.models import PublicBlog, NewsletterFollowers
 
 User = get_user_model()
 

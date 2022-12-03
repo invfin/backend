@@ -8,10 +8,10 @@ from django.contrib.auth import get_user_model
 
 from bfet import DjangoTestingModel
 
-from apps.emailing.outils.emailing import EmailingSystem
-from apps.escritos.models import Term
-from apps.emailing import constants
-from apps.web.models import WebsiteEmail, WebsiteEmailTrack
+from src.emailing.outils.emailing import EmailingSystem
+from src.escritos.models import Term
+from src.emailing import constants
+from src.web.models import WebsiteEmail, WebsiteEmailTrack
 
 User = get_user_model()
 
@@ -130,5 +130,3 @@ class EmailTest(TestCase):
         # assert mail.outbox[0].body == TODO find how to test the field
         assert mail.outbox[0].from_email == "Web-automation <EMAIL_DEFAULT@example.com>"
         assert mail.outbox[0].to == ["EMAIL_DEFAULT@example.com"]
-
-

@@ -6,8 +6,8 @@ from django.utils import timezone
 
 from bfet import DjangoTestingModel
 
-from apps.empresas.utils import arrange_quarters, FinprepRequestCheck
-from apps.empresas.models import (
+from src.empresas.utils import arrange_quarters, FinprepRequestCheck
+from src.empresas.models import (
     Company,
     CompanyStockPrice,
     CompanyUpdateLog,
@@ -47,7 +47,7 @@ from apps.empresas.models import (
     KeyStatsYahooQuery,
     StatementsFinnhub,
 )
-from apps.periods.models import Period
+from src.periods.models import Period
 
 
 class TestUtils(TestCase):

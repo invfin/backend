@@ -13,13 +13,13 @@ from django.conf import settings
 from rest_framework.exceptions import ErrorDetail, server_error
 from rest_framework import status
 
-from apps.api.models import Key
-from apps.business.models import (
+from src.api.models import Key
+from src.business.models import (
     Product,
     ProductComplementary,
     ProductSubscriber,
 )
-from apps.currencies.models import Currency
+from src.currencies.models import Currency
 
 User = get_user_model()
 

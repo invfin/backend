@@ -6,8 +6,8 @@ from django.test import TestCase
 
 from bfet import DjangoTestingModel
 
-from apps.escritos.models import Term
-from apps.escritos.tasks import prepare_term_newsletter_task
+from src.escritos.models import Term
+from src.escritos.tasks import prepare_term_newsletter_task
 
 
 class TestTask(TestCase):
@@ -15,8 +15,8 @@ class TestTask(TestCase):
     def setUpTestData(cls) -> None:
         pass
 
-    @patch("apps.emailing.outils.emailing.EmailingSystem.simple_email")
-    @patch("apps.escritos.tasks.notify_term_to_improve_task.delay")
+    @patch("src.emailing.outils.emailing.EmailingSystem.simple_email")
+    @patch("src.escritos.tasks.notify_term_to_improve_task.delay")
     def test_prepare_term_newsletter(self, mock_simple_email, mock_notify_term_to_improve_task):
         prepare_term_newsletter_task()
         subject = "There are no terms ready for newsletters"

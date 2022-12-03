@@ -5,8 +5,8 @@ from django.test import RequestFactory
 from rest_framework.test import APITestCase
 
 from bfet import DjangoTestingModel
-from apps.empresas.models import Company
-from apps.roboadvisor.api.views import (
+from src.empresas.models import Company
+from src.roboadvisor.api.views import (
     RoboAdvisorQuestionCompanyAnalysisAPIView,
     RoboAdvisorQuestionFinancialSituationAPIView,
     RoboAdvisorQuestionInvestorExperienceAPIView,
@@ -15,7 +15,7 @@ from apps.roboadvisor.api.views import (
     RoboAdvisorQuestionRiskAversionAPIView,
     RoboAdvisorQuestionStocksPortfolioAPIView,
 )
-from apps.roboadvisor.views import RoboAdvisorResultView
+from src.roboadvisor.views import RoboAdvisorResultView
 
 
 User = get_user_model()

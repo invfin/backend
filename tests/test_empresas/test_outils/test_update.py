@@ -4,11 +4,11 @@ from django.test import TestCase
 
 from bfet import DjangoTestingModel, DataCreator
 
-from apps.periods import constants
-from apps.currencies.models import Currency
-from apps.periods.models import Period
-from apps.empresas.outils.update import UpdateCompany
-from apps.empresas.models import (
+from src.periods import constants
+from src.currencies.models import Currency
+from src.periods.models import Period
+from src.empresas.outils.update import UpdateCompany
+from src.empresas.models import (
     Company,
     IncomeStatementYahooQuery,
     IncomeStatementYFinance,
