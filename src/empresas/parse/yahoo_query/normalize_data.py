@@ -10,7 +10,7 @@ class NormalizeYahooQuery:
     company = None
 
     def initial_data(
-        self, date: Type[pd.Timestamp], period_type, period: Callable, currency
+        self, date: pd.Timestamp, period_type, period: Callable, currency
     ) -> Dict[str, Union[int, datetime.datetime, Type["Company"]]]:
         return dict(
             date=date.date().year,

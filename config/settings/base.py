@@ -1,4 +1,5 @@
 from pathlib import Path
+import re
 
 from django.contrib.messages import constants as messages
 
@@ -479,15 +480,17 @@ TWITTER_ACCESS_TOKEN_SECRET = env.str("TWITTER_ACCESS_TOKEN_SECRET", "not-set")
 # List of compiled regular expression objects representing User-Agent strings
 # that are not allowed to visit any page, systemwide. Use this for bad
 # robots/crawlers. Here are a few examples:
-#     import re
-#     DISALLOWED_USER_AGENTS = [
-#         re.compile(r'^NaverBot.*'),
-#         re.compile(r'^EmailSiphon.*'),
-#         re.compile(r'^SiteSucker.*'),
-#         re.compile(r'^sohu-search'),
-#     ]
+DISALLOWED_USER_AGENTS = [
+    re.compile(r"^SemrushBot.*"),
+    re.compile(r"^PetalBot.*"),
+    re.compile(r"^DotBot.*"),
+    # re.compile(r"^RU_Bot"),
+    # re.compile(r"^YandexBot"),
+    # re.compile(r"^DuckDuckGo-Favicons-Bot"),
+    # re.compile(r"^BLEXBot"),
+]
 
-# IMAKIT
+# IMAGEKIT
 # ------------------------------------------------------------------------------
 if env.bool("USE_IMAGEKIT", False):
     IMAGEKIT_PRIVATE_KEY = env.str("IMAGEKIT_PRIVATE_KEY")

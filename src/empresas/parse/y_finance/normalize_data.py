@@ -8,14 +8,16 @@ class NormalizeYFinance:
     company = None
 
     def initial_data(
-        self, column: Type[pd.Timestamp], period: Callable
-    ) -> Dict[str, Union[int, datetime.datetime, Callable, Type["Company"]]]:
+        self,
+        column: pd.Timestamp,
+        period: Callable,
+    ) -> Dict[str, Union[int, datetime.datetime, Callable, Type]]:
         return dict(
             date=column.year, year=column.to_pydatetime().date(), company=self.company, period=period(int(column.year))
         )
 
     def normalize_balance_sheets_yfinance(
-        self, yfinance_serie: pd.Series, column: Type[pd.Timestamp], period: Callable
+        self, yfinance_serie: pd.Series, column: pd.Timestamp, period: Callable
     ) -> Dict[str, Union[float, int, str, Any]]:
         return dict(
             **self.initial_data(column, period),
@@ -50,7 +52,7 @@ class NormalizeYFinance:
         )
 
     def normalize_cashflow_statements_yfinance(
-        self, yfinance_serie: pd.Series, column: Type[pd.Timestamp], period: Callable
+        self, yfinance_serie: pd.Series, column: pd.Timestamp, period: Callable
     ) -> Dict[str, Union[float, int, str, Any]]:
         return dict(
             **self.initial_data(column, period),
@@ -77,7 +79,7 @@ class NormalizeYFinance:
         )
 
     def normalize_income_statements_yfinance(
-        self, yfinance_serie: pd.Series, column: Type[pd.Timestamp], period: Callable
+        self, yfinance_serie: pd.Series, column: pd.Timestamp, period: Callable
     ) -> Dict[str, Union[float, int, str, Any]]:
         return dict(
             **self.initial_data(column, period),

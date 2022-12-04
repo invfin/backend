@@ -65,7 +65,7 @@ def detect_outlier(list_data):
     return outliers
 
 
-def log_company(checking: str = None):
+def log_company(checking: str = ""):
     def decorator(func):
         def wrapper(*args, **kwargs):
             company = args[0].company
@@ -76,17 +76,17 @@ def log_company(checking: str = None):
             except Exception as e:
                 error_message = f"{e}"
                 had_error = True
-            finally:
-                CompanyUpdateLog.objects.create(
-                    company=company,
-                    date=timezone.now(),
-                    where=func.__name__,
-                    had_error=had_error,
-                    error_message=error_message,
-                )
-                if checking:
-                    has_it = had_error is False
-                    company.modify_checking(checking, has_it)
+
+            CompanyUpdateLog.objects.create(
+                company=company,
+                date=timezone.now(),
+                where=func.__name__,
+                had_error=had_error,
+                error_message=error_message,
+            )
+            if checking:
+                has_it = had_error is False
+                company.modify_checking(checking, has_it)
 
         return wrapper
 
@@ -146,5 +146,4 @@ def company_searched(search, request):
         redirect_path = empresa_busqueda.get_absolute_url()
     except Exception as e:
         redirect_path = request.META.get("HTTP_REFERER")
-    finally:
-        return redirect_path
+    return redirect_path

@@ -3,8 +3,6 @@ import json
 from django.db.models import Q
 from django.http.response import HttpResponse
 
-from src.empresas.utils import FinprepRequestCheck
-
 from .api.serializers import (
     ExcelBalanceSheetSerializer,
     ExcelCashflowStatementSerializer,

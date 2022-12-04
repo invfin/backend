@@ -2,7 +2,7 @@ from typing import Optional
 
 from django.conf import settings
 from django.core.mail import send_mail
-from django.db.models import OuterRef, Q, Subquery
+from django.db.models import OuterRef, Subquery
 
 from celery import shared_task
 

@@ -1,6 +1,6 @@
 from collections import Counter
 from statistics import mean
-from typing import Any, Dict, List, Optional, Type, Union
+from typing import Any, Dict, List, Optional, Type
 
 
 class AverageStatements:
