@@ -9,7 +9,7 @@ from src.notifications import constants
 from src.notifications.models import Notification
 from src.notifications.outils.notifications import NotificationSystem
 from src.preguntas_respuestas.models import Answer, AnswerComment, QuesitonComment, Question
-from src.public_blog.models import NewsletterFollowers, PublicBlog
+from src.public_blog.models import NewsletterFollowers, PublicBlog, WritterProfile
 from src.users.models import Profile
 
 User = get_user_model()
@@ -19,9 +19,18 @@ class TestNotificationSystem(TestCase):
     @classmethod
     def setUpTestData(cls) -> None:
         cls.writter = DjangoTestingModel.create(User, is_writter=True)
-        cls.user_1 = DjangoTestingModel.create(User, first_name="question", last_name="author")
-        cls.user_2 = DjangoTestingModel.create(User)
+        cls.user_1 = DjangoTestingModel.create(
+            User,
+            is_writter=False,
+            first_name="question",
+            last_name="author",
+        )
+        cls.user_2 = DjangoTestingModel.create(
+            User,
+            is_writter=False,
+        )
         DjangoTestingModel.create(Profile, user=cls.writter)
+        DjangoTestingModel.create(WritterProfile, user=cls.writter)
         DjangoTestingModel.create(Profile, user=cls.user_1)
         DjangoTestingModel.create(Profile, user=cls.user_2)
         cls.question = DjangoTestingModel.create(Question, author=cls.user_1)

@@ -75,13 +75,13 @@ class TestCreateCommentView(BaseVoteAndCommentViewTestMixin, APITestCase):
             (self.answer, {"id": "1", "app_label": "preguntas_respuestas", "object_name": "Answer"}),
         ]:
             with self.subTest(obj):
-                assert expected_result == self.view_class().parse_url(obj.encoded_url_comment)
+                assert expected_result == self.view_class().parse_url(obj.encoded_url)
 
     def test_get_object(self):
         for encoded_url, expected_result in [
-            (self.term.encoded_url_comment, self.term),
-            (self.answer.encoded_url_comment, self.answer),
-            (self.question.encoded_url_comment, self.question),
+            (self.term.encoded_url, self.term),
+            (self.answer.encoded_url, self.answer),
+            (self.question.encoded_url, self.question),
         ]:
             with self.subTest(expected_result):
                 assert expected_result == self.view_class().get_object(encoded_url)
@@ -122,7 +122,7 @@ class TestVoteView(BaseVoteAndCommentViewTestMixin, APITestCase):
             ),
         ]:
             with self.subTest(obj):
-                assert expected_result == self.view_class().parse_url(obj.encoded_url_up)
+                assert expected_result == self.view_class().parse_url(obj.base_encoded_url_up)
 
     def test_parse_url_down(self):
         for obj, expected_result in [
@@ -155,22 +155,22 @@ class TestVoteView(BaseVoteAndCommentViewTestMixin, APITestCase):
             ),
         ]:
             with self.subTest(obj):
-                assert expected_result == self.view_class().parse_url(obj.encoded_url_down)
+                assert expected_result == self.view_class().parse_url(obj.base_encoded_url_down)
 
     def test_get_object_upvote(self):
         for encoded_url, expected_result in [
-            (self.term.encoded_url_up, self.term),
-            (self.answer.encoded_url_up, self.answer),
-            (self.question.encoded_url_up, self.question),
+            (self.term.base_encoded_url_up, self.term),
+            (self.answer.base_encoded_url_up, self.answer),
+            (self.question.base_encoded_url_up, self.question),
         ]:
             with self.subTest(expected_result):
                 assert expected_result == self.view_class().get_object(encoded_url)
 
     def test_get_object_downvote(self):
         for encoded_url, expected_result in [
-            (self.term.encoded_url_down, self.term),
-            (self.answer.encoded_url_down, self.answer),
-            (self.question.encoded_url_down, self.question),
+            (self.term.base_encoded_url_down, self.term),
+            (self.answer.base_encoded_url_down, self.answer),
+            (self.question.base_encoded_url_down, self.question),
         ]:
             with self.subTest(expected_result):
                 assert expected_result == self.view_class().get_object(encoded_url)

@@ -6,7 +6,7 @@ from bfet import DjangoTestingModel
 from src.empresas.models import Company
 from src.escritos.models import Term
 from src.preguntas_respuestas.models import Question
-from src.public_blog.models import PublicBlog
+from src.public_blog.models import PublicBlog, WritterProfile
 from src.seo.models import UserCompanyVisited, UserJourney, Visiteur, VisiteurJourney, VisiteurQuestionVisited
 from src.seo.outils.save_journey import JourneyClassifier
 
@@ -27,7 +27,8 @@ class MockRequest:
 class TestJourneyClassifier(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.user = DjangoTestingModel.create(User)
+        cls.user = DjangoTestingModel.create(User, is_writter=True)
+        DjangoTestingModel.create(WritterProfile, user=cls.user)
         cls.visiteur = DjangoTestingModel.create(Visiteur)
         cls.company = DjangoTestingModel.create(Company, ticker="company")
         cls.term = DjangoTestingModel.create(Term, author=cls.user, slug="term")

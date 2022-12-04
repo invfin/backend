@@ -25,6 +25,6 @@ if __name__ == "__main__":
 
     current_path = Path(__file__).parent.resolve()
 
-    sys.path.append(f'{current_path}/apps')
+    sys.path.append(f"{current_path}/src")
 
     execute_from_command_line(sys.argv)
