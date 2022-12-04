@@ -1,15 +1,14 @@
 import base64
+from typing import Any, Dict
 
-from typing import Dict, Any
-
-from rest_framework.parsers import MultiPartParser, FormParser
-from rest_framework.views import APIView
-
-from django.utils import timezone
 from django.http.response import HttpResponse
+from django.utils import timezone
 
 from apps.api.permissions import ReadOnly
 from apps.general.api.mixins import ParseEncodedUrlMixin
+from rest_framework.parsers import FormParser, MultiPartParser
+from rest_framework.views import APIView
+
 from .constants import PIXEL_GIF_BYTES
 
 

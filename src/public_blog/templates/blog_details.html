@@ -28,7 +28,7 @@
         <div class="card-header">
             <div class="row">
                 <div class="col-1">
-                    {% include "votes.html" with object=object %}
+                    {% include "votes.html" %}
                 </div>
                 <div class="col-11">
                     <h1 class="mb-1 pt-2 text-bold">
@@ -59,7 +59,7 @@
             </div>
         </div>
         {% with help_text="Deja un comentario al autor"%}
-        {% include "comments.html" with object=object object_name="blog" help_text=help_text %}
+        {% include "comments.html" with object_name="blog" help_text=help_text %}
         {% endwith %}
     </div>
 </div>

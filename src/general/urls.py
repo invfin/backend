@@ -2,9 +2,9 @@ from django.urls import path
 
 from .api.views import CreateCommentView, VoteView
 from .views import (
+    ComingSoonview,
     MessagesTemplateview,
     NotificationsListView,
-    ComingSoonview,
     delete_notification,
     search_results,
     suggest_list_search,

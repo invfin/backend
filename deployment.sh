@@ -28,8 +28,10 @@ CODE_FOLDER="$BASE_FOLDER"/src
 
 source $HOME/Dev/ifvenv/bin/activate
 
-# pytest $TEST_FOLDER -x --disable-pytest-warnings -n auto
-pytest $TEST_FOLDER -x --disable-pytest-warnings
+isort $CODE_FOLDER
+black $CODE_FOLDER
+
+pytest $TEST_FOLDER -x --disable-pytest-warnings -n auto
 pytest_result=$?
 
 if [ "$pytest_result" == "0" ]; then

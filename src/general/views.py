@@ -7,7 +7,6 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.http.response import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
-
 from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
 from django.views.generic import ListView, RedirectView, TemplateView
