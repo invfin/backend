@@ -186,7 +186,7 @@ class TestExcelAPICashflow(BaseAPIViewTestMixin, APITestCase):
             "deferred_income_tax": self.yearly_cashflow_statement.deferred_income_tax,
             "stock_based_compensation": self.yearly_cashflow_statement.stock_based_compensation,
             "change_in_working_capital": self.yearly_cashflow_statement.change_in_working_capital,
-            "accounts_receivables": self.yearly_cashflow_statement.accounts_receivables,
+            "accounts_receivable": self.yearly_cashflow_statement.accounts_receivable,
             "inventory": self.yearly_cashflow_statement.inventory,
             "accounts_payable": self.yearly_cashflow_statement.accounts_payable,
             "other_working_capital": self.yearly_cashflow_statement.other_working_capital,
