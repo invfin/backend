@@ -10,47 +10,47 @@ class EnterpriseValueRatios:
         cls,
         market_cap:Union[int, float],
         total_debt:Union[int, float],
-        weighted_average_shares_out: Union[int, float],
+        cash_and_short_term_investments: Union[int, float],
     ) -> Union[int, float]:
         return market_cap + total_debt - cash_and_short_term_investments
 
     @classmethod
     def calculate_ev_fcf(
         cls,
-        algo:Union[int, float],
-        algo:Union[int, float],
+        enterprise_value:Union[int, float],
+        free_cash_flow:Union[int, float],
     ) -> Union[int, float]:
-        return divide_or_zero()
+        return divide_or_zero(enterprise_value, free_cash_flow)
 
     @classmethod
     def calculate_ev_operating_cf(
         cls,
-        algo:Union[int, float],
-        algo:Union[int, float],
+        enterprise_value:Union[int, float],
+        net_cash_provided_by_operating_activities:Union[int, float],
     ) -> Union[int, float]:
-        return divide_or_zero()
+        return divide_or_zero(enterprise_value, net_cash_provided_by_operating_activities)
 
     @classmethod
     def calculate_ev_sales(
         cls,
-        algo:Union[int, float],
-        algo:Union[int, float],
+        enterprise_value:Union[int, float],
+        revenue:Union[int, float],
     ) -> Union[int, float]:
-        return divide_or_zero()
+        return divide_or_zero(enterprise_value, revenue)
 
     @classmethod
     def calculate_company_equity_multiplier(
         cls,
-        current_price:Union[int, float],
-        algo:Union[int, float],
+        total_assets:Union[int, float],
+        total_stockholders_equity:Union[int, float],
     ) -> Union[int, float]:
-        return divide_or_zero()
+        return divide_or_zero(total_assets, total_stockholders_equity)
 
     @classmethod
     def calculate_ev_multiple(
         cls,
-        algo:Union[int, float],
-        algo:Union[int, float],
+        enterprise_value:Union[int, float],
+        ebitda:Union[int, float],
     ) -> Union[int, float]:
-        return divide_or_zero()
+        return divide_or_zero(enterprise_value, ebitda)
 

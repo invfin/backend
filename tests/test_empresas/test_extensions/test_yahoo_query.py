@@ -71,7 +71,7 @@ class TestAverageStatementsYahooQuery(TestCase):
         assert bs_yahooquery_dict["total_non_current_assets"] == self.bs_yahooquery.total_non_current_assets
         assert bs_yahooquery_dict["other_assets"] == None
         assert bs_yahooquery_dict["total_assets"] == self.bs_yahooquery.total_assets
-        assert bs_yahooquery_dict["account_payables"] == self.bs_yahooquery.payables_and_accrued_expenses
+        assert bs_yahooquery_dict["accounts_payable"] == self.bs_yahooquery.payables_and_accrued_expenses
         assert bs_yahooquery_dict["short_term_debt"] == self.bs_yahooquery.current_debt_and_capital_lease_obligation
         assert bs_yahooquery_dict["tax_payables"] == None
         assert bs_yahooquery_dict["deferred_revenue"] == self.bs_yahooquery.current_deferred_revenue
@@ -107,9 +107,9 @@ class TestAverageStatementsYahooQuery(TestCase):
         assert cf_st_yahooquery_dict["net_income"] == self.cf_st_yahooquery.net_income
         assert cf_st_yahooquery_dict["depreciation_amortization"] == self.cf_st_yahooquery.depreciation_and_amortization
         assert cf_st_yahooquery_dict["deferred_income_tax"] == self.cf_st_yahooquery.deferred_income_tax
-        assert cf_st_yahooquery_dict["stock_based_compesation"] == self.cf_st_yahooquery.stock_based_compensation
+        assert cf_st_yahooquery_dict["stock_based_compensation"] == self.cf_st_yahooquery.stock_based_compensation
         assert cf_st_yahooquery_dict["change_in_working_capital"] == self.cf_st_yahooquery.change_in_working_capital
-        assert cf_st_yahooquery_dict["accounts_receivables"] == self.cf_st_yahooquery.changes_in_account_receivables
+        assert cf_st_yahooquery_dict["accounts_receivable"] == self.cf_st_yahooquery.changes_in_account_receivables
         assert cf_st_yahooquery_dict["inventory"] == self.cf_st_yahooquery.change_in_inventory
         assert cf_st_yahooquery_dict["accounts_payable"] == None
         assert cf_st_yahooquery_dict["other_working_capital"] == self.cf_st_yahooquery.change_in_other_working_capital

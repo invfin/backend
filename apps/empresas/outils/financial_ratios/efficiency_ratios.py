@@ -10,12 +10,12 @@ class EfficiencyRatios:
         return divide_or_zero(average_inventory, (cost_of_revenue * 365), 4)
 
     @classmethod
-    def calculate_days_payables_outstanding(cls, account_payables:Union[int, float], cost_of_goods_sold:Union[int, float],) -> Union[int, float]:
-        return divide_or_zero((account_payables*365), cost_of_goods_sold, 3)
+    def calculate_days_payables_outstanding(cls, accounts_payable:Union[int, float], cost_of_goods_sold:Union[int, float],) -> Union[int, float]:
+        return divide_or_zero((accounts_payable*365), cost_of_goods_sold, 3)
 
     @classmethod
-    def calculate_days_sales_outstanding(cls, accounts_receivables:Union[int, float], account_payables:Union[int, float],) -> Union[int, float]:
-        return divide_or_zero((accounts_receivables*365), account_payables, 3)
+    def calculate_days_sales_outstanding(cls, accounts_receivable:Union[int, float], accounts_payable:Union[int, float],) -> Union[int, float]:
+        return divide_or_zero((accounts_receivable*365), accounts_payable, 3)
 
     @classmethod
     def calculate_operating_cycle(cls, days_inventory_outstanding:Union[int, float], days_sales_outstanding:Union[int, float],) -> Union[int, float]:

@@ -91,7 +91,7 @@ class TestAverageStatementsYFinance(TestCase):
         cf_st_yfinance_dict["net_income"] = self.cf_st_yfinance.net_income
         cf_st_yfinance_dict["depreciation_amortization"] = self.cf_st_yfinance.depreciation
         cf_st_yfinance_dict["deferred_income_tax"] = None
-        cf_st_yfinance_dict["stock_based_compesation"] = None
+        cf_st_yfinance_dict["stock_based_compensation"] = None
         cf_st_yfinance_dict["change_in_working_capital"] = None
         cf_st_yfinance_dict["accounts_receivables"] = self.cf_st_yfinance.change_to_account_receivables
         cf_st_yfinance_dict["inventory"] = self.cf_st_yfinance.change_to_inventory

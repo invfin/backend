@@ -140,7 +140,7 @@ class TestAverageStatements(TestCase):
         assert ("total_non_current_assets" in bs_finprep_keys) is True
         assert ("other_assets" in bs_finprep_keys) is True
         assert ("total_assets" in bs_finprep_keys) is True
-        assert ("account_payables" in bs_finprep_keys) is True
+        assert ("accounts_payable" in bs_finprep_keys) is True
         assert ("short_term_debt" in bs_finprep_keys) is True
         assert ("tax_payables" in bs_finprep_keys) is True
         assert ("deferred_revenue" in bs_finprep_keys) is True
@@ -168,9 +168,9 @@ class TestAverageStatements(TestCase):
         assert ("net_income" in cf_st_finprep_keys) is True
         assert ("depreciation_amortization" in cf_st_finprep_keys) is True
         assert ("deferred_income_tax" in cf_st_finprep_keys) is True
-        assert ("stock_based_compesation" in cf_st_finprep_keys) is True
+        assert ("stock_based_compensation" in cf_st_finprep_keys) is True
         assert ("change_in_working_capital" in cf_st_finprep_keys) is True
-        assert ("accounts_receivables" in cf_st_finprep_keys) is True
+        assert ("accounts_receivable" in cf_st_finprep_keys) is True
         assert ("inventory" in cf_st_finprep_keys) is True
         assert ("accounts_payable" in cf_st_finprep_keys) is True
         assert ("other_working_capital" in cf_st_finprep_keys) is True

@@ -107,7 +107,7 @@ class CalculateFinancialRatios(
 
     def last_year_data(self, data: Dict[str, Union[int, float]]) -> Dict[str, Union[int, float]]:
         last_year_inventory = data["inventory"]
-        last_year_accounts_payable = data["account_payables"]
+        last_year_accounts_payable = data["accounts_payable"]
         last_year_revenue = data["revenue"]
         last_year_net_income = data["net_income"]
         last_year_fcf = data["free_cash_flow"]
@@ -342,7 +342,7 @@ class CalculateFinancialRatios(
         nopat = data["nopat"]
         net_working_cap = data["total_current_assets"] - data["total_current_liabilities"]
         average_inventory = (data["last_year_inventory"] + data["inventory"]) / 2
-        average_payables = (data["last_year_accounts_payable"] + data["account_payables"]) / 2
+        average_payables = (data["last_year_accounts_payable"] + data["accounts_payable"]) / 2
         divs_per_share = data["dividends_paid"] / data["common_stock"] if data["common_stock"] != 0 else 0
         dividend_yield = divs_per_share / data["current_price"] if data["current_price"] != 0 else 0
         earnings_yield = (data["eps"] / data["current_price"]) * 100 if data["current_price"] != 0 else 0
@@ -510,20 +510,20 @@ class CalculateFinancialRatios(
 
     @classmethod
     def calculate_average_inventory(cls, data: Dict[str, Union[int, float]]) -> Union[int, float]:
-        return (data["last_year_inventory"] + data["inventory"]) / 2
+        return round((data["last_year_inventory"] + data["inventory"]) / 2, 2)
 
     @classmethod
     def calculate_efficiency_ratios(cls, data: Dict[str, Union[int, float]]) -> Dict[str, Union[int, float]]:
         average_inventory = data.get("average_inventory", cls.calculate_average_inventory(data))
         days_inventory_outstanding = cls.calculate_days_inventory_outstanding(average_inventory, data.get("cost_of_revenue",0),)
-        days_payables_outstanding = cls.calculate_days_payables_outstanding(data.get("account_payables",0), data.get("cost_of_goods_sold",0),)
-        days_sales_outstanding = cls.calculate_days_sales_outstanding(data.get("accounts_receivables",0), data.get("account_payables",0),)
+        days_payables_outstanding = cls.calculate_days_payables_outstanding(data.get("accounts_payable",0), data.get("cost_of_goods_sold",0),)
+        days_sales_outstanding = cls.calculate_days_sales_outstanding(data.get("accounts_receivable",0), data.get("accounts_payable",0),)
         operating_cycle = cls.calculate_operating_cycle(days_inventory_outstanding, days_sales_outstanding)
         cash_conversion_cycle = cls.calculate_cash_conversion_cycle(days_inventory_outstanding, days_sales_outstanding, days_payables_outstanding,)
         asset_turnover = cls.calculate_asset_turnover(data.get("revenue", 0), data.get("average_assets", 0))
         inventory_turnover = cls.calculate_inventory_turnover(data.get("cost_of_revenue", 0), average_inventory)
         fixed_asset_turnover = cls.calculate_fixed_asset_turnover(data.get("revenue", 0), data.get("average_fixed_assets", 0),)
-        payables_turnover = cls.calculate_payables_turnover(data.get("account_payables", 0), data.get("average_payables", 0),)
+        payables_turnover = cls.calculate_payables_turnover(data.get("accounts_payable", 0), data.get("average_payables", 0),)
         fcf_to_operating_cf = cls.calculate_fcf_to_operating_cf(data.get("free_cash_flow", 0), data.get("net_cash_provided_by_operating_activities", 0),)
         return {
             "days_inventory_outstanding": days_inventory_outstanding,

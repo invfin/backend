@@ -4,7 +4,7 @@ from apps.empresas.outils.financial_ratios import CalculateFinancialRatios
 
 
 class TestCalculateFinancialRatios(TestCase):
-    def test_calculate_price_to_ratio(self):
+    def test_calculate_price_to_ratios(self):
         expected_data = {
             "price_book": 1.0,
             "price_cf": 5.0,
@@ -28,7 +28,7 @@ class TestCalculateFinancialRatios(TestCase):
             "operating_cf_ps": 0,
             "tangible_ps": 12.12,
         }
-        assert expected_data == CalculateFinancialRatios.calculate_price_to_ratio(data)
+        assert expected_data == CalculateFinancialRatios.calculate_price_to_ratios(data)
 
     def test_calculate_average_inventory(self):
         data = {
