@@ -1,4 +1,5 @@
 from rest_framework.serializers import CharField, ModelSerializer
+
 from src.industries_sectors.models import Industry, Sector
 
 
