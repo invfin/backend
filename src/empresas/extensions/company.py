@@ -1956,9 +1956,13 @@ class CompanyExtended(ChartSerializer):
             current_currency = yfinance_info["currency"]
         else:
             yahooquery_info = yq.Ticker(self.ticker).price
-            for key in yahooquery_info.keys():
+            key = yahooquery_info.keys()[0]
+            if yahooquery_info[key] != "Quote not found for ticker symbol: LB":
                 current_price = yahooquery_info[key]["regularMarketPrice"]
                 current_currency = yahooquery_info[key]["currency"]
+            else:
+                current_price = 0
+                current_currency = ""
         return {"current_price": current_price, "current_currency": current_currency}
 
     def calculate_current_ratios(
