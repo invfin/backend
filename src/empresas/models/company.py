@@ -4,7 +4,6 @@ from django.db.models import (
     SET_NULL,
     BooleanField,
     CharField,
-    DateField,
     DateTimeField,
     FloatField,
     ForeignKey,

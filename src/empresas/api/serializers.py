@@ -33,7 +33,11 @@ class ExchangeSerializer(ModelSerializer):
 
     class Meta:
         model = Exchange
-        exclude = ["id", "main_org"]
+        exclude = [
+            "id",
+            "main_org",
+            "data_source",
+        ]
 
 
 class BasicCompanySerializer(ModelSerializer):

@@ -17,9 +17,9 @@ User = get_user_model()
 
 class AllExchangesAPIView(BaseAPIView):
     serializer_class = ExchangeSerializer
-    model = Exchange, True
+    queryset = (Exchange.objects.all, True)
     pagination_class = StandardResultPagination
-    model_to_track = Company
+    model_to_track = "ignore"
 
 
 class BasicCompanyAPIView(BaseAPIView):
