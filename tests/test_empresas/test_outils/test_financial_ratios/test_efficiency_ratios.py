@@ -2,7 +2,7 @@ from unittest import skip
 
 from django.test import TestCase
 
-from apps.empresas.outils.financial_ratios.efficiency_ratios import EfficiencyRatios
+from src.empresas.outils.financial_ratios.efficiency_ratios import EfficiencyRatios
 
 
 class TestEfficiencyRatios(TestCase):
@@ -55,4 +55,3 @@ class TestEfficiencyRatios(TestCase):
         assert 0.07 == EfficiencyRatios.calculate_fcf_to_operating_cf(234.67, 3333)
         assert 58.962 == EfficiencyRatios.calculate_fcf_to_operating_cf(234.67, 3.98)
         assert 0 == EfficiencyRatios.calculate_fcf_to_operating_cf(234.67, 0)
-

@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from apps.empresas.outils.financial_ratios.per_share_values import PerShareValues
+from src.empresas.outils.financial_ratios.per_share_values import PerShareValues
 
 
 class TestPerShareValues(TestCase):

@@ -15,18 +15,13 @@ class OperationRiskRatios:
         interest_expense: Union[int, float],
     ) -> Union[int, float]:
         total_assets_less_cash = (
-            total_assets
-            - goodwill_and_intangible_assets
-            - total_current_liabilities
-            - short_term_debt
+            total_assets - goodwill_and_intangible_assets - total_current_liabilities - short_term_debt
         )
         return divide_or_zero(total_assets_less_cash, interest_expense)
 
     @classmethod
     def calcualte_cash_flow_coverage_ratios(
-        cls,
-        net_cash_provided_by_operating_activities: Union[int, float],
-        total_debt: Union[int, float]
+        cls, net_cash_provided_by_operating_activities: Union[int, float], total_debt: Union[int, float]
     ) -> Union[int, float]:
         return divide_or_zero(net_cash_provided_by_operating_activities, total_debt)
 

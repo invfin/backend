@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from apps.empresas.outils.financial_ratios.liquidity_ratios import LiquidityRatios
+from src.empresas.outils.financial_ratios.liquidity_ratios import LiquidityRatios
 
 
 class TestLiquidityRatios(TestCase):

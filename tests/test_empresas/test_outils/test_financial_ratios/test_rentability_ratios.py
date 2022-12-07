@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from apps.empresas.outils.financial_ratios.rentability_ratios import RentabilityRatios
+from src.empresas.outils.financial_ratios.rentability_ratios import RentabilityRatios
 
 
 class TestRentabilityRatios(TestCase):

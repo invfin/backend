@@ -1,28 +1,17 @@
 from datetime import datetime
-from typing import Type
 
 from django.db.models import Q
 
-<<<<<<< HEAD:src/empresas/outils/update.py
 from src.empresas.models import BalanceSheet, CashflowStatement, IncomeStatement
 from src.empresas.outils.average_statements import AverageStatements
-from src.empresas.outils.ratios import CalculateCompanyFinancialRatios
+from src.empresas.outils.financial_ratios import CalculateFinancialRatios
 from src.empresas.outils.retrieve_data import RetrieveCompanyData
 from src.empresas.utils import FinprepRequestCheck, log_company
 from src.periods.constants import PERIOD_FOR_YEAR
 from src.translate.google_trans_new import google_translator
-=======
-from apps.translate.google_trans_new import google_translator
-from apps.empresas.utils import log_company
-from apps.empresas.outils.financial_ratios import CalculateFinancialRatios
-from apps.empresas.outils.average_statements import AverageStatements
-from apps.empresas.outils.retrieve_data import RetrieveCompanyData
-from apps.periods.constants import PERIOD_FOR_YEAR
-from apps.empresas.models import IncomeStatement, BalanceSheet, CashflowStatement
->>>>>>> 037d1e68457ef4a6a5ff24ff95ac51ca4e60cc76:apps/empresas/outils/update.py
 
 
-class UpdateCompany(CalculateCompanyFinancialRatios, AverageStatements):
+class UpdateCompany(CalculateFinancialRatios, AverageStatements):
     def __init__(self, company) -> None:
         self.company = company
 

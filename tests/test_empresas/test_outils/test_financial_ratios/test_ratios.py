@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from apps.empresas.outils.financial_ratios import CalculateFinancialRatios
+from src.empresas.outils.financial_ratios import CalculateFinancialRatios
 
 
 class TestCalculateFinancialRatios(TestCase):
@@ -29,10 +29,3 @@ class TestCalculateFinancialRatios(TestCase):
             "tangible_ps": 12.12,
         }
         assert expected_data == CalculateFinancialRatios.calculate_price_to_ratios(data)
-
-    def test_calculate_average_inventory(self):
-        data = {
-            "last_year_inventory": 16.22,
-            "inventory": 12.22,
-        }
-        assert 14.22 == CalculateFinancialRatios.calculate_average_inventory(data)

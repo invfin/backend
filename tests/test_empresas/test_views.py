@@ -3,7 +3,7 @@ import json
 from django.db import connection
 from django.test import TestCase
 from django.test.utils import CaptureQueriesContext
-from django.urls import reverse
+
 
 from bfet import DjangoTestingModel
 from rest_framework.test import APITestCase
