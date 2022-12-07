@@ -93,7 +93,7 @@ class BalanceSheet(BaseFinalStatement):
     total_non_current_assets = FloatField(default=0, blank=True, null=True)
     other_assets = FloatField(default=0, blank=True, null=True)
     total_assets = FloatField(default=0, blank=True, null=True)
-    account_payables = FloatField(default=0, blank=True, null=True)
+    accounts_payable = FloatField(default=0, blank=True, null=True)
     short_term_debt = FloatField(default=0, blank=True, null=True)
     tax_payables = FloatField(default=0, blank=True, null=True)
     deferred_revenue = FloatField(default=0, blank=True, null=True)
@@ -127,9 +127,9 @@ class CashflowStatement(BaseFinalStatement):
     net_income = FloatField(default=0, blank=True, null=True)
     depreciation_amortization = FloatField(default=0, blank=True, null=True)
     deferred_income_tax = FloatField(default=0, blank=True, null=True)
-    stock_based_compesation = FloatField(default=0, blank=True, null=True)  # stock_based_compensation
+    stock_based_compensation = FloatField(default=0, blank=True, null=True)  # stock_based_compensation
     change_in_working_capital = FloatField(default=0, blank=True, null=True)
-    accounts_receivables = FloatField(default=0, blank=True, null=True)
+    accounts_receivable = FloatField(default=0, blank=True, null=True)
     inventory = FloatField(default=0, blank=True, null=True)
     accounts_payable = FloatField(default=0, blank=True, null=True)
     other_working_capital = FloatField(default=0, blank=True, null=True)

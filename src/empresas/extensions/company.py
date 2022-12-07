@@ -337,7 +337,7 @@ class CompanyExtended(ChartSerializer):
                     "url": "#!",
                     "percent": "false",
                     "short": "false",
-                    "values": [data.account_payables for data in bls],
+                    "values": [data.accounts_payable for data in bls],
                 },
                 {
                     "title": "Deuda a corto plazo",
@@ -538,7 +538,7 @@ class CompanyExtended(ChartSerializer):
                     "url": "#!",
                     "percent": "false",
                     "short": "false",
-                    "values": [data.stock_based_compesation for data in cf],
+                    "values": [data.stock_based_compensation for data in cf],
                 },
                 {
                     "title": "Cambios en working capital",

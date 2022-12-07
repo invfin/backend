@@ -69,7 +69,7 @@ class TestAverageStatementsFinprep(TestCase):
         assert self.bs_finprep.total_non_current_assets == bs_finprep_dict["total_non_current_assets"]
         assert self.bs_finprep.other_assets == bs_finprep_dict["other_assets"]
         assert self.bs_finprep.total_assets == bs_finprep_dict["total_assets"]
-        assert self.bs_finprep.account_payables == bs_finprep_dict["account_payables"]
+        assert self.bs_finprep.account_payables == bs_finprep_dict["accounts_payable"]
         assert self.bs_finprep.short_term_debt == bs_finprep_dict["short_term_debt"]
         assert self.bs_finprep.tax_payables == bs_finprep_dict["tax_payables"]
         assert self.bs_finprep.deferred_revenue == bs_finprep_dict["deferred_revenue"]
@@ -105,10 +105,15 @@ class TestAverageStatementsFinprep(TestCase):
         assert self.cf_st_finprep.net_income == cf_st_finprep_dict["net_income"]
         assert self.cf_st_finprep.depreciation_and_amortization == cf_st_finprep_dict["depreciation_amortization"]
         assert self.cf_st_finprep.deferred_income_tax == cf_st_finprep_dict["deferred_income_tax"]
-        assert self.cf_st_finprep.stock_based_compensation == cf_st_finprep_dict["stock_based_compesation"]
+        assert self.cf_st_finprep.stock_based_compensation == cf_st_finprep_dict["stock_based_compensation"]
         assert self.cf_st_finprep.change_in_working_capital == cf_st_finprep_dict["change_in_working_capital"]
-        assert self.cf_st_finprep.accounts_receivables == cf_st_finprep_dict["accounts_receivables"]
+        assert self.cf_st_finprep.accounts_receivables == cf_st_finprep_dict["accounts_receivable"]
         assert self.cf_st_finprep.inventory == cf_st_finprep_dict["inventory"]
+        print("*"*100)
+        print(self.cf_st_finprep.accounts_payables)
+        print("*" * 100)
+        print(cf_st_finprep_dict["accounts_payable"])
+        print("*" * 100)
         assert self.cf_st_finprep.accounts_payables == cf_st_finprep_dict["accounts_payable"]
         assert self.cf_st_finprep.other_working_capital == cf_st_finprep_dict["other_working_capital"]
         assert self.cf_st_finprep.other_non_cash_items == cf_st_finprep_dict["other_non_cash_items"]

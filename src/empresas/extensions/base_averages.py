@@ -138,7 +138,7 @@ class AverageBalanceSheet(BaseAverage):
     total_non_current_assets_field: str = "total_non_current_assets"
     other_assets_field: str = "other_assets"
     total_assets_field: str = "total_assets"
-    account_payables_field: str = "account_payables"
+    accounts_payable_field: str = "accounts_payable"
     short_term_debt_field: str = "short_term_debt"
     tax_payables_field: str = "tax_payables"
     deferred_revenue_field: str = "deferred_revenue"
@@ -212,8 +212,8 @@ class AverageBalanceSheet(BaseAverage):
     def calculate_total_assets(self):
         return getattr(self, self.total_assets_field, None)
 
-    def calculate_account_payables(self):
-        return getattr(self, self.account_payables_field, None)
+    def calculate_accounts_payable(self):
+        return getattr(self, self.accounts_payable_field, None)
 
     def calculate_short_term_debt(self):
         return getattr(self, self.short_term_debt_field, None)
@@ -299,7 +299,7 @@ class AverageBalanceSheet(BaseAverage):
             total_non_current_assets=self.calculate_total_non_current_assets(),
             other_assets=self.calculate_other_assets(),
             total_assets=self.calculate_total_assets(),
-            account_payables=self.calculate_account_payables(),
+            accounts_payable=self.calculate_accounts_payable(),
             short_term_debt=self.calculate_short_term_debt(),
             tax_payables=self.calculate_tax_payables(),
             deferred_revenue=self.calculate_deferred_revenue(),
@@ -328,9 +328,9 @@ class AverageCashflowStatement(BaseAverage):
     net_income_field: str = "net_income"
     depreciation_amortization_field: str = "depreciation_amortization"
     deferred_income_tax_field: str = "deferred_income_tax"
-    stock_based_compesation_field: str = "stock_based_compesation"
+    stock_based_compensation_field: str = "stock_based_compensation"
     change_in_working_capital_field: str = "change_in_working_capital"
-    accounts_receivables_field: str = "accounts_receivables"
+    accounts_receivable_field: str = "accounts_receivable"
     inventory_field: str = "inventory"
     accounts_payable_field: str = "accounts_payable"
     other_working_capital_field: str = "other_working_capital"
@@ -365,14 +365,14 @@ class AverageCashflowStatement(BaseAverage):
     def calculate_deferred_income_tax(self):
         return getattr(self, self.deferred_income_tax_field, None)
 
-    def calculate_stock_based_compesation(self):
-        return getattr(self, self.stock_based_compesation_field, None)
+    def calculate_stock_based_compensation(self):
+        return getattr(self, self.stock_based_compensation_field, None)
 
     def calculate_change_in_working_capital(self):
         return getattr(self, self.change_in_working_capital_field, None)
 
-    def calculate_accounts_receivables(self):
-        return getattr(self, self.accounts_receivables_field, None)
+    def calculate_accounts_receivable(self):
+        return getattr(self, self.accounts_receivable_field, None)
 
     def calculate_inventory(self):
         return getattr(self, self.inventory_field, None)
@@ -453,9 +453,9 @@ class AverageCashflowStatement(BaseAverage):
             net_income=self.calculate_net_income(),
             depreciation_amortization=self.calculate_depreciation_amortization(),
             deferred_income_tax=self.calculate_deferred_income_tax(),
-            stock_based_compesation=self.calculate_stock_based_compesation(),
+            stock_based_compensation=self.calculate_stock_based_compensation(),
             change_in_working_capital=self.calculate_change_in_working_capital(),
-            accounts_receivables=self.calculate_accounts_receivables(),
+            accounts_receivable=self.calculate_accounts_receivable(),
             inventory=self.calculate_inventory(),
             accounts_payable=self.calculate_accounts_payable(),
             other_working_capital=self.calculate_other_working_capital(),

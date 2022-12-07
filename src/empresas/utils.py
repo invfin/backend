@@ -7,10 +7,15 @@ from django.utils import timezone
 from dateutil.relativedelta import relativedelta
 import numpy as np
 
+<<<<<<< HEAD:src/empresas/utils.py
 from src.empresas.constants import MAX_REQUESTS_FINPREP
 from src.empresas.models import Company, CompanyUpdateLog
 from src.periods import constants
 from src.periods.models import Period
+=======
+from apps.periods import constants
+from apps.periods.models import Period
+>>>>>>> 037d1e68457ef4a6a5ff24ff95ac51ca4e60cc76:apps/empresas/utils.py
 
 
 class FinprepRequestCheck:

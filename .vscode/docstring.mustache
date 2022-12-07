@@ -7,15 +7,14 @@
 Parameters
 ----------
 {{#args}}
-    {{var}} : {{typePlaceholder}}
-        {{descriptionPlaceholder}}
-        Example: 
-
+{{var}} : {{typePlaceholder}}
+    {{descriptionPlaceholder}}
+        Example:
 {{/args}}
 {{#kwargs}}
     {{var}} : {{typePlaceholder}}, optional
         {{descriptionPlaceholder}}, by default {{&default}}
-        Example: 
+        Example:
 {{/kwargs}}
 {{/parametersExist}}
 {{#returnsExist}}
@@ -23,13 +22,11 @@ Parameters
 Returns
 -------
 {{#returns}}
-    {{typePlaceholder}}
-        {{descriptionPlaceholder}}
-        Example: 
-
+{{typePlaceholder}}
+    {{descriptionPlaceholder}}
+        Example:
 {{/returns}}
 {{/returnsExist}}
-{{#yieldsExist}}
 
 Yields
 ------
@@ -46,6 +43,6 @@ Raises
 {{#exceptions}}
     {{type}}
         {{descriptionPlaceholder}}
-        
+
 {{/exceptions}}
 {{/exceptionsExist}}

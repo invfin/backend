@@ -16,12 +16,14 @@ class IncomeStatementFinprepExtended(AverageIncomeStatement):
 class BalanceSheetFinprepExtended(AverageBalanceSheet):
     property_plant_equipment_field = "property_plant_equipment_net"
     common_stocks_field = "common_stock"
+    accounts_payable_field = "account_payables"
 
 
 class CashflowStatementFinprepExtended(AverageCashflowStatement):
     depreciation_amortization_field = "depreciation_and_amortization"
-    stock_based_compesation_field = "stock_based_compensation"
+    stock_based_compensation_field = "stock_based_compensation"
     accounts_payable_field = "accounts_payables"
+    accounts_receivable_field = "accounts_receivables"
     operating_activities_cf_field = "net_cash_provided_by_operating_activities"
     investments_property_plant_equipment_field = "investments_in_property_plant_and_equipment"
     purchases_investments_field = "purchases_of_investments"
