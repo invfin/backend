@@ -1,0 +1,25 @@
+{% load static i18n extra humanize%}
+<div class="list-group list-group-flush scrollable-notifs">
+  {% for notification in user_notifs %}
+  <a href="{{notification.get_absolute_url}}{% utm content='web-notifs' term=notification.title %}"
+    class="list-group-item list-group-item-action">
+    <div class="row align-items-center">
+      <div class="col-auto">
+        <!-- Avatar -->
+        <img alt="Image placeholder" src="{{notification.object.author.foto}}" class="avatar rounded-circle">
+      </div>
+      <div class="col ml--2">
+        <div class="d-flex justify-content-between align-items-center">
+          <div>
+            <h4 class="mb-0 text-sm">{{notification.notification_type}}</h4>
+          </div>
+          <div class="text-right text-muted">
+            <small>{{notification.date|naturaltime}}</small>
+          </div>
+        </div>
+        <p class="text-sm mb-0">{{notification.object.title|truncatechars:200}}</p>
+      </div>
+    </div>
+  </a>
+  {% endfor %}
+</div>

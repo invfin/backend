@@ -1,0 +1,26 @@
+<div class="col-10">
+    <div class="d-flex flex-column h-100">
+        <p class="h1 mb-1 pt-2 text-bold">
+            {{object.title}}
+        </p>
+        <h5 class="font-weight-bolder">
+            Visitado {{object.total_views}} veces desde el {{object.created_at}}
+        </h5>
+        <div class="mb-2 mt-2 text-dark text-justify font-weight-bolder">
+            {{object.content|safe}}
+        </div>
+        <div class="d-flex">
+            {% for tag in object.tags.all %}
+            <a href="#" class="badge badge-info text-center mr-2">
+                <span class="font-weight-bolder">{{tag.name}}</span>
+            </a>
+            {% endfor %}
+        </div>
+        <div class="mt-2 text-right">
+            <img class="avatar" src="{{object.author.foto}}">
+            <a href="{{object.author.custom_url}}">
+                {{object.author}} - {{object.author.user_profile.reputation_score}}
+            </a>
+        </div>
+    </div>
+</div>

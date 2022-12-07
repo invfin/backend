@@ -1,185 +1,161 @@
-BLACK_FOLDERS=apps
-MYPY_FOLDERS=apps
+FOLDERS=src tests
 
 .PHONY: requirements
 
 
 build:
-	docker-compose -f local.yml build $(ar)
+	docker compose -f local.yml build $(ar)
 
 clean-build:
-	docker-compose -f local.yml build --no-cache $(ar)
+	docker compose -f local.yml build --no-cache $(ar)
 
 reboot:
 	$(MAKE) stop && $(MAKE) up-b
 
 clean-start:
 	make requirements
-	docker-compose -f local.yml build invfin
+	docker compose -f local.yml build invfin
 	make up-b
 
 restart:
-	docker-compose -f local.yml restart $(ar)
+	docker compose -f local.yml restart $(ar)
 
 up-b:
-	docker-compose -f local.yml up -d invfin
-	docker-compose -f local.yml logs -f invfin
+	docker compose -f local.yml up -d invfin
+	docker compose -f local.yml logs -f invfin
 
 up:
-	docker-compose -f local.yml up $(ar)
+	docker compose -f local.yml up $(ar)
+
+up-complements:
+	docker compose -f local.yml up redis celeryworker mailhog celerybeat flower
+
+changepassword:
+	docker compose -f local.yml run --rm invfin ./manage.py changepassword $(ar)
+
+admin-pass:
+	docker compose -f local.yml run --rm invfin ./manage.py admin_pass
 
 buildsemi:
-	docker-compose -f semiprod.yml build
+	docker compose -f semiprod.yml build
 
 upsemi:
-	docker-compose -f semiprod.yml up nginx invfin
+	docker compose -f semiprod.yml up nginx invfin
 
 stop:
-	docker-compose -f local.yml stop
+	docker compose -f local.yml stop
 
 shell:
-	docker-compose -f local.yml exec invfin /bin/bash
+	docker compose -f local.yml exec invfin /bin/bash
 
 # Django
 up-d:
-	docker-compose -f local.yml up invfin
-
-dbshell:
-	docker-compose -f local.yml run --rm invfin python -u manage.py dbshell --settings=config.settings.final
+	docker compose -f local.yml up invfin
 
 log:
-	docker-compose -f local.yml logs -f invfin
+	docker compose -f local.yml logs -f invfin
 
 migrations:
-	docker-compose -f local.yml run --rm invfin python -u manage.py makemigrations $(ar) --settings=config.settings.final
+	docker compose -f local.yml run --rm invfin python -u manage.py makemigrations $(ar)
 
 migrate:
-	docker-compose -f local.yml run --rm invfin python -u manage.py migrate $(ar) --settings=config.settings.final
+	docker compose -f local.yml run --rm invfin python -u manage.py migrate $(ar)
 
 allmig:
-	docker-compose -f local.yml run --rm invfin python -u manage.py makemigrations $(ar) --settings=config.settings.final
-	docker-compose -f local.yml run --rm invfin python -u manage.py migrate $(ar) --settings=config.settings.final
-
-shell_plus:
-	docker-compose -f local.yml run --rm invfin ./manage.py shell_plus --settings=config.settings.final
+	docker compose -f local.yml run --rm invfin python -u manage.py makemigrations $(ar)
+	docker compose -f local.yml run --rm invfin python -u manage.py migrate $(ar)
 
 manage:
-	docker-compose -f local.yml run --rm invfin ./manage.py $(ar) --settings=config.settings.final
+	docker compose -f local.yml run --rm invfin ./manage.py $(ar)
 
 collectstatic:
-	docker-compose -f local.yml run --rm invfin ./manage.py collectstatic --noinput --settings=config.settings.final
+	docker compose -f local.yml run --rm invfin ./manage.py collectstatic --noinput
 	make build ar="invfin"
 
 col-share-static:
-	docker-compose -f local.yml run --rm invfin ./manage.py collectstatic --noinput --settings=config.settings.final
-	docker-compose -f local.yml build
+	docker compose -f local.yml run --rm invfin ./manage.py collectstatic --noinput
+	docker compose -f local.yml build
 
 run:
-	docker-compose -f local.yml run --rm invfin $(ar)
+	docker compose -f local.yml run --rm invfin $(ar)
 
 pip:
 	docker exec -ti invfin_local_invfin pip install $(ar)
 
-pdb:
-	docker-compose -f local.yml stop invfin
-	docker-compose -f local.yml run --rm --service-ports invfin
-
-pdb_manage:
-	docker-compose -f local.yml stop invfin
-	docker-compose -f local.yml run --rm --service-ports invfin  ./manage.py $(ar) --settings=config.settings.final
-
 requirements:
-	docker-compose -f local.yml run invfin /requirements.sh "temp_venv/bin/pip"
-	docker-compose -f local.yml run invfin rm -rf temp_venv/
+	docker compose -f local.yml run invfin /requirements.sh "temp_venv/bin/pip"
+	docker compose -f local.yml run invfin rm -rf temp_venv/
 
 reset_migrations:
-	docker-compose -f local.yml run --rm invfin /reset_migrations.sh
+	docker compose -f local.yml run --rm invfin /reset_migrations.sh
 
 # Postgres
 shell_db:
-	docker-compose -f local.yml exec postgres /bin/sh
+	docker compose -f local.yml exec postgres /bin/sh
 
 log-db:
-	docker-compose -f local.yml logs db
+	docker compose -f local.yml logs db
 
 backup:
-	docker-compose -f local.yml exec postgres backup
+	docker compose -f local.yml exec postgres backup
 
 ls_backups:
-	docker-compose -f local.yml exec postgres backups
+	docker compose -f local.yml exec postgres backups
 
 rt_backups:
 	@echo ls -Art $PWD/backups/*.sql.gz | tail -n 1
 
 restore:
-	docker-compose -f local.yml stop
-	docker-compose -f local.yml up -d postgres
-	docker-compose -f local.yml exec postgres restore $(ar)
-
-auto_restore:
-	auto_backup_import
+	docker compose -f local.yml stop
+	docker compose -f local.yml up -d postgres
+	docker compose -f local.yml exec postgres restore $(ar)
 
 # Documentation
 docs_check:
-	docker-compose -f local.yml run --rm invfin ./manage.py generate_swagger --settings=config.settings.final
+	docker compose -f local.yml run --rm invfin ./manage.py generate_swagger
 
 # Testing
 new-test:
-	docker-compose -f local.yml run --rm invfin python -u manage.py test $(ar) --noinput --settings=config.settings.test
+	docker compose -f local.yml run --rm invfin python -u manage.py test $(ar) --noinput --settings=config.settings.test
 
 test:
-	docker-compose -f local.yml run --rm invfin python -u manage.py test $(ar) --noinput --keepdb --settings=config.settings.test
+	docker compose -f local.yml run --rm invfin python -u manage.py test $(ar) --noinput --keepdb --settings=config.settings.test
 
 pytest:
-	docker-compose -f local.yml run --rm invfin pytest
+	docker compose -f local.yml run --rm invfin pytest
 
 cov:
-	docker-compose -f local.yml run --rm invfin coverage run --source='.' manage.py test $(ar) --noinput --settings=config.settings.test
-	docker-compose -f local.yml run --rm invfin coverage report
+	docker compose -f local.yml run --rm invfin coverage run --source='.' manage.py test $(ar) --noinput --settings=config.settings.test
+	docker compose -f local.yml run --rm invfin coverage report
 
 pycov:
-	docker-compose -f local.yml run --rm invfin coverage run -m pytest
-	docker-compose -f local.yml run --rm invfin coverage report
+	docker compose -f local.yml run --rm invfin coverage run -m pytest
+	docker compose -f local.yml run --rm invfin coverage report
 
 # Style
-local/flake8:
-	flake8
-
-local/isort:
-	isort .
-
-local/mypy:
-	mypy ${MYPY_FOLDERS}
-
-local/isort_check:
-	isort --df -c .
-
-local/black:
-	black ${BLACK_FOLDERS}
-
-local/black_check:
-	black ${BLACK_FOLDERS} --check
-
-local/format:
-	local/isort local/black local/flake8 local/mypy
-
 format:
-	docker-compose -f local.yml run --rm invfin make local/format
+	isort ${FOLDERS} 
+	black ${FOLDERS} 
+	flake8 ${FOLDERS}
+	mypy ${FOLDERS}
 
 isort_check:
-	docker-compose -f local.yml run --rm invfin make local/isort_check
+	isort --df -c ${FOLDERS}
 
 black_check:
-	docker-compose -f local.yml run --rm invfin black local/black_check
+	black ${BLACK_FOLDERS} --check
 
 flake8:
-	docker-compose -f local.yml run --rm invfin make local/flake8
+	flake8 ${FOLDERS}
 
 isort:
-	docker-compose -f local.yml run --rm invfin make local/isort
+	isort ${FOLDERS}
 
 black:
-	docker-compose -f local.yml run --rm invfin local/black
+	black ${FOLDERS}
 
 mypy:
-	docker-compose -f local.yml run --rm invfin local/mypy
+	mypy ${FOLDERS}
+
+deploy:
+	./deployment.sh

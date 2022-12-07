@@ -1,12 +1,14 @@
 from pathlib import Path
+import re
+
+from django.contrib.messages import constants as messages
 
 import environ
-from django.contrib.messages import constants as messages
 from imagekitio import ImageKit
 
 ROOT_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
 # invfin/
-APPS_DIR = ROOT_DIR / "apps"
+APPS_DIR = ROOT_DIR / "src"
 env = environ.Env()
 
 READ_DOT_ENV_FILE = env.bool("DJANGO_READ_DOT_ENV_FILE", default=True)
@@ -15,10 +17,9 @@ if READ_DOT_ENV_FILE:
     env.read_env(str(ROOT_DIR / ".env"))
 
 IS_PROD = env.bool("IS_PROD", False)
+IS_TEST = env.bool("IS_TEST", False)
 
-PROTOCOL = "http://"
-if IS_PROD:
-    PROTOCOL = "https://"
+PROTOCOL = "https://" if IS_PROD else "http://"
 
 # GENERAL
 # ------------------------------------------------------------------------------
@@ -86,7 +87,7 @@ WSGI_APPLICATION = "config.wsgi.application"
 # ------------------------------------------------------------------------------
 
 APPS_BEFORE_DJANGO_APPS = [
-    "apps.admin_custom",
+    "src.admin_custom",
     "jazzmin",
 ]
 
@@ -122,23 +123,33 @@ THIRD_PARTY_APPS = [
 ]
 
 LOCAL_APPS = [
-    "apps.users",
-    "apps.general",
-    "apps.seo",
-    "apps.escritos",
-    "apps.web",
-    "apps.preguntas_respuestas",
-    "apps.public_blog",
-    "apps.empresas",
-    "apps.super_investors",
-    "apps.etfs",
-    "apps.screener",
-    "apps.cartera",
-    "apps.roboadvisor",
-    "apps.socialmedias",
-    "apps.api",
-    "apps.business",
-    "apps.recsys",
+    "src.users",
+    "src.general",
+    "src.seo",
+    "src.escritos",
+    "src.web",
+    "src.preguntas_respuestas",
+    "src.public_blog",
+    "src.empresas",
+    "src.super_investors",
+    "src.etfs",
+    "src.screener",
+    "src.cartera",
+    "src.roboadvisor",
+    "src.socialmedias",
+    "src.api",
+    "src.business",
+    "src.recsys",
+    "src.emailing",
+    "src.classifications",
+    "src.content_creation",
+    "src.engagement_machine",
+    "src.industries_sectors",
+    "src.countries",
+    "src.currencies",
+    "src.notifications",
+    "src.periods",
+    "src.promotions",
 ]
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
@@ -147,7 +158,7 @@ INSTALLED_APPS = APPS_BEFORE_DJANGO_APPS + DJANGO_APPS + THIRD_PARTY_APPS + LOCA
 # MIGRATIONS
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#migration-modules
-MIGRATION_MODULES = {"sites": "apps.contrib.sites.migrations"}
+MIGRATION_MODULES = {"sites": "src.contrib.sites.migrations"}
 
 # AUTHENTICATION
 # ------------------------------------------------------------------------------
@@ -196,8 +207,8 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.common.BrokenLinkEmailsMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "general.middleware.SubdomainURLRoutingMiddleware",
-    "seo.middleware.VisiteurMiddleware",
+    "src.general.middleware.SubdomainURLRoutingMiddleware",
+    "src.seo.middleware.VisiteurMiddleware",
 ]
 
 # SECURITY
@@ -214,6 +225,9 @@ CSRF_COOKIE_DOMAIN = f".{CURRENT_DOMAIN}"
 CSRF_TRUSTED_ORIGINS = [f".{CURRENT_DOMAIN}", f"{CURRENT_DOMAIN}"]
 # https://docs.djangoproject.com/en/dev/ref/settings/#secure-browser-xss-filter
 SECURE_BROWSER_XSS_FILTER = True
+
+SECURE_PROXY_SSL_HEADER = ("HTTP_X_FORWARDED_PROTO", "https")
+
 # https://docs.djangoproject.com/en/dev/ref/settings/#x-frame-options
 X_FRAME_OPTIONS = "DENY"
 
@@ -260,12 +274,12 @@ TEMPLATES = [
                 "django.template.context_processors.static",
                 "django.template.context_processors.tz",
                 "django.contrib.messages.context_processors.messages",
-                "apps.users.context_processors.allauth_settings",
-                "apps.users.context_processors.users_notifications",
-                "apps.users.context_processors.user_companies_visited",
-                "apps.public_blog.context_processors.keep_email",
-                "apps.seo.context_processors.journey",
-                "apps.general.context_processors.general_settings",
+                "src.users.context_processors.allauth_settings",
+                "src.users.context_processors.users_notifications",
+                "src.users.context_processors.user_companies_visited",
+                "src.public_blog.context_processors.keep_email",
+                "src.seo.context_processors.journey",
+                "src.general.context_processors.general_settings",
             ],
         },
     }
@@ -293,14 +307,14 @@ EMAIL_BACKEND = env(
 # https://docs.djangoproject.com/en/dev/ref/settings/#email-timeout
 EMAIL_TIMEOUT = 5
 
-EMAIL_CONTACT = env("EMAIL_CONTACT", default="EMAIL_CONTACT@inversionesyfinanzas.xyz")
-EMAIL_SUBJECT_PREFIX = env("EMAIL_SUBJECT_PREFIX", default="EMAIL_SUBJECT_PREFIX@inversionesyfinanzas.xyz")
-DEFAULT_EMAIL = env("DEFAULT_EMAIL", default="DEFAULT_EMAIL@inversionesyfinanzas.xyz")
-EMAIL_NEWSLETTER = env("EMAIL_NEWSLETTER", default="EMAIL_NEWSLETTER@inversionesyfinanzas.xyz")
-MAIN_EMAIL = env("MAIN_EMAIL", default="MAIN_EMAIL@inversionesyfinanzas.xyz")
-EMAIL_ACCOUNTS = env("EMAIL_ACCOUNTS", default="EMAIL_ACCOUNTS@inversionesyfinanzas.xyz")
-EMAIL_DEFAULT = env("EMAIL_DEFAULT", default="EMAIL_DEFAULT@inversionesyfinanzas.xyz")
-EMAIL_SUGGESTIONS = env("EMAIL_SUGGESTIONS", default="EMAIL_SUGGESTIONS@inversionesyfinanzas.xyz")
+EMAIL_CONTACT = env("EMAIL_CONTACT", default=f"EMAIL_CONTACT@example.com")
+EMAIL_SUBJECT_PREFIX = env("EMAIL_SUBJECT_PREFIX", default=f"EMAIL_SUBJECT_PREFIX@example.com")
+DEFAULT_EMAIL = env("DEFAULT_EMAIL", default=f"DEFAULT_EMAIL@example.com")
+EMAIL_NEWSLETTER = env("EMAIL_NEWSLETTER", default=f"EMAIL_NEWSLETTER@example.com")
+MAIN_EMAIL = env("MAIN_EMAIL", default=f"MAIN_EMAIL@example.com")
+EMAIL_ACCOUNTS = env("EMAIL_ACCOUNTS", default=f"EMAIL_ACCOUNTS@example.com")
+EMAIL_DEFAULT = env("EMAIL_DEFAULT", default=f"EMAIL_DEFAULT@example.com")
+EMAIL_SUGGESTIONS = env("EMAIL_SUGGESTIONS", default=f"EMAIL_SUGGESTIONS@example.com")
 
 # ADMIN
 # ------------------------------------------------------------------------------
@@ -325,13 +339,13 @@ ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 
 ACCOUNT_SESSION_REMEMBER = True
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
-ACCOUNT_ADAPTER = "apps.users.adapters.AccountAdapter"
+ACCOUNT_ADAPTER = "src.users.adapters.AccountAdapter"
 # https://django-allauth.readthedocs.io/en/latest/forms.html
-ACCOUNT_FORMS = {"signup": "apps.users.forms.UserSignupForm"}
+ACCOUNT_FORMS = {"signup": "src.users.forms.UserSignupForm"}
 # https://django-allauth.readthedocs.io/en/latest/configuration.html
-SOCIALACCOUNT_ADAPTER = "apps.users.adapters.SocialAccountAdapter"
+SOCIALACCOUNT_ADAPTER = "src.users.adapters.SocialAccountAdapter"
 # https://django-allauth.readthedocs.io/en/latest/forms.html
-SOCIALACCOUNT_FORMS = {"signup": "apps.users.forms.UserSocialSignupForm"}
+SOCIALACCOUNT_FORMS = {"signup": "src.users.forms.UserSocialSignupForm"}
 
 # Celery
 # ------------------------------------------------------------------------------
@@ -380,9 +394,9 @@ REST_FRAMEWORK = {
         "rest_framework.renderers.BrowsableAPIRenderer",
     ],
     "DEFAULT_AUTHENTICATION_CLASSES": [
-        "apps.api.authentication.KeyAuthentication",
+        "src.api.authentication.KeyAuthentication",
     ],
-    "DEFAULT_PERMISSION_CLASSES": ["apps.api.permissions.ReadOnly"],
+    "DEFAULT_PERMISSION_CLASSES": ["src.api.permissions.ReadOnly"],
     "DEFAULT_VERSIONING_CLASS": "rest_framework.versioning.NamespaceVersioning",
     "DEFAULT_PARSER_CLASSES": ["rest_framework.parsers.JSONParser"],
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.LimitOffsetPagination",
@@ -466,15 +480,17 @@ TWITTER_ACCESS_TOKEN_SECRET = env.str("TWITTER_ACCESS_TOKEN_SECRET", "not-set")
 # List of compiled regular expression objects representing User-Agent strings
 # that are not allowed to visit any page, systemwide. Use this for bad
 # robots/crawlers. Here are a few examples:
-#     import re
-#     DISALLOWED_USER_AGENTS = [
-#         re.compile(r'^NaverBot.*'),
-#         re.compile(r'^EmailSiphon.*'),
-#         re.compile(r'^SiteSucker.*'),
-#         re.compile(r'^sohu-search'),
-#     ]
+DISALLOWED_USER_AGENTS = [
+    re.compile(r"^SemrushBot.*"),
+    re.compile(r"^PetalBot.*"),
+    re.compile(r"^DotBot.*"),
+    # re.compile(r"^RU_Bot"),
+    # re.compile(r"^YandexBot"),
+    # re.compile(r"^DuckDuckGo-Favicons-Bot"),
+    # re.compile(r"^BLEXBot"),
+]
 
-# IMAKIT
+# IMAGEKIT
 # ------------------------------------------------------------------------------
 if env.bool("USE_IMAGEKIT", False):
     IMAGEKIT_PRIVATE_KEY = env.str("IMAGEKIT_PRIVATE_KEY")

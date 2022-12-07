@@ -1,0 +1,14 @@
+{% extends "bases/base_content.html" %}
+{% load static i18n extra %}
+{% block header %}{% include "headers/inicio.html" %}{% endblock header%}
+
+{% block FirstContent %}
+<div class="row" hx-trigger="load, refreshNewsletterList from:body" hx-get="{% url 'web:list_emails_engagement' %}"
+  hx-target="this">
+  <div class="text-center">
+    <div class="spinner-border" role="status">
+    </div>
+    Cargando...
+  </div>
+</div>
+{% endblock FirstContent%}

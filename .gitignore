@@ -272,13 +272,14 @@ Session.vim
 tags
 
 ### Project template
-apps/media/
+src/media/
 
 .pytest_cache/
 .ipython/
 .envs/*
 
 geoip
+
 
 temp_venv
 .env
@@ -287,3 +288,7 @@ Notes
 checkout-single-subscription
 
 .idea
+*.sqlite3
+
+assets_*
+src/empresas/parse/finprep_requests_done.json

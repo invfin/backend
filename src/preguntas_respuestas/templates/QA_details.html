@@ -1,0 +1,82 @@
+{% extends "bases/base_content.html" %}
+{% load static i18n extra %}
+{% block extra %}
+<script type="text/javascript" src="{% static 'ckeditor/ckeditor-init.js' %}"></script>
+<script type="text/javascript" src="{% static 'ckeditor/ckeditor/ckeditor.js' %}"></script>
+{% endblock extra %}
+{% block header %}{% include "header/QA_details.html" %}{% endblock header%}
+{% block content %}
+
+<div class="row mb-5">
+    <div class="col-12">
+        <div class="card">
+            <div class="card-body p-3">
+                <div class="row">
+                    <div class="col-1">
+                        {% include "votes.html" %}
+                    </div>
+                    {% include "components/card/content.html" %}
+                    <div class="col-1"></div>
+                </div>
+            </div>
+            {% with help_text="Deja un comentario al autor para que pueda mejorar su pregunta"%}
+            {% include "comments.html" with object_name="question" help_text=help_text %}
+            {% endwith %}
+        </div>
+    </div>
+    <h3>Respuestas</h3>
+    <div class="col-12">
+        {% for answer in object.related_answers %}
+        <div class="card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-1">
+                        {% include "votes.html" with object=answer %}
+                    </div>
+                    <div class="col-10">
+                        {% if object.has_accepted_answer == False and request.user == object.author%}
+                        <span style="font-size: 12px;">
+                            ¿Esta respuesta responde exactamente a tu pregunta?<a
+                                href="{% url 'preguntas_respuestas:is_accepted' object.id answer.id %}"
+                                style="font-size: 14px;text-decoration: underline;"> ¡Accéptala!</a>
+                        </span>
+                        {% endif %}
+                        <div class="mb-2 mt-2 text-dark text-justify font-weight-bolder">
+                            {{answer.content|safe}}
+                        </div>
+                        <div class="mt-2 pt-5 text-right">
+                            <img class="avatar" src="{{answer.author.foto}}">
+                            <a href="{{answer.author.custom_url}}">
+                                {{answer.author}} - {{answer.author.user_profile.reputation_score}}
+                            </a>
+                        </div>
+                    </div>
+
+                    {% if answer.is_accepted %}
+                    <div class="col-1">
+                        <div style="width: 100%;text-align: center;" class="pt-1 pb-1"><i class="fa fa-check-circle"
+                                style="color: green;font-size:36px;"></i></div>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% with help_text="Deja un comentario al autor para que pueda mejorar su respuesta"%}
+            {% include "comments.html" with object=answer object_name="answer" help_text=help_text %}
+            {% endwith %}
+        </div>
+        {% empty %}
+        <div class="card">
+            <div class="card-body p-3">
+                <h3>
+                    Todavía no hay ninguna respuesta, sé el primero en responder
+                </h3>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="col-12" id="doAnswer">
+        {% include "forms/create_answer.html" %}
+    </div>
+</div>
+{% endblock content %}

@@ -11,7 +11,7 @@ SECRET_KEY = env(
     default="BifHoqHjJrgBr1ZDzCf3sCeE9fa1BZSIBvoIClZcYuBUgEPWVVCkvAsz2vWlJ10B",
 )
 
-USE_DOCKER = env("USE_DOCKER") == "yes"
+USE_DOCKER = env("USE_DOCKER", default="no") == "yes"
 # https://docs.djangoproject.com/en/dev/ref/settings/#allowed-hosts
 ALLOWED_HOSTS = ["localhost", "0.0.0.0", "127.0.0.1", ".example.com"]
 
@@ -24,6 +24,13 @@ if USE_DOCKER:
 DATABASES = {"default": env.db(DATABASE_URL)}
 DATABASES["default"]["ATOMIC_REQUESTS"] = True
 
+
+# DATABASES["data_warehouse"] = env.db(DATABASE_URL)
+# DATABASE_ROUTERS = [
+#     'config.db_router.DataWarehouse',
+# ]
+
+# DATA_WAREHOUSE_DB_ROUTER = "data_warehouse"
 # CACHES
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#caches
@@ -34,8 +41,8 @@ DATABASES["default"]["ATOMIC_REQUESTS"] = True
 #     }
 # }
 CACHES = {
-    'default': {
-        'BACKEND': 'django.core.cache.backends.dummy.DummyCache',
+    "default": {
+        "BACKEND": "django.core.cache.backends.dummy.DummyCache",
     }
 }
 
@@ -47,7 +54,7 @@ EMAIL_HOST = "mailhog"
 # https://docs.djangoproject.com/en/dev/ref/settings/#email-port
 EMAIL_PORT = 1025
 # https://docs.djangoproject.com/en/dev/ref/settings/#email-backend
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 
 EMAIL_HOST_USER = None
 EMAIL_HOST_PASSWORD = None
@@ -65,9 +72,9 @@ INSTALLED_APPS += [
     # "channel",
     "debug_toolbar",
     "drf_spectacular",
-    ]  # noqa F405
+]  # noqa F405
 # https://django-debug-toolbar.readthedocs.io/en/latest/installation.html#middleware
-MIDDLEWARE += ["debug_toolbar.middleware.DebugToolbarMiddleware"] # noqa F405
+MIDDLEWARE += ["debug_toolbar.middleware.DebugToolbarMiddleware"]  # noqa F405
 # https://django-debug-toolbar.readthedocs.io/en/latest/configuration.html#debug-toolbar-config
 DEBUG_TOOLBAR_CONFIG = {
     "DISABLE_PANELS": ["debug_toolbar.panels.redirects.RedirectsPanel"],
@@ -88,9 +95,7 @@ INSTALLED_APPS += ["django_extensions"]  # noqa F405
 
 # CORS
 # ------------------------------------------------------------------------------
-CORS_ALLOWED_ORIGINS = [
-    FULL_DOMAIN
-]
+CORS_ALLOWED_ORIGINS = [FULL_DOMAIN]
 # django-cors-headers - https://github.com/adamchainz/django-cors-headers#setup
 CORS_URLS_REGEX = r"^/api/.*$"
 
@@ -101,18 +106,13 @@ CORS_URLS_REGEX = r"^/api/.*$"
 # more details on how to customize your logging configuration.
 LOGGING = {
     "version": 1,
-    'filters': {
-        'require_debug_true': {
-            '()': 'django.utils.log.RequireDebugTrue',
+    "filters": {
+        "require_debug_true": {
+            "()": "django.utils.log.RequireDebugTrue",
         },
     },
     "disable_existing_loggers": False,
-    "formatters": {
-        "verbose": {
-            "format": "%(levelname)s %(asctime)s %(module)s "
-            "%(process)d %(thread)d %(message)s"
-        }
-    },
+    "formatters": {"verbose": {"format": "%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s"}},
     "handlers": {
         "console": {
             "level": "DEBUG",

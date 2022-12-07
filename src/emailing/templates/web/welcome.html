@@ -1,0 +1,7 @@
+{% extends "complements/base_structure.html" %}
+{% load static i18n extra %}
+{% block email_content %}
+<p>
+    {{content|safe}}
+</p>
+{% endblock email_content %}

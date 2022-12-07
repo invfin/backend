@@ -56,30 +56,26 @@ CSRF_COOKIE_SECURE = True
 # TODO: set this to 60 seconds first and then to 518400 once you prove the former works
 SECURE_HSTS_SECONDS = 60
 # https://docs.djangoproject.com/en/dev/ref/settings/#secure-hsts-include-subdomains
-SECURE_HSTS_INCLUDE_SUBDOMAINS = env.bool(
-    "DJANGO_SECURE_HSTS_INCLUDE_SUBDOMAINS", default=True
-)
+SECURE_HSTS_INCLUDE_SUBDOMAINS = env.bool("DJANGO_SECURE_HSTS_INCLUDE_SUBDOMAINS", default=True)
 # https://docs.djangoproject.com/en/dev/ref/settings/#secure-hsts-preload
 SECURE_HSTS_PRELOAD = env.bool("DJANGO_SECURE_HSTS_PRELOAD", default=True)
 # https://docs.djangoproject.com/en/dev/ref/middleware/#x-content-type-options-nosniff
-SECURE_CONTENT_TYPE_NOSNIFF = env.bool(
-    "DJANGO_SECURE_CONTENT_TYPE_NOSNIFF", default=True
-)
+SECURE_CONTENT_TYPE_NOSNIFF = env.bool("DJANGO_SECURE_CONTENT_TYPE_NOSNIFF", default=True)
 
 # STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 # EMAIL
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#default-from-email
-DEFAULT_FROM_EMAIL = env('DEFAULT_EMAIL')
-EMAIL_HOST = env('EMAIL_HOST')
-EMAIL_PORT = env('EMAIL_PORT')
-EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
-EMAIL_HOST_USER = env('EMAIL_HOST_USER')
-EMAIL_USE_TLS = env('EMAIL_USE_TLS')
+DEFAULT_FROM_EMAIL = env("DEFAULT_EMAIL")
+EMAIL_HOST = env("EMAIL_HOST")
+EMAIL_PORT = env("EMAIL_PORT")
+EMAIL_HOST_PASSWORD = env("EMAIL_HOST_PASSWORD")
+EMAIL_HOST_USER = env("EMAIL_HOST_USER")
+EMAIL_USE_TLS = env("EMAIL_USE_TLS")
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#server-email
-SERVER_EMAIL = env('SERVER_EMAIL')
+SERVER_EMAIL = env("SERVER_EMAIL")
 
 # https://docs.djangoproject.com/en/dev/ref/settings/#email-subject-prefix
 EMAIL_SUBJECT_PREFIX = env(
@@ -114,17 +110,14 @@ if env("LOGGING") == "yes":
         "disable_existing_loggers": False,
         "filters": {"require_debug_false": {"()": "django.utils.log.RequireDebugFalse"}},
         "formatters": {
-            "verbose": {
-                "format": "%(levelname)s %(asctime)s %(module)s "
-                "%(process)d %(thread)d %(message)s"
-            }
+            "verbose": {"format": "%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s"}
         },
         "handlers": {
-            'file': {
-                'level': 'INFO',
-                'class': 'logging.FileHandler',
-                'filename': str(ROOT_DIR / "../logs/paginaweb.log"),
-                'formatter': 'verbose',
+            "file": {
+                "level": "INFO",
+                "class": "logging.FileHandler",
+                "filename": str(ROOT_DIR / "../logs/paginaweb.log"),
+                "formatter": "verbose",
             },
             "mail_admins": {
                 "level": "ERROR",
@@ -139,28 +132,11 @@ if env("LOGGING") == "yes":
         },
         "root": {"level": "INFO", "handlers": ["console"]},
         "loggers": {
-            'django': {
-                'handlers': ['file'],
-                "level": "ERROR",
-                'propagate': True,
-            },
-            "django.request": {
-                "handlers": ["mail_admins", 'file'],
+            "django": {
+                "handlers": ["mail_admins"],
                 "level": "ERROR",
                 "propagate": True,
             },
-            "django.security.DisallowedHost": {
-                "level": "ERROR",
-                "handlers": ["file", "mail_admins"],
-                "propagate": True,
-            },
-            # Errors logged by the SDK itself
-            # "sentry_sdk": {"level": "ERROR", "handlers": ["console"], "propagate": False},
-            # "django.security.DisallowedHost": {
-            #     "level": "ERROR",
-            #     "handlers": ["console"],
-            #     "propagate": False,
-            # },
         },
     }
 
@@ -184,13 +160,11 @@ sentry_sdk.init(
     integrations=integrations,
     environment=env("SENTRY_ENVIRONMENT", default="production"),
     traces_sample_rate=env.float("SENTRY_TRACES_SAMPLE_RATE", default=1.0),
-    send_default_pii=True
+    send_default_pii=True,
 )
 
 # CORS
 # ------------------------------------------------------------------------------
-CORS_ALLOWED_ORIGINS = [
-    FULL_DOMAIN
-]
+CORS_ALLOWED_ORIGINS = [FULL_DOMAIN]
 # django-cors-headers - https://github.com/adamchainz/django-cors-headers#setup
 CORS_URLS_REGEX = r"^/api/.*$"

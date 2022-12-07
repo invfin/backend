@@ -1,11 +1,12 @@
-import vcr
-import pytest
+from django.test import TestCase
 
-from apps.empresas.models import Company
-from apps.escritos.models import Term
-from apps.preguntas_respuestas.models import Question
-from apps.public_blog.models import PublicBlog
-from apps.socialmedias.models import (
+import vcr
+
+from src.empresas.models import Company
+from src.escritos.models import Term
+from src.preguntas_respuestas.models import Question
+from src.public_blog.models import PublicBlog
+from src.socialmedias.models import (
     BlogSharedHistorial,
     CompanySharedHistorial,
     NewsSharedHistorial,
@@ -13,10 +14,8 @@ from apps.socialmedias.models import (
     QuestionSharedHistorial,
     TermSharedHistorial,
 )
-from apps.socialmedias.socialposter.tweetpy import Twitter
-
-from apps.socialmedias.poster import SocialPosting
-
+from src.socialmedias.outils.poster import SocialPosting
+from src.socialmedias.outils.socialposter.tweetpy import Twitter
 
 twitter_vcr = vcr.VCR(
     cassette_library_dir="cassettes/twitter/",
@@ -24,10 +23,9 @@ twitter_vcr = vcr.VCR(
 )
 
 
-@pytest.mark.django_db
-class TestPoster:
+class TestPoster(TestCase):
     @classmethod
-    def setup_class(cls) -> None:
+    def setUpTestData(cls) -> None:
         cls.term = Term.objects.create(
             title="term",
             resume="resumen",

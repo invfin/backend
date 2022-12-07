@@ -1,0 +1,32 @@
+{% extends "complements/base_email.html" %}
+{% load static i18n extra %}
+{% block content %}
+<table class="email-wrapper" width="100%" cellpadding="0" cellspacing="0" role="presentation">
+    <tr>
+        <td align="center">
+            <table class="email-content" width="100%" cellpadding="0" cellspacing="0" role="presentation">
+                {% include "complements/header_email.html" %}
+                <tr>
+                    <td class="email-body" width="570" cellpadding="0" cellspacing="0">
+                        <table class="email-body_inner" align="center" width="570" cellpadding="0" cellspacing="0"
+                            role="presentation">
+                            <!-- Body content -->
+                            <tr>
+                                <td class="content-cell">
+                                    <div class="f-fallback">
+                                        <h1>Hola, {{user.full_name}}</h1>
+                                        {% block email_content %}
+                                        {% endblock email_content %}
+                                        {% include "complements/pre_footer_email.html" %}
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                {% include "complements/footer_email.html" %}
+            </table>
+        </td>
+    </tr>
+</table>
+{% endblock content %}

@@ -1,0 +1,119 @@
+{% load static i18n extra %}
+<footer class="footer section bg-primary text-white overflow-hidden">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-4 mb-4 mb-lg-0">
+                <a class="footer-brand mr-lg-5 d-flex" href="{% url 'web:inicio' %}">
+                    <img src="{% static 'general/assets/img/general/inversionesyfinanzas.WebP' %}" height="35"
+                        class="mr-3" alt="Footer logo">
+                </a>
+                <p class="my-4">Una comunidad y todos los recursos que todo inversor necesita para mejorar sus
+                    rendimientos.</p>
+                <div class="mb-4 mb-lg-0">
+                    <a href="https://www.facebook.com/InversionesyFinanzas" target="_blank" class="btn btn-white mr-1">
+                        <i class="fab fa-facebook text-primary"></i>
+                    </a>
+                    <a href="https://twitter.com/InvFinz" target="_blank" class="btn btn-white mr-1">
+                        <i class="fab fa-twitter text-primary"></i>
+                    </a>
+                    <a href="https://www.tiktok.com/@inversionesyfinanzas" target="_blank" class="btn btn-white mr-1">
+                        <i class="fab fa-tiktok"></i>
+                    </a>
+                    <a href="https://www.youtube.com/channel/UCLC5OpaeNlcUyIKHFOXRlpw?sub_confirmation=1"
+                        target="_blank" class="btn btn-white mr-1">
+                        <i class="fab fa-youtube text-danger"></i>
+                    </a>
+                    <a href="https://www.instagram.com/inversiones.finanzas/" target="_blank"
+                        class="btn btn-white mr-1">
+                        <i class="fab fa-instagram text-danger"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="col-6 col-sm-3 col-lg-2 mb-4 mb-lg-0">
+                <h6>Información</h6>
+                <ul class="links-vertical">
+                    <li>
+                        <a
+                            href="{% url 'escritos:glosario' %}{% utm content='footer' term='Glosario' medium='web' source='invfin' campaign='website-links' %}">
+                            Glosario
+                        </a>
+                    </li>
+                    <li>
+                        <a
+                            href="{% url 'screener:screener_inicio' %}{% utm content='footer' term='Empresas' medium='web' source='invfin' campaign='website-links' %}">
+                            Empresas
+                        </a>
+
+                    <li>
+                        <a
+                            href="{% url 'preguntas_respuestas:list_questions' %}{% utm content='footer' term='Preguntas' medium='web' source='invfin' campaign='website-links' %}">
+                            Preguntas
+                        </a>
+                    </li>
+                    <li>
+                        <a
+                            href="{% url 'public_blog:blog_list' %}{% utm content='footer' term='Escritores' medium='web' source='invfin' campaign='website-links' %}">
+                            Escritores
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-6 col-sm-3 col-lg-2 mb-4 mb-lg-0">
+                <h6>Herramientas</h6>
+                <ul class="links-vertical">
+                    <li>
+                        <a
+                            href="{% url 'business:all_products' %}{% utm content='footer' term='Excel' medium='web' source='invfin' campaign='website-links' %}">
+                            Excels
+                        </a>
+                    </li>
+                    <li>
+                        <a
+                            href="{% url 'roboadvisor:roboadvisor' %}{% utm content='footer' term='roboadvisor' medium='web' source='invfin' campaign='website-links' %}">
+                            Roboadvisor
+                        </a>
+                    </li>
+                    <li>
+                        <a
+                            href="{% url 'api:api_documentation' %}{% utm content='footer' term='api_documentation' medium='web' source='invfin' campaign='website-links' %}">
+                            Documentación API
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-6 col-sm-3 col-lg-2 mb-4 mb-lg-0">
+                <h6>Ayuda</h6>
+                <ul class="links-vertical">
+                    <li>
+                        <a
+                            href="{% url 'web:soporte' %}{% utm content='footer' term='Contáctanos' medium='web' source='invfin' campaign='website-links' %}">
+                            Contáctanos
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-6 col-sm-3 col-lg-2 mb-4 mb-lg-0">
+                <h6>Legales</h6>
+                <ul class="links-vertical">
+                    {% for link in legal_links %}
+                    <li>
+                        <a
+                            href="{{link.get_absolute_url}}{% utm content='footer' term=legal.title medium='web' source='invfin' campaign='website-links' %}">
+                            {{link.title}}
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        <hr class="my-4 my-lg-5">
+        <div class="row">
+            <div class="col pb-4 mb-md-0">
+                <div class="d-flex text-center justify-content-center align-items-center">
+                    <p class="font-weight-normal mb-0">© Inversiones & Finanzas <span class="current-year"></span>. All
+                        rights reserved.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</footer>

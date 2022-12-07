@@ -1,0 +1,76 @@
+{% extends "bases/base_content.html" %}
+{% load static i18n extra %}
+{% block header %}{% include "header/blog_details.html" %}{% endblock header%}
+
+{% block FirstCtaContent %}
+{% include "cta/blog_details_first.html" %}
+{% endblock FirstCtaContent %}
+
+{% block ListContent %}
+<style>
+    html,
+    body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+
+    img {
+        padding: 0;
+        display: block;
+        margin: 0 auto;
+        max-height: 100%;
+        max-width: 100%;
+    }
+</style>
+<div class="col-12">
+    <div class="card">
+        <div class="card-header">
+            <div class="row">
+                <div class="col-1">
+                    {% include "votes.html" %}
+                </div>
+                <div class="col-11">
+                    <h1 class="mb-1 pt-2 text-bold">
+                        {{object.title}}
+                    </h1>
+                    <h5 class="font-weight-bolder mb-4">
+                        Visitado {{object.total_views}} veces desde el {{object.created_at}}
+                    </h5>
+                    <div>
+                        {% for tag in object.tags.all %}
+                        <a href="#" class="badge badge-info text-center mr-2">
+                            <span class="font-weight-bolder">{{tag.name}}</span>
+                        </a>
+                        {% endfor %}
+                        <div class=" text-right">
+                            <img class="avatar" src="{{object.author.foto}}">
+                            <a href="{{object.author.custom_url}}">
+                                {{object.author}}
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <div class="mb-2 mt-2 text-dark text-justify font-weight-bolder">
+                {{object.content|safe}}
+            </div>
+        </div>
+        {% with help_text="Deja un comentario al autor"%}
+        {% include "comments.html" with object_name="blog" help_text=help_text %}
+        {% endwith %}
+    </div>
+</div>
+{% endblock ListContent %}
+
+{% block MiddleCtaContent %}
+{% include "cta/blog_details_first.html" %}
+{% endblock MiddleCtaContent %}
+
+{% block ListContinuation %}
+{% endblock ListContinuation %}
+
+{% block LastCta %}
+{% endblock LastCta %}

@@ -1,0 +1,25 @@
+<li>
+    <button class="dropdown-item" hx-get="{% url 'cartera:save_cashflow_movement' %}" hx-target="#SharedModalDialog">
+        Movimientos de caja
+    </button>
+</li>
+<li>
+    <button class="dropdown-item" hx-get="{% url 'cartera:save_asset_movement' %}" hx-target="#SharedModalDialog">
+        Posiciones activos
+    </button>
+</li>
+<li>
+    <button class="dropdown-item" hx-get="{% url 'cartera:save_new_asset_movement' %}" hx-target="#SharedModalDialog">
+        Nuevo activo
+    </button>
+</li>
+<li>
+    <button class="dropdown-item" hx-get="{% url 'cartera:save_default_currency' %}" hx-target="#SharedModalDialog">
+        Divisa
+    </button>
+</li>
+<!-- <li>
+    <button class="dropdown-item" hx-get="{% url 'cartera:save_new_objectif' %}" hx-target="#SharedModalDialog">
+        Objetivos
+    </button>
+</li> -->
