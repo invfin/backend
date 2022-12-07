@@ -1,9 +1,18 @@
 from django.test import TestCase
 
+from apps.empresas.models import IncomeStatement
 from apps.empresas.outils.financial_ratios.valuation_ratios import ValuationRatios
 
+from bfet import DjangoTestingModel
+import pandas as pd
 
 class TestValuationRatios(TestCase):
+    def test_opa(self):
+        inc = DjangoTestingModel.create(IncomeStatement)
+        df = pd.DataFrame(IncomeStatement.objects.values())
+        ndf = df.drop(columns=["id"])
+        nic = IncomeStatement.objects.create(**ndf.to_dict('records')[0])
+
     def test_calculate_price_to_book(self):
         assert 1.88 == ValuationRatios.calculate_price_to_book(23.33, 12.42)
 
