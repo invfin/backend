@@ -25,11 +25,12 @@ SOCIAL_MEDIAS_USED = [FACEBOOK, TWITTER]
 
 
 FACEBOOK_GRAPH_API_VERSION = "v15.0/"
-
-FACEBOOK_GRAPH_URL = f"https://graph.facebook.com/{FACEBOOK_GRAPH_API_VERSION}"
-
-FACEBOOK_GRAPH_VIDEO_URL = f"https://graph-video.facebook.com/"
-
-INSTAGRAM_GRAPH_URL = f"https://graph.instagram.com/"
+FACEBOOK_GRAPH_URL = "https://graph.facebook.com/"
+FACEBOOK_GRAPH_VIDEO_URL = "https://graph-video.facebook.com/"
+FACEBOOK_OAUTH_ACCESS_TOKEN = "oauth/access_token"
+FACEBOOK_POST_TEXT_PAGE = "feed"
+FACEBOOK_POST_IMAGE_PAGE = "photos"
+FACEBOOK_POST_VIDEO_PAGE = "videos"
+INSTAGRAM_GRAPH_URL = "https://graph.instagram.com/"
 
 TWEET_MAX_LENGTH = 174

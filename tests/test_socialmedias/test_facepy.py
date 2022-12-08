@@ -7,6 +7,7 @@ import vcr
 
 from src.content_creation.constants import POST_TYPE_TEXT
 from src.socialmedias.outils.socialposter.facepy import Facebook
+from src.socialmedias import constants
 
 facebook_vcr = vcr.VCR(
     cassette_library_dir="cassettes/facebook/",
@@ -19,9 +20,15 @@ class TestFacePoster(TestCase):
     @classmethod
     def setUpTestData(cls):
         cls.facebook = Facebook(
-            settings.NEW_FACEBOOK_ID,
-            settings.NEW_FB_PAGE_ACCESS_TOKEN,
-            "InversionesyFinanzas",
+            settings.TEST_FACEBOOK_ID,
+            settings.TEST_FB_PAGE_ACCESS_TOKEN,
+            "Inversiones.y.Finanzas.Para.Todos.Tests",
+        )
+        cls.facebook_old = Facebook(
+            settings.TEST_FACEBOOK_ID,
+            settings.TEST_FB_PAGE_ACCESS_TOKEN,
+            "Inversiones.y.Finanzas.Para.Todos.Tests",
+            is_old_page=True,
         )
 
     def test_create_fb_description(self):
@@ -56,8 +63,43 @@ class TestFacePoster(TestCase):
             == description
         )
 
-    @skip("Not ready")
-    @facebook_vcr.use_cassette
+    def test_build_base_url(self):
+        assert "https://graph.facebook.com/v15.0/" == self.facebook_old.build_base_url()
+        assert "https://graph-video.facebook.com/v15.0/" == self.facebook_old.build_base_url(is_video=True)
+        assert "https://graph.facebook.com/v15.0/105836681984738/" == self.facebook.build_base_url()
+
+    def test_build_action_url_auth(self):
+        assert "https://graph.facebook.com/v15.0/oauth/access_token" == self.facebook_old.build_action_url(
+            constants.FACEBOOK_OAUTH_ACCESS_TOKEN
+        )
+        assert "https://graph.facebook.com/v15.0/105836681984738/oauth/access_token" == self.facebook.build_action_url(
+            constants.FACEBOOK_OAUTH_ACCESS_TOKEN
+        )
+
+    def test_build_action_url_text(self):
+        assert "https://graph.facebook.com/v15.0/feed" == self.facebook_old.build_action_url(
+            constants.FACEBOOK_POST_TEXT_PAGE
+        )
+        assert "https://graph.facebook.com/v15.0/105836681984738/feed" == self.facebook.build_action_url(
+            constants.FACEBOOK_POST_TEXT_PAGE
+        )
+
+    def test_build_action_url_video(self):
+        assert "https://graph-video.facebook.com/v15.0/videos" == self.facebook_old.build_action_url(
+            constants.FACEBOOK_POST_VIDEO_PAGE
+        )
+        assert "https://graph-video.facebook.com/v15.0/105836681984738/videos" == self.facebook.build_action_url(
+            constants.FACEBOOK_POST_VIDEO_PAGE
+        )
+
+    def test_build_action_url_image(self):
+        assert "https://graph.facebook.com/v15.0/photos" == self.facebook_old.build_action_url(
+            constants.FACEBOOK_POST_IMAGE_PAGE
+        )
+        assert "https://graph.facebook.com/v15.0/105836681984738/photos" == self.facebook.build_action_url(
+            constants.FACEBOOK_POST_IMAGE_PAGE
+        )
+
     def test_post(self):
         post_content = dict(
             media="",

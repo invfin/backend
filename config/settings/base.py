@@ -458,12 +458,13 @@ GOOGLE_RECAPTCHA_PUBLIC_KEY = env.str("GOOGLE_RECAPTCHA_PUBLIC_KEY", "not-set")
 
 # FACEBOOK KEYS
 # ------------------------------------------------------------------------------
-OLD_FB_PAGE_ACCESS_TOKEN = env.str("OLD_FB_PAGE_ACCESS_TOKEN", "not-set")
-NEW_FB_PAGE_ACCESS_TOKEN = env.str("NEW_FB_PAGE_ACCESS_TOKEN", "not-set")
+ACTUAL_FB_PAGE_ACCESS_TOKEN = env.str("ACTUAL_FB_PAGE_ACCESS_TOKEN", "not-set")
+TEST_FB_PAGE_ACCESS_TOKEN = env.str("TEST_FB_PAGE_ACCESS_TOKEN", "not-set")
 FACEBOOK_APP_SECRET = env.str("FACEBOOK_APP_SECRET", "not-set")
-OLD_FACEBOOK_ID = env.str("OLD_FACEBOOK_ID", "not-set")
-NEW_FACEBOOK_ID = env.str("NEW_FACEBOOK_ID", "not-set")
+ACTUAL_FACEBOOK_ID = env.str("ACTUAL_FACEBOOK_ID", "not-set")
+TEST_FACEBOOK_ID = env.str("TEST_FACEBOOK_ID", "not-set")
 FB_USER_ACCESS_TOKEN = env.str("FB_USER_ACCESS_TOKEN", "not-set")
+FACEBOOK_APP_ID = env.str("FACEBOOK_APP_ID", "not-set")
 
 # INSTAGRAM KEYS
 # ------------------------------------------------------------------------------
