@@ -1,5 +1,3 @@
-from unittest import skip
-
 from django.test import TestCase
 
 from src.empresas.outils.financial_ratios.efficiency_ratios import EfficiencyRatios

@@ -1,7 +1,7 @@
 from django.core.management import BaseCommand
 
 from src.empresas.models import Company
-from src.general.models import Period
+from src.periods.models import Period
 
 
 class Command(BaseCommand):
