@@ -87,7 +87,7 @@ class CalculateFinancialRatios(
         all_data.update(non_gaap)
 
         price_to_ratio = self.calculate_price_to_ratios(all_data)
-        eficiency_ratio = self.calculate_efficiency_ratios(all_data)
+        efficiency_ratio = self.calculate_efficiency_ratios(all_data)
         enterprise_value_ratio = self.calculate_enterprise_value_ratios(all_data)
         liquidity_ratio = self.calculate_liquidity_ratios(all_data)
         margin_ratio = self.calculate_margin_ratios(all_data)
@@ -97,7 +97,7 @@ class CalculateFinancialRatios(
         return {
             "current_data": current_data,
             "price_to_ratio": price_to_ratio,
-            "eficiency_ratio": eficiency_ratio,
+            "efficiency_ratio": efficiency_ratio,
             "enterprise_value_ratio": enterprise_value_ratio,
             "liquidity_ratio": liquidity_ratio,
             "margin_ratio": margin_ratio,
@@ -107,7 +107,7 @@ class CalculateFinancialRatios(
             "ps_value": ps_value,
             "company_growth": company_growth,
             "non_gaap": non_gaap,
-            "main_ratios": main_ratios,
+            "other_ratios": other_ratios,
         }
 
     def last_year_data(self, data: Dict[str, Union[int, float]]) -> Dict[str, Union[int, float]]:
@@ -117,12 +117,12 @@ class CalculateFinancialRatios(
         last_year_net_income = data.get("net_income", 0)
         last_year_fcf = data.get("free_cash_flow", 0)
         last_year_capex = data.get("capital_expenditure", 0)
-        last_year_shares_outstanding = data.get("weighted_average_shares_out", 0)
+        last_year_shares_outstanding = data.get("weighted_average_shares_outstanding", 0)
         last_year_cost_expense = data.get("cost_and_expenses", 0)  # TODO check what is this cost of expenses
         last_year_cost_revenue = data.get("cost_of_revenue", 0)
         last_year_eps = (
-            data.get("net_income", 0) / data.get("weighted_average_shares_out", 0)
-            if data.get("weighted_average_shares_out", 0) != 0
+            data.get("net_income", 0) / data.get("weighted_average_shares_outstanding", 0)
+            if data.get("weighted_average_shares_outstanding", 0) != 0
             else 0
         )
         last_year_research_dev = data.get("rd_expenses", 0)
@@ -174,7 +174,7 @@ class CalculateFinancialRatios(
             data.get("depreciation_and_amortization", 0),
         )
         effective_tax_rate = cls.calculate_effective_tax_rate(
-            (data.get("income_tax_expense", 0), data.get("operating_income", 0))
+            data.get("income_tax_expense", 0), data.get("operating_income", 0)
         )
         net_tangible_equity = cls.calculate_net_tangible_equity(
             data.get("total_current_assets", 0), data.get("property_plant_equipment_net", 0), data["total_liabilities"]
@@ -206,7 +206,6 @@ class CalculateFinancialRatios(
 
     @classmethod
     def calculate_rentability_ratios(cls, data: Dict[str, Union[int, float]]) -> Dict[str, Union[int, float]]:
-        capital_employed = data.get("total_assets", 0) - data.get("total_current_liabilities", 0)
         roa = cls.calculate_roa(data.get("net_income", 0), data.get("total_assets", 0))
         roe = cls.calculate_roe(data.get("net_income", 0), data.get("total_stockholders_equity", 0))
         roc = cls.calculate_roc(data.get("operating_income", 0), data.get("total_assets", 0))
@@ -314,7 +313,6 @@ class CalculateFinancialRatios(
             data.get("change_in_working_capital", 0),
             data.get("capital_expenditure", 0),
         )
-
         return {
             "fcf_equity": fcf_equity,
             "unlevered_fcf": unlevered_fcf,
@@ -326,39 +324,39 @@ class CalculateFinancialRatios(
     def calculate_ps_value(cls, data: Dict[str, Union[int, float]]) -> Dict[str, Union[int, float]]:
         sales_ps = cls.calculate_sales_ps(
             data.get("revenue", 0),
-            data.get("weighted_average_shares_out", 0),
+            data.get("weighted_average_shares_outstanding", 0),
         )
         book_ps = cls.calculate_book_ps(
             data.get("total_stockholders_equity", 0),
-            data.get("weighted_average_shares_out", 0),
+            data.get("weighted_average_shares_outstanding", 0),
         )
         tangible_ps = cls.calculate_tangible_ps(
             data.get("net_tangible_equity", 0),
-            data.get("weighted_average_shares_out", 0),
+            data.get("weighted_average_shares_outstanding", 0),
         )
         fcf_ps = cls.calculate_fcf_ps(
             data.get("free_cash_flow", 0),
-            data.get("weighted_average_shares_out", 0),
+            data.get("weighted_average_shares_outstanding", 0),
         )
         eps = cls.calculate_eps(
             data.get("net_income", 0),
-            data.get("weighted_average_shares_out", 0),
+            data.get("weighted_average_shares_outstanding", 0),
         )
         cash_ps = cls.calculate_cash_ps(
             data.get("cash_and_short_term_investments", 0),
-            data.get("weighted_average_shares_out", 0),
+            data.get("weighted_average_shares_outstanding", 0),
         )
         operating_cf_ps = cls.calculate_operating_cf_ps(
             data.get("net_cash_provided_by_operating_activities", 0),
-            data.get("weighted_average_shares_out", 0),
+            data.get("weighted_average_shares_outstanding", 0),
         )
         capex_ps = cls.calculate_capex_ps(
             data.get("capital_expenditure", 0),
-            data.get("weighted_average_shares_out", 0),
+            data.get("weighted_average_shares_outstanding", 0),
         )
         total_assets_ps = cls.calculate_total_assets_ps(
             data.get("total_assets", 0),
-            data.get("weighted_average_shares_out", 0),
+            data.get("weighted_average_shares_outstanding", 0),
         )
 
         return {
@@ -382,7 +380,7 @@ class CalculateFinancialRatios(
             data.get("income_tax_expense", 0), data.get("operating_income", 0)
         )
 
-        net_working_cap = cls.calculate_net_working_cap(
+        net_working_capital = cls.calculate_net_working_capital(
             data.get("total_current_assets", 0) - data.get("total_current_liabilities", 0)
         )
         average_inventory = cls.calculate_average_inventory(
@@ -404,22 +402,22 @@ class CalculateFinancialRatios(
             + data.get("net_working_capital", 0)
             - data.get("cash_and_cash_equivalents", 0)
         )
-        market_cap = cls.calculate_market_cap(data.get("current_price", 0) * data.get("weighted_average_shares_out", 0))
+        market_cap = cls.calculate_market_cap(data.get("current_price", 0) * data.get("weighted_average_shares_outstanding", 0))
         net_current_asset_value = cls.calculate_net_current_asset_value(
             data.get("total_current_assets", 0),
             data.get("total_liabilities", 0),
-            data.get("weighted_average_shares_out", 0),
+            data.get("weighted_average_shares_outstanding", 0),
         )
         payout_ratio = cls.calculate_payout_ratio(data.get("dividends_paid", 0), data.get("net_income", 0))
         tangible_assets = cls.calculate_tangible_assets(
             data.get("total_current_assets", 0) + data.get("property_plant_equipment_net", 0)
         )
-        retention_ratio = cls.calculate_retention_ratiodata.get("dividends_paid", 0) / data.get("net_income", 0)
+        retention_ratio = cls.calculate_retention_ratio(data.get("dividends_paid", 0) / data.get("net_income", 0))
 
         return {
             "normalized_income": normalized_income,
             "effective_tax_rate": effective_tax_rate,
-            "net_working_cap": net_working_cap,
+            "net_working_capital": net_working_capital,
             "average_inventory": average_inventory,
             "average_payables": average_payables,
             "dividend_yield": dividend_yield,
@@ -486,7 +484,7 @@ class CalculateFinancialRatios(
         }
 
     def calculate_enterprise_value_ratios(self, data: Dict[str, Union[int, float]]) -> Dict[str, Union[int, float]]:
-        market_cap = data.get("current_price", 0) * data.get("weighted_average_shares_out", 0)
+        market_cap = data.get("current_price", 0) * data.get("weighted_average_shares_outstanding", 0)
         enterprise_value = market_cap + data.get("total_debt", 0) - data.get("cash_and_short_term_investments", 0)
         ev_fcf = enterprise_value / data.get("free_cash_flow", 0) if data.get("free_cash_flow", 0) != 0 else 0
         ev_operating_cf = (
@@ -536,7 +534,7 @@ class CalculateFinancialRatios(
             else 0
         )
         shares_buyback = (
-            (data.get("weighted_average_shares_out", 0) - data.get("last_year_shares_outstanding", 0))
+            (data.get("weighted_average_shares_outstanding", 0) - data.get("last_year_shares_outstanding", 0))
             / data.get("last_year_shares_outstanding", 0)
             if data.get("last_year_shares_outstanding", 0) != 0
             else 0
@@ -583,12 +581,11 @@ class CalculateFinancialRatios(
 
     @classmethod
     def calculate_efficiency_ratios(cls, data: Dict[str, Union[int, float]]) -> Dict[str, Union[int, float]]:
-        average_inventory = data.get("average_inventory", 0)
         days_inventory_outstanding = cls.calculate_days_inventory_outstanding(
-            average_inventory,
+            data.get("average_inventory", 0),
             data.get("cost_of_revenue", 0),
         )
-        days_payables_outstanding = cls.calculate_days_payables_outstanding(
+        days_payables_outstanding = cls.calculate_days_payable_outstanding(
             data.get("accounts_payable", 0),
             data.get("cost_of_goods_sold", 0),
         )
@@ -603,16 +600,16 @@ class CalculateFinancialRatios(
             days_payables_outstanding,
         )
         asset_turnover = cls.calculate_asset_turnover(data.get("revenue", 0), data.get("average_assets", 0))
-        inventory_turnover = cls.calculate_inventory_turnover(data.get("cost_of_revenue", 0), average_inventory)
+        inventory_turnover = cls.calculate_inventory_turnover(data.get("cost_of_revenue", 0), data.get("average_inventory", 0))
         fixed_asset_turnover = cls.calculate_fixed_asset_turnover(
             data.get("revenue", 0),
             data.get("average_fixed_assets", 0),
         )
-        payables_turnover = cls.calculate_payables_turnover(
+        payables_turnover = cls.calculate_accounts_payable_turnover(
             data.get("accounts_payable", 0),
             data.get("average_payables", 0),
         )
-        fcf_to_operating_cf = cls.calculate_fcf_to_operating_cf(
+        fcf_to_operating_cf = cls.calculate_free_cashflow_to_operating_cashflow(
             data.get("free_cash_flow", 0),
             data.get("net_cash_provided_by_operating_activities", 0),
         )

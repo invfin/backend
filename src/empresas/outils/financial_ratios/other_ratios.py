@@ -6,6 +6,14 @@ from .utils import divide_or_zero, modify_for_percentage
 
 class OtherRatios:
     @classmethod
+    def calculate_capital_employed(
+        cls,
+        fixed_assets: Union[int, float],
+        working_capital: Union[int, float],
+    ) -> Union[int, float]:
+        return fixed_assets + working_capital
+
+    @classmethod
     def calculate_average_fixed_assets(
         cls,
         last_year_fixed_assets: Union[int, float],

@@ -121,11 +121,11 @@ class NonGaap:
     def calculate_market_cap(
         cls,
         current_price: Union[int, float],
-        weighted_average_shares_out: Union[int, float],
+        weighted_average_shares_outstanding: Union[int, float],
     ) -> Union[int, float]:
         return divide_or_zero(
             current_price,
-            weighted_average_shares_out,
+            weighted_average_shares_outstanding,
         )
 
     @classmethod
