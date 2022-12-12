@@ -1,6 +1,5 @@
 from typing import Union
 
-
 from .utils import divide_or_zero
 
 
@@ -50,7 +49,6 @@ class EfficiencyRatios:
         days_payable_outstanding: Union[int, float],
     ) -> Union[int, float]:
         return days_inventory_outstanding + days_sales_outstanding - days_payable_outstanding
-
 
     @classmethod
     def calculate_asset_turnover(

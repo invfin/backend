@@ -1,5 +1,3 @@
-from email.policy import default
-
 from django.db.models import SET_NULL, ForeignKey, JSONField, Model
 
 from src.empresas.models import Company

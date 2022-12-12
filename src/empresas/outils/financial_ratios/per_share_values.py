@@ -1,6 +1,5 @@
 from typing import Union
 
-
 from .utils import divide_or_zero
 
 
@@ -54,7 +53,9 @@ class PerShareValues:
         cash_and_short_term_investments: Union[int, float],
         weighted_average_shares_outstanding: Union[int, float],
     ) -> Union[int, float]:
-        return divide_or_zero(cash_and_short_term_investments, weighted_average_shares_outstanding, cls.round_after_coma)
+        return divide_or_zero(
+            cash_and_short_term_investments, weighted_average_shares_outstanding, cls.round_after_coma
+        )
 
     @classmethod
     def calculate_operating_cf_ps(

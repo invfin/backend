@@ -52,7 +52,7 @@ class TermDetailsView(SEODetailView):
     def get_object(self):
         try:
             return self.model.objects.get(**self.kwargs)
-        except:
+        except Exception:
             return
 
 

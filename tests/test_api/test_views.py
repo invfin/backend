@@ -4,14 +4,13 @@ from django.db.models import QuerySet
 
 from bfet import DjangoTestingModel
 from rest_framework import status
-from rest_framework.exceptions import ParseError
 from rest_framework.test import APITestCase
 
-from src.api.exceptions import ParameterNotSetException, QueryNotFoundException, ServerError, WrongParameterException
+from src.api.exceptions import ParameterNotSetException, WrongParameterException
 from src.api.models import CompanyRequestAPI, Key
 from src.api.views import BaseAPIView
 from src.business.models import ProductSubscriber
-from src.empresas.api.serializers import BasicCompanySerializer, IncomeStatementSerializer
+from src.empresas.api.serializers import IncomeStatementSerializer
 from src.empresas.models import Company, IncomeStatement
 from src.escritos.api.serializers import AllTermsSerializer
 from src.escritos.models import Term, TermContent

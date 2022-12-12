@@ -7,7 +7,7 @@ class SeoMetaMixin:
         if self.object_name == "Question":  # type: ignore
             schema_org = self.schema_org
         else:
-            meta_url = f"{FULL_DOMAIN}/definicion/{self.slug}/"  # type: ignore
+            meta_url = f"{settings.FULL_DOMAIN}/definicion/{self.slug}/"  # type: ignore
             if self.object_name == "PublicBlog":  # type: ignore
                 meta_url = f"{self.author.custom_url}/p/{self.slug}/"  # type: ignore
             schema_org = {

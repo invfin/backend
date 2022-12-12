@@ -1,6 +1,4 @@
-from typing import Type
-
-from django.db.models import Manager, QuerySet
+from django.db.models import Manager
 
 from . import constants
 

@@ -4,10 +4,10 @@ def keep_email(request):
         if request.user.is_anonymous:
             try:
                 email = request.session["F-E"]
-            except:
+            except Exception:
                 email = email
 
         return {"anon_email": email}
-    except:
+    except Exception:
         pass
     return {}

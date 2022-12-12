@@ -109,7 +109,7 @@ class TestAverageStatementsFinprep(TestCase):
         assert self.cf_st_finprep.change_in_working_capital == cf_st_finprep_dict["change_in_working_capital"]
         assert self.cf_st_finprep.accounts_receivables == cf_st_finprep_dict["accounts_receivable"]
         assert self.cf_st_finprep.inventory == cf_st_finprep_dict["inventory"]
-        print("*"*100)
+        print("*" * 100)
         print(self.cf_st_finprep.accounts_payables)
         print("*" * 100)
         print(cf_st_finprep_dict["accounts_payable"])

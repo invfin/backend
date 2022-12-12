@@ -1,12 +1,9 @@
 from collections import defaultdict
 import copy
-import json
 from typing import Dict, List
 
 from django.contrib.admin.helpers import AdminForm, InlineAdminFormSet
-from django.contrib.admin.models import LogEntry
 from django.template import Context
-from django.urls import reverse
 from django.utils.text import capfirst
 
 from jazzmin.settings import get_settings

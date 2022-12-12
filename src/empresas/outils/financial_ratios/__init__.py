@@ -74,10 +74,10 @@ class CalculateFinancialRatios(
         other_ratios = self.calculate_other_ratios(all_data)
         all_data.update(other_ratios)
 
-        fcf_ratio = self.calculate_fcf_ratios(current_data)
+        fcf_ratio = self.calculate_free_cashflow_ratios(current_data)
         all_data.update(fcf_ratio)
 
-        ps_value = self.calculate_ps_value(all_data)
+        ps_value = self.calculate_per_share_value(all_data)
         all_data.update(ps_value)
 
         company_growth = self.calculate_company_growth(all_data)
@@ -288,7 +288,7 @@ class CalculateFinancialRatios(
         }
 
     @classmethod
-    def calculate_fcf_ratios(cls, data: Dict[str, Union[int, float]]) -> Dict[str, Union[int, float]]:
+    def calculate_free_cashflow_ratios(cls, data: Dict[str, Union[int, float]]) -> Dict[str, Union[int, float]]:
         fcf_equity = cls.calculate_fcf_equity(
             data.get("net_cash_provided_by_operating_activities", 0),
             data.get("capital_expenditure", 0),
@@ -321,7 +321,7 @@ class CalculateFinancialRatios(
         }
 
     @classmethod
-    def calculate_ps_value(cls, data: Dict[str, Union[int, float]]) -> Dict[str, Union[int, float]]:
+    def calculate_per_share_value(cls, data: Dict[str, Union[int, float]]) -> Dict[str, Union[int, float]]:
         sales_ps = cls.calculate_sales_ps(
             data.get("revenue", 0),
             data.get("weighted_average_shares_outstanding", 0),
@@ -381,28 +381,30 @@ class CalculateFinancialRatios(
         )
 
         net_working_capital = cls.calculate_net_working_capital(
-            data.get("total_current_assets", 0) - data.get("total_current_liabilities", 0)
+            data.get("total_current_assets", 0), data.get("total_current_liabilities", 0)
         )
         average_inventory = cls.calculate_average_inventory(
-            data.get("last_year_inventory", 0) + data.get("inventory", 0)
+            data.get("last_year_inventory", 0), data.get("inventory", 0)
         )
-        average_payables = cls.calculate_average_payables(
-            data.get("last_year_accounts_payable", 0) + data.get("accounts_payable", 0)
+        average_accounts_payable = cls.calculate_average_accounts_payable(
+            data.get("last_year_accounts_payable", 0), data.get("accounts_payable", 0)
         )
-        divs_per_share = cls.calculate_divs_per_share(data.get("dividends_paid", 0) / data.get("common_stock", 0))
-        dividend_yield = cls.calculate_dividend_yield(divs_per_share / data.get("current_price", 0))
-        earnings_yield = cls.calculate_earnings_yield(data.get("eps", 0) / data.get("current_price", 0))
-        fcf_yield = cls.calculate_fcf_yield(data.get("fcf_ps", 0) / data.get("current_price", 0))
+        divs_per_share = cls.calculate_divs_per_share(data.get("dividends_paid", 0), data.get("common_stock", 0))
+        dividend_yield = cls.calculate_dividend_yield(divs_per_share, data.get("current_price", 0))
+        earnings_yield = cls.calculate_earnings_yield(data.get("eps", 0), data.get("current_price", 0))
+        fcf_yield = cls.calculate_fcf_yield(data.get("fcf_ps", 0), data.get("current_price", 0))
         income_quality = cls.calculate_income_quality(
-            data.get("net_cash_provided_by_operating_activities", 0) / data.get("net_income", 0)
+            data.get("net_cash_provided_by_operating_activities", 0), data.get("net_income", 0)
         )
 
         invested_capital = cls.calculate_invested_capital(
-            data.get("property_plant_equipment_net", 0)
-            + data.get("net_working_capital", 0)
-            - data.get("cash_and_cash_equivalents", 0)
+            data.get("property_plant_equipment_net", 0),
+            data.get("net_working_capital", 0),
+            data.get("cash_and_cash_equivalents", 0),
         )
-        market_cap = cls.calculate_market_cap(data.get("current_price", 0) * data.get("weighted_average_shares_outstanding", 0))
+        market_cap = cls.calculate_market_cap(
+            data.get("current_price", 0), data.get("weighted_average_shares_outstanding", 0)
+        )
         net_current_asset_value = cls.calculate_net_current_asset_value(
             data.get("total_current_assets", 0),
             data.get("total_liabilities", 0),
@@ -412,14 +414,14 @@ class CalculateFinancialRatios(
         tangible_assets = cls.calculate_tangible_assets(
             data.get("total_current_assets", 0) + data.get("property_plant_equipment_net", 0)
         )
-        retention_ratio = cls.calculate_retention_ratio(data.get("dividends_paid", 0) / data.get("net_income", 0))
+        retention_ratio = cls.calculate_retention_ratio(data.get("dividends_paid", 0), data.get("net_income", 0))
 
         return {
             "normalized_income": normalized_income,
             "effective_tax_rate": effective_tax_rate,
             "net_working_capital": net_working_capital,
             "average_inventory": average_inventory,
-            "average_payables": average_payables,
+            "average_accounts_payable": average_accounts_payable,
             "dividend_yield": dividend_yield,
             "earnings_yield": earnings_yield,
             "fcf_yield": fcf_yield,
@@ -600,16 +602,18 @@ class CalculateFinancialRatios(
             days_payables_outstanding,
         )
         asset_turnover = cls.calculate_asset_turnover(data.get("revenue", 0), data.get("average_assets", 0))
-        inventory_turnover = cls.calculate_inventory_turnover(data.get("cost_of_revenue", 0), data.get("average_inventory", 0))
+        inventory_turnover = cls.calculate_inventory_turnover(
+            data.get("cost_of_revenue", 0), data.get("average_inventory", 0)
+        )
         fixed_asset_turnover = cls.calculate_fixed_asset_turnover(
             data.get("revenue", 0),
             data.get("average_fixed_assets", 0),
         )
-        payables_turnover = cls.calculate_accounts_payable_turnover(
+        accounts_payable_turnover = cls.calculate_accounts_payable_turnover(
             data.get("accounts_payable", 0),
-            data.get("average_payables", 0),
+            data.get("average_accounts_payable", 0),
         )
-        fcf_to_operating_cf = cls.calculate_free_cashflow_to_operating_cashflow(
+        free_cashflow_to_operating_cashflow = cls.calculate_free_cashflow_to_operating_cashflow(
             data.get("free_cash_flow", 0),
             data.get("net_cash_provided_by_operating_activities", 0),
         )
@@ -622,8 +626,8 @@ class CalculateFinancialRatios(
             "asset_turnover": asset_turnover,
             "inventory_turnover": inventory_turnover,
             "fixed_asset_turnover": fixed_asset_turnover,
-            "payables_turnover": payables_turnover,
-            "fcf_to_operating_cf": fcf_to_operating_cf,
+            "accounts_payable_turnover": accounts_payable_turnover,
+            "free_cashflow_to_operating_cashflow": free_cashflow_to_operating_cashflow,
         }
 
     @classmethod

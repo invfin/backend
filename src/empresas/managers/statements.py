@@ -1,4 +1,4 @@
-from django.db.models import Q, QuerySet
+from django.db.models import Q
 
 from src.general.managers import BaseManager, BaseQuerySet
 from src.periods import constants

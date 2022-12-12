@@ -126,7 +126,7 @@ class CreatePublicBlogPostView(WritterOnlyMixin, CreateView):
         modelo = form.save()
         modelo.add_tags(tags)
         modelo.save_secondary_info("blog")
-        if modelo.send_as_newsletter == True:
+        if modelo.send_as_newsletter is True:
             # Prepare email and send it
             return redirect("public_blog:create_newsletter_blog", kwargs={"slug": modelo.slug})
         if modelo.status == escritos_constants.BASE_ESCRITO_PUBLISHED:

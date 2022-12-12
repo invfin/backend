@@ -7,7 +7,7 @@
     "workbench.editor.enablePreview": false,
     "python.testing.pytestEnabled": true,
     "python.testing.pytestArgs": [
-        // "-n 8",
+         "-n 8",
         "--tb=long",
         "-rAf"
     ],
@@ -25,7 +25,7 @@
                 ],
                 "settings": {
                     "fontStyle": "italic",
-                    "foreground": "#58d406",
+                    "foreground": "#58d406"
                 }
             }
         ]
@@ -35,10 +35,14 @@
         "editor.wordBasedSuggestions": false,
         "editor.bracketPairColorization.enabled": true,
         "editor.autoIndent": "advanced",
-        "editor.wordWrapColumn": 110,
+        "editor.wordWrapColumn": 110
     },
     "python.linting.mypyEnabled": true,
     "python.linting.flake8Enabled": true,
     "python.linting.enabled": true,
     "python.linting.pycodestyleEnabled": true,
+    "python.linting.pylintEnabled": true,
+    "python.linting.pylintArgs": [
+      "--enable=W0614"
+    ]
 }

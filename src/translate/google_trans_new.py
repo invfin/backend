@@ -112,11 +112,11 @@ class google_translator:
 
     def translate(self, text, lang_tgt="auto", lang_src="auto", pronounce=False):
         try:
-            lang = LANGUAGES[lang_src]
+            LANGUAGES[lang_src]
         except:
             lang_src = "auto"
         try:
-            lang = LANGUAGES[lang_tgt]
+            LANGUAGES[lang_tgt]
         except:
             lang_src = "auto"
         text = str(text)
@@ -191,10 +191,10 @@ class google_translator:
             r.raise_for_status()
         except requests.exceptions.ConnectTimeout as e:
             raise e
-        except requests.exceptions.HTTPError as e:
+        except requests.exceptions.HTTPError:
             # Request successful, bad response
             raise google_new_transError(tts=self, response=r)
-        except requests.exceptions.RequestException as e:
+        except requests.exceptions.RequestException:
             # Request failed
             raise google_new_transError(tts=self)
 

@@ -115,9 +115,9 @@ def create_answer_view(request, slug):
 @login_required
 def accept_answer(request, question_id, answer_id):
     question = Question.objects.get(id=question_id)
-    if request.user == question.author and question.has_accepted_answer == False:
+    if request.user == question.author and question.has_accepted_answer is False:
         answer = Answer.objects.get(id=answer_id)
-        if question.is_answered == False:
+        if question.is_answered is False:
             question.is_answered = True
 
         question.has_accepted_answer = True

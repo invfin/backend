@@ -8,7 +8,6 @@ from rest_framework.response import Response
 from src.empresas.brain.analysis import simple_stock_analysis
 from src.empresas.models import Company
 
-from ..constants import *
 from ..models import (
     RoboAdvisorQuestionCompanyAnalysis,
     RoboAdvisorQuestionFinancialSituation,
@@ -18,7 +17,6 @@ from ..models import (
     RoboAdvisorQuestionRiskAversion,
     RoboAdvisorQuestionStocksPortfolio,
     RoboAdvisorServiceStep,
-    RoboAdvisorUserServiceActivity,
     RoboAdvisorUserServiceStepActivity,
 )
 from .serializers import (

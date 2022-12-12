@@ -1,4 +1,3 @@
-import datetime
 from typing import Dict
 
 from django.conf import settings

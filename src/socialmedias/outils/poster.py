@@ -1,4 +1,3 @@
-import random
 from typing import Dict, List, Type
 
 from django.conf import settings

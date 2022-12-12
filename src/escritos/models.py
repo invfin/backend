@@ -104,7 +104,6 @@ class TermCorrection(Model):
             enviar email de agradecimiento
             Perfil.ADD_CREDITS(self.user, 5)
             """
-            pass
         return super().save(*args, **kwargs)
 
     def get_absolute_url(self):

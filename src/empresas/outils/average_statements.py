@@ -15,8 +15,9 @@ class AverageStatements:
     Methods
     -------
         return_averaged_data:
-            Method that accepts a list of statements and a specific period. It then to the calculations, find the currency
-            and returns a dict with the information for the new statement.
+            Method that accepts a list of statements and a specific period.
+            It then to the calculations, find the currency and returns a dict with the
+            information for the new statement.
 
         find_correct_currency:
             Method that get a list of currencies IDs and find the most common.
@@ -25,8 +26,8 @@ class AverageStatements:
             Method that get a list of values and calculates the mean.
 
         prepare_data:
-            Method that loops over the statements and builds a dict with the fields for the multiples statements, the values of
-            all the statements related to the company and the period.
+            Method that loops over the statements and builds a dict with the fields for
+            the multiples statements, the values of all the statements related to the company and the period.
 
         calculate_average_income_statement:
             Method that filter according to the company and the period and get the first of all the statements.

@@ -1,7 +1,5 @@
 from django.test import TestCase
 
-from src.empresas.models import Company, IncomeStatement
-from src.periods import constants
 from tests.data.empresas import CreateStatements
 
 

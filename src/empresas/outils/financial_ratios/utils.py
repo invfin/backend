@@ -1,7 +1,7 @@
 from typing import Union
 
-import yfinance as yf
 import yahooquery as yq
+import yfinance as yf
 
 
 def get_most_recent_price(ticker: str) -> float:

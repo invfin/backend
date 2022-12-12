@@ -18,7 +18,6 @@ from django.db.models import (
     TextField,
 )
 from django.template.defaultfilters import slugify
-from django.utils.html import format_html, strip_tags
 from django.utils.translation import gettext_lazy as _
 
 from ckeditor.fields import RichTextField

@@ -144,6 +144,6 @@ def company_searched(search, request):
     try:
         empresa_busqueda = Company.objects.get(ticker=ticker)
         redirect_path = empresa_busqueda.get_absolute_url()
-    except Exception as e:
+    except Exception:
         redirect_path = request.META.get("HTTP_REFERER")
     return redirect_path

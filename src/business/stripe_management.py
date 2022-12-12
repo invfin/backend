@@ -3,7 +3,6 @@ from django.conf import settings
 import stripe
 
 from src.business.models import Customer, ProductComplementary, ProductComplementaryPaymentLink
-from src.currencies.models import Currency
 
 STRIPE_PRIVATE = settings.STRIPE_PRIVATE
 STRIPE_PUBLIC = settings.STRIPE_PUBLIC

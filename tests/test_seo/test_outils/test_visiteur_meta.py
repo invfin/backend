@@ -1,4 +1,3 @@
-from unittest import skip
 from unittest.mock import patch
 
 from django.contrib.sessions.middleware import SessionMiddleware
@@ -102,7 +101,7 @@ class TestSeoInformation(TestCase):
         assert "08015" == visiteur.postal_code
         assert "EU" == visiteur.continent_code
         assert "Europe" == visiteur.continent_name
-        assert None == visiteur.http_user_agent
+        assert visiteur.http_user_agent is None
 
     @patch("django.contrib.gis.geoip2.base.GeoIP2.city")
     def test_find_visiteur(self, mock_city):
@@ -132,5 +131,5 @@ class TestSeoInformation(TestCase):
             assert "08015" == visiteur_found.postal_code
             assert "EU" == visiteur_found.continent_code
             assert "Europe" == visiteur_found.continent_name
-            assert None == visiteur_found.http_user_agent
+            assert visiteur_found.http_user_agent is None
             assert 2 == Visiteur.objects.all().count()

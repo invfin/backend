@@ -1,6 +1,5 @@
 from typing import Union
 
-
 from .utils import divide_or_zero, modify_for_percentage
 
 
@@ -41,7 +40,7 @@ class NonGaap:
         return round((last_year_inventory + inventory) / 2, 2)
 
     @classmethod
-    def calculate_average_payables(
+    def calculate_average_accounts_payable(
         cls,
         last_year_accounts_payable: Union[int, float],
         accounts_payable: Union[int, float],

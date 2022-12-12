@@ -1,4 +1,3 @@
-import logging
 import sys
 import time
 
@@ -32,14 +31,14 @@ class Instagram:
         }
         re = requests.get(url, params=parameters)
         if re.status_code == 200:
-            access_token = re.json()["access_token"]
+            re.json()["access_token"]
 
     def refresh_long_live_user_token(self):
         url = f"{self.main_instagram_url}refresh_access_token"
         parameters = {"grant_type": "ig_refresh_token", "access_token": self.user_access_token}
         re = requests.get(url, params=parameters)
         if re.status_code == 200:
-            access_token = re.json()["access_token"]
+            re.json()["access_token"]
 
     def get_quota(self):
         extra = "fields=config,quota_usage"

@@ -28,8 +28,8 @@ FACEBOOK_GRAPH_API_VERSION = "v15.0/"
 
 FACEBOOK_GRAPH_URL = f"https://graph.facebook.com/{FACEBOOK_GRAPH_API_VERSION}"
 
-FACEBOOK_GRAPH_VIDEO_URL = f"https://graph-video.facebook.com/"
+FACEBOOK_GRAPH_VIDEO_URL = "https://graph-video.facebook.com/"
 
-INSTAGRAM_GRAPH_URL = f"https://graph.instagram.com/"
+INSTAGRAM_GRAPH_URL = "https://graph.instagram.com/"
 
 TWEET_MAX_LENGTH = 174

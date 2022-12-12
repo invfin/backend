@@ -1,10 +1,6 @@
 from django.apps import apps
 
 from config import celery_app
-from src.empresas.models import Company
-from src.escritos.models import Term
-from src.preguntas_respuestas.models import Question
-from src.public_blog.models import PublicBlog
 from src.seo.outils.save_journey import JourneyClassifier
 
 

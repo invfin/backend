@@ -1,4 +1,4 @@
-from typing import Any, Callable, Dict, List, Optional, Tuple, Type, Union
+from typing import Callable, Dict, List, Optional, Tuple, Type, Union
 
 from django.apps import apps
 from django.contrib import messages
@@ -67,7 +67,7 @@ class ObtainAuthKey(APIView):
         return Response({"token": key.key})
 
     def get(self, request, *args, **kwargs):
-        response = {"Respuesta": f"Autentifícate o crea un perfil para tener tu llave"}
+        response = {"Respuesta": "Autentifícate o crea un perfil para tener tu llave"}
         response_status = status.HTTP_204_NO_CONTENT
         if request.user.is_authenticated:
             key = Key.objects.return_if_key(user=request.user)
@@ -363,5 +363,5 @@ def request_API_key(request):
             key = Key.objects.create(user=request.user, ip=SeoInformation.get_client_ip(request), limit=250)
             messages.success(request, f"Gracias, tu clave ya está disponible {key.key}")
         else:
-            messages.error(request, f"Oups, parece que hay un error con tu motivo")
+            messages.error(request, "Oups, parece que hay un error con tu motivo")
     return redirect(request.META.get("HTTP_REFERER"))

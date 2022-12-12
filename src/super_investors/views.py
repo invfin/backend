@@ -37,7 +37,7 @@ class SuperinvestorView(SEODetailView):
         if user.is_authenticated:
             try:
                 fav_investors_list = user.fav_superinvestors
-            except:
+            except Exception:
                 fav_investors_list, created = FavoritesSuperinvestorsList.objects.get_or_create(user=user)
                 fav_investors_list = fav_investors_list.superinvestor
             if investor.slug in fav_investors_list.all().only("slug"):

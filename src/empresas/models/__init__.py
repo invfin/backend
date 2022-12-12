@@ -14,7 +14,6 @@ from .finprep import BalanceSheetFinprep, CashflowStatementFinprep, IncomeStatem
 from .institutions import InstitutionalOrganization, TopInstitutionalOwnership
 from .statements import (
     BalanceSheet,
-    BaseStatement,
     CashflowStatement,
     CompanyGrowth,
     EficiencyRatio,

@@ -1,7 +1,6 @@
 from typing import Union
 
-
-from .utils import divide_or_zero, modify_for_percentage
+from .utils import divide_or_zero
 
 
 class OtherRatios:

@@ -1,5 +1,5 @@
 import datetime
-from typing import Any, Callable, Dict, Type, Union
+from typing import Any, Callable, Dict, Union
 
 import pandas as pd
 
@@ -11,7 +11,7 @@ class NormalizeYahooQuery:
 
     def initial_data(
         self, date: pd.Timestamp, period_type, period: Callable, currency
-    ) -> Dict[str, Union[int, datetime.datetime, Type["Company"]]]:
+    ) -> Dict[str, Union[int, datetime.datetime, type]]:
         return dict(
             date=date.date().year,
             year=date.to_pydatetime().date(),

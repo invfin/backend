@@ -1,6 +1,5 @@
 from typing import Union
 
-
 from .utils import divide_or_zero
 
 

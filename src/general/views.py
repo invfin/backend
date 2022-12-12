@@ -1,21 +1,16 @@
 import json
 
-from django.apps import apps
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
 from django.http.response import HttpResponse, JsonResponse
 from django.shortcuts import redirect, render
-from django.utils.encoding import force_text
-from django.utils.http import urlsafe_base64_decode
 from django.views.generic import ListView, RedirectView, TemplateView
 
 from src.empresas.models import Company
 from src.escritos.models import FavoritesTermsHistorial, FavoritesTermsList, Term
-from src.notifications import constants
 from src.notifications.models import Notification
-from src.notifications.tasks import prepare_notification_task
 from src.screener.models import FavoritesStocksHistorial
 from src.super_investors.models import FavoritesSuperinvestorsHistorial, FavoritesSuperinvestorsList, Superinvestor
 
@@ -88,7 +83,7 @@ def search_results(request):
                 empresa_busqueda = Company.objects.filter(ticker=term)
                 if empresa_busqueda.exists():
                     redirect_to = empresa_busqueda[0].get_absolute_url()
-            elif term.isupper() == False:
+            elif term.isupper() is False:
                 empresa_busqueda = Company.objects.filter(name__icontains=term)
                 if empresa_busqueda.exists():
                     redirect_to = empresa_busqueda[0].get_absolute_url()
@@ -122,7 +117,7 @@ def update_favorites(request):
             current_term = Term.objects.get(id=term_id)
             try:
                 user.favorites_terms
-            except:
+            except Exception:
                 FavoritesTermsList.objects.create(user=user)
             if current_term in user.fav_terms:
                 user.favorites_terms.term.remove(current_term)
@@ -138,7 +133,7 @@ def update_favorites(request):
             current_superinvestor = Superinvestor.objects.get(slug=superinvestor)
             try:
                 user.favorites_superinvestors
-            except:
+            except Exception:
                 FavoritesSuperinvestorsList.objects.create(user=user)
             if current_superinvestor in user.fav_superinvestors:
                 user.favorites_superinvestors.superinvestor.remove(current_superinvestor)

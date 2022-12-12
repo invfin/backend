@@ -138,15 +138,15 @@ class UpdateCompany(CalculateFinancialRatios, AverageStatements):
         return financial_model.create(**data)
 
     @log_company()
-    def create_or_update_inc_statements(self, data: dict, period=None)-> type:
+    def create_or_update_inc_statements(self, data: dict, period=None) -> type:
         return self.create_or_update_statement(data, self.company.inc_statements, period)
 
     @log_company()
-    def create_or_update_balance_sheets(self, data: dict, period=None)-> type:
+    def create_or_update_balance_sheets(self, data: dict, period=None) -> type:
         return self.create_or_update_statement(data, self.company.balance_sheets, period)
 
     @log_company()
-    def create_or_update_cf_statements(self, data: dict, period=None)-> type:
+    def create_or_update_cf_statements(self, data: dict, period=None) -> type:
         return self.create_or_update_statement(data, self.company.cf_statements, period)
 
     @log_company()
@@ -154,45 +154,45 @@ class UpdateCompany(CalculateFinancialRatios, AverageStatements):
         return self.company.stock_prices.create(price=price)
 
     @log_company()
-    def create_or_update_rentability_ratios(self, data: dict, period=None)-> type:
+    def create_or_update_rentability_ratios(self, data: dict, period=None) -> type:
         return self.create_or_update_statement(data, self.company.rentability_ratios, period)
 
     @log_company()
-    def create_or_update_liquidity_ratio(self, data: dict, period=None)-> type:
+    def create_or_update_liquidity_ratio(self, data: dict, period=None) -> type:
         return self.create_or_update_statement(data, self.company.liquidity_ratios, period)
 
     @log_company()
-    def create_or_update_margin_ratio(self, data: dict, period=None)-> type:
+    def create_or_update_margin_ratio(self, data: dict, period=None) -> type:
         return self.create_or_update_statement(data, self.company.margins, period)
 
     @log_company()
-    def create_or_update_fcf_ratio(self, data: dict, period=None)-> type:
+    def create_or_update_fcf_ratio(self, data: dict, period=None) -> type:
         return self.create_or_update_statement(data, self.company.fcf_ratios, period)
 
     @log_company()
-    def create_or_update_ps_value(self, data: dict, period=None)-> type:
+    def create_or_update_ps_value(self, data: dict, period=None) -> type:
         return self.create_or_update_statement(data, self.company.per_share_values, period)
 
     @log_company()
-    def create_or_update_non_gaap(self, data: dict, period=None)-> type:
+    def create_or_update_non_gaap(self, data: dict, period=None) -> type:
         return self.create_or_update_statement(data, self.company.non_gaap_figures, period)
 
     @log_company()
-    def create_or_update_operation_risk_ratio(self, data: dict, period=None)-> type:
+    def create_or_update_operation_risk_ratio(self, data: dict, period=None) -> type:
         return self.create_or_update_statement(data, self.company.operation_risks_ratios, period)
 
     @log_company()
-    def create_or_update_enterprise_value_ratio(self, data: dict, period=None)-> type:
+    def create_or_update_enterprise_value_ratio(self, data: dict, period=None) -> type:
         return self.create_or_update_statement(data, self.company.ev_ratios, period)
 
     @log_company()
-    def create_or_update_company_growth(self, data: dict, period=None)-> type:
+    def create_or_update_company_growth(self, data: dict, period=None) -> type:
         return self.create_or_update_statement(data, self.company.growth_rates, period)
 
     @log_company()
-    def create_or_update_efficiency_ratio(self, data: dict, period=None)-> type:
+    def create_or_update_efficiency_ratio(self, data: dict, period=None) -> type:
         return self.create_or_update_statement(data, self.company.efficiency_ratios, period)
 
     @log_company()
-    def create_or_update_price_to_ratio(self, data: dict, period=None)-> type:
+    def create_or_update_price_to_ratio(self, data: dict, period=None) -> type:
         return self.create_or_update_statement(data, self.company.price_to_ratios, period)

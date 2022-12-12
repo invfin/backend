@@ -24,7 +24,7 @@ def stripe_webhook(request):
 
     try:
         event = stripe.Webhook.construct_event(payload, sig_header, settings.WEBHOOK_SECRET)
-    except ValueError as e:
+    except ValueError:
         # Invalid payload
         return HttpResponse(status=400)
     except stripe.error.SignatureVerificationError as e:
@@ -37,7 +37,7 @@ def stripe_webhook(request):
 
     # Handle the checkout.session.completed event
     if event["type"] == "checkout.session.completed":
-        session = event["data"]["object"]
+        event["data"]["object"]
 
         # send_mail('Solicitud recibida',
     # f'{session}' ,
@@ -48,7 +48,7 @@ def stripe_webhook(request):
         intent = event["data"]["object"]
         stripe_customer_id = intent["customer"]
         stripe_customer = stripe.Customer.retrieve(stripe_customer_id)
-        customer_email = stripe_customer["email"]
+        stripe_customer["email"]
 
         send_mail(
             "Compra realizada",

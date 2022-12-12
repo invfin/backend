@@ -19,8 +19,6 @@ from django.db.models import (
 )
 
 from src.currencies.models import Currency
-from src.empresas.models import Company
-from src.etfs.models import Etf
 from src.general.utils import ChartSerializer
 
 User = get_user_model()
@@ -189,13 +187,13 @@ class Patrimonio(Model, ChartSerializer):
     def ingresos_totales(self):
         incomes = Income.objects.filter(user=self.user)
         total = sum(Decimal(item.amount) for item in incomes)
-        if total == None:
+        if total is None:
             total = 0
         return {"total": total, "incomes": incomes}
 
     def cantidad_total_invertida(self, ingresos_totales):
         cantidad_total_invertida = sum(item.amount_invested for item in self.assets.all())
-        if cantidad_total_invertida == None:
+        if cantidad_total_invertida is None:
             cantidad_total_invertida = 0
         return {
             "total": cantidad_total_invertida,

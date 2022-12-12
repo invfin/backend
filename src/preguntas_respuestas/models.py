@@ -5,7 +5,6 @@ from django.urls import reverse
 
 User = get_user_model()
 
-from itertools import chain
 
 from ckeditor.fields import RichTextField
 

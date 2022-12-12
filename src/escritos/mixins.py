@@ -16,7 +16,7 @@ class BaseEscritosMixins:
         return image
 
     def extra_info(self, image):
-        if image == False:
+        if image is False:
             self.in_text_image = False
         else:
             self.in_text_image = True

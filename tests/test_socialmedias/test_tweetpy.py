@@ -6,16 +6,6 @@ from src.empresas.models import Company
 from src.escritos.models import Term
 from src.preguntas_respuestas.models import Question
 from src.public_blog.models import PublicBlog
-from src.socialmedias.models import (
-    BlogSharedHistorial,
-    CompanySharedHistorial,
-    NewsSharedHistorial,
-    ProfileSharedHistorial,
-    QuestionSharedHistorial,
-    TermSharedHistorial,
-)
-from src.socialmedias.outils.poster import SocialPosting
-from src.socialmedias.outils.socialposter.tweetpy import Twitter
 
 twitter_vcr = vcr.VCR(
     cassette_library_dir="cassettes/twitter/",

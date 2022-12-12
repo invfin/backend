@@ -6,7 +6,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect, render
 from django.urls import reverse
-from django.utils.translation import gettext_lazy as _
 from django.views.generic import DetailView, TemplateView
 
 from src.public_blog.forms import WritterProfileForm
@@ -49,12 +48,6 @@ class UserPublicProfileDetailView(DetailView):
 def invitation_view(request, invitation_code):
     perfil = Profile.objects.get(ref_code=invitation_code)
     request.session["recommender"] = perfil.id
-    context = {
-        "meta_desc": "Todo lo que necesitas para invertir",
-        "meta_tags": "finanzas, blog financiero, blog el financiera, invertir",
-        "meta_title": "Dashboard",
-        "meta_url": "/inicio/",
-    }
     return redirect("account_signup")
 
 
@@ -85,7 +78,7 @@ def user_update_profile(request):
             new_profile.save()
 
             form.save()
-            messages.success(request, f"Perfil actualizado.")
+            messages.success(request, "Perfil actualizado.")
             return redirect("users:update")
 
     else:

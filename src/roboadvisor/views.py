@@ -5,7 +5,6 @@ from django.views.generic import DetailView, ListView
 from src.seo.views import SEOListView
 
 from . import constants
-from .brain.investor import get_investor_type
 from .forms import (
     RoboAdvisorQuestionCompanyAnalysisForm,
     RoboAdvisorQuestionFinancialSituationForm,

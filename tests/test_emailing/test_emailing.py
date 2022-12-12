@@ -1,15 +1,11 @@
-from typing import Dict, Tuple
-from unittest.mock import patch
-
 from django.contrib.auth import get_user_model
 from django.core import mail
-from django.test import TestCase, override_settings
+from django.test import TestCase
 
 from bfet import DjangoTestingModel
 
 from src.emailing import constants
 from src.emailing.outils.emailing import EmailingSystem
-from src.escritos.models import Term
 from src.web.models import WebsiteEmail, WebsiteEmailTrack
 
 User = get_user_model()
@@ -101,7 +97,7 @@ class EmailTest(TestCase):
         assert expected_result == email_machine_response
 
     def test_enviar_email(self):
-        web_email = DjangoTestingModel.create(WebsiteEmail, id=1)
+        DjangoTestingModel.create(WebsiteEmail, id=1)
         email_info_image_tag_tracker = {
             "app_label": "web",
             "object_name": "WebsiteEmail",
