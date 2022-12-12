@@ -1,3 +1,6 @@
+from decimal import Decimal
+import random
+
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
@@ -22,9 +25,6 @@ from src.currencies.models import Currency
 from src.general.utils import ChartSerializer
 
 User = get_user_model()
-
-from decimal import Decimal
-import random
 
 
 class Asset(Model):
@@ -175,7 +175,7 @@ class Patrimonio(Model, ChartSerializer):
     def gastos_totales(self, ingresos_totales):
         spends = Spend.objects.filter(user=self.user)
         gastos_totales = sum(Decimal(item.amount) for item in spends)
-        if gastos_totales == None:
+        if gastos_totales is None:
             gastos_totales = 0
         return {
             "total": gastos_totales,

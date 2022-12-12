@@ -22,12 +22,12 @@ from ckeditor.fields import RichTextField
 from src.empresas.models import Company
 from src.etfs.models import Etf
 
-User = get_user_model()
-
 from src.classifications.models import Category, Tag
 from src.general.abstracts import AbstractFavoritesHistorial
 
 from . import constants
+
+User = get_user_model()
 
 
 class CompanyInformationBought(Model):

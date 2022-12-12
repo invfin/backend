@@ -107,6 +107,7 @@ class BalanceSheet(BaseFinalStatement):
     other_liabilities = FloatField(default=0, blank=True, null=True)
     total_liabilities = FloatField(default=0, blank=True, null=True)
     common_stocks = FloatField(default=0, blank=True, null=True)
+    preferred_stocks = FloatField(default=0, blank=True, null=True)
     retained_earnings = FloatField(default=0, blank=True, null=True)
     accumulated_other_comprehensive_income_loss = FloatField(default=0, blank=True, null=True)
     othertotal_stockholders_equity = FloatField(default=0, blank=True, null=True)

@@ -68,7 +68,7 @@ class BaseEscritosMixins:
         if content_type != "blog":
             for term_part in self.term_parts.all():
                 image = self.search_image(term_part.content)
-                if image != False:
+                if image is not False:
                     break
         else:
             image = self.search_image(self.content)

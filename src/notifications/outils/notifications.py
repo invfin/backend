@@ -132,7 +132,8 @@ class NotificationSystem:
         return notif_info
 
     def announce_new_blog(self, blog, notif_type):
-        # blog.author.main_writter_followed.followers.all() that should be the actual loop over, all the writter's followers
+        # blog.author.main_writter_followed.followers.all() that should be
+        # the actual loop over, all the writter's followers
         notif_info = []
         for user in blog.author.main_writter_followed.followers.all():
             email = self.save_notif(

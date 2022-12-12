@@ -36,7 +36,8 @@ class BaseModelRecommended(Model, BaseToAllMixin):
         abstract = True
 
     """
-    Sobre escribir método clean o full clean. Cojer los motivos de la personalización o de la recomendación y guardalos en el json.
+    Sobre escribir método clean o full clean. Cojer los motivos de la personalización
+    o de la recomendación y guardalos en el json.
     """
 
     def full_clean(self, *args, **kwargs):

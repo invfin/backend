@@ -1,18 +1,18 @@
+import json
+import urllib
+
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.shortcuts import redirect
 from django.urls import reverse
 
-User = get_user_model()
-
-import json
-import urllib
-
 from src.seo.views import SEOCreateView, SEODetailView, SEOListView
 
 from .forms import CreateCorrectionForm
 from .models import Term, TermContent
+
+User = get_user_model()
 
 
 class GlosarioView(SEOListView):

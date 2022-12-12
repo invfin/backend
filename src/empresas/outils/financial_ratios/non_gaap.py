@@ -108,15 +108,6 @@ class NonGaap:
         return modify_for_percentage(value)
 
     @classmethod
-    def calculate_invested_capital(
-        cls,
-        property_plant_equipment_net: Union[int, float],
-        net_working_capital: Union[int, float],
-        cash_and_cash_equivalents: Union[int, float],
-    ) -> Union[int, float]:
-        return property_plant_equipment_net + net_working_capital - cash_and_cash_equivalents
-
-    @classmethod
     def calculate_market_cap(
         cls,
         current_price: Union[int, float],

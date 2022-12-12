@@ -50,7 +50,7 @@ class ChartSerializer:
         return chartData
 
     def generate_portfolio_charts(self):
-        data = {
+        return {
             "labels": [],
             "datasets": [
                 {

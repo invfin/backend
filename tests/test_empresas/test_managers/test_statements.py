@@ -1,12 +1,10 @@
 from django.test import TestCase
 
-from tests.data.empresas import CreateStatements
-
 
 class TestBaseStatementManager(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.statements_data = CreateStatements().create_data()
+        pass
 
     # def test_quarterly(self, **kwargs) -> QuerySet:
     #     assert 30 == IncomeStatement.objects.all().count()

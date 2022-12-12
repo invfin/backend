@@ -97,9 +97,27 @@ class OtherRatios:
         return non_cash_working_capital - cash_and_cash_equivalents
 
     @classmethod
+    def calculate_common_equity(
+        cls,
+        common_stocks: Union[int, float],
+        current_price: Union[int, float],
+        retained_earnings: Union[int, float],
+    ) -> Union[int, float]:
+        return (common_stocks * current_price) + retained_earnings
+
+    @classmethod
+    def calculate_preferred_equity(
+        cls,
+        preferred_stocks: Union[int, float],
+        preferred_share_price: Union[int, float],
+    ) -> Union[int, float]:
+        return preferred_stocks * preferred_share_price
+
+    @classmethod
     def calculate_invested_capital(
         cls,
-        property_plant_equipment_net: Union[int, float],
-        non_cash_working_capital: Union[int, float],
+        long_term_debt: Union[int, float],
+        common_equity: Union[int, float],
+        preferred_equity: Union[int, float],
     ) -> Union[int, float]:
-        return property_plant_equipment_net + non_cash_working_capital
+        return long_term_debt + common_equity + preferred_equity

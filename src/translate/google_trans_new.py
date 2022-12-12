@@ -113,11 +113,11 @@ class google_translator:
     def translate(self, text, lang_tgt="auto", lang_src="auto", pronounce=False):
         try:
             LANGUAGES[lang_src]
-        except:
+        except Exception:
             lang_src = "auto"
         try:
             LANGUAGES[lang_tgt]
-        except:
+        except Exception:
             lang_src = "auto"
         text = str(text)
         if len(text) >= 5000:
@@ -141,7 +141,7 @@ class google_translator:
             headers=headers,
         )
         try:
-            if self.proxies == None or type(self.proxies) != dict:
+            if self.proxies is None or type(self.proxies) != dict:
                 self.proxies = {}
             with requests.Session() as s:
                 s.proxies = self.proxies
@@ -159,20 +159,20 @@ class google_translator:
                         if len(response) == 1:
                             if len(response[0]) > 5:
                                 sentences = response[0][5]
-                            else:  ## only url
+                            else:  # only url
                                 sentences = response[0][0]
-                                if pronounce == False:
+                                if pronounce is False:
                                     return sentences
-                                elif pronounce == True:
+                                elif pronounce is True:
                                     return [sentences, None, None]
                             translate_text = ""
                             for sentence in sentences:
                                 sentence = sentence[0]
                                 translate_text += sentence.strip() + " "
                             translate_text = translate_text
-                            if pronounce == False:
+                            if pronounce is False:
                                 return translate_text
-                            elif pronounce == True:
+                            elif pronounce is True:
                                 pronounce_src = response_[0][0]
                                 pronounce_tgt = response_[1][0][0][1]
                                 return [translate_text, pronounce_src, pronounce_tgt]
@@ -180,9 +180,9 @@ class google_translator:
                             sentences = []
                             for i in response:
                                 sentences.append(i[0])
-                            if pronounce == False:
+                            if pronounce is False:
                                 return sentences
-                            elif pronounce == True:
+                            elif pronounce is True:
                                 pronounce_src = response_[0][0]
                                 pronounce_tgt = response_[1][0][0][1]
                                 return [sentences, pronounce_src, pronounce_tgt]
@@ -216,7 +216,7 @@ class google_translator:
         freq = self._package_rpc(text)
         response = requests.Request(method="POST", url=self.url, data=freq, headers=headers)
         try:
-            if self.proxies == None or type(self.proxies) != dict:
+            if self.proxies is None or type(self.proxies) != dict:
                 self.proxies = {}
             with requests.Session() as s:
                 s.proxies = self.proxies
