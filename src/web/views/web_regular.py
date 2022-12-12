@@ -52,11 +52,7 @@ class RoadmapListView(SEOListView):
     meta_title = "Roadmap"
     meta_description = "Conoce el desarrollo y pide lo que necesites"
     meta_tags = "finanzas, blog financiero, blog el financiera, invertir"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["legal_links"] = WebsiteLegalPage.objects.all()
-        return context
+    custom_context_data = {"legal_links": WebsiteLegalPage.objects.all()}
 
 
 class RoadmapDetailView(SEODetailView):
@@ -64,6 +60,7 @@ class RoadmapDetailView(SEODetailView):
     model = Roadmap
     context_object_name = "object"
     meta_description = "Conoce el desarrollo y pide lo que necesites"
+    custom_context_data = {"show_author": False}
 
 
 class LegalPages(SEODetailView):
@@ -74,11 +71,7 @@ class LegalPages(SEODetailView):
     slug_field = "slug"
     meta_description = "Todo lo que necesitas para ser un mejor inversor"
     meta_tags = "finanzas, blog financiero, blog el financiera, invertir"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["legal_links"] = WebsiteLegalPage.objects.all()
-        return context
+    custom_context_data = {"legal_links": WebsiteLegalPage.objects.all()}
 
 
 def soporte_view(request):

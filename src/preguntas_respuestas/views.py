@@ -33,17 +33,14 @@ class QuestionDetailsView(SEODetailView):
     context_object_name = "object"
     slug_field = "slug"
     update_visits = True
+    custom_context_data = {"show_author": True}
 
 
 class CreateQuestionView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
     form_class = CreateQuestionForm
     template_name = "forms/create_question.html"
     success_message = "Pregunta creada"
-
-    def get_context_data(self, **kwargs):
-        context = super(CreateQuestionView, self).get_context_data(**kwargs)
-        context["meta_title"] = "Dashboard"
-        return context
+    custom_context_data = {"meta_title": "Dashboard"}
 
     def get_initial(self, *args, **kwargs):
         initial = super(CreateQuestionView, self).get_initial(**kwargs)
@@ -76,11 +73,7 @@ class UpdateQuestionView(LoginRequiredMixin, UserPassesTestMixin, SuccessMessage
     slug_field = "slug"
     fields = ["title", "content"]
     success_message = "Pregunta actualizada"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["meta_title"] = "Dashboard"
-        return context
+    custom_context_data = {"meta_title": "Dashboard"}
 
     def form_valid(self, form):
         form.instance.author = self.request.user

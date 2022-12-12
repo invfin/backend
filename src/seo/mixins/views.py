@@ -1,12 +1,21 @@
 import random
-from typing import Dict
+from typing import Dict, Any
 
 from django.conf import settings
 
 from src.recsys.mixins import RecommenderMixin
 
 
-class SEOViewMixin(RecommenderMixin):
+class FastContextView:
+    custom_context_data: Dict[str, Any] = {}
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update(**self.custom_context_data)
+        return context
+
+
+class SEOViewMixin(FastContextView, RecommenderMixin):
     """
     Mixin to populate meta information for SEO purpose
 

@@ -16,11 +16,13 @@
             </a>
             {% endfor %}
         </div>
+        {% if show_author %}
         <div class="mt-2 text-right">
             <img class="avatar" src="{{object.author.foto}}">
             <a href="{{object.author.custom_url}}">
                 {{object.author}} - {{object.author.user_profile.reputation_score}}
             </a>
         </div>
+        {% endif %}
     </div>
 </div>
