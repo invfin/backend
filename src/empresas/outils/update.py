@@ -18,7 +18,7 @@ class UpdateCompany(CalculateFinancialRatios, AverageStatements):
     @log_company("fixed_last_finprep")
     def create_financials_finprep(self) -> None:
         if FinprepRequestCheck().manage_track_requests(3):
-            finprep_data = RetrieveCompanyData(self.company).finprep.create_financials_finprep()
+            finprep_data = RetrieveCompanyData(self.company).create_financials_finprep()
             income_statements = finprep_data["income_statements"]
             balance_sheets = finprep_data["balance_sheets"]
             cashflow_statements = finprep_data["cashflow_statements"]
@@ -68,7 +68,7 @@ class UpdateCompany(CalculateFinancialRatios, AverageStatements):
         return "updated"
 
     @log_company()
-    def update_average_financials_statements(self, period):
+    def update_average_financials_statements(self, period)->None:
         """
         TODO
         Move all the calculation logic into SQL
@@ -82,6 +82,7 @@ class UpdateCompany(CalculateFinancialRatios, AverageStatements):
             if averaged_stement:
                 averaged_stement.update({"company": self.company, "from_average": True})
                 funct_create_or_update_statement(averaged_stement, period)
+        return None
 
     @log_company()
     def create_or_update_ttm(self):

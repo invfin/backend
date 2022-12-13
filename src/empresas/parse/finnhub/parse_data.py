@@ -351,4 +351,5 @@ class ParseFinnhub(ParserClient):
     # def get_news(self, symbol):
     #     day = str(int(datetime.now().strftime("%Y-%m-%d")[-2:])-2)
     #     final_date = (datetime.now().strftime(f"%Y-%m-{day}"))
-    #     return requests.get(f'https://finnhub.io/api/v1/company-news?symbol={symbol}&from={final_date}&to={datetime.now().strftime("%Y-%m-%d")}&token={FINNHUB_TOKEN}').json()
+    #     return requests.get(f'https://finnhub.io/api/v1/company-news?
+    #     symbol={symbol}&from={final_date}&to={datetime.now().strftime("%Y-%m-%d")}&token={FINNHUB_TOKEN}').json()

@@ -113,18 +113,55 @@ class MetaProfileHistorial(Model):
 
 
 class Profile(Model, BaseToAllMixin, ResizeImageMixin):
-    user = OneToOneField(User, on_delete=CASCADE, null=True, related_name="user_profile",)
+    user = OneToOneField(
+        User,
+        on_delete=CASCADE,
+        null=True,
+        related_name="user_profile",
+    )
     reputation_score = IntegerField(default=0)
     creditos = IntegerField(default=0)
-    edad = DateField("Fecha de nacimiento (DD/MM/AAAA)", null=True, blank=True,)
-    pais = CountryField("País de origen", null=True, blank=True, blank_label="(select country)",)
-    ciudad = CharField("Ciudad de origen", max_length=150, null=True, blank=True,)
+    edad = DateField(
+        "Fecha de nacimiento (DD/MM/AAAA)",
+        null=True,
+        blank=True,
+    )
+    pais = CountryField(
+        "País de origen",
+        null=True,
+        blank=True,
+        blank_label="(select country)",
+    )
+    ciudad = CharField(
+        "Ciudad de origen",
+        max_length=150,
+        null=True,
+        blank=True,
+    )
     # foto_perfil = CloudinaryField("Foto de perfil", 'image', null=True, width_field='image_width',
     # height_field='image_height', default="inversorinteligente.png")
-    foto_perfil = ImageField("Foto de perfil", upload_to="avatar/", default="inversorinteligente.WebP",)
-    bio = TextField("Descripción", null=True, blank=True,)
-    recommended_by = ForeignKey(User, on_delete=SET_NULL, null=True, blank=True, related_name="invited_by",)
-    ref_code = CharField(max_length=1000, blank=True, unique=True,)
+    foto_perfil = ImageField(
+        "Foto de perfil",
+        upload_to="avatar/",
+        default="inversorinteligente.WebP",
+    )
+    bio = TextField(
+        "Descripción",
+        null=True,
+        blank=True,
+    )
+    recommended_by = ForeignKey(
+        User,
+        on_delete=SET_NULL,
+        null=True,
+        blank=True,
+        related_name="invited_by",
+    )
+    ref_code = CharField(
+        max_length=1000,
+        blank=True,
+        unique=True,
+    )
     objects = ProfileManager()
 
     class Meta:

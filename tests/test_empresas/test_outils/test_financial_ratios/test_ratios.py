@@ -1,24 +1,55 @@
+from django.test import TestCase
+
+from bfet import DjangoTestingModel
+
+from src.empresas.models import BalanceSheet, CashflowStatement, Company, IncomeStatement
 from src.empresas.outils.financial_ratios import CalculateFinancialRatios
+from src.periods.models import Period
 
 
-class TestCalculateFinancialRatios:
+class TestCalculateFinancialRatios(TestCase):
+    @classmethod
+    def setUpTestData(cls) -> None:
+        current_period = DjangoTestingModel.create(Period, period=5, year=2022)
+        previous_period = DjangoTestingModel.create(Period, period=5, year=2021)
+        company = DjangoTestingModel.create(Company)
+        cls.current_income = DjangoTestingModel.create(
+            IncomeStatement,
+            period=current_period,
+            company=company,
+        )
+        cls.current_balance = DjangoTestingModel.create(
+            BalanceSheet,
+            period=current_period,
+            company=company,
+        )
+        cls.current_cashflow = DjangoTestingModel.create(
+            CashflowStatement,
+            period=current_period,
+            company=company,
+        )
+        cls.previous_income = DjangoTestingModel.create(
+            IncomeStatement,
+            period=previous_period,
+            company=company,
+        )
+        cls.previous_balance = DjangoTestingModel.create(
+            BalanceSheet,
+            period=previous_period,
+            company=company,
+        )
+        cls.previous_cashflow = DjangoTestingModel.create(
+            CashflowStatement,
+            period=previous_period,
+            company=company,
+        )
+
     def test_generate_current_data(self):
         income_statements = []
         balance_sheets = []
         cashflow_statements = []
         expected_result = {}
         assert expected_result == CalculateFinancialRatios.generate_current_data(
-            income_statements,
-            balance_sheets,
-            cashflow_statements,
-        )
-
-    def test_generate_last_year_data(self):
-        income_statements = []
-        balance_sheets = []
-        cashflow_statements = []
-        expected_result = {}
-        assert expected_result == CalculateFinancialRatios().generate_last_year_data(
             income_statements,
             balance_sheets,
             cashflow_statements,
