@@ -56,7 +56,7 @@ class AbstractGenericModels(AbstractTimeStampedModel):
         if self.object:
             return self.object.get_absolute_url()
         else:
-            return reverse("users:user_inicio")
+            return reverse("users:user-detail-view")
 
 
 class AbstractFavoritesHistorial(AbstractTimeStampedModel):

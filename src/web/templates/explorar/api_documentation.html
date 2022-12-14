@@ -32,7 +32,7 @@
                         {% if request.user.is_anonymous %}
                         <a class="nav-link active" href="{% url 'preguntas_respuestas:list_questions' %}{% utm 'sidebar' 'Inicio' %}">
                             {% else %}
-                        <a class="nav-link active" href="{% url 'users:user_inicio' %}{% utm 'sidebar' 'Inicio' %}">
+                        <a class="nav-link active" href="{% url 'users:user-detail-view' %}{% utm 'sidebar' 'Inicio' %}">
                             {% endif %}
                             <i class="fas fa-home text-primary"></i>
                             <span class="nav-link-text">Inicio</span>
@@ -110,7 +110,7 @@
           <a href="#!" data-bs-toggle="modal" data-bs-target="#APIKeyModal" class="form-control" readonly>Obtener clave API</a>
           {% endif %}
         {% else %}
-        <a href="{% url 'users:user_inicio' %}{% utm 'api-doc' 'sign-up' %}" class="form-control">Consigue tu Clave</a>
+        <a href="{% url 'users:user-detail-view' %}{% utm 'api-doc' 'sign-up' %}" class="form-control">Consigue tu Clave</a>
         {% endif %}
       </p>
       <hr class="mb-4">

@@ -9,7 +9,8 @@
     "python.testing.pytestArgs": [
         // "-n 8",
         "--tb=long",
-        "-rAf"
+        "-rAf",
+        "-v"
     ],
     "python.analysis.typeCheckingMode": "basic",
     "python.analysis.autoImportCompletions": true,

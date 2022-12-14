@@ -40,7 +40,10 @@ buildsemi:
 	docker compose -f semiprod.yml build
 
 upsemi:
-	docker compose -f semiprod.yml up nginx invfin
+	docker compose -f semiprod.yml up --build
+
+stopsemi:
+	docker compose -f local.yml stop
 
 stop:
 	docker compose -f local.yml stop

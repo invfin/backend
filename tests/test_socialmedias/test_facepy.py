@@ -1,7 +1,7 @@
 from unittest import skip
 
 from django.conf import settings
-from django.test import TestCase
+from django.test import TestCase, override_settings
 
 import vcr
 
@@ -16,6 +16,7 @@ facebook_vcr = vcr.VCR(
 )
 
 
+@override_settings(FACEBOOK_APP_ID="app-id")
 class TestFacePoster(TestCase):
     @classmethod
     def setUpTestData(cls):
@@ -100,6 +101,13 @@ class TestFacePoster(TestCase):
             constants.FACEBOOK_POST_IMAGE_PAGE
         )
 
+    def test_build_auth_url(self):
+        redirect_url = "redirect_uri=https://inversionesyfinanzas.xyz/facebook-auth/"
+        base_path = "https://www.facebook.com/v15.0/dialog/oauth?"
+        params = f"client_id=app-id&{redirect_url}&state=InvFin&auth_type=rerequest"
+        assert f"{base_path}{params}" == self.facebook.build_auth_url()
+
+    @skip("not ready")
     def test_post(self):
         post_content = dict(
             media="",

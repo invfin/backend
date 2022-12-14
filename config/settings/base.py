@@ -170,7 +170,7 @@ AUTHENTICATION_BACKENDS = [
 # https://docs.djangoproject.com/en/dev/ref/settings/#auth-user-model
 AUTH_USER_MODEL = "users.User"
 # https://docs.djangoproject.com/en/dev/ref/settings/#login-redirect-url
-LOGIN_REDIRECT_URL = "users:user_inicio"
+LOGIN_REDIRECT_URL = "users:user-detail-view"
 # https://docs.djangoproject.com/en/dev/ref/settings/#login-url
 LOGIN_URL = "account_login"
 
@@ -460,11 +460,14 @@ GOOGLE_RECAPTCHA_PUBLIC_KEY = env.str("GOOGLE_RECAPTCHA_PUBLIC_KEY", "not-set")
 # ------------------------------------------------------------------------------
 ACTUAL_FB_PAGE_ACCESS_TOKEN = env.str("ACTUAL_FB_PAGE_ACCESS_TOKEN", "not-set")
 TEST_FB_PAGE_ACCESS_TOKEN = env.str("TEST_FB_PAGE_ACCESS_TOKEN", "not-set")
-FACEBOOK_APP_SECRET = env.str("FACEBOOK_APP_SECRET", "not-set")
+
 ACTUAL_FACEBOOK_ID = env.str("ACTUAL_FACEBOOK_ID", "not-set")
 TEST_FACEBOOK_ID = env.str("TEST_FACEBOOK_ID", "not-set")
+
 FB_USER_ACCESS_TOKEN = env.str("FB_USER_ACCESS_TOKEN", "not-set")
+
 FACEBOOK_APP_ID = env.str("FACEBOOK_APP_ID", "not-set")
+FACEBOOK_APP_SECRET = env.str("FACEBOOK_APP_SECRET", "not-set")
 
 # INSTAGRAM KEYS
 # ------------------------------------------------------------------------------

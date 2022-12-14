@@ -19,6 +19,7 @@ RUN apt-get update && apt-get install --no-install-recommends -y \
   texlive-latex-recommended \
   texlive-fonts-recommended \
   texlive-latex-extra \
+  git \
   latexmk \
   # cleaning up unused files
   && apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false \

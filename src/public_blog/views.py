@@ -19,7 +19,7 @@ User = get_user_model()
 
 
 def following_management_view(request):
-    redirect_to = reverse("users:user_inicio")
+    redirect_to = reverse("users:user-detail-view")
     if request.POST:
         writter = request.POST["writter"]
         action = request.POST["what"]

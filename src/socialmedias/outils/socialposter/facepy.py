@@ -1,4 +1,5 @@
 from typing import Dict
+import urllib.parse
 
 from django.conf import settings
 
@@ -9,6 +10,9 @@ from src.socialmedias import constants
 
 
 class Facebook:
+    redirect_uri = "https://inversionesyfinanzas.xyz/facebook-auth/"
+    state = "InvFin"
+
     def __init__(
         self,
         page_id: str,
@@ -32,7 +36,7 @@ class Facebook:
             base_url = constants.FACEBOOK_GRAPH_VIDEO_URL
         base_url = f"{base_url}{version}"
         if not self.is_old_page and not is_for_auth:
-            base_url = f"{base_url}{self.page_id}/"
+            base_url = f"{base_url}/{self.page_id}/"
         return base_url
 
     def build_action_url(
@@ -47,6 +51,47 @@ class Facebook:
             is_for_auth = True
         base_url = self.build_base_url(version, is_video, is_for_auth)
         return f"{base_url}{action}"
+
+    def build_auth_url(self) -> str:
+        """
+        https://developers.facebook.com/docs/facebook-login/guides/advanced/manual-flow
+        """
+        base_path = "https://www.facebook.com/v15.0/dialog/oauth"
+        base_params = {
+            "auth_type": "rerequest",
+            "client_id": {settings.FACEBOOK_APP_ID},
+            "redirect_uri": {self.redirect_uri},
+            "state": {self.state},
+        }
+        encoded_params = urllib.parse.urlencode(base_params)
+        return f"{base_path}?{encoded_params}"
+
+    @classmethod
+    def change_auth_code_per_access_token(cls, code: str) -> Dict[str, str]:
+        """
+        https://developers.facebook.com/docs/facebook-login/guides/advanced/manual-flow
+        """
+        params = {
+            "client_id": settings.FACEBOOK_APP_ID,
+            "redirect_uri": cls.redirect_uri,
+            "client_secret": settings.FACEBOOK_APP_SECRET,
+            "code": code,
+        }
+        response = requests.get("https://graph.facebook.com/v15.0/oauth/access_token?", params=params)
+        response.raise_for_status()
+        return response.json()
+
+    @classmethod
+    def get_access_token_information(cls, json_response: Dict[str, str]) -> str:
+        # token_type = json_response["token_type"] see what to do with that
+        # expires_in = json_response["expires_in"] seems not to be in the response anymore
+        return json_response["access_token"]
+
+    @classmethod
+    def return_user_access_token(cls, code: str):
+        json_response = cls.change_auth_code_per_access_token(code)
+        token = cls.get_access_token_information(json_response)
+        return token
 
     def handle_responses(self, response: requests.Response, field_to_retrieve: str) -> Dict:
         response_result = {}
@@ -70,22 +115,6 @@ class Facebook:
         return response_result
 
     def get_long_live_user_token(self, user_token: str) -> Dict:
-        """method to get a token if a response is 403
-
-        Parameters
-        ----------
-            app_id : _type_
-                _description_
-
-            user_token : _type_
-                _description_
-
-        Returns
-        -------
-            str
-                returns a FB_USER_ACCESS_TOKEN
-        """
-
         url = self.build_action_url(constants.FACEBOOK_OAUTH_ACCESS_TOKEN)
         parameters = {
             "grant_type": "fb_exchange_token",
@@ -97,13 +126,6 @@ class Facebook:
         return self.handle_responses(response, "access_token")
 
     def get_long_live_page_token(self, long_lived_user_token: str):
-        """Method to get a NEW_FB_PAGE_ACCESS_TOKEN
-
-        Returns
-        -------
-            str
-                NEW_FB_PAGE_ACCESS_TOKEN
-        """
         parameters = {"fields": "access_token", "access_token": long_lived_user_token}
         url = self.build_base_url()
 

@@ -48,3 +48,5 @@ uvicorn[standard]==0.18.2  # https://github.com/encode/uvicorn
 channels
 
 django-pghistory
+
+git+https://github.com/lluc2397/python-facebook.git#egg=python-facebook-api

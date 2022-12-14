@@ -111,6 +111,23 @@ services:
     ports:
       - "5555:5555"
     command: /start-flower
+  
+
+  nginx-proxy:
+    image: jwilder/nginx-proxy:alpine
+    container_name: nginx-proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - /var/run/docker.sock:/tmp/docker.sock:ro
+      - ./certs:/etc/nginx/certs
+    restart: always
+    depends_on:
+      - invfin
+    environment:
+      - VIRTUAL_HOST=example.com
+      - VIRTUAL_PORT=8000
 
 networks:
   invfin_network:

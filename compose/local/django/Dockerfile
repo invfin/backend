@@ -6,16 +6,17 @@ RUN apt update -yqq \
 
 RUN apt update -yqq \
     && apt install -yqq gcc \
-                        curl \
-                        zip \
-                        build-essential \
-                        libssl-dev \
-                        libffi-dev \
-                        libxml2-dev \
-                        libxslt1-dev \
-                        zlib1g-dev \
-                        libgdal-dev \
-                        gdal-bin
+    curl \
+    zip \
+    build-essential \
+    libssl-dev \
+    libffi-dev \
+    libxml2-dev \
+    libxslt1-dev \
+    zlib1g-dev \
+    libgdal-dev \
+    gdal-bin \
+    git
 
 RUN pip install --upgrade pip
 
@@ -36,6 +37,10 @@ RUN pip install -U -r /requirements/local.txt
 COPY ./compose/local/django/start /start
 RUN sed -i 's/\r//' /start
 RUN chmod +x /start
+
+COPY ./compose/local/django/start /start_semi
+RUN sed -i 's/\r//' /start_semi
+RUN chmod +x /start_semi
 
 COPY ./compose/production/django/requirements.sh /requirements.sh
 RUN chmod +x /requirements.sh
