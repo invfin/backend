@@ -21,8 +21,10 @@ def jazzmin_menu_check(app_configs, **kwargs):
                 except LookupError:
                     errors.append(
                         Error(
-                            f"Model `{model}` under label {menu_elem.get('label')} in "
-                            f"JAZZMIN_SETTINGS.{menu_name} does not exist.",
+                            (
+                                f"Model `{model}` under label {menu_elem.get('label')} in "
+                                f"JAZZMIN_SETTINGS.{menu_name} does not exist."
+                            ),
                         )
                     )
 

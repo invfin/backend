@@ -19,14 +19,20 @@ function run_ssh_command(){
 EOF
 }
 
+find_in_conda_env(){
+    conda env list | grep "${@}" >/dev/null 2>/dev/null
+}
+
 
 COMMIT_MESSAGE="${1:-.}"
 SERVICES_TO_RESTART="${2:-all}"
-BASE_FOLDER="$HOME/Dev/InvFin/"
-TEST_FOLDER="$BASE_FOLDER"/tests
-CODE_FOLDER="$BASE_FOLDER"/src
+TEST_FOLDER="$PWD"/tests
+CODE_FOLDER="$PWD"/src
 
-source $HOME/Dev/ifvenv/bin/activate
+if find_in_conda_env ".*RUN_ENV.*" ; then
+   conda init invfin
+fi
+
 
 isort $CODE_FOLDER
 black $CODE_FOLDER

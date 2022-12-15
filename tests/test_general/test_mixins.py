@@ -59,8 +59,8 @@ class TestBaseToAllMixin(TestCase):
 class TestVotesMixin(TestCase):
     @classmethod
     def setUpTestData(cls) -> None:
-        cls.user_1 = DjangoTestingModel.create(User)
-        cls.user_2 = DjangoTestingModel.create(User)
+        cls.user_1 = DjangoTestingModel.create(User, first_name="up", last_name="vote")
+        cls.user_2 = DjangoTestingModel.create(User, first_name="down", last_name="vote")
         cls.question = DjangoTestingModel.create(Question, author=DjangoTestingModel.create(User))
         cls.question.upvotes.add(cls.user_1)
         cls.question.downvotes.add(cls.user_2)
@@ -68,16 +68,15 @@ class TestVotesMixin(TestCase):
     def test_action_is_upvote(self):
         assert VotesMixin.action_is_upvote("up") is True
         assert VotesMixin.action_is_upvote("down") is False
-    
+
     def test_action_is_downvote(self):
         assert VotesMixin.action_is_downvote("down") is True
         assert VotesMixin.action_is_downvote("up") is False
-    
+
     def test_user_already_upvoted(self):
         assert self.question.user_already_upvoted(self.user_1) is True
         assert self.question.user_already_upvoted(self.user_2) is False
-    
+
     def test_user_already_downvoted(self):
         assert self.question.user_already_downvoted(self.user_2) is True
         assert self.question.user_already_downvoted(self.user_1) is False
-    

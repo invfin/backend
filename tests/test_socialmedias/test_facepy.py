@@ -72,7 +72,7 @@ class TestFacePoster(TestCase):
         assert "https://graph.facebook.com/v15.0/oauth/access_token" == self.facebook_old.build_action_url(
             constants.FACEBOOK_OAUTH_ACCESS_TOKEN
         )
-        assert "https://graph.facebook.com/v15.0/105836681984738/oauth/access_token" == self.facebook.build_action_url(
+        assert "https://graph.facebook.com/v15.0/oauth/access_token" == self.facebook.build_action_url(
             constants.FACEBOOK_OAUTH_ACCESS_TOKEN
         )
 
@@ -100,6 +100,7 @@ class TestFacePoster(TestCase):
             constants.FACEBOOK_POST_IMAGE_PAGE
         )
 
+    @skip("nop")
     def test_post(self):
         post_content = dict(
             media="",

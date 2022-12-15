@@ -158,4 +158,4 @@ mypy:
 	mypy ${FOLDERS}
 
 deploy:
-	./deployment.sh
+	./deployment.sh ${ar} ${str}
