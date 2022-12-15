@@ -1,5 +1,6 @@
-from typing import Dict, List, Union
+from typing import Dict, List, Union, Tuple
 
+from django.db.models import QuerySet
 from django.utils import timezone
 
 from src.periods.constants import PERIOD_FOR_YEAR
@@ -36,7 +37,7 @@ class CalculateFinancialRatios(
         self.company = company
 
     @classmethod
-    def last_year_data(cls, data: Dict[str, Union[int, float]]) -> Dict[str, Union[int, float]]:
+    def filter_previous_year_data(cls, data: Dict[str, Union[int, float]]) -> Dict[str, Union[int, float]]:
         last_year_inventory = data.get("inventory", 0)
         last_year_accounts_payable = data.get("accounts_payable", 0)
         last_year_revenue = data.get("revenue", 0)
@@ -81,29 +82,49 @@ class CalculateFinancialRatios(
             "last_year_current_liabilities": last_year_current_liabilities,
         }
 
-    def split_statements_by_year(self, period:str = PERIOD_FOR_YEAR):
-        current_year = timezone.now().year
+    def split_statements_by_year(self, year: int = timezone.now().year, period: int = PERIOD_FOR_YEAR,) ->Tuple[List, List]:
+        current_year = year
         previous_year = current_year - 1
-        inc_statements = self.company.inc_statements.filter(period__date="", period__period=period,)
-        balance_sheets = self.company.balance_sheets.filter(period__date="", period__period=period,)
-        cf_statements = self.company.cf_statements.filter(period__date="", period__period=period,)
+        inc_statements = self.company.inc_statements.filter(period__period=period)
+        balance_sheets = self.company.balance_sheets.filter(period__period=period)
+        cf_statements = self.company.cf_statements.filter(period__period=period)
+        return ([
+                    inc_statements.filter(period__year=current_year).first(),
+                    balance_sheets.filter(period__year=current_year).first(),
+                    cf_statements.filter(period__year=current_year).first(),
+        ], [
+            inc_statements.filter(period__year=previous_year).first(),
+            balance_sheets.filter(period__year=previous_year).first(),
+            cf_statements.filter(period__year=previous_year).first(),
+        ])
 
     @classmethod
     def prepare_base_data(
         cls,
-        previous_year_statements: List,
-        current_income_statements: List,
-        current_balance_sheets: List,
-        current_cashflow_statements: List,
-        previous_income_statements: List,
-        previous_balance_sheets: List,
-        previous_cashflow_statements: List,
-        current_price: Union[int, float],
+        current_income_statements: Union[List, QuerySet],
+        current_balance_sheets: Union[List, QuerySet],
+        current_cashflow_statements: Union[List, QuerySet],
+        previous_income_statements: Union[List, QuerySet],
+        previous_balance_sheets: Union[List, QuerySet],
+        previous_cashflow_statements: Union[List, QuerySet],
+        current_price: Dict[str, Union[int, float]],
     ) -> Dict[str, Union[int, float]]:
-        current_year =
-        ly_data = cls.last_year_data(ly_data)
-
-        return {}
+        to_clean_previous_data = {
+            **previous_income_statements[0],
+            **previous_balance_sheets[0],
+            **previous_cashflow_statements[0],
+        }
+        previous_year_data = cls.filter_previous_year_data(to_clean_previous_data)
+        current_year_data = {
+            **current_income_statements[0],
+            **current_balance_sheets[0],
+            **current_cashflow_statements[0],
+        }
+        return {
+            **previous_year_data,
+            **current_year_data,
+            **current_price,
+        }
 
     @classmethod
     def calculate_other_ratios(cls, data: Dict[str, Union[int, float]]) -> Dict[str, Union[int, float]]:
@@ -732,42 +753,49 @@ class CalculateFinancialRatios(
             "price_tangible_assets": price_to_tangible_assets,
         }
 
+    @classmethod
     def calculate_all_ratios(
-        self,
-        income_statements: List,
-        balance_sheets: List,
-        cashflow_statements: List,
-        current_price: Union[int, float],
+        cls,
+        current_income_statements: Union[List, QuerySet],
+        current_balance_sheets: Union[List, QuerySet],
+        current_cashflow_statements: Union[List, QuerySet],
+        previous_income_statements: Union[List, QuerySet],
+        previous_balance_sheets: Union[List, QuerySet],
+        previous_cashflow_statements: Union[List, QuerySet],
+        current_price: Dict[str, Union[int, float]],
     ) -> Dict[str, Dict[str, Union[int, float]]]:
-        base_data = self.prepare_base_data(
-            income_statements,
-            balance_sheets,
-            cashflow_statements,
+        base_data = cls.prepare_base_data(
+            current_income_statements,
+            current_balance_sheets,
+            current_cashflow_statements,
+            previous_income_statements,
+            previous_balance_sheets,
+            previous_cashflow_statements,
             current_price,
         )
 
-        other_ratios = self.calculate_other_ratios(base_data)
+        other_ratios = cls.calculate_other_ratios(base_data)
         base_data.update(other_ratios)
 
-        fcf_ratio = self.calculate_free_cashflow_ratios(base_data)
+        fcf_ratio = cls.calculate_free_cashflow_ratios(base_data)
         base_data.update(fcf_ratio)
 
-        ps_value = self.calculate_per_share_value(base_data)
+        ps_value = cls.calculate_per_share_value(base_data)
         base_data.update(ps_value)
 
-        company_growth = self.calculate_company_growth(base_data)
+        company_growth = cls.calculate_company_growth(base_data)
         base_data.update(company_growth)
 
-        non_gaap = self.calculate_non_gaap(base_data)
+        non_gaap = cls.calculate_non_gaap(base_data)
         base_data.update(non_gaap)
 
-        price_to_ratio = self.calculate_price_to_ratios(base_data)
-        efficiency_ratio = self.calculate_efficiency_ratios(base_data)
-        enterprise_value_ratio = self.calculate_enterprise_value_ratios(base_data)
-        liquidity_ratio = self.calculate_liquidity_ratios(base_data)
-        margin_ratio = self.calculate_margin_ratios(base_data)
-        operation_risk_ratio = self.calculate_operation_risk_ratios(base_data)
-        rentability_ratios = self.calculate_rentability_ratios(base_data)
+        price_to_ratio = cls.calculate_price_to_ratios(base_data)
+        efficiency_ratio = cls.calculate_efficiency_ratios(base_data)
+        enterprise_value_ratio = cls.calculate_enterprise_value_ratios(base_data)
+        liquidity_ratio = cls.calculate_liquidity_ratios(base_data)
+        margin_ratio = cls.calculate_margin_ratios(base_data)
+        operation_risk_ratio = cls.calculate_operation_risk_ratios(base_data)
+        rentability_ratios = cls.calculate_rentability_ratios(base_data)
 
         return {
             "price_to_ratio": price_to_ratio,

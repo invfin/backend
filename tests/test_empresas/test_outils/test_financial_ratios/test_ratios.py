@@ -1,48 +1,65 @@
 from django.test import TestCase
+from django.utils import timezone
 
 from bfet import DjangoTestingModel
 
 from src.empresas.models import BalanceSheet, CashflowStatement, Company, IncomeStatement
 from src.empresas.outils.financial_ratios import CalculateFinancialRatios
 from src.periods.models import Period
+from src.periods.constants import PERIOD_FOR_YEAR
 
 
 class TestCalculateFinancialRatios(TestCase):
     @classmethod
     def setUpTestData(cls) -> None:
-        current_period = DjangoTestingModel.create(Period, period=5, year=2022)
-        previous_period = DjangoTestingModel.create(Period, period=5, year=2021)
-        company = DjangoTestingModel.create(Company)
+        cls.current_year = timezone.now().year
+        cls.previous_year = cls.current_year - 1
+        current_period = DjangoTestingModel.create(Period, period=PERIOD_FOR_YEAR, year=cls.current_year)
+        previous_period = DjangoTestingModel.create(Period, period=PERIOD_FOR_YEAR, year=cls.previous_year)
+        cls.company = DjangoTestingModel.create(Company)
         cls.current_income = DjangoTestingModel.create(
             IncomeStatement,
             period=current_period,
-            company=company,
+            company=cls.company,
         )
         cls.current_balance = DjangoTestingModel.create(
             BalanceSheet,
             period=current_period,
-            company=company,
+            company=cls.company,
         )
         cls.current_cashflow = DjangoTestingModel.create(
             CashflowStatement,
             period=current_period,
-            company=company,
+            company=cls.company,
         )
         cls.previous_income = DjangoTestingModel.create(
             IncomeStatement,
             period=previous_period,
-            company=company,
+            company=cls.company,
         )
         cls.previous_balance = DjangoTestingModel.create(
             BalanceSheet,
             period=previous_period,
-            company=company,
+            company=cls.company,
         )
         cls.previous_cashflow = DjangoTestingModel.create(
             CashflowStatement,
             period=previous_period,
-            company=company,
+            company=cls.company,
         )
+
+    def test_split_statements_by_year(self):
+        current, previous = CalculateFinancialRatios(self.company).split_statements_by_year(2022, 5)
+        assert [
+                   self.current_income,
+                   self.current_balance,
+                   self.current_cashflow,
+               ] == current
+        assert [
+                   self.previous_income,
+                   self.previous_balance,
+                   self.previous_cashflow,
+               ] == previous
 
     def test_generate_current_data(self):
         income_statements = []
@@ -54,6 +71,22 @@ class TestCalculateFinancialRatios(TestCase):
             balance_sheets,
             cashflow_statements,
         )
+
+    def test_prepare_base_data(self):
+        inc_statements = self.company.inc_statements.filter(period__period=PERIOD_FOR_YEAR)
+        balance_sheets = self.company.balance_sheets.filter(period__period=PERIOD_FOR_YEAR)
+        cf_statements = self.company.cf_statements.filter(period__period=PERIOD_FOR_YEAR)
+        base_data = CalculateFinancialRatios.prepare_base_data(
+            inc_statements.filter(period__year=self.current_year),
+            balance_sheets.filter(period__year=self.current_year),
+            cf_statements.filter(period__year=self.current_year),
+            inc_statements.filter(period__year=self.previous_year),
+            balance_sheets.filter(period__year=self.previous_year),
+            cf_statements.filter(period__year=self.previous_year),
+            {"current_price": 34.65}
+        )
+        assert isinstance(base_data, dict)
+
 
     def test_calculate_all_ratios(self):
         income_statements = []
@@ -74,13 +107,13 @@ class TestCalculateFinancialRatios(TestCase):
             "non_gaap": 0,
             "other_ratios": 0,
         }
-        assert expected_result == CalculateFinancialRatios().calculate_all_ratios(
+        assert expected_result == CalculateFinancialRatios.calculate_all_ratios(
             income_statements,
             balance_sheets,
             cashflow_statements,
         )
 
-    def test_last_year_data(self):
+    def test_filter_previous_year_data(self):
         data = {
             "inventory": 3546,
             "accounts_payable": 678,
@@ -117,7 +150,7 @@ class TestCalculateFinancialRatios(TestCase):
             "last_year_current_assets": 35.46,
             "last_year_current_liabilities": 567,
         }
-        assert expected_result == CalculateFinancialRatios.last_year_data(data)
+        assert expected_result == CalculateFinancialRatios.filter_previous_year_data(data)
 
     def test_calculate_other_ratios(self):
         data = {
