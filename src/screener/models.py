@@ -19,10 +19,9 @@ from django.urls import reverse
 
 from ckeditor.fields import RichTextField
 
+from src.classifications.models import Category, Tag
 from src.empresas.models import Company
 from src.etfs.models import Etf
-
-from src.classifications.models import Category, Tag
 from src.general.abstracts import AbstractFavoritesHistorial
 
 from . import constants
