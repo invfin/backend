@@ -146,7 +146,7 @@ isort_check:
 	isort --df -c ${FOLDERS}
 
 black_check:
-	black ${BLACK_FOLDERS} --check
+	black ${FOLDERS} --check
 
 flake8:
 	flake8 ${FOLDERS}
