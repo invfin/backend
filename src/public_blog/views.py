@@ -46,8 +46,10 @@ def user_become_writter_view(request):
         NewsletterFollowers.objects.create(user=request.user)
         messages.success(
             request,
-            "Pon al día tu perfil, añade tus redes sociales, una buena descripción y tu nombre para que la gente"
-            " pueda conocerte.",
+            (
+                "Pon al día tu perfil, añade tus redes sociales, una buena descripción y tu nombre para que la gente"
+                " pueda conocerte."
+            ),
         )
         return redirect("users:update")
 
@@ -60,14 +62,10 @@ class PublicBlogsListView(SEOListView):
     meta_description = "El blog donde tu también puedes escribir de forma libre"
     meta_tags = "finanzas, blog financiero, blog el financiera, invertir"
     meta_title = "Convíertete en escritor"
+    custom_context_data = {"escritores": WritterProfile.objects.all()}
 
     def get_queryset(self):
         return PublicBlog.objects.filter(status=1)
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context["escritores"] = WritterProfile.objects.all()
-        return context
 
 
 class PublicBlogDetailsView(SEODetailView):
@@ -77,11 +75,8 @@ class PublicBlogDetailsView(SEODetailView):
     slug_field = "slug"
     is_article = True
     open_graph_type = "article"
-
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        self.update_views(self.get_object())
-        return context
+    update_visits = True
+    custom_context_data = {"show_author": True}
 
 
 class WritterOnlyMixin(LoginRequiredMixin, UserPassesTestMixin, SuccessMessageMixin):
@@ -140,7 +135,7 @@ class UpdatePublicBlogPostView(WritterOnlyMixin, UpdateView):
     success_message = "Escrito actualizado"
     template_name = "forms/manage_escrito.html"
 
-    def get_success_url(self) -> str:
+    def get_success_url(self):
         return redirect("public_blog:manage_blogs", kwargs={"slug": self.request.user.username})
 
     def get_context_data(self, **kwargs):

@@ -4,22 +4,54 @@ from django.conf import settings
 
 import requests
 
+from src.content_creation import constants as content_creation_constants
 from src.socialmedias import constants
 
 
 class Facebook:
-    def __init__(self, page_id: str, page_access_token: str, facebook_page_name: str) -> None:
+    def __init__(
+        self,
+        page_id: str,
+        page_access_token: str,
+        facebook_page_name: str,
+        is_old_page: bool = False,
+    ) -> None:
         self.page_id = page_id
         self.facebook_page_name = facebook_page_name
-        self.app_secret = settings.FACEBOOK_APP_SECRET
-        self.long_lived_user_token = settings.FB_USER_ACCESS_TOKEN
         self.page_access_token = page_access_token
-        self.post_facebook_url = f"{constants.FACEBOOK_GRAPH_URL}{self.page_id}"
-        self.post_facebook_video_url = f"{constants.FACEBOOK_GRAPH_VIDEO_URL}{self.page_id}"
+        self.is_old_page = is_old_page
+
+    def build_base_url(
+        self,
+        version: str = constants.FACEBOOK_GRAPH_API_VERSION,
+        is_video: bool = False,
+        is_for_auth: bool = False,
+    ) -> str:
+        base_url = constants.FACEBOOK_GRAPH_URL
+        if is_video:
+            base_url = constants.FACEBOOK_GRAPH_VIDEO_URL
+        base_url = f"{base_url}{version}"
+        if not self.is_old_page and not is_for_auth:
+            base_url = f"{base_url}{self.page_id}/"
+        return base_url
+
+    def build_action_url(
+        self,
+        action: str,
+        version: str = constants.FACEBOOK_GRAPH_API_VERSION,
+    ) -> str:
+        is_video, is_for_auth = False, False
+        if action == constants.FACEBOOK_POST_VIDEO_PAGE:
+            is_video = True
+        if action == constants.FACEBOOK_OAUTH_ACCESS_TOKEN:
+            is_for_auth = True
+        base_url = self.build_base_url(version, is_video, is_for_auth)
+        return f"{base_url}{action}"
 
     def handle_responses(self, response: requests.Response, field_to_retrieve: str) -> Dict:
         response_result = {}
         response_dict = response.json()
+        print(response.json())
         if response.status_code == 200:
             response_result["result"] = "success"
             response_result["extra"] = str(response_dict[field_to_retrieve])
@@ -37,7 +69,7 @@ class Facebook:
 
         return response_result
 
-    def get_long_live_user_token(self, app_id, user_token):
+    def get_long_live_user_token(self, user_token: str) -> Dict:
         """method to get a token if a response is 403
 
         Parameters
@@ -54,20 +86,17 @@ class Facebook:
                 returns a FB_USER_ACCESS_TOKEN
         """
 
-        url = f"{constants.FACEBOOK_GRAPH_URL}oauth/access_token"
-
+        url = self.build_action_url(constants.FACEBOOK_OAUTH_ACCESS_TOKEN)
         parameters = {
             "grant_type": "fb_exchange_token",
-            "client_id": app_id,
-            "client_secret": self.app_secret,
+            "client_id": settings.FACEBOOK_APP_ID,
+            "client_secret": settings.FACEBOOK_APP_SECRET,
             "fb_exchange_token": user_token,
         }
-
         response = requests.get(url, params=parameters)
-
         return self.handle_responses(response, "access_token")
 
-    def get_long_live_page_token(self):
+    def get_long_live_page_token(self, long_lived_user_token: str):
         """Method to get a NEW_FB_PAGE_ACCESS_TOKEN
 
         Returns
@@ -75,9 +104,10 @@ class Facebook:
             str
                 NEW_FB_PAGE_ACCESS_TOKEN
         """
-        parameters = {"fields": "access_token", "access_token": self.long_lived_user_token}
+        parameters = {"fields": "access_token", "access_token": long_lived_user_token}
+        url = self.build_base_url()
 
-        response = requests.get(self.post_facebook_url, params=parameters)
+        response = requests.get(url, params=parameters)
         return self.handle_responses(response, "access_token")
 
     def post_content(self, content_type: str, content: Dict, **kwargs):
@@ -96,20 +126,21 @@ class Facebook:
             _type_
                 The facebook response inside a dict with and error message if any or success
         """
-        if not kwargs["post_now"]:
+        if not kwargs["post_now"] and kwargs.get("scheduled_publish_time"):
             content.update({"published": False, "scheduled_publish_time": kwargs["scheduled_publish_time"]})
         content.update({"access_token": self.page_access_token})
-        if content_type == "video":
+        files = None
+        if content_type == constants.FACEBOOK_POST_VIDEO_PAGE:
             files = {"source": open(kwargs["media_url"], "rb")}
-            response = requests.post(f"{self.post_facebook_video_url}/videos", data=content, files=files)
 
-        elif content_type == "text":
+        elif content_type == constants.FACEBOOK_POST_TEXT_PAGE:
             content.update({"link": kwargs["link"]})
-            response = requests.post(f"{self.post_facebook_url}/feed", data=content)
 
         else:
             content.update({"url": kwargs["media_url"]})
-            response = requests.post(f"{self.post_facebook_url}/photos", data=content)
+
+        url = self.build_action_url(content_type)
+        response = requests.post(url, data=content, files=files)
 
         return self.handle_responses(response, "id")
 
@@ -122,14 +153,20 @@ class Facebook:
         link = kwargs["link"]
 
         content = self.create_fb_description(kwargs["content"], kwargs["hashtags"], link)
-        data = {"title": title, "description": content}
+        data = {"title": title, "message": content}
 
-        if post_type == constants.POST_TYPE_TEXT or post_type == constants.POST_TYPE_REPOST:
-            content_type = "text"
-        elif post_type == constants.POST_TYPE_IMAGE or post_type == constants.POST_TYPE_TEXT_IMAGE:
-            content_type = "image"
+        if (
+            post_type == content_creation_constants.POST_TYPE_TEXT
+            or post_type == content_creation_constants.POST_TYPE_REPOST
+        ):
+            content_type = constants.FACEBOOK_POST_TEXT_PAGE
+        elif (
+            post_type == content_creation_constants.POST_TYPE_IMAGE
+            or post_type == content_creation_constants.POST_TYPE_TEXT_IMAGE
+        ):
+            content_type = constants.FACEBOOK_POST_IMAGE_PAGE
         else:
-            content_type = "video"
+            content_type = constants.FACEBOOK_POST_VIDEO_PAGE
 
         post_response = self.post_content(
             content_type,

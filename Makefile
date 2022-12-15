@@ -163,4 +163,4 @@ autoflake:
 	autoflake --remove-unused-variables --recursive ${FOLDERS} -i
 
 deploy:
-	./deployment.sh
+	./deployment.sh ${ar} ${str}

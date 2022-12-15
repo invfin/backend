@@ -13,7 +13,7 @@ from ..constants import FACEBOOK_GRAPH_URL, INSTAGRAM_GRAPH_URL
 
 class Instagram:
     ig_account_id = settings.INSTAGRAM_ID
-    page_access_token = settings.OLD_FB_PAGE_ACCESS_TOKEN
+    page_access_token = settings.ACTUAL_FB_PAGE_ACCESS_TOKEN
     user_access_token = settings.FB_USER_ACCESS_TOKEN
     main_instagram_url = INSTAGRAM_GRAPH_URL
     main_facebook_url = FACEBOOK_GRAPH_URL

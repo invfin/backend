@@ -107,6 +107,7 @@ class JSONFieldFilter(SimpleListFilter):
 
 # Now Extend this class to create custom admin filter for JSON field properties.
 
+
 # admin.py
 class AgeFilter(JSONFieldFilter):
     """ """

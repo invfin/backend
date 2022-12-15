@@ -59,7 +59,12 @@ class WebsiteEmail(AbstractEmail):
         related_name="emails",
     )
     users_selected = ManyToManyField(User, blank=True)
-    content_type = ForeignKey(ContentType, on_delete=CASCADE, null=True, blank=True)
+    content_type = ForeignKey(
+        ContentType,
+        on_delete=CASCADE,
+        null=True,
+        blank=True,
+    )
     object_id = PositiveBigIntegerField(null=True, blank=True)
     object = GenericForeignKey("content_type", "object_id")
 
@@ -111,7 +116,12 @@ class WebsiteEmail(AbstractEmail):
                 color = "orange"
                 icon = "eye"
                 bs_color = "warning"
-        return {"status": status, "color": color, "icon": icon, "bs_color": bs_color}
+        return {
+            "status": status,
+            "color": color,
+            "icon": icon,
+            "bs_color": bs_color,
+        }
 
 
 class WebsiteEmailTrack(AbstractTrackEmail):
@@ -133,7 +143,11 @@ class WebsiteEmailTrack(AbstractTrackEmail):
 
 class Roadmap(AbstractWrittenContent):
     content = RichTextField()
-    status = CharField(max_length=30, choices=constants.ROADMAP_STATUS, default=constants.ROADMAP_STATUS_PENDING)
+    status = CharField(
+        max_length=30,
+        choices=constants.ROADMAP_STATUS,
+        default=constants.ROADMAP_STATUS_PENDING,
+    )
     upvotes = ManyToManyField(
         User,
         blank=True,
@@ -163,7 +177,12 @@ class Roadmap(AbstractWrittenContent):
 
 
 class RoadmapComment(AbstractComment):
-    content_related = ForeignKey("web.Roadmap", on_delete=CASCADE, null=True, related_name="comments_related")
+    content_related = ForeignKey(
+        "web.Roadmap",
+        on_delete=CASCADE,
+        null=True,
+        related_name="comments_related",
+    )
 
     class Meta:
         verbose_name = "Roadmap's comment"

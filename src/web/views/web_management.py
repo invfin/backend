@@ -101,7 +101,7 @@ class ManagePreviewEmailEngagementDetailsView(PrivateWebDetailView):
 
     def render_to_response(self, context, **response_kwargs):
         template_name = self.object.previsualization_template
-        context.update({"content": self.object.content, "preview": True})
+        context.update({**self.object.email_serialized, "preview": True})
 
         response_kwargs.setdefault("content_type", self.content_type)
         return self.response_class(

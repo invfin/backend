@@ -1,4 +1,4 @@
-from typing import Dict, List, Type
+from typing import Dict, List, Optional, Type
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -20,8 +20,8 @@ User = get_user_model()
 
 class SocialPosting:
     facebook: Facebook = Facebook(
-        settings.OLD_FACEBOOK_ID,
-        settings.OLD_FB_PAGE_ACCESS_TOKEN,
+        settings.ACTUAL_FACEBOOK_ID,
+        settings.ACTUAL_FB_PAGE_ACCESS_TOKEN,
         "InversionesyFinanzas",
     )
     twitter: Twitter = Twitter(
@@ -30,8 +30,8 @@ class SocialPosting:
         settings.TWITTER_ACCESS_TOKEN,
         settings.TWITTER_ACCESS_TOKEN_SECRET,
     )
-    instagram: Type = None
-    youtube: Type = None
+    instagram: Optional[Type] = None
+    youtube: Optional[Type] = None
     socialmedias_map: Dict = {
         constants.FACEBOOK: facebook,
         constants.TWITTER: twitter,
@@ -118,7 +118,7 @@ class SocialPosting:
             post_type = platform_post_type_dict["post_type"]
             if not media and post_type != content_creation_constants.POST_TYPE_TEXT:
                 post_type = content_creation_constants.POST_TYPE_TEXT
-            # Here is where we are posting on socilamedia
+            # Here is where we are posting on socialmedia
             socialmedia_obj = self.get_socialmedia(platform_shared)
             socialmedia_obj_response = socialmedia_obj.post(
                 **socialmedia_content,

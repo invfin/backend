@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Tuple, Type, Union
+from typing import Any, Dict, List, Optional, Tuple, Type, Union
 
 from django.apps import apps
 from django.conf import settings
@@ -55,8 +55,20 @@ class EmailingSystem:
         # email_track is a Model inhertitaded from BaseTrackEmail
         return email_track.encoded_url
 
+    def _prepare_call_to_action(self, email: Dict[str, Any]) -> Dict[str, Optional[str]]:
+        call_to_action = email.pop("call_to_action", "")
+        call_to_action_url = email.pop("call_to_action_url", "")
+        return {"call_to_action": call_to_action, "call_to_action_url": call_to_action_url}
+
     def _prepare_content(self, email: Dict[str, Any], receiver: Type) -> Dict:
-        return {**email, "user": receiver, "image_tag": self._prepare_email_track(email, receiver)}
+        image_tag = self._prepare_email_track(email, receiver)
+        cta = self._prepare_call_to_action(email)
+        return {
+            **email,
+            "user": receiver,
+            "image_tag": image_tag,
+            **cta,
+        }
 
     def _prepare_sender(self, sender: str = "") -> str:
         if self.is_for == constants.EMAIL_FOR_PUBLIC_BLOG:
@@ -78,9 +90,8 @@ class EmailingSystem:
         content = self._prepare_content(email, receiver)
         return sender, content
 
-    def enviar_email(self, email: Dict[str, Union[str, int]], receiver_id: int):
-        """Recieves the email that has to be sent and the id of the user to sent the email to.
-
+    def rich_email(self, email: Dict[str, Union[str, int]], receiver_id: int):
+        """
         Parameters
         ----------
             email : Dict[str, Union[str, int]]

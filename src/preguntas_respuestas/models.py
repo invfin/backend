@@ -66,7 +66,7 @@ class Question(AbstractWrittenContent):
     def accepted_answer(self):
         return self.answers.filter(is_accepted=True).first()
 
-    def add_answer(self, author: User, answer_content: str, is_accepted: bool = False):
+    def add_answer(self, author: type, answer_content: str, is_accepted: bool = False):
         answer = Answer.objects.create(
             author=author,
             content=answer_content,

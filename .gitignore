@@ -292,3 +292,5 @@ checkout-single-subscription
 
 assets_*
 src/empresas/parse/finprep_requests_done.json
+certs/*
+notes.txt
