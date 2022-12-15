@@ -2,7 +2,10 @@ from django.test import TestCase
 
 from bfet import DjangoTestingModel
 
+from src.users.models import User
 from src.escritos.models import Term
+from src.preguntas_respuestas.models import Question
+from src.general.mixins import VotesMixin
 
 
 class TestMixins(TestCase):
@@ -51,3 +54,30 @@ class TestBaseToAllMixin(TestCase):
             "change": f"http://example.com:8000/admin/escritos/term/{self.term.id}/change/",
         }
         assert expected_result == self.term.admin_urls
+
+
+class TestVotesMixin(TestCase):
+    @classmethod
+    def setUpTestData(cls) -> None:
+        cls.user_1 = DjangoTestingModel.create(User)
+        cls.user_2 = DjangoTestingModel.create(User)
+        cls.question = DjangoTestingModel.create(Question, author=DjangoTestingModel.create(User))
+        cls.question.upvotes.add(cls.user_1)
+        cls.question.downvotes.add(cls.user_2)
+
+    def test_action_is_upvote(self):
+        assert VotesMixin.action_is_upvote("up") is True
+        assert VotesMixin.action_is_upvote("down") is False
+    
+    def test_action_is_downvote(self):
+        assert VotesMixin.action_is_downvote("down") is True
+        assert VotesMixin.action_is_downvote("up") is False
+    
+    def test_user_already_upvoted(self):
+        assert self.question.user_already_upvoted(self.user_1) is True
+        assert self.question.user_already_upvoted(self.user_2) is False
+    
+    def test_user_already_downvoted(self):
+        assert self.question.user_already_downvoted(self.user_2) is True
+        assert self.question.user_already_downvoted(self.user_1) is False
+    

@@ -1,15 +1,11 @@
-from typing import Dict, Tuple
-from unittest.mock import patch
-
 from django.contrib.auth import get_user_model
 from django.core import mail
-from django.test import TestCase, override_settings
+from django.test import TestCase
 
 from bfet import DjangoTestingModel
 
 from src.emailing import constants
 from src.emailing.outils.emailing import EmailingSystem
-from src.escritos.models import Term
 from src.web.models import WebsiteEmail, WebsiteEmailTrack
 
 User = get_user_model()
@@ -18,7 +14,7 @@ User = get_user_model()
 class EmailTest(TestCase):
     @classmethod
     def setUpTestData(cls) -> None:
-        cls.user = DjangoTestingModel.create(User, email="test@user.com")
+        cls.user = DjangoTestingModel.create(User, first_name="f", last_name="f", email="test@user.com")
 
     def test_html_link(self):
         assert '<a href="link" target="_blank">Text</a>' == EmailingSystem.html_link("link", "Text")
@@ -54,9 +50,8 @@ class EmailTest(TestCase):
         email_track = WebsiteEmailTrack.objects.get(email_related=web_email)
         expected_data = {
             "subject": "Subject here",
-            "app_label": "web",
-            "object_name": "WebsiteEmail",
-            "id": 1,
+            "call_to_action": "",
+            "call_to_action_url": "",
             "user": self.user,
             "image_tag": email_track.encoded_url,
         }
@@ -73,6 +68,21 @@ class EmailTest(TestCase):
         assert "writter <EMAIL_NEWSLETTER@example.com>" == public_blog_sender
         assert "InvFin <EMAIL_DEFAULT@example.com>" == notif_sender
         assert "Lucas - InvFin <MAIN_EMAIL@example.com>" == web_sender
+
+    def test__prepare_call_to_action(self):
+        data = {
+            "call_to_action": "call_to_action",
+            "call_to_action_url": "call_to_action_url",
+        }
+        expected_result = {
+            "call_to_action": "call_to_action",
+            "call_to_action_url": "call_to_action_url",
+        }
+        assert expected_result == EmailingSystem(constants.EMAIL_FOR_NOTIFICATION)._prepare_call_to_action(data)
+
+        data = {"call_to_action": "", "call_to_action_url": ""}
+        expected_result = {"call_to_action": "", "call_to_action_url": ""}
+        assert expected_result == EmailingSystem(constants.EMAIL_FOR_NOTIFICATION)._prepare_call_to_action(data)
 
     def test__prepare_content(self):
         email_machine = EmailingSystem(constants.EMAIL_FOR_NOTIFICATION)
@@ -92,16 +102,15 @@ class EmailTest(TestCase):
         expected_result = {
             "subject": "Subject here",
             "sender": "EMAIL_DEFAULT@example.com",
-            "app_label": "web",
-            "object_name": "WebsiteEmail",
-            "id": 1,
             "user": self.user,
+            "call_to_action": "",
+            "call_to_action_url": "",
             "image_tag": email_track.encoded_url,
         }
         assert expected_result == email_machine_response
 
-    def test_enviar_email(self):
-        web_email = DjangoTestingModel.create(WebsiteEmail, id=1)
+    def test_rich_email(self):
+        DjangoTestingModel.create(WebsiteEmail, id=1)
         email_info_image_tag_tracker = {
             "app_label": "web",
             "object_name": "WebsiteEmail",
@@ -114,7 +123,7 @@ class EmailTest(TestCase):
             **email_info_image_tag_tracker,
         }
         # Need to check all the posibilities for EMAIL_FOR and purpose
-        EmailingSystem(constants.EMAIL_FOR_NOTIFICATION).enviar_email(email_dict, self.user.id)
+        EmailingSystem(constants.EMAIL_FOR_NOTIFICATION).rich_email(email_dict, self.user.id)
         assert len(mail.outbox) == 1
         assert mail.outbox[0].subject == "Subject here"
         # assert mail.outbox[0].body == 'Message there' Improve the parsing of the body to test it
