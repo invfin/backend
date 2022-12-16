@@ -38,8 +38,8 @@ class AbstractEmail(AbstractTimeStampedModel, EmailExtension):
     title_emojis = ManyToManyField("content_creation.Emoji", blank=True)
     sent = BooleanField(default=False)
     date_to_send = DateTimeField(null=True, blank=True)
-    call_to_action = CharField(max_length=500, default="")
-    call_to_action_url = SlugField(max_length=500, default="")
+    call_to_action = CharField(max_length=500, null=True, blank=True)
+    call_to_action_url = CharField(max_length=500, null=True, blank=True)
 
     class Meta:
         abstract = True

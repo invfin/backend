@@ -7,6 +7,7 @@ from bfet import DjangoTestingModel
 from src.emailing import constants
 from src.emailing.outils.emailing import EmailingSystem
 from src.web.models import WebsiteEmail, WebsiteEmailTrack
+from src.web.constants import CONTENT_FOR_WELCOME
 
 User = get_user_model()
 
@@ -22,29 +23,65 @@ class EmailTest(TestCase):
             "link", "Text", True
         )
 
+    def test_is_for_the_website(self):
+        assert EmailingSystem(constants.EMAIL_FOR_NOTIFICATION).is_for_the_website() is False
+        assert EmailingSystem(constants.EMAIL_FOR_WEB, "web-ob").is_for_the_website() is True
+
+    def test_is_for_public_blog(self):
+        assert EmailingSystem(constants.EMAIL_FOR_NOTIFICATION).is_for_public_blog() is False
+        assert EmailingSystem(constants.EMAIL_FOR_PUBLIC_BLOG).is_for_public_blog() is True
+
+    def test_is_for_notifications(self):
+        assert EmailingSystem(constants.EMAIL_FOR_PUBLIC_BLOG).is_for_notifications() is False
+        assert EmailingSystem(constants.EMAIL_FOR_NOTIFICATION).is_for_notifications() is True
+
+    def test_verify_there_is_web_objective(self):
+        with self.assertRaises(NotImplementedError):
+            EmailingSystem(constants.EMAIL_FOR_WEB).verify_there_is_web_objective("")
+
+    def test_return_email_and_sender_name(self):
+        assert "sender <email>" == EmailingSystem.return_email_and_sender_name("email", "sender")
+
+    def test_return_default_sender(self):
+        result = EmailingSystem(constants.EMAIL_FOR_NOTIFICATION).return_default_sender()
+        assert "InvFin <EMAIL_DEFAULT@example.com>" == result
+
+    def test_return_lucas_as_sender(self):
+        result = EmailingSystem(constants.EMAIL_FOR_NOTIFICATION).return_lucas_as_sender()
+        assert "Lucas - InvFin <MAIN_EMAIL@example.com>" == result
+
+    def test_return_public_blog_author_as_sender(self):
+        result = EmailingSystem(constants.EMAIL_FOR_NOTIFICATION).return_public_blog_author_as_sender("sender")
+        assert "sender <EMAIL_NEWSLETTER@example.com>" == result
+
+    def test_get_email_template(self):
+        email_template = EmailingSystem(constants.EMAIL_FOR_WEB, CONTENT_FOR_WELCOME).get_email_template()
+        assert "web/welcome.html" == email_template
+        email_template = EmailingSystem(constants.EMAIL_FOR_NOTIFICATION).get_email_template()
+        assert "notification.html" == email_template
+
     def test__prepare_email_track(self):
         web_email = DjangoTestingModel.create(WebsiteEmail, id=1)
-        email_info_image_tag_tracker = {
-            "app_label": "web",
-            "object_name": "WebsiteEmail",
-            "id": 1,
-        }
-        email_machine_response = EmailingSystem()._prepare_email_track(email_info_image_tag_tracker, self.user)
+        email_machine_response = EmailingSystem()._prepare_email_track("web", "WebsiteEmail", 1, self.user)
         web_email_track = WebsiteEmailTrack.objects.get(email_related=web_email)
         assert web_email_track.encoded_url == email_machine_response
         assert self.user == web_email_track.sent_to
 
+    def test_get_email_track_parameters(self):
+        data = {"app_label": "web", "object_name": "WebsiteEmail", "id": 1}
+        app_label, object_name, object_id = EmailingSystem.get_email_track_parameters(data)
+        assert "web" == app_label
+        assert "WebsiteEmail" == object_name
+        assert 1 == object_id
+
     def test__prepare_email(self):
         web_email = DjangoTestingModel.create(WebsiteEmail, id=1)
-        email_info_image_tag_tracker = {
-            "app_label": "web",
-            "object_name": "WebsiteEmail",
-            "id": 1,
-        }
         email_dict = {
             "subject": "Subject here",
             "sender": "EMAIL_DEFAULT@example.com",  # Not always necessary
-            **email_info_image_tag_tracker,
+            "app_label": "web",
+            "object_name": "WebsiteEmail",
+            "id": 1,
         }
         sender, message = EmailingSystem(constants.EMAIL_FOR_NOTIFICATION)._prepare_email(email_dict, self.user)
         email_track = WebsiteEmailTrack.objects.get(email_related=web_email)
@@ -87,15 +124,12 @@ class EmailTest(TestCase):
     def test__prepare_content(self):
         email_machine = EmailingSystem(constants.EMAIL_FOR_NOTIFICATION)
         web_email = DjangoTestingModel.create(WebsiteEmail, id=1)
-        email_info_image_tag_tracker = {
-            "app_label": "web",
-            "object_name": "WebsiteEmail",
-            "id": 1,
-        }
         email_dict = {
             "subject": "Subject here",
             "sender": "EMAIL_DEFAULT@example.com",  # Not always necessary
-            **email_info_image_tag_tracker,
+            "app_label": "web",
+            "object_name": "WebsiteEmail",
+            "id": 1,
         }
         email_machine_response = email_machine._prepare_content(email_dict, self.user)
         email_track = WebsiteEmailTrack.objects.get(email_related=web_email)
@@ -111,16 +145,13 @@ class EmailTest(TestCase):
 
     def test_rich_email(self):
         DjangoTestingModel.create(WebsiteEmail, id=1)
-        email_info_image_tag_tracker = {
-            "app_label": "web",
-            "object_name": "WebsiteEmail",
-            "id": 1,
-        }
         email_dict = {
             "subject": "Subject here",
             "message": "Message there",
             "sender": "EMAIL_DEFAULT@example.com",  # Not always necessary
-            **email_info_image_tag_tracker,
+            "app_label": "web",
+            "object_name": "WebsiteEmail",
+            "id": 1,
         }
         # Need to check all the posibilities for EMAIL_FOR and purpose
         EmailingSystem(constants.EMAIL_FOR_NOTIFICATION).rich_email(email_dict, self.user.id)
