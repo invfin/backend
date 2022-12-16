@@ -39,6 +39,22 @@ class EmailTest(TestCase):
         with self.assertRaises(NotImplementedError):
             EmailingSystem(constants.EMAIL_FOR_WEB).verify_there_is_web_objective("")
 
+    def test_append_slash_to_call_to_action_url(self):
+        assert "/algo" == EmailingSystem.append_slash_to_call_to_action_url("algo")
+        assert "/algo" == EmailingSystem.append_slash_to_call_to_action_url("/algo")
+
+    def test_build_call_to_action_url(self):
+        assert "" == EmailingSystem.build_call_to_action_url()
+
+    def test_get_call_to_action_parameters(self):
+        data = {
+            "call_to_action": "call_to_action",
+            "call_to_action_url": "call_to_action_url",
+        }
+        call_to_action, call_to_action_url = EmailingSystem.get_call_to_action_parameters(data)
+        assert "call_to_action" == call_to_action
+        assert "call_to_action_url" == call_to_action_url
+
     def test_return_email_and_sender_name(self):
         assert "sender <email>" == EmailingSystem.return_email_and_sender_name("email", "sender")
 

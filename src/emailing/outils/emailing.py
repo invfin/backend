@@ -66,9 +66,28 @@ class EmailingSystem:
         # email_track is a Model inhertitaded from BaseTrackEmail
         return email_track.encoded_url
 
-    def _prepare_call_to_action(self, email: Dict[str, Any]) -> Dict[str, Optional[str]]:
+    @staticmethod
+    def append_slash_to_call_to_action_url(call_to_action_url: str) -> str:
+        if not call_to_action_url.startswith("/"):
+            call_to_action_url = f"/{call_to_action_url}"
+        return call_to_action_url
+
+    @classmethod
+    def build_call_to_action_url(cls, base_call_to_action_url: str) -> str:
+        if base_call_to_action_url:
+            call_to_action_url = cls.append_slash_to_call_to_action_url(call_to_action_url)
+            # TODO Add utm
+        return ""
+
+    @classmethod
+    def get_call_to_action_parameters(cls, email: Dict[str, Any]) -> Tuple[str, str]:
         call_to_action = email.pop("call_to_action", "")
-        call_to_action_url = email.pop("call_to_action_url", "")
+        base_call_to_action_url = email.pop("call_to_action_url", "")
+        return call_to_action, base_call_to_action_url
+
+    def _prepare_call_to_action(self, email: Dict[str, Any]) -> Dict[str, Optional[str]]:
+        call_to_action, base_call_to_action_url = self.get_call_to_action_parameters(email)
+        call_to_action_url = self.build_call_to_action_url(base_call_to_action_url)
         return {"call_to_action": call_to_action, "call_to_action_url": call_to_action_url}
 
     @classmethod
