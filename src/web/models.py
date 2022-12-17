@@ -49,7 +49,7 @@ class WebsiteEmail(AbstractEmail):
     whom_to_send = CharField(
         max_length=800,
         choices=constants.WHOM_TO_SEND_EMAIL,
-        default=constants.WHOM_TO_SEND_EMAIL_ALL,
+        default=constants.EMAIL_ALL,
     )
     campaign = ForeignKey(
         "promotions.Campaign",

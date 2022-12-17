@@ -66,14 +66,14 @@ CONTENT_PURPOSES = (
 
 CONTENT_PURPOSES_MAP = {key: value for key, value in CONTENT_PURPOSES}
 
-WHOM_TO_SEND_EMAIL_ALL = "all"
-WHOM_TO_SEND_EMAIL_CAMPAIGN_RELATED = "campaign_related"
-WHOM_TO_SEND_EMAIL_SELECTED = "selected"
+EMAIL_ALL = "all"
+EMAIL_CAMPAIGN_RELATED = "campaign_related"
+EMAIL_SELECTED = "selected"
 
 WHOM_TO_SEND_EMAIL = (
-    (WHOM_TO_SEND_EMAIL_ALL, "All"),
-    (WHOM_TO_SEND_EMAIL_CAMPAIGN_RELATED, "Campaign related"),
-    (WHOM_TO_SEND_EMAIL_SELECTED, "Selected"),
+    (EMAIL_ALL, "All"),
+    (EMAIL_CAMPAIGN_RELATED, "Campaign related"),
+    (EMAIL_SELECTED, "Selected"),
 )
 
 COMMENT_PURCHASED_PRODUCT = "Comenta tu úlitma compra"

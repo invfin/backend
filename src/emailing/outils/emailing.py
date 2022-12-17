@@ -75,8 +75,9 @@ class EmailingSystem:
     @classmethod
     def build_call_to_action_url(cls, base_call_to_action_url: str) -> str:
         if base_call_to_action_url:
-            call_to_action_url = cls.append_slash_to_call_to_action_url(call_to_action_url)
+            call_to_action_url = cls.append_slash_to_call_to_action_url(base_call_to_action_url)
             # TODO Add utm
+            return call_to_action_url
         return ""
 
     @classmethod

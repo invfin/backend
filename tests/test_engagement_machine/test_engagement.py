@@ -45,7 +45,7 @@ class TestEngagementMachine(TestCase):
     def test_send_website_email_engagement(self):
         title = "Default title"
         content = "Insider content"
-        whom_to_send = constants.WHOM_TO_SEND_EMAIL_ALL
+        whom_to_send = constants.EMAIL_ALL
         newsletter_data = {
             "title": title,
             "content": content,
@@ -63,7 +63,7 @@ class TestEngagementMachine(TestCase):
     def test_create_newsletter(self):
         web_email_type = constants.CONTENT_FOR_ENGAGEMENT
         content_object = content_creation_constants.TERM_FOR_CONTENT
-        whom_to_send = constants.WHOM_TO_SEND_EMAIL_ALL
+        whom_to_send = constants.EMAIL_ALL
 
         self.term.checkings.update({"has_information_clean": {"state": "yes", "time": ""}})
         self.term.save(update_fields=["checkings"])

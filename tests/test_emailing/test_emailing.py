@@ -1,3 +1,4 @@
+from unittest import skip
 from django.contrib.auth import get_user_model
 from django.core import mail
 from django.test import TestCase
@@ -44,16 +45,17 @@ class EmailTest(TestCase):
         assert "/algo" == EmailingSystem.append_slash_to_call_to_action_url("/algo")
 
     def test_build_call_to_action_url(self):
-        assert "" == EmailingSystem.build_call_to_action_url()
+        assert "/algo" == EmailingSystem.build_call_to_action_url("algo")
+        assert "" == EmailingSystem.build_call_to_action_url("")
 
     def test_get_call_to_action_parameters(self):
         data = {
             "call_to_action": "call_to_action",
-            "call_to_action_url": "call_to_action_url",
+            "call_to_action_url": "/call_to_action_url",
         }
         call_to_action, call_to_action_url = EmailingSystem.get_call_to_action_parameters(data)
         assert "call_to_action" == call_to_action
-        assert "call_to_action_url" == call_to_action_url
+        assert "/call_to_action_url" == call_to_action_url
 
     def test_return_email_and_sender_name(self):
         assert "sender <email>" == EmailingSystem.return_email_and_sender_name("email", "sender")
@@ -125,11 +127,11 @@ class EmailTest(TestCase):
     def test__prepare_call_to_action(self):
         data = {
             "call_to_action": "call_to_action",
-            "call_to_action_url": "call_to_action_url",
+            "call_to_action_url": "/call_to_action_url",
         }
         expected_result = {
             "call_to_action": "call_to_action",
-            "call_to_action_url": "call_to_action_url",
+            "call_to_action_url": "/call_to_action_url",
         }
         assert expected_result == EmailingSystem(constants.EMAIL_FOR_NOTIFICATION)._prepare_call_to_action(data)
 
