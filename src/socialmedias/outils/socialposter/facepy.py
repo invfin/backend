@@ -3,12 +3,11 @@ import urllib.parse
 
 from django.conf import settings
 
+from pyfacebook import GraphAPI
 import requests
 
 from src.content_creation import constants as content_creation_constants
 from src.socialmedias import constants
-
-from pyfacebook import GraphAPI
 
 
 class Facebook:

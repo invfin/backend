@@ -19,6 +19,7 @@ from src.emailing.abstracts import AbstractEmail, AbstractTrackEmail
 from src.escritos.abstracts import AbstractWrittenContent
 from src.general.abstracts import AbstractComment
 from src.general.mixins import BaseToAllMixin
+
 from . import constants
 from .managers import RoadmapManager
 from .querysets import RoadmapQuerySet

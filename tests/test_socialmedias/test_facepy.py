@@ -64,49 +64,6 @@ class TestFacePoster(TestCase):
             == description
         )
 
-    def test_build_base_url(self):
-        assert "https://graph.facebook.com/v15.0/" == self.facebook_old.build_base_url()
-        assert "https://graph-video.facebook.com/v15.0/" == self.facebook_old.build_base_url(is_video=True)
-        assert "https://graph.facebook.com/v15.0/105836681984738/" == self.facebook.build_base_url()
-
-    def test_build_action_url_auth(self):
-        assert "https://graph.facebook.com/v15.0/oauth/access_token" == self.facebook_old.build_action_url(
-            constants.FACEBOOK_OAUTH_ACCESS_TOKEN
-        )
-        assert "https://graph.facebook.com/v15.0/oauth/access_token" == self.facebook.build_action_url(
-            constants.FACEBOOK_OAUTH_ACCESS_TOKEN
-        )
-
-    def test_build_action_url_text(self):
-        assert "https://graph.facebook.com/v15.0/feed" == self.facebook_old.build_action_url(
-            constants.FACEBOOK_POST_TEXT_PAGE
-        )
-        assert "https://graph.facebook.com/v15.0/105836681984738/feed" == self.facebook.build_action_url(
-            constants.FACEBOOK_POST_TEXT_PAGE
-        )
-
-    def test_build_action_url_video(self):
-        assert "https://graph-video.facebook.com/v15.0/videos" == self.facebook_old.build_action_url(
-            constants.FACEBOOK_POST_VIDEO_PAGE
-        )
-        assert "https://graph-video.facebook.com/v15.0/105836681984738/videos" == self.facebook.build_action_url(
-            constants.FACEBOOK_POST_VIDEO_PAGE
-        )
-
-    def test_build_action_url_image(self):
-        assert "https://graph.facebook.com/v15.0/photos" == self.facebook_old.build_action_url(
-            constants.FACEBOOK_POST_IMAGE_PAGE
-        )
-        assert "https://graph.facebook.com/v15.0/105836681984738/photos" == self.facebook.build_action_url(
-            constants.FACEBOOK_POST_IMAGE_PAGE
-        )
-
-    def test_build_auth_url(self):
-        redirect_url = "redirect_uri=https://inversionesyfinanzas.xyz/facebook-auth/"
-        base_path = "https://www.facebook.com/v15.0/dialog/oauth?"
-        params = f"client_id=app-id&{redirect_url}&state=InvFin&auth_type=rerequest"
-        assert f"{base_path}{params}" == self.facebook.build_auth_url()
-
     @skip("not ready")
     def test_post(self):
         post_content = dict(

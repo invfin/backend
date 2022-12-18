@@ -1,9 +1,8 @@
 from django.conf import settings
+from django.core.management import BaseCommand
 
 from pyfacebook import GraphAPI
-
 import requests
-from django.core.management import BaseCommand
 
 from src.socialmedias import constants
 from src.socialmedias.outils.socialposter.facepy import Facebook

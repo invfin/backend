@@ -1956,7 +1956,7 @@ class CompanyExtended(ChartSerializer):
             current_currency = yfinance_info["currency"]
         else:
             yahooquery_info = yq.Ticker(self.ticker).price
-            key = yahooquery_info.keys()[0]
+            key = list(yahooquery_info.keys())[0]
             if yahooquery_info[key] != "Quote not found for ticker symbol: LB":
                 current_price = yahooquery_info[key]["regularMarketPrice"]
                 current_currency = yahooquery_info[key]["currency"]

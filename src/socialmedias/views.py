@@ -1,9 +1,10 @@
-from django.views.generic import RedirectView
 from django.contrib import messages
+from django.views.generic import RedirectView
 
-from src.seo.views import SEOListView, SEOCreateView, SEOTemplateView
-from .outils.socialposter.facepy import Facebook
+from src.seo.views import SEOCreateView, SEOListView, SEOTemplateView
+
 from .models import SocialmediaAuth
+from .outils.socialposter.facepy import Facebook
 
 
 class ManageAddSocialmediasTempalteView(SEOTemplateView):
@@ -47,4 +48,3 @@ class FacebookAuthRedirectView(RedirectView):
     def get(self, request, *args, **kwargs):
         self.get_facebook_params_response()
         return super().get(request, *args, **kwargs)
-    

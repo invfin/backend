@@ -17,14 +17,13 @@ from src.content_creation.constants import POST_TYPE
 from src.content_creation.models import DefaultContent, DefaultTilte, Emoji, Hashtag
 from src.empresas.models import Company
 from src.escritos.models import Term
-from src.general.mixins import BaseToAllMixin
 from src.general.abstracts import AbstractTimeStampedModel
+from src.general.mixins import BaseToAllMixin
 from src.preguntas_respuestas.models import Question
 from src.public_blog.models import PublicBlog, WritterProfile
+
 from .constants import SOCIAL_MEDIAS
-
 from .managers import SocialmediaAuthManager
-
 from .querysets import SocialmediaAuthQuerySet
 
 User = get_user_model()

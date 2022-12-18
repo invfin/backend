@@ -1,7 +1,6 @@
 from django.urls import path
 
-from .views import FacebookAuthRedirectView, ManageSocialmediasView, ManageAddSocialmediasTempalteView
-
+from .views import FacebookAuthRedirectView, ManageAddSocialmediasTempalteView, ManageSocialmediasView
 
 app_name = "socialmedias"
 urlpatterns = [
