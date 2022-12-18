@@ -1,0 +1,47 @@
+<div class="col-12">
+    <div class="card">
+        <!-- Card body -->
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-auto">
+                    <div class="col-1">
+                        <div style="width: 100%;text-align: center;" class="pt-1 pb-1"><i
+                                class="fa fa-{{ object.status.icon }}"
+                                style="color: {{ object.status.color }};font-size:36px;"></i></div>
+                    </div>
+                </div>
+                <div class="col ml--2">
+                    <h4 class="mb-0">
+                        {% if object.status_waiting or object.status_draft %}
+                        <a href="{% url 'web:update_email_engagement' object.id %}">{{object.title}}</a>
+                        {% else %}
+                        {{object.title}}
+                        {% endif %}
+                        <span class="badge badge-pill badge-xs bg-{{ object.status.bs_color }}">
+                            {{ object.status.status }}</span>
+                    </h4>
+                    <p class="text-sm text-muted mb-0">
+                        {{object.resume}}
+                    </p>
+                    <p class="text-sm text-muted mt-2">
+                        <span class="me-2"><i class="fas fa-eye"></i> {{ object.opening_rate }} </span>
+                        <span class="me-2"><i class="fas fa-star"></i> {{ object.total_votes }}</span>
+                        <span class="me-2"><i class="fas fa-envelope-open"></i> {{ object.date_to_send }}</span>
+                    </p>
+                </div>
+                <div class="col-auto">
+                    {% if object.status_waiting or object.status_draft %}
+                    <a href="{% url 'web:update_email_engagement' object.id %}"
+                        class="btn btn-sm btn-primary mb-1">Edit</a>
+                    <a href="{{object.previsualization_url}}" target="_blank"
+                        class="btn btn-sm btn-success mb-1">Preview</a>
+                    {% endif %}
+                    {% if object.status_waiting %}
+                    <button hx-put="{% url 'web:send_email_engagement' object.id %}"
+                        hx-headers='{"X-CSRFToken":"{{ csrf_token }}"}' class="btn btn-sm btn-danger mb-1">Send</button>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

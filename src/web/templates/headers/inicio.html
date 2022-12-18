@@ -1,16 +1,37 @@
 {% load static i18n extra %}
 <div class="row align-items-center py-4">
-    <div class="col-lg-8 col-8">
+    <div class="col-lg-5 col-5">
         <h6 class="h2 d-inline-block mb-0 mr-5">{{meta_title}}</h6>
     </div>
-    <div class="col-lg-4 col-4 text-right">
+    <div class="col-lg-7 col-7 text-right">
         <div class="btn-group" role="group" aria-label="Basic outlined example">
-            <a href="{% url 'web:manage_web' %}" class="btn btn-outline-primary">
-                Web
-            </a>
-            <a href="{% url 'web:manage_all_terms' %}" class="btn btn-outline-primary">
-                Terms
-            </a>
+            <button id="correction-btn" type="button" class="btn btn-outline-primary dropdown-toggle"
+                data-bs-toggle="dropdown" aria-expanded="false">
+                Correction
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="correction-btn">
+                <li>
+                    <a href="{% url 'web:manage_all_terms' %}" class="dropdown-item">
+                        Terms
+                    </a>
+                </li>
+            </ul>
+            <button id="engagement-btn" type="button" class="btn btn-outline-primary dropdown-toggle"
+                data-bs-toggle="dropdown" aria-expanded="false">
+                Engagement
+            </button>
+            <ul class="dropdown-menu" aria-labelledby="engagement-btn">
+                <li>
+                    <a href="{% url 'web:manage_web' %}" class="dropdown-item">
+                        Emails
+                    </a>
+                </li>
+                <li>
+                    <a href="{% url 'socialmedias:manage-socialmedias' %}" class="dropdown-item">
+                        Socialmedias
+                    </a>
+                </li>
+            </ul>
             <button id="btnGroupDrop1" type="button" class="btn btn-outline-primary dropdown-toggle"
                 data-bs-toggle="dropdown" aria-expanded="false">
                 Create Email

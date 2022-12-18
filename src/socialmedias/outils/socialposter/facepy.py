@@ -8,6 +8,8 @@ import requests
 from src.content_creation import constants as content_creation_constants
 from src.socialmedias import constants
 
+from pyfacebook import GraphAPI
+
 
 class Facebook:
     redirect_uri = "https://inversionesyfinanzas.xyz/facebook-auth/"
@@ -24,6 +26,15 @@ class Facebook:
         self.facebook_page_name = facebook_page_name
         self.page_access_token = page_access_token
         self.is_old_page = is_old_page
+
+    @staticmethod
+    def authorisation_url():
+        api = GraphAPI(app_id=settings.FACEBOOK_APP_ID, app_secret=settings.FACEBOOK_APP_SECRET, oauth_flow=True)
+        authorization_url, state = api.get_authorization_url(
+            redirect_uri="https://inversionesyfinanzas.xyz/",
+            # state="InvFin",
+        )
+        return authorization_url
 
     def build_base_url(
         self,

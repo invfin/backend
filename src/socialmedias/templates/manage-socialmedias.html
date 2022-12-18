@@ -1,0 +1,63 @@
+{% extends "bases/base_content.html" %}
+{% load static i18n extra %}
+{% block header %}{% include "headers/inicio.html" %}{% endblock header%}
+
+{% block FirstCtaContent %}
+{% include "cta/socialmedia-inicio.html" %}
+{% endblock FirstCtaContent %}
+
+{% block LeftSide %}
+{% for object in objects %}
+<div class="col-12">
+    <div class="card">
+        <!-- Card body -->
+        <div class="card-body">
+            <div class="row align-items-center">
+                <div class="col-auto">
+                    <div class="col-1">
+                        <div style="width: 100%;text-align: center;" class="pt-1 pb-1"><i
+                                class="fa fa-{{ object.status.icon }}"
+                                style="color: {{ object.status.color }};font-size:36px;"></i></div>
+                    </div>
+                </div>
+                <div class="col ml--2">
+                    <h4 class="mb-0">
+
+                        {{ object.socialmedia | title }}
+
+                        <span class="badge badge-pill badge-xs bg-{{ object.status.bs_color }}">
+                            {{ object.status.status }}</span>
+                    </h4>
+                    <p class="text-sm text-muted mb-0">
+                        {{object.resume}}
+                    </p>
+                    <p class="text-sm text-muted mt-2">
+                        <span class="me-2"><i class="fas fa-eye"></i> {{ object.opening_rate }} </span>
+                        <span class="me-2"><i class="fas fa-star"></i> {{ object.total_votes }}</span>
+                        <span class="me-2"><i class="fas fa-envelope-open"></i> {{ object.date_to_send }}</span>
+                    </p>
+                </div>
+                <div class="col-auto">
+
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% empty %}
+<div class="card-translucent bg-transparent text-center">
+    <div class="card-body p-3">
+        Añade una red social y hacer crecer tu comunidad
+        <br>
+        <button class="btn btn-success" hx-get="{% url 'socialmedias:add-new-auth-socialmedias' %}"
+            hx-target="#SharedModalDialog">
+            Añade una nueva red social
+        </button>
+    </div>
+</div>
+{% endfor %}
+{% endblock LeftSide %}
+
+{% block RightSide %}
+{% include "side/socialmedia-inicio.html" %}
+{% endblock RightSide%}

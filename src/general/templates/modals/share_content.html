@@ -1,5 +1,6 @@
 {% load static i18n extra %}
-<div class="modal fade" id="ShareContentModal" tabindex="-1" role="dialog" aria-labelledby="ShareContentModalLabel" aria-hidden="true">
+<div class="modal fade" id="ShareContentModal" tabindex="-1" role="dialog" aria-labelledby="ShareContentModalLabel"
+    aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -9,31 +10,35 @@
                 </button>
             </div>
             <div class="modal-body text-center">
-                <div data-bs-toggle="tooltip" data-bs-placement="top" title="Comparte tu link con tus personas cercanas para ayudarlas a aprender. Por cada compra que efectuen tus referidos recibirás un porcentaje de la venta." class="input-group mb-2">
-                    <input type="text" class="form-control form-control-sm" readonly id="myUrl-{{object.id}}" value="{{ object.shareable_link }}">
+                <div data-bs-toggle="tooltip" data-bs-placement="top"
+                    title="Comparte tu link con tus personas cercanas para ayudarlas a aprender. Por cada compra que efectuen tus referidos recibirás un porcentaje de la venta."
+                    class="input-group mb-2">
+                    <input type="text" class="form-control form-control-sm" readonly id="{{object.id}}"
+                        value="{{ object.shareable_link }}">
                     <div class="input-group-append">
-                    <button class="btn btn-success btn-sm" onclick="copyMyurl("myUrl-{{object.id}}")">Copiar Link Afiliados</button>  
+                        <button class="btn btn-success btn-sm" onclick='copyMyurl({{object.id}})'>Copiar
+                            Link</button>
                     </div>
                 </div>
                 <div class="col-12 mt-4">
-                    <a href="https://www.facebook.com/sharer/sharer.php?u={{object.shareable_link}}{% utm content='multispaces' term=content medium='user-shared' source='facebook' campaign='website-shared' %}"  
-                    target="_blank" class="btn btn-facebook btn-icon-only rounded-circle">
+                    <a href="https://www.facebook.com/sharer/sharer.php?u={{object.shareable_link}}{% utm content='multispaces' term=content medium='user-shared' source='facebook' campaign='website-shared' %}"
+                        target="_blank" class="btn btn-facebook btn-icon-only rounded-circle">
                         <span class="btn-inner--icon"><i class="fab fa-facebook"></i></span>
                     </a>
-                    <a href="https://twitter.com/intent/tweet?text={{object.shareable_link}}{% utm content='multispaces' term=content medium='user-shared' source='twitter' campaign='website-shared' %}"  
-                    target="_blank" class="btn btn-twitter btn-icon-only rounded-circle">
+                    <a href="https://twitter.com/intent/tweet?text={{object.shareable_link}}{% utm content='multispaces' term=content medium='user-shared' source='twitter' campaign='website-shared' %}"
+                        target="_blank" class="btn btn-twitter btn-icon-only rounded-circle">
                         <span class="btn-inner--icon"><i class="fab fa-twitter"></i></span>
                     </a>
-                    <a href="https://reddit.com/submit/?url={{object.shareable_link}}{% utm content='multispaces' term=content medium='user-shared' source='reddit' campaign='website-shared' %}"  
-                    target="_blank" class="btn btn-youtube btn-icon-only rounded-circle">
+                    <a href="https://reddit.com/submit/?url={{object.shareable_link}}{% utm content='multispaces' term=content medium='user-shared' source='reddit' campaign='website-shared' %}"
+                        target="_blank" class="btn btn-youtube btn-icon-only rounded-circle">
                         <span class="btn-inner--icon"><i class="fab fa-reddit"></i></span>
                     </a>
-                    <a href="https://www.linkedin.com/shareArticle?url={{object.shareable_link}}{% utm content='multispaces' term=content medium='user-shared' source='linkedin' campaign='website-shared' %}"  
-                    target="_blank" class="btn btn-facebook btn-icon-only rounded-circle">
+                    <a href="https://www.linkedin.com/shareArticle?url={{object.shareable_link}}{% utm content='multispaces' term=content medium='user-shared' source='linkedin' campaign='website-shared' %}"
+                        target="_blank" class="btn btn-facebook btn-icon-only rounded-circle">
                         <span class="btn-inner--icon"><i class="fab fa-linkedin"></i></span>
                     </a>
-                    <a href="https://api.whatsapp.com/send?text={{object.shareable_link}}{% utm content='multispaces' term=content medium='user-shared' source='whatsapp' campaign='website-shared' %}"  
-                    target="_blank" class="btn btn-slack btn-icon-only rounded-circle">
+                    <a href="https://api.whatsapp.com/send?text={{object.shareable_link}}{% utm content='multispaces' term=content medium='user-shared' source='whatsapp' campaign='website-shared' %}"
+                        target="_blank" class="btn btn-slack btn-icon-only rounded-circle">
                         <span class="btn-inner--icon"><i class="fab fa-whatsapp"></i></span>
                     </a>
                 </div>
@@ -43,12 +48,10 @@
 </div>
 <script>
     function copyMyurl(id) {
-    var copyText = document.getElementById(id);
-    copyText.select();
-    copyText.setSelectionRange(0, 99999)
-    document.execCommand("copy");
-    alert("Copiar texto: " + copyText.value);
-  }
+        var copyText = document.getElementById(id);
+        copyText.select();
+        copyText.setSelectionRange(0, 99999)
+        document.execCommand("copy");
+        alert("Copiar texto: " + copyText.value);
+    }
 </script>
-
-

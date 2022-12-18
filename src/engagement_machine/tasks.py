@@ -40,7 +40,6 @@ class EmailEngamentTask:
             web_constants.EMAIL_ALL: User.objects,
         }
         users_manager = users_managers_possibilities[self.email.whom_to_send]
-        print(users_manager.exclude(Q(for_testing=True) | Q(is_bot=True)))
         return users_manager.exclude(Q(for_testing=True) | Q(is_bot=True))
 
     def get_email_parameters_to_send(self) -> Tuple[Dict, str]:

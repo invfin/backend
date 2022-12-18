@@ -18,18 +18,34 @@ from src.content_creation.models import DefaultContent, DefaultTilte, Emoji, Has
 from src.empresas.models import Company
 from src.escritos.models import Term
 from src.general.mixins import BaseToAllMixin
+from src.general.abstracts import AbstractTimeStampedModel
 from src.preguntas_respuestas.models import Question
 from src.public_blog.models import PublicBlog, WritterProfile
-from src.socialmedias.constants import SOCIAL_MEDIAS
+from .constants import SOCIAL_MEDIAS
+
+from .managers import SocialmediaAuthManager
+
+from .querysets import SocialmediaAuthQuerySet
 
 User = get_user_model()
+
+
+class SocialmediaAuth(AbstractTimeStampedModel):
+    user = ForeignKey(User, on_delete=SET_NULL, null=True, blank=True)
+    socialmedia = CharField(max_length=12, choices=SOCIAL_MEDIAS)
+    metadata = JSONField(default=dict)
+    objects = SocialmediaAuthManager.from_queryset(SocialmediaAuthQuerySet)()
+
+    class Meta:
+        verbose_name = "Socialmedia authentication"
+        db_table = "socialmedia_auth"
 
 
 class AbstractContentShared(Model, BaseToAllMixin):
     user = ForeignKey(User, on_delete=SET_NULL, null=True, blank=True)
     date_shared = DateTimeField(auto_now_add=True)
     post_type = PositiveIntegerField(choices=POST_TYPE)
-    platform_shared = CharField(max_length=500, choices=SOCIAL_MEDIAS)
+    platform_shared = CharField(max_length=12, choices=SOCIAL_MEDIAS)
     social_id = CharField(max_length=500)
     title = RichTextField(blank=True)
     content = RichTextField(blank=True)

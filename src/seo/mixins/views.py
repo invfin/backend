@@ -29,6 +29,9 @@ class SEOViewMixin(FastContextView, RecommenderMixin):
     is_article
     open_graph_type
     update_visits
+    no_index
+    no_follow
+    private_view
 
     open_graph_type might be = website, article, or video
     https://ogp.me/#types

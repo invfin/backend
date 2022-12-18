@@ -19,8 +19,9 @@ from src.emailing.abstracts import AbstractEmail, AbstractTrackEmail
 from src.escritos.abstracts import AbstractWrittenContent
 from src.general.abstracts import AbstractComment
 from src.general.mixins import BaseToAllMixin
-from src.web import constants
-from src.web.managers import RoadmapManager
+from . import constants
+from .managers import RoadmapManager
+from .querysets import RoadmapQuerySet
 
 User = get_user_model()
 
@@ -158,7 +159,7 @@ class Roadmap(AbstractWrittenContent):
         blank=True,
         related_name="user_downvote_roadmap",
     )
-    objects = RoadmapManager()
+    objects = RoadmapManager.from_queryset(RoadmapQuerySet)()
 
     class Meta:
         verbose_name = "Roadmap"
