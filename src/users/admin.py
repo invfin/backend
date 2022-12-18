@@ -143,13 +143,34 @@ class UserAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
         ),
     )
 
-    list_display = ["username", "is_writter", "just_newsletter", "just_correction", "last_login", "date_joined"]
+    list_display = [
+        "username",
+        "is_writter",
+        "just_newsletter",
+        "just_correction",
+        "for_testing",
+        "is_bot",
+        "last_login",
+        "date_joined",
+    ]
 
     search_fields = ["first_name", "last_name", "username", "email"]
 
-    list_editable = ["is_writter", "just_newsletter", "just_correction"]
+    list_editable = [
+        "is_writter",
+        "just_newsletter",
+        "just_correction",
+        "for_testing",
+        "is_bot",
+    ]
 
-    list_filter = ["is_writter", "just_newsletter", "just_correction"]
+    list_filter = [
+        "is_writter",
+        "just_newsletter",
+        "just_correction",
+        "for_testing",
+        "is_bot",
+    ]
 
     jazzmin_form_tabs = [
         ("general", "User"),

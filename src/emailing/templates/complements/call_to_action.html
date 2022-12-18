@@ -1,0 +1,19 @@
+{% if call_to_action %}
+<table class="discount" align="center" width="100%" cellpadding="0" cellspacing="0" role="presentation">
+    <tr>
+        <td align="center">
+            <h1 class="f-fallback discount_heading">{{call_to_action}}</h1>
+            <table width="100%" border="0" cellspacing="0" cellpadding="0" role="presentation">
+                <tr>
+                    <td align="center">
+                        <!-- Add utm -->
+                        <a href="{{full_domain}}{{call_to_action_url}}" class="f-fallback button button--green"
+                            target="_blank">Sigue
+                            leyendo</a>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+{% endif %}

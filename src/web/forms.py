@@ -36,6 +36,8 @@ class WebEmailForm(ModelForm):
         widget=DateTimeInput(attrs={"class": "form-control datetimepicker-input"}),
         required=False,
     )
+    call_to_action = CharField(label="Call to action", required=False)
+    call_to_action_url = CharField(label="Call to action url", required=False)
 
     class Meta:
         model = WebsiteEmail
@@ -46,6 +48,8 @@ class WebEmailForm(ModelForm):
             "campaign",
             "whom_to_send",
             "users_selected",
+            "call_to_action",
+            "call_to_action_url",
         ]
 
     def __init__(self, *args, **kwargs) -> None:

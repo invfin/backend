@@ -17,6 +17,7 @@
                                         <h1>Hola, {{user.full_name}}</h1>
                                         {% block email_content %}
                                         {% endblock email_content %}
+                                        {% include "complements/call_to_action.html" %}
                                         {% include "complements/pre_footer_email.html" %}
                                     </div>
                                 </td>

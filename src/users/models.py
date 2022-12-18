@@ -44,6 +44,8 @@ class User(AbstractUser, UserExtended):
     last_time_seen = DateTimeField(blank=True, null=True)
     is_recurrent = BooleanField(default=False)
     is_customer = BooleanField(default=False)
+    for_testing = BooleanField(default=False)
+    is_bot = BooleanField(default=False)
     notifications = JSONField(default=default_dict)
     objects = UserExtraManager()
 

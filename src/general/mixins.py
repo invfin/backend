@@ -159,14 +159,39 @@ class VotesMixin:
         comment_url = reverse("general:create_vote_view", kwargs={"url_encoded": self.base_encoded_url_down})
         return f"{FULL_DOMAIN}{comment_url}"
 
-    def vote(self, user, action):
-        # TODO change user in for a filter
-        user_already_upvoted = user in self.upvotes.all()
-        user_already_downvoted = user in self.downvotes.all()
+    @classmethod
+    def action_is_upvote(cls, action: str) -> bool:
+        return action == "up"
+
+    @classmethod
+    def action_is_downvote(cls, action: str) -> bool:
+        return action == "down"
+
+    @classmethod
+    def not_allowed_to_vote(
+        cls,
+        is_upvote: bool,
+        is_downvote: bool,
+        user_already_upvoted: bool,
+        user_already_downvoted: bool,
+    ) -> bool:
+        return is_upvote and user_already_upvoted or is_downvote and user_already_downvoted
+
+    def user_already_upvoted(self, user) -> bool:
+        return self.upvotes.filter(pk=user.pk).exists()
+
+    def user_already_downvoted(self, user) -> bool:
+        return self.downvotes.filter(pk=user.pk).exists()
+
+    def vote(self, user, action: str) -> int:
+        user_already_upvoted = self.user_already_upvoted(user)
+        user_already_downvoted = self.user_already_downvoted(user)
+        is_upvote = self.action_is_upvote(action)
+        is_downvote = self.action_is_downvote(action)
         vote_result = 0
-        if action == "up" and user_already_upvoted or action == "down" and user_already_downvoted:
+        if self.not_allowed_to_vote(is_upvote, is_downvote, user_already_upvoted, user_already_downvoted):
             return vote_result
-        if action == "up":
+        if is_upvote:
             if user_already_downvoted:
                 self.downvotes.remove(user)
                 self.upvotes.add(user)
@@ -175,7 +200,7 @@ class VotesMixin:
                 self.upvotes.add(user)
                 vote_result = 1
 
-        elif action == "down":
+        elif is_downvote:
             if user_already_upvoted:
                 self.upvotes.remove(user)
                 self.downvotes.add(user)
