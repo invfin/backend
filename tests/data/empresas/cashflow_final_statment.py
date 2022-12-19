@@ -1,13 +1,9 @@
-[
-    {
+CURRENT_YEAR = {
         "id": 155305,
         "date": 2021,
         "year": "17/03/2022",
-        "period": "",
-        "reported_currency": 1,
-        "is_ttm": "0",
-        "from_average": "0",
-        "company": 7,
+        "is_ttm": False,
+        "from_average": False,
         "net_income": -93353000000.0,
         "depreciation_amortization": 11284000000.0,
         "deferred_income_tax": -4774000000.0,
@@ -38,16 +34,14 @@
         "operating_cf": 104038000000.0,
         "capex": -11085000000.0,
         "fcf": 92953000000.0
-    },
-    {
+    }
+
+PAST_YEAR = {
         "id": 155306,
         "date": 2020,
         "year": "17/03/2022",
-        "period": "",
-        "reported_currency": 1,
-        "is_ttm": "0",
-        "from_average": "0",
-        "company": 7,
+        "is_ttm": False,
+        "from_average": False,
         "net_income": -10435000000.0,
         "depreciation_amortization": 11056000000.0,
         "deferred_income_tax": -215000000.0,
@@ -79,4 +73,3 @@
         "capex": -7309000000.0,
         "fcf": 73365000000.0
     }
-]

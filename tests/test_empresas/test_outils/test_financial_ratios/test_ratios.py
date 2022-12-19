@@ -8,6 +8,11 @@ from src.empresas.outils.financial_ratios import CalculateFinancialRatios
 from src.periods.models import Period
 from src.periods.constants import PERIOD_FOR_YEAR
 
+from tests.data.empresas import (
+    balance_sheets_final_statment,
+    income_final_statment,
+    cashflow_final_statment,
+)
 
 class TestCalculateFinancialRatios(TestCase):
     @classmethod
@@ -21,31 +26,37 @@ class TestCalculateFinancialRatios(TestCase):
             IncomeStatement,
             period=current_period,
             company=cls.company,
+            **income_final_statment.CURRENT_YEAR,
         )
         cls.current_balance = DjangoTestingModel.create(
             BalanceSheet,
             period=current_period,
             company=cls.company,
+            **balance_sheets_final_statment.CURRENT_YEAR,
         )
         cls.current_cashflow = DjangoTestingModel.create(
             CashflowStatement,
             period=current_period,
             company=cls.company,
+            **cashflow_final_statment.CURRENT_YEAR,
         )
         cls.previous_income = DjangoTestingModel.create(
             IncomeStatement,
             period=previous_period,
             company=cls.company,
+            **income_final_statment.PAST_YEAR,
         )
         cls.previous_balance = DjangoTestingModel.create(
             BalanceSheet,
             period=previous_period,
             company=cls.company,
+            **balance_sheets_final_statment.PAST_YEAR,
         )
         cls.previous_cashflow = DjangoTestingModel.create(
             CashflowStatement,
             period=previous_period,
             company=cls.company,
+            **cashflow_final_statment.PAST_YEAR,
         )
 
     def test_split_statements_by_year(self):
