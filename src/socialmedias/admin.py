@@ -1,5 +1,7 @@
 from django.contrib import admin
+from django.db import models
 
+from django_json_widget.widgets import JSONEditorWidget
 from import_export.admin import ImportExportActionModelAdmin
 
 from .models import (
@@ -12,8 +14,18 @@ from .models import (
     NewsSharedHistorial,
     ProfileSharedHistorial,
     QuestionSharedHistorial,
+    SocialmediaAuth,
     TermSharedHistorial,
 )
+
+
+@admin.register(SocialmediaAuth)
+class SocialmediaAuthAdmin(admin.ModelAdmin):
+    formfield_overrides = {
+        models.JSONField: {"widget": JSONEditorWidget},
+    }
+
+    list_display = ["title", "user", "socialmedia"]
 
 
 @admin.register(DefaultContent)

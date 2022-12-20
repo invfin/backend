@@ -37,7 +37,7 @@ fi
 isort $CODE_FOLDER
 black $CODE_FOLDER
 
-pytest $TEST_FOLDER -x --disable-pytest-warnings -n auto
+pytest $TEST_FOLDER -x --disable-pytest-warnings -n auto -vv
 pytest_result=$?
 
 if [ "$pytest_result" == "0" ]; then

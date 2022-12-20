@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Any, Dict, Tuple
 import urllib.parse
 
 from django.conf import settings
@@ -142,50 +142,16 @@ class Facebook:
         response = requests.get(url, params=parameters)
         return self.handle_responses(response, "access_token")
 
-    def post_content(self, content_type: str, content: Dict, **kwargs):
-        """Method to post to the Facebook API
-
-        Parameters
-        ----------
-            content_type : str
-                Specify if you are going to post a text alone, an image with a text or a video with a text
-
-            content : Dict
-                The basic data that it's used accross the 3 types of content (title, description/message)
-
-        Returns
-        -------
-            _type_
-                The facebook response inside a dict with and error message if any or success
-        """
-        if not kwargs["post_now"] and kwargs.get("scheduled_publish_time"):
-            content.update({"published": False, "scheduled_publish_time": kwargs["scheduled_publish_time"]})
-        content.update({"access_token": self.page_access_token})
-        files = None
-        if content_type == constants.FACEBOOK_POST_VIDEO_PAGE:
-            files = {"source": open(kwargs["media_url"], "rb")}
-
-        elif content_type == constants.FACEBOOK_POST_TEXT_PAGE:
-            content.update({"link": kwargs["link"]})
-
-        else:
-            content.update({"url": kwargs["media_url"]})
-
-        url = self.build_action_url(content_type)
-        response = requests.post(url, data=content, files=files)
-
-        return self.handle_responses(response, "id")
-
     def post(self, **kwargs):
         media_url = kwargs.get("media", "")
         scheduled_publish_time = kwargs.get("scheduled_publish_time", "")
         post_type = kwargs["post_type"]
         post_now = kwargs.get("post_now", True)
-        title = kwargs["title"]
         link = kwargs["link"]
+        title = kwargs["title"]
 
-        content = self.create_fb_description(kwargs["content"], kwargs["hashtags"], link)
-        data = {"title": title, "message": content}
+        content = self.create_fb_description(title, kwargs["content"], kwargs["hashtags"])
+        data = {"link": link, "message": content}
 
         if (
             post_type == content_creation_constants.POST_TYPE_TEXT
@@ -200,34 +166,66 @@ class Facebook:
         else:
             content_type = constants.FACEBOOK_POST_VIDEO_PAGE
 
-        post_response = self.post_content(
-            content_type,
-            data,
-            media_url=media_url,
-            post_now=post_now,
-            scheduled_publish_time=scheduled_publish_time,
-            link=link,
+        # post_content, file = self.generate_post_content(
+        #     content_type,
+        #     data,
+        #     media_url=media_url,
+        #     post_now=post_now,
+        #     scheduled_publish_time=scheduled_publish_time,
+        #     link=link,
+        # )
+        api = GraphAPI(
+            app_id=settings.FACEBOOK_APP_ID,
+            app_secret=settings.FACEBOOK_APP_SECRET,
+            oauth_flow=True,
+            access_token=self.page_access_token,
         )
 
-        if post_response["result"] == "success":
-            return {
-                "post_response": [
-                    {
-                        "social_id": post_response["extra"],
-                        "title": title,
-                        "content": content,
-                        "post_type": post_type,
-                        "use_hashtags": True,
-                        "use_emojis": True,
-                        "use_link": True,
-                        "use_default_title": True,
-                        "use_default_content": True,
-                        "platform_shared": constants.FACEBOOK,
-                    }
-                ]
-            }
+        data = api.post_object(
+            self.page_id,
+            connection="feed",
+            data=data,
+        )
+
+        return {
+            "post_response": [
+                {
+                    "social_id": data.get("id"),
+                    "title": title,
+                    "content": content,
+                    "post_type": post_type,
+                    "use_hashtags": True,
+                    "use_emojis": True,
+                    "use_link": True,
+                    "use_default_title": True,
+                    "use_default_content": True,
+                    "platform_shared": constants.FACEBOOK,
+                }
+            ]
+        }
+
+    def generate_post_content(self, content_type: str, content: Dict, **kwargs) -> Tuple[Dict, Any]:
+        if not kwargs["post_now"] and kwargs.get("scheduled_publish_time"):
+            content.update({"published": False, "scheduled_publish_time": kwargs["scheduled_publish_time"]})
+        content.update({"access_token": self.page_access_token})
+        files = None
+        if content_type == constants.FACEBOOK_POST_VIDEO_PAGE:
+            files = {"source": open(kwargs["media_url"], "rb")}
+
+        elif content_type == constants.FACEBOOK_POST_TEXT_PAGE:
+            content.update({"link": kwargs["link"]})
+
         else:
-            return post_response
+            content.update({"url": kwargs["media_url"]})
+
+        return content, files
+
+    def post_content(self, content, files):
+        url = f"https://graph.facebook.com/v15.0/{self.page_id}/feed"
+        params = {"access_token": self.page_access_token}
+        response = requests.post(url, params=params, data=content, files=files)
+
+        return self.handle_responses(response, "id")
 
     # def share_facebook_post(self, post_id, yb_title):
     #     default_title = DefaultTilte.objects.random_title()
@@ -240,30 +238,16 @@ class Facebook:
     #         link=url_to_share,
     #     )
 
-    def create_fb_description(self, content: str, hashtags: str, link: str):
-        return f"""{content}
-
-        Descubre el resto en: {link}
-        Prueba las herramientas que todo inversor inteligente necesita: https://inversionesyfinanzas.xyz
-
-        Visita nuestras redes sociales:
-        Youtube: https://www.youtube.com/c/InversionesyFinanzas/
-        Facebook: https://www.facebook.com/InversionesyFinanzas/
-        Instagram: https://www.instagram.com/inversiones.finanzas/
-        TikTok: https://www.tiktok.com/@inversionesyfinanzas?
-        Twitter : https://twitter.com/InvFinz
-        LinkedIn : https://www.linkedin.com/company/inversiones-finanzas
-        .
-        .
-        .
-        .
-        .
-        .
-        .
-        .
-        .
-        .
-        .
-        .
-        {hashtags}
-        """
+    def create_fb_description(self, title: str, content: str, hashtags: str) -> str:
+        return (
+            f"{title}\n\n{content}\n\n"
+            "Prueba las herramientas que todo inversor inteligente necesita: https://inversionesyfinanzas.xyz/\n"
+            "Visita nuestras redes sociales:\n"
+            "Youtube: https://www.youtube.com/c/InversionesyFinanzas/\n"
+            "Facebook: https://www.facebook.com/InversionesyFinanzas/\n"
+            "Instagram: https://www.instagram.com/inversiones.finanzas/\n"
+            "TikTok: https://www.tiktok.com/@inversionesyfinanzas?\n"
+            "Twitter : https://twitter.com/InvFinz\n"
+            "LinkedIn : https://www.linkedin.com/company/inversiones-finanzas\n"
+            f".\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n{hashtags}"
+        )

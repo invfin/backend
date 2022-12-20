@@ -109,9 +109,12 @@ SIDE_MENU = [
         ),
     },
     {
-        "label": "Socialmedia shared",
+        "label": "Socialmedia",
         "icon": "fas fa-pen-nib",
         "models": (
+            {
+                "model": "socialmedias.SocialmediaAuth",
+            },
             {
                 "model": "socialmedias.CompanySharedHistorial",
             },

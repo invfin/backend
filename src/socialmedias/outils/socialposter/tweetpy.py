@@ -5,7 +5,9 @@ from typing import Dict
 
 import tweepy
 
-from src.socialmedias import constants
+from src.content_creation import constants
+
+from ...constants import TWEET_MAX_LENGTH, TWITTER
 
 
 class Twitter:
@@ -48,7 +50,7 @@ class Twitter:
         post_type: str,
     ):
         twitter_api = self.do_authenticate()
-        total_number_parts = int(math.ceil(len(content) / constants.TWEET_MAX_LENGTH))
+        total_number_parts = int(math.ceil(len(content) / TWEET_MAX_LENGTH))
 
         initial_tweet = f"{title} [0/{total_number_parts}]"
 
@@ -68,12 +70,12 @@ class Twitter:
                     "use_link": False,
                     "use_default_title": True,
                     "use_default_content": False,
-                    "platform_shared": constants.TWITTER,
+                    "platform_shared": TWITTER,
                 }
             ]
         }
 
-        for index, part in enumerate(textwrap.wrap(content, constants.TWEET_MAX_LENGTH)):
+        for index, part in enumerate(textwrap.wrap(content, TWEET_MAX_LENGTH)):
             if index == 0:
                 response = initial_tweet_response
             index += 1
@@ -92,7 +94,7 @@ class Twitter:
                     "use_link": False,
                     "use_default_title": False,
                     "use_default_content": True,
-                    "platform_shared": constants.TWITTER,
+                    "platform_shared": TWITTER,
                 }
             )
 
@@ -108,7 +110,7 @@ class Twitter:
                 "use_emojis": False,
                 "use_default_title": False,
                 "use_default_content": False,
-                "platform_shared": constants.TWITTER,
+                "platform_shared": TWITTER,
             }
         )
 

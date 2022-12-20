@@ -30,6 +30,7 @@ User = get_user_model()
 
 
 class SocialmediaAuth(AbstractTimeStampedModel):
+    title = CharField(max_length=120, null=True)
     user = ForeignKey(User, on_delete=SET_NULL, null=True, blank=True)
     socialmedia = CharField(max_length=12, choices=SOCIAL_MEDIAS)
     metadata = JSONField(default=dict)

@@ -11,7 +11,7 @@ def socialmedia_share_company():
     SocialPosting().share_content(
         constants.COMPANY_FOR_CONTENT,
         [
-            # {"platform_shared": FACEBOOK, "post_type": constants.POST_TYPE_TEXT_IMAGE},
+            {"platform_shared": FACEBOOK, "post_type": constants.POST_TYPE_TEXT_IMAGE},
             {"platform_shared": TWITTER, "post_type": constants.POST_TYPE_TEXT_IMAGE},
         ],
     )
@@ -22,7 +22,7 @@ def socialmedia_share_news():
     SocialPosting().share_content(
         constants.NEWS_FOR_CONTENT,
         [
-            # {"platform_shared": FACEBOOK, "post_type": constants.POST_TYPE_TEXT_IMAGE},
+            {"platform_shared": FACEBOOK, "post_type": constants.POST_TYPE_TEXT_IMAGE},
             {"platform_shared": TWITTER, "post_type": constants.POST_TYPE_TEXT_IMAGE},
         ],
     )
@@ -33,7 +33,7 @@ def socialmedia_share_term():
     SocialPosting().share_content(
         constants.TERM_FOR_CONTENT,
         [
-            # {"platform_shared": FACEBOOK, "post_type": constants.POST_TYPE_TEXT_IMAGE},
+            {"platform_shared": FACEBOOK, "post_type": constants.POST_TYPE_TEXT_IMAGE},
             {"platform_shared": TWITTER, "post_type": constants.POST_TYPE_TEXT_IMAGE},
         ],
     )

@@ -43,7 +43,7 @@ class CompanyNewsContentCreation(CompanyContentCreation):
         self.object = self.get_object(object_filter)
         return self.create_social_media_content_from_object(object_filter)
 
-    def create_social_media_content_from_object(self, object_filter):
+    def create_social_media_content_from_object(self, object_filter: Dict = {}):
         news_list = RetrieveCompanyData(self.object).get_company_news()
         if not news_list:
             return self.get_new_object(object_filter)

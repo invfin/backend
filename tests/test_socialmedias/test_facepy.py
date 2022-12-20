@@ -33,36 +33,19 @@ class TestFacePoster(TestCase):
         )
 
     def test_create_fb_description(self):
-        description = self.facebook.create_fb_description("contenido", "#list #de #hashtags", "enlace")
+        description = self.facebook.create_fb_description("title", "contenido", "#list #de #hashtags")
         assert (
-            """contenido
-
-        Descubre el resto en: enlace
-        Prueba las herramientas que todo inversor inteligente necesita: https://inversionesyfinanzas.xyz
-
-        Visita nuestras redes sociales:
-        Youtube: https://www.youtube.com/c/InversionesyFinanzas/
-        Facebook: https://www.facebook.com/InversionesyFinanzas/
-        Instagram: https://www.instagram.com/inversiones.finanzas/
-        TikTok: https://www.tiktok.com/@inversionesyfinanzas?
-        Twitter : https://twitter.com/InvFinz
-        LinkedIn : https://www.linkedin.com/company/inversiones-finanzas
-        .
-        .
-        .
-        .
-        .
-        .
-        .
-        .
-        .
-        .
-        .
-        .
-        #list #de #hashtags
-        """
-            == description
-        )
+            "title\n\ncontenido\n\n"
+            "Prueba las herramientas que todo inversor inteligente necesita: https://inversionesyfinanzas.xyz/\n"
+            "Visita nuestras redes sociales:\n"
+            "Youtube: https://www.youtube.com/c/InversionesyFinanzas/\n"
+            "Facebook: https://www.facebook.com/InversionesyFinanzas/\n"
+            "Instagram: https://www.instagram.com/inversiones.finanzas/\n"
+            "TikTok: https://www.tiktok.com/@inversionesyfinanzas?\n"
+            "Twitter : https://twitter.com/InvFinz\n"
+            "LinkedIn : https://www.linkedin.com/company/inversiones-finanzas\n"
+            ".\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n#list #de #hashtags"
+        ) == description
 
     @skip("not ready")
     def test_post(self):
