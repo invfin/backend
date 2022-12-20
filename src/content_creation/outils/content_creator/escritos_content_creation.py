@@ -27,16 +27,8 @@ class TermContentCreation(ContentCreation):
         return self.model_class._default_manager.term_ready_newsletter()
 
     def get_object_content(self, **kwargs):
-        """Creates a basic content for a term's newsletter or post.
-        The content will be used for both newsletters and socialmedia posts
-
-        Returns
-        -------
-            _type_
-                The content created
-        """
         link = self.create_url()
-        line_break = "\n" if self.platform == socialmedias_constants.PLATFORM_WEB else "<br>"
+        line_break = "\n"
         description = (
             f"{self.object.resume} {line_break}Si quieres conocer más a fondo puedes leer la definición entera {link}."
             f" {line_break}Estos son los puntos claves que encontrarás:"

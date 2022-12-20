@@ -3,6 +3,8 @@ import textwrap
 import time
 from typing import Dict
 
+from django.conf import settings
+
 import tweepy
 
 from src.content_creation import constants
@@ -117,20 +119,17 @@ class Twitter:
         return list_tweets
 
     def post(self, **kwargs) -> Dict:
-        title = kwargs["title"]
-        content = kwargs["content"]
-        hashtags = kwargs["hashtags"]
-        link = kwargs["link"]
         media_url = kwargs.get("media", "")
-        post_type = kwargs["post_type"]
+        if media_url:
+            media_url = f"{settings.FULL_DOMAIN}{media_url}"
 
         post_response = self.create_thread(
-            title,
-            content,
-            hashtags,
-            link,
+            kwargs["title"],
+            kwargs["content"],
+            kwargs["hashtags"],
+            kwargs["link"],
             media_url,
-            post_type,
+            kwargs["post_type"],
         )
 
         twitter_post = {"social_id": post_response}

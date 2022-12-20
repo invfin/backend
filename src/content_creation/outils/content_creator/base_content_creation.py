@@ -1,5 +1,5 @@
 import random
-from typing import Any, Dict, List, Tuple, Type, Union
+from typing import Any, Dict, List, Optional, Tuple, Type, Union
 
 from django.apps import apps
 from django.conf import settings
@@ -13,8 +13,8 @@ FULL_DOMAIN = settings.FULL_DOMAIN
 
 
 class ContentCreation:
-    model_class: Type = None
-    shared_model_historial: Type = None
+    model_class: Optional[Type] = None
+    shared_model_historial: Optional[Type] = None
     for_content: List[int] = []
 
     def __init__(self, platform: str = "") -> None:
@@ -218,7 +218,7 @@ class ContentCreation:
     def create_newsletter_content_from_object(self):
         return self.prepare_inital_data()
 
-    def create_social_media_content_from_object(self):
+    def create_social_media_content_from_object(self) -> Dict[str, Union[str, List, Any]]:
         need_slice = bool(self.platform == socialmedias_constants.TWITTER)
         hashtags_list, hashtags = self.create_hashtags(self.platform, need_slice)
         return {

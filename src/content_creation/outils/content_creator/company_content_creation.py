@@ -20,7 +20,7 @@ class CompanyContentCreation(ContentCreation):
     """
 
     def get_object(self, object_filter: Dict = {}) -> Type:
-        return self.model_class._default_manager.get_random_most_visited_clean_company(object_filter)
+        return self.model_class._default_manager.get_random_most_visited_clean_company(**object_filter)
 
     def get_object_content(self, **kwargs) -> str:
         return f"{self.object.short_introduction} {self.object.description}"

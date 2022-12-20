@@ -1,9 +1,9 @@
 from celery import shared_task
 
+from src.content_creation import constants as content_creation_constants
 from src.emailing.outils.emailing import EmailingSystem
 from src.engagement_machine.outils.engagement import EngagementMachine
 from src.escritos.models import Term
-from src.socialmedias import constants as socialmedias_constants
 from src.web import constants as web_constants
 from src.web.models import WebsiteEmail
 
@@ -66,7 +66,7 @@ def prepare_term_newsletter_task():
         else:
             web_email = EngagementMachine().create_newsletter(
                 web_email_type=web_constants.CONTENT_FOR_NEWSLETTER_TERM,
-                content_object=socialmedias_constants.TERM_FOR_CONTENT,
+                content_object=content_creation_constants.TERM_FOR_CONTENT,
                 whom_to_send=web_constants.EMAIL_CAMPAIGN_RELATED,
             )
             term_link_html = EmailingSystem.html_link(web_email.edit_url, term_for_newsletter.title)

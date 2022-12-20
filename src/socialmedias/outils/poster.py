@@ -1,4 +1,4 @@
-from typing import Dict, List, Optional, Type
+from typing import Any, Dict, List, Optional, Type, Union
 
 from django.conf import settings
 from django.contrib.auth import get_user_model
@@ -51,14 +51,16 @@ class SocialPosting:
         content_creation_constants.COMPANY_FOR_CONTENT: CompanyContentCreation,
     }
 
-    def get_creator(self, content_object: str) -> Type:
-        return self.content_creators_map[content_object]
+    @classmethod
+    def get_creator(cls, content_object: str) -> Type:
+        return cls.content_creators_map[content_object]
 
-    def get_socialmedia(self, socialmedia: str) -> Type:
-        return self.socialmedias_map[socialmedia]
+    @classmethod
+    def get_socialmedia(cls, socialmedia: str) -> Type:
+        return cls.socialmedias_map[socialmedia]
 
+    @staticmethod
     def prepare_data_to_be_saved(
-        self,
         socialmedia_post_response: Dict,
         socialmedia_content: Dict,
     ) -> Dict:
@@ -81,7 +83,8 @@ class SocialPosting:
             response_dict["default_content"] = socialmedia_content.get("default_content", None)
         return response_dict
 
-    def save_content_posted(self, **kwargs):
+    @staticmethod
+    def save_content_posted(**kwargs):
         shared_model_historial = kwargs.pop("shared_model_historial")
         title_emojis = kwargs.pop("title_emojis", [])
         hashtags_list = kwargs.pop("hashtags_list", [])
@@ -95,7 +98,53 @@ class SocialPosting:
         if hashtags_list:
             shared_model_historial_obj.hashtags.add(*hashtags_list)
 
-    def share_content(self, content_object: str, socialmedia_list: List[Dict]):
+    @staticmethod
+    def get_socialmedia_content(socialmedia_content_creator: type, platform: str) -> Dict[str, Union[str, List, Any]]:
+        # TODO add tests
+        return socialmedia_content_creator(platform).create_social_media_content_from_object()
+
+    @staticmethod
+    def post_type_is_text(media: str, post_type: int) -> bool:
+        # TODO add tests
+        return not media and post_type != content_creation_constants.POST_TYPE_TEXT
+
+    @classmethod
+    def return_correct_post_type(cls, media: str, post_type: int) -> int:
+        # TODO add tests
+        if cls.post_type_is_text(media, post_type):
+            return content_creation_constants.POST_TYPE_TEXT
+        return post_type
+
+    @classmethod
+    def post_on_socialmedia(
+        cls,
+        platform_shared: str,
+        post_type: int,
+        socialmedia_content: Dict,
+    ) -> Dict[str, List[Dict[str, Any]]]:
+        # TODO add tests
+        socialmedia_obj = cls.get_socialmedia(platform_shared)
+        return socialmedia_obj.post(
+            **socialmedia_content,
+            post_type=post_type,
+        )
+
+    @classmethod
+    def save_responses(cls, socialmedia_obj_responses: List, socialmedia_content: Dict) -> None:
+        # TODO add tests
+        for socialmedia_post_response in socialmedia_obj_responses:
+            response_dict = cls.prepare_data_to_be_saved(
+                socialmedia_post_response,
+                socialmedia_content,
+            )
+            cls.save_content_posted(
+                content_shared=socialmedia_content["content_shared"],
+                shared_model_historial=socialmedia_content["shared_model_historial"],
+                **response_dict,
+            )
+
+    @classmethod
+    def share_content(cls, content_object: str, socialmedia_list: List[Dict]):
         """The main method that get the content crator according to the model, then it gets
         the socialmedia and post on it. Once the post has been successfull it saves the results.
         For the moment it'll probably be most used from tasks.
@@ -110,28 +159,13 @@ class SocialPosting:
                 A list of dicts with the socialmedia platform to post and the post type.
                 Example: {"platform_shared": constants.FACEBOOK, "post_type": constants.POST_TYPE_TEXT_IMAGE}
         """
-        socialmedia_content_creator = self.get_creator(content_object)
+        socialmedia_content_creator = cls.get_creator(content_object)
         for platform_post_type_dict in socialmedia_list:
             platform_shared = platform_post_type_dict["platform_shared"]
-            socialmedia_content = socialmedia_content_creator(platform_shared).create_social_media_content_from_object()
+            socialmedia_content = cls.get_socialmedia_content(socialmedia_content_creator, platform_shared)
             media = socialmedia_content.get("media", "")
             post_type = platform_post_type_dict["post_type"]
-            if not media and post_type != content_creation_constants.POST_TYPE_TEXT:
-                post_type = content_creation_constants.POST_TYPE_TEXT
-            # Here is where we are posting on socialmedia
-            socialmedia_obj = self.get_socialmedia(platform_shared)
-            socialmedia_obj_response = socialmedia_obj.post(
-                **socialmedia_content,
-                post_type=post_type,
-            )
+            post_type = cls.return_correct_post_type(media, post_type)
+            socialmedia_obj_response = cls.post_on_socialmedia(platform_shared, post_type, socialmedia_content)
             # Here we get the response and save it
-            for socialmedia_post_response in socialmedia_obj_response["post_response"]:
-                response_dict = self.prepare_data_to_be_saved(
-                    socialmedia_post_response,
-                    socialmedia_content,
-                )
-                self.save_content_posted(
-                    content_shared=socialmedia_content["content_shared"],
-                    shared_model_historial=socialmedia_content["shared_model_historial"],
-                    **response_dict,
-                )
+            cls.save_responses(socialmedia_obj_response["post_response"], socialmedia_content)

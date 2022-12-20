@@ -53,7 +53,7 @@ class TermManager(BaseManager):
         )
 
     def term_ready_newsletter(self) -> Type:
-        return self.all_terms_ready_newsletter().first()
+        return self.get_random(self.all_terms_ready_newsletter())
 
     def clean_terms(self):
         return self.filter(status=BASE_ESCRITO_PUBLISHED)
