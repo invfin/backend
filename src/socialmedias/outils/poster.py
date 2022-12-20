@@ -163,6 +163,7 @@ class SocialPosting:
         for platform_post_type_dict in socialmedia_list:
             platform_shared = platform_post_type_dict["platform_shared"]
             socialmedia_content = cls.get_socialmedia_content(socialmedia_content_creator, platform_shared)
+            print("post content")
             media = socialmedia_content.get("media", "")
             post_type = platform_post_type_dict["post_type"]
             post_type = cls.return_correct_post_type(media, post_type)

@@ -184,10 +184,15 @@ class CompanyManager(BaseManager):
             no_incs=False, no_bs=False, no_cfs=False, exchange__main_org__name=name, updated=False, has_error=False
         )
 
-    def get_random_most_visited_clean_company(self, exclude: Dict[str, Any] = {}, filter: Dict[str, Any] = {}):
+    def get_random_most_visited_clean_company(self, exclude: Dict[str, Any] = {}):
         return self.get_random(
             self.filter(
-                no_incs=False, no_bs=False, no_cfs=False, has_error=False, description_translated=True, **filter
+                no_incs=False,
+                no_bs=False,
+                no_cfs=False,
+                has_error=False,
+                description_translated=True,
+                exchange__main_org__name="Estados Unidos",
             )
             .exclude(name__contains="Need-parsing", **exclude)
             .annotate(

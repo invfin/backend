@@ -55,6 +55,8 @@ class ParserClient:
                     return response.text
                 else:
                     return response
+            elif response.status_code == requests.codes.forbidden:
+                return {"error": "Not auth"}
             time.sleep(attempt * REQUESTS_MAX_RETRIES)
         response.raise_for_status()
 

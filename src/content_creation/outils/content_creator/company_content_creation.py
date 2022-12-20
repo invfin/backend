@@ -43,19 +43,20 @@ class CompanyNewsContentCreation(CompanyContentCreation):
         self.object = self.get_object(object_filter)
         return self.create_social_media_content_from_object(object_filter)
 
+    def manage_response(self, news_list, object_filter):
+        # TODO test
+        if not news_list or "error" in news_list:
+            return self.get_new_object(object_filter)
+
     def create_social_media_content_from_object(self, object_filter: Dict = {}):
         news_list = RetrieveCompanyData(self.object).get_company_news()
-        if not news_list:
+        if not news_list or "error" in news_list:
             return self.get_new_object(object_filter)
         news: Dict = news_list[0]
-        title = news["headline"]
-        content = news["summary"]
-        media = news.get("image")
-        if not media:
-            media = self.object.image
+        media = news.get("image", self.object.image)
 
-        content = google_translator().translate(content, lang_src="en", lang_tgt="es")
-        title = google_translator().translate(title, lang_src="en", lang_tgt="es")
+        content = google_translator().translate(news.get("summary", ""), lang_src="en", lang_tgt="es")
+        title = google_translator().translate(news.get("headline", ""), lang_src="en", lang_tgt="es")
 
         need_slice = bool(self.platform == socialmedias_constants.TWITTER)
         hashtags_list, hashtags = self.create_hashtags(self.platform, need_slice)
@@ -66,7 +67,7 @@ class CompanyNewsContentCreation(CompanyContentCreation):
             ),
             "description": content,
             "link": self.create_url(),
-            "media": self.get_object_media(),
+            "media": media,
             "content_shared": self.object,
             "shared_model_historial": self.shared_model_historial,
             "hashtags_list": hashtags_list,
