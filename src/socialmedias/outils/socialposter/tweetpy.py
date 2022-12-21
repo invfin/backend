@@ -123,7 +123,7 @@ class Twitter:
         if media_url:
             media_url = f"{settings.FULL_DOMAIN}{media_url}"
 
-        post_response = self.create_thread(
+        return self.create_thread(
             kwargs["title"],
             kwargs["content"],
             kwargs["hashtags"],
@@ -131,7 +131,3 @@ class Twitter:
             media_url,
             kwargs["post_type"],
         )
-
-        twitter_post = {"social_id": post_response}
-
-        return twitter_post
