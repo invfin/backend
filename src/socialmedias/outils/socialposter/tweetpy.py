@@ -1,7 +1,9 @@
+import io
 import math
 import textwrap
 import time
 from typing import Dict
+import urllib
 
 from django.conf import settings
 
@@ -37,8 +39,9 @@ class Twitter:
         return json_response["id"]
 
     def tweet_with_media(self, twitter_api, status, media_url):
-        post_id = twitter_api.media_upload(media_url)
-        response = twitter_api.update_status(status=status, media_ids=[post_id.media_id_string])
+        data = urllib.request.urlopen(media_url).read()
+        file_like_object = io.BytesIO(data)
+        response = twitter_api.update_status_with_media(status, "fake_name.jpg", file=file_like_object)
         json_response = response._json
         return json_response["id"]
 
@@ -120,8 +123,8 @@ class Twitter:
 
     def post(self, **kwargs) -> Dict:
         media_url = kwargs.get("media", "")
-        if media_url:
-            media_url = f"{settings.FULL_DOMAIN}{media_url}"
+        if not media_url.startswith("http"):
+            media_url = f"https://inversionesyfinanzas.xyz{media_url}"
 
         return self.create_thread(
             kwargs["title"],

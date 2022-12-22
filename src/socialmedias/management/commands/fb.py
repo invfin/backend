@@ -1,7 +1,6 @@
 from django.conf import settings
 from django.core.management import BaseCommand
 
-
 from src.socialmedias.outils.socialposter.tweetpy import Twitter
 
 
@@ -12,7 +11,7 @@ class Command(BaseCommand):
             title="Default title",
             content="Default content #default #hashtags",
             hashtags="",
-            post_type=3,
+            post_type=2,
             link="https://inversionesyfinanzas.xyz",
         )
         fb_response = Twitter(
