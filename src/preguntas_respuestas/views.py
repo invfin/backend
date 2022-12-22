@@ -48,17 +48,19 @@ class CreateQuestionView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
         initial["content"] = "Explica tu duda con todo lujo de detalles"
         return initial
 
+    def save_answer_if_not_empty(self, question, selfanswer):
+        if selfanswer != "":
+            question.add_answer(selfanswer)
+            question.is_answered = True
+            question.has_accepted_answer = True
+
     def form_valid(self, form):
         form.instance.author = self.request.user
         tags = self.request.POST["tags"].split(",")
         selfanswer = self.request.POST["selfanswereditor"]
         question = form.save()
         question.add_tags(tags)
-        if selfanswer != "":
-            question.add_answer(selfanswer)
-            question.is_answered = True
-            question.has_accepted_answer = True
-
+        self.save_answer_if_not_empty(question, selfanswer)
         prepare_notification_task.delay(question.dict_for_task, constants.NEW_QUESTION)
         return super().form_valid(form)
 

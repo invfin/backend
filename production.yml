@@ -10,7 +10,7 @@ services:
     build:
       context: .
       dockerfile: ./compose/production/django/Dockerfile
-    image: invfin_production_django
+    image: invfin_local_invfin
     depends_on:
       - postgres
       - redis

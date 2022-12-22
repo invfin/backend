@@ -11,8 +11,8 @@ services:
     build:
       context: .
       dockerfile: ./compose/local/django/Dockerfile
-    image: invfin_local_django
-    container_name: invfin_local_django
+    image: invfin_local_invfin
+    container_name: invfin_local_invfin
     platform: linux/x86_64
     depends_on:
       - postgres

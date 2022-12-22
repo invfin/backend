@@ -1,6 +1,7 @@
 from django.contrib import admin
 from django.db import models
 from django.utils.html import format_html
+from django.urls import reverse
 
 from django_json_widget.widgets import JSONEditorWidget
 from import_export.admin import ImportExportActionModelAdmin
@@ -84,8 +85,8 @@ class TermAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
         return super().save_model(request, obj, form, change)
 
     def term_link(self, obj):
-        # link = reverse(f"web:manage_single_term", args=(obj.slug,))
-        link = obj.get_absolute_url()
+        link = reverse("web:manage_single_term", args=(obj.slug,))
+        # link = obj.get_absolute_url()
         return format_html(f'<a target="_blank" href="{link}">{obj.title}</a>')
 
     term_link.short_description = "term"

@@ -11,8 +11,8 @@ services:
     build:
       context: .
       dockerfile: ./compose/local/django/Dockerfile
-    image: invfin_local_django
-    container_name: invfin_local_django
+    image: invfin_local_invfin
+    container_name: invfin_local_invfin
     platform: linux/x86_64
     depends_on:
       - postgres
@@ -42,24 +42,6 @@ services:
       - invfin_local_postgres_data_backups:/backups:z
     env_file:
       - ./.envs/.local/.postgres
-    networks:
-      - invfin_network
-
-  docs:
-    image: invfin_local_docs
-    container_name: invfin_local_docs
-    platform: linux/x86_64
-    build:
-      context: .
-      dockerfile: ./compose/local/docs/Dockerfile
-    env_file:
-      - ./.envs/.local/.django
-    volumes:
-      - ./docs:/docs:z
-      - ./config:/app/config:z
-    ports:
-      - "7000:7000"
-    command: /start-docs
     networks:
       - invfin_network
 
@@ -111,23 +93,6 @@ services:
     ports:
       - "5555:5555"
     command: /start-flower
-  
-
-  nginx-proxy:
-    image: jwilder/nginx-proxy:alpine
-    container_name: nginx-proxy
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - /var/run/docker.sock:/tmp/docker.sock:ro
-      - ./certs:/etc/nginx/certs
-    restart: always
-    depends_on:
-      - invfin
-    environment:
-      - VIRTUAL_HOST=example.com
-      - VIRTUAL_PORT=8000
 
 networks:
   invfin_network:

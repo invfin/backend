@@ -1,5 +1,5 @@
 import time
-from typing import Dict, List
+from typing import Callable, Dict, List, Tuple
 
 from django.apps import apps
 from django.contrib.auth import get_user_model
@@ -25,7 +25,8 @@ class NotificationSystem:
     The annonunce_ method return a list 'cause on the task we iterate over the emails to send
     """
 
-    def save_notif(self, object_related, user, notif_type, email_data):
+    @classmethod
+    def save_notif(cls, object_related, user, notif_type, email_data):
         notification = Notification.objects.create(
             user=user,
             object=object_related,
@@ -37,31 +38,51 @@ class NotificationSystem:
             "app_label": notification.app_label,
             "object_name": notification.object_name,
             "id": notification.pk,
+            "call_to_action_url": object_related.shareable_link,
         }
 
-    def notify(self, object_related: Dict, notif_type: str) -> List:
-        time.sleep(10)
-        app_label = object_related["app_label"]
-        object_name = object_related["object_name"]
-        pk = object_related["id"]
+    @staticmethod
+    def get_object_related_params(object_related_dict: Dict) -> Tuple:
+        app_label = object_related_dict.pop("app_label")
+        object_name = object_related_dict.pop("object_name")
+        pk = object_related_dict.pop("id")
+        return app_label, object_name, pk
 
-        object_related = apps.get_model(app_label, object_name, require_ready=True)._default_manager.get(pk=pk)
+    @staticmethod
+    def get_object_related_model(app_label, object_name) -> type:
+        return apps.get_model(app_label, object_name, require_ready=True)
 
+    @classmethod
+    def get_object_related(cls, object_related_dict: Dict) -> type:
+        app_label, object_name, pk = cls.get_object_related_params(object_related_dict)
+        model = cls.get_object_related_model(app_label, object_name)
+        return model._default_manager.get(pk=pk)
+
+    @classmethod
+    def get_notification_method(cls, notif_type: str) -> Callable:
         notif_type_fnct = {
-            constants.NEW_BLOG_POST: self.announce_new_blog,
-            constants.NEW_COMMENT: self.announce_new_comment,
-            constants.NEW_VOTE: self.announce_new_vote,
-            constants.NEW_FOLLOWER: self.announce_new_follower,
-            constants.NEW_QUESTION: self.announce_new_question,
-            constants.NEW_ANSWER: self.announce_new_answer,
-            constants.ANSWER_ACCEPTED: self.announce_answer_accepted,
+            constants.NEW_BLOG_POST: cls.announce_new_blog,
+            constants.NEW_COMMENT: cls.announce_new_comment,
+            constants.NEW_VOTE: cls.announce_new_vote,
+            constants.NEW_FOLLOWER: cls.announce_new_follower,
+            constants.NEW_QUESTION: cls.announce_new_question,
+            constants.NEW_ANSWER: cls.announce_new_answer,
+            constants.ANSWER_ACCEPTED: cls.announce_answer_accepted,
         }
-        return notif_type_fnct[notif_type](object_related, notif_type)
+        return notif_type_fnct[notif_type]
 
-    def announce_new_follower(self, writter, notif_type):
+    @classmethod
+    def notify(cls, object_related_dict: Dict, notif_type: str) -> List:
+        time.sleep(10)
+        object_related = cls.get_object_related(object_related_dict)
+        notification_fnct = cls.get_notification_method(notif_type)
+        return notification_fnct(object_related, notif_type)
+
+    @classmethod
+    def announce_new_follower(cls, writter, notif_type):
         return [
             {
-                "email": self.save_notif(
+                "email": cls.save_notif(
                     writter,
                     writter,
                     notif_type,
@@ -78,10 +99,11 @@ class NotificationSystem:
             }
         ]
 
-    def announce_new_comment(self, obj, notif_type):
+    @classmethod
+    def announce_new_comment(cls, obj, notif_type):
         return [
             {
-                "email": self.save_notif(
+                "email": cls.save_notif(
                     obj,
                     obj.content_related.author,
                     notif_type,
@@ -95,10 +117,11 @@ class NotificationSystem:
             }
         ]
 
-    def announce_new_vote(self, obj, notif_type):
+    @classmethod
+    def announce_new_vote(cls, obj, notif_type):
         return [
             {
-                "email": self.save_notif(
+                "email": cls.save_notif(
                     obj,
                     obj.author,
                     notif_type,
@@ -112,18 +135,20 @@ class NotificationSystem:
             }
         ]
 
-    def announce_new_question(self, question, notif_type):
+    @classmethod
+    def announce_new_question(cls, question, notif_type):
         notif_info = []
         for user in User.objects.all().exclude(pk=question.author.pk):
             title = question.title[:15]
             subject = f"{constants.NEW_QUESTION} {title}..."
-            email = self.save_notif(
+            email = cls.save_notif(
                 question,
                 user,
                 notif_type,
                 {
                     "subject": subject,
-                    "content": question.content,
+                    "content": f"Hay una nueva pregunta: \n{question.content}\n ¿Conoces la respuesta?",
+                    "call_to_action": "Se el primero en ayudar y gana créditos extras",
                 },
             )
             notif_info.append(
@@ -131,11 +156,12 @@ class NotificationSystem:
             )
         return notif_info
 
-    def announce_new_blog(self, blog, notif_type):
+    @classmethod
+    def announce_new_blog(cls, blog, notif_type):
         # blog.author.main_writter_followed.followers.all() that should be the actual loop over, all the writter's followers
         notif_info = []
         for user in blog.author.main_writter_followed.followers.all():
-            email = self.save_notif(
+            email = cls.save_notif(
                 blog,
                 user,
                 notif_type,
@@ -149,7 +175,8 @@ class NotificationSystem:
             )
         return notif_info
 
-    def announce_new_answer(self, answer, notif_type):
+    @classmethod
+    def announce_new_answer(cls, answer, notif_type):
         notif_info = []
         question = answer.question_related
         users_relateds = question.related_users
@@ -160,7 +187,7 @@ class NotificationSystem:
                 subject = f"{title}... tiene una nueva respuesta"
                 if question.author == user:
                     subject = "Tu pregunta tiene una nueva respuesta"
-                email = self.save_notif(
+                email = cls.save_notif(
                     answer,
                     user,
                     notif_type,
@@ -175,7 +202,8 @@ class NotificationSystem:
 
         return notif_info
 
-    def announce_answer_accepted(self, answer, notif_type):
+    @classmethod
+    def announce_answer_accepted(cls, answer, notif_type):
         notif_info = []
         question = answer.question_related
         for user in question.related_users:
@@ -185,7 +213,7 @@ class NotificationSystem:
             if answer.author == user:
                 subject = "Tu respuesta ha sido acceptada"
                 content = f"Felicidades. Tu respuesta a {question.title} ha sido acceptda."
-            email = self.save_notif(
+            email = cls.save_notif(
                 answer,
                 user,
                 notif_type,
