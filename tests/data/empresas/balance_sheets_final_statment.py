@@ -1,8 +1,8 @@
-
-    CURRENT_YEAR =    {
+from datetime import date
+CURRENT_YEAR =    {
         "id": 152012,
         "date": 2021,
-        "year": "17/03/2022",
+        "year":  date(year=2022, month=3, day=17),
         "is_ttm": False,
         "from_average":False,
         "cash_and_cash_equivalents": 34940000000.0,
@@ -49,7 +49,7 @@
 PAST_YEAR = {
     "id": 152013,
     "date": 2020,
-    "year": "17/03/2022",
+    "year":  date(year=2022, month=3, day=17),
     "is_ttm": False,
     "from_average": False,
     "cash_and_cash_equivalents": 38016000000.0,

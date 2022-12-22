@@ -72,37 +72,23 @@ class TestCalculateFinancialRatios(TestCase):
                    self.previous_cashflow,
                ] == previous
 
-    def test_generate_current_data(self):
-        income_statements = []
-        balance_sheets = []
-        cashflow_statements = []
-        expected_result = {}
-        assert expected_result == CalculateFinancialRatios.generate_current_data(
-            income_statements,
-            balance_sheets,
-            cashflow_statements,
-        )
-
     def test_prepare_base_data(self):
         inc_statements = self.company.inc_statements.filter(period__period=PERIOD_FOR_YEAR)
         balance_sheets = self.company.balance_sheets.filter(period__period=PERIOD_FOR_YEAR)
         cf_statements = self.company.cf_statements.filter(period__period=PERIOD_FOR_YEAR)
         base_data = CalculateFinancialRatios.prepare_base_data(
-            inc_statements.filter(period__year=self.current_year),
-            balance_sheets.filter(period__year=self.current_year),
-            cf_statements.filter(period__year=self.current_year),
-            inc_statements.filter(period__year=self.previous_year),
-            balance_sheets.filter(period__year=self.previous_year),
-            cf_statements.filter(period__year=self.previous_year),
+            inc_statements.filter(period__year=self.current_year).values(),
+            balance_sheets.filter(period__year=self.current_year).values(),
+            cf_statements.filter(period__year=self.current_year).values(),
+            inc_statements.filter(period__year=self.previous_year).values(),
+            balance_sheets.filter(period__year=self.previous_year).values(),
+            cf_statements.filter(period__year=self.previous_year).values(),
             {"current_price": 34.65}
         )
         assert isinstance(base_data, dict)
 
 
     def test_calculate_all_ratios(self):
-        income_statements = []
-        balance_sheets = []
-        cashflow_statements = []
         expected_result = {
             "current_data": 0,
             "price_to_ratio": 0,
@@ -118,10 +104,15 @@ class TestCalculateFinancialRatios(TestCase):
             "non_gaap": 0,
             "other_ratios": 0,
         }
+
         assert expected_result == CalculateFinancialRatios.calculate_all_ratios(
-            income_statements,
-            balance_sheets,
-            cashflow_statements,
+            IncomeStatement.objects.filter(period=self.current_year).values(),
+            BalanceSheet.objects.filter(period=self.current_year).values(),
+            CashflowStatement.objects.filter(period=self.current_year).values(),
+            IncomeStatement.objects.filter(period=self.previous_year).values(),
+            BalanceSheet.objects.filter(period=self.previous_year).values(),
+            CashflowStatement.objects.filter(period=self.previous_year).values(),
+            {"current_price": 45.32},
         )
 
     def test_filter_previous_year_data(self):

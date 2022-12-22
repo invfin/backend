@@ -109,6 +109,7 @@ class CalculateFinancialRatios(
         previous_cashflow_statements: Union[List, QuerySet],
         current_price: Dict[str, Union[int, float]],
     ) -> Dict[str, Union[int, float]]:
+        print(previous_income_statements[0])
         to_clean_previous_data = {
             **previous_income_statements[0],
             **previous_balance_sheets[0],
