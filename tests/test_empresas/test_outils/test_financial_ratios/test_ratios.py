@@ -89,29 +89,14 @@ class TestCalculateFinancialRatios(TestCase):
 
 
     def test_calculate_all_ratios(self):
-        expected_result = {
-            "current_data": 0,
-            "price_to_ratio": 0,
-            "efficiency_ratio": 0,
-            "enterprise_value_ratio": 0,
-            "liquidity_ratio": 0,
-            "margin_ratio": 0,
-            "operation_risk_ratio": 0,
-            "rentability_ratios": 0,
-            "fcf_ratio": 0,
-            "ps_value": 0,
-            "company_growth": 0,
-            "non_gaap": 0,
-            "other_ratios": 0,
-        }
-
+        expected_result = {'price_to_ratio': {'price_book': 12.11, 'price_cf': 12.2, 'price_earnings': -8.19, 'price_earnings_growth': -0.01, 'price_sales': 2.09, 'price_total_assets': 2.18, 'price_fcf': 0, 'price_operating_cf': 0, 'price_tangible_assets': -4.99}, 'efficiency_ratio': {'days_inventory_outstanding': -0.0, 'days_payables_outstanding': 0, 'days_sales_outstanding': -299.66499999999996, 'operating_cycle': -299.66, 'cash_conversion_cycle': -299.66499999999996, 'asset_turnover': 1.084, 'inventory_turnover': -153.832, 'fixed_asset_turnover': 0, 'accounts_payable_turnover': 2.983, 'free_cashflow_to_operating_cashflow': 0}, 'enterprise_value_ratio': {'market_cap': 0.0, 'enterprise_value': 62080000000.0, 'ev_fcf': 0, 'ev_operating_cf': 0, 'ev_sales': 0.17, 'company_equity_multiplier': 5.56, 'ev_multiple': 0.5}, 'liquidity_ratio': {'cash_ratio': 0.28, 'current_ratio': 1.07, 'quick_ratio': 0.91, 'operating_cashflow_ratio': 0.0, 'debt_to_equity': 4.56}, 'margin_ratio': {'gross_margin': 42.0, 'ebitda_margin': 34.0, 'net_income_margin': -26.0, 'fcf_margin': 0.0, 'fcf_equity_to_net_income': 9.0, 'unlevered_fcf_to_net_income': 257.0, 'unlevered_fcf_ebit_to_net_income': 262.0, 'owners_earnings_to_net_income': 357.0}, 'operation_risk_ratio': {'asset_coverage_ratio': 79.36, 'cash_flow_coverage_ratios': 0.0, 'cash_coverage': 23.68, 'debt_service_coverage': 0.0, 'interest_coverage': 0.0, 'operating_cashflow_ratio': 0.0, 'debt_ratio': 0.36, 'long_term_debt_to_capitalization': 1.0, 'total_debt_to_capitalization': 0.66}, 'rentability_ratios': {'roa': -27.0, 'roe': -148.0, 'roc': 0.0, 'roce': 0, 'rota': -69.0, 'roic': -178.0, 'nopat_roic': 0.0, 'rogic': 0.0}, 'fcf_ratio': {'fcf_equity': -8750000000.0, 'unlevered_fcf': -239750000000.0, 'unlevered_fcf_ebit': -244524000000.0, 'owners_earnings': -333103000000.0}, 'ps_value': {'sales_ps': 21.691, 'book_ps': 3.7409, 'tangible_ps': -9.0766, 'fcf_ps': 0.0, 'eps': -5.5353, 'cash_ps': 3.7142, 'operating_cf_ps': 0.0, 'capex_ps': 0.0, 'total_assets_ps': 20.8126}, 'company_growth': {'revenue_growth': 33.0, 'cost_revenue_growth': 26.0, 'operating_expenses_growth': 23.0, 'net_income_growth': 795.0, 'shares_buyback': -4.0, 'eps_growth': 830.0, 'fcf_growth': 0, 'owners_earnings_growth': 6920.0, 'capex_growth': 0, 'rd_expenses_growth': 0}, 'non_gaap': {'normalized_income': -93353000000.0, 'effective_tax_rate': 0, 'net_working_capital': 9355000000.0, 'average_inventory': -1384500000.0, 'average_accounts_payable': 4132000000.0, 'dividend_yield': 0.0, 'earnings_yield': -12.0, 'fcf_yield': 0.0, 'income_quality': -0.0, 'invested_capital': 44295000000.0, 'market_cap': 0.0, 'net_current_asset_value': -9.08, 'payout_ratio': 15.0, 'tangible_assets': 134836000000.0, 'retention_ratio': 85.0}, 'other_ratios': {'average_fixed_assets': 0.0, 'average_assets': 337445000000.0, 'net_working_capital': 9355000000.0, 'change_in_working_capital': -239750000000.0, 'gross_invested_capital': 9355000000.0, 'effective_tax_rate': 0, 'net_tangible_equity': -153076000000.0, 'nopat': 0.0, 'debt_and_equity': 187809000000.0, 'non_cash_working_capital': -25585000000.0, 'invested_capital': 2714449800000.0, 'common_equity': 2605343800000.0, 'preferred_equity': 0.0},}
         assert expected_result == CalculateFinancialRatios.calculate_all_ratios(
-            IncomeStatement.objects.filter(period=self.current_year).values(),
-            BalanceSheet.objects.filter(period=self.current_year).values(),
-            CashflowStatement.objects.filter(period=self.current_year).values(),
-            IncomeStatement.objects.filter(period=self.previous_year).values(),
-            BalanceSheet.objects.filter(period=self.previous_year).values(),
-            CashflowStatement.objects.filter(period=self.previous_year).values(),
+            IncomeStatement.objects.filter(period__year=self.current_year).values(),
+            BalanceSheet.objects.filter(period__year=self.current_year).values(),
+            CashflowStatement.objects.filter(period__year=self.current_year).values(),
+            IncomeStatement.objects.filter(period__year=self.previous_year).values(),
+            BalanceSheet.objects.filter(period__year=self.previous_year).values(),
+            CashflowStatement.objects.filter(period__year=self.previous_year).values(),
             {"current_price": 45.32},
         )
 
