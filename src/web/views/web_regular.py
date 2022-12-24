@@ -1,4 +1,5 @@
 import json
+from typing import Dict, Tuple
 import urllib
 
 from django.conf import settings
@@ -6,35 +7,92 @@ from django.contrib import messages
 from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views.generic import RedirectView
+from django.views.generic.edit import FormMixin
 
 from src.general.utils import HostChecker
 from src.public_blog.models import WritterProfile
-from src.seo.views import SEODetailView, SEOListView, SEOTemplateView
+from src.seo.views import SEODetailView, SEOFormView, SEOListView, SEOTemplateView
 from src.web.forms import ContactForm
 from src.web.models import Roadmap, WebsiteLegalPage
 
 
-class HomePage(SEOTemplateView):
-    def render_to_response(self, context, **response_kwargs):
-        writter = HostChecker(self.request).return_writter()
-        if writter:
-            context.update(
-                {
-                    "meta_description": writter.user_profile.bio,
-                    "meta_title": writter.full_name,
-                    "meta_image": writter.foto,
-                    "current_profile": writter,
-                }
-            )
-            template_name = "public/profile.html"
-        else:
-            escritores = WritterProfile.objects.all()
-            context["escritor1"] = escritores[0]
-            context["escritor2"] = escritores[1]
-            context["escritor3"] = escritores[2]
-            context["legal_links"] = WebsiteLegalPage.objects.all()
-            template_name = "home_page.html"
+class CaptchaFormMixin(FormMixin):
+    def get_success_url(self):
+        url = reverse(self.success_url)
+        return f"{url}#contact-section"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["public_key"] = settings.GOOGLE_RECAPTCHA_PUBLIC_KEY
+        context["post_url"] = self.success_url
+        return context
+
+    def validate_captcha(self) -> Dict:
+        recaptcha_response = self.request.POST.get("g-recaptcha-response")
+        url = "https://www.google.com/recaptcha/api/siteverify"
+        values = {"secret": settings.GOOGLE_RECAPTCHA_SECRET_KEY, "response": recaptcha_response}
+        data = urllib.parse.urlencode(values).encode()
+        req = urllib.request.Request(url, data=data)
+        response = urllib.request.urlopen(req)
+        return json.loads(response.read().decode())
+
+    def post(self, request, *args, **kwargs):
+        form = self.get_form()
+        captcha_response = self.validate_captcha()
+        if form.is_valid() and captcha_response["success"]:
+            messages.success(request, "Gracias por tu mensaje, te responderemos lo antes posible.")
+            form.send_email()
+            return self.form_valid(form)
+        else:
+            messages.error(request, "Ha habido un error con el captcha")
+            return self.form_invalid(form)
+
+
+class HomePage(SEOTemplateView, CaptchaFormMixin):
+    success_url = "web:inicio"
+
+    def return_writter_page_data(self, user_writter: type) -> Tuple[Dict, str]:
+        context = {
+            "meta_description": user_writter.user_profile.bio,
+            "meta_title": user_writter.full_name,
+            "meta_image": user_writter.foto,
+            "current_profile": user_writter,
+        }
+        return context, "public/profile.html"
+
+    def return_home_page_data(self) -> Tuple[Dict, str]:
+        escritores = WritterProfile.objects.all()
+        context = {
+            "escritor1": escritores[0],
+            "escritor2": escritores[1],
+            "escritor3": escritores[2],
+            "legal_links": WebsiteLegalPage.objects.all(),
+        }
+        return context, "home_page.html"
+
+    def return_business_page_data(self) -> Tuple[Dict, str]:
+        context = dict(
+            meta_description="Ayudamos tu negocio a crecer gracias a nuestros expertos y herramientas",
+            meta_tags="coach, ayuda, consultoría, software, IA, contabilidad",
+            meta_title="Ayudamos tu negocio a crecer",
+        )
+        return context, "business_page.html"
+
+    def get_form(self):
+        return ContactForm(email_source="business-template", **self.get_form_kwargs())
+
+    def return_page_data(self) -> Tuple[Dict, str]:
+        host_checker = HostChecker(self.request)
+        user_writter = host_checker.return_user_writter()
+        if user_writter:
+            return self.return_writter_page_data(user_writter)
+        elif host_checker.host_is_business():
+            return self.return_business_page_data()
+        return self.return_home_page_data()
+
+    def render_to_response(self, context, **response_kwargs):
+        custom_content, template_name = self.return_page_data()
+        context.update(custom_content)
         response_kwargs.setdefault("content_type", self.content_type)
         return self.response_class(
             request=self.request,
@@ -43,6 +101,19 @@ class HomePage(SEOTemplateView):
             using=self.template_engine,
             **response_kwargs,
         )
+
+
+class SupportFormView(SEOFormView, CaptchaFormMixin):
+    form_class = ContactForm
+    meta_title = "Soporte"
+    template_name = "soporte.html"
+    success_url = "web:soporte"
+
+    def get_initial(self):
+        if self.request.user.is_authenticated:
+            self.initial["name"] = self.request.user.username
+            self.initial["email"] = self.request.user.email
+        return self.initial.copy()
 
 
 class RoadmapListView(SEOListView):
@@ -72,37 +143,6 @@ class LegalPages(SEODetailView):
     meta_description = "Todo lo que necesitas para ser un mejor inversor"
     meta_tags = "finanzas, blog financiero, blog el financiera, invertir"
     custom_context_data = {"legal_links": WebsiteLegalPage.objects.all()}
-
-
-def soporte_view(request):
-    initial = {}
-    if request.user.is_authenticated:
-        initial["name"] = request.user.username
-        initial["email"] = request.user.email
-    form = ContactForm(initial=initial)
-    public_key = settings.GOOGLE_RECAPTCHA_PUBLIC_KEY
-    context = {"form": form, "public_key": public_key, "meta_title": "Soporte"}
-
-    if request.method == "POST":
-        form = ContactForm(request.POST)
-        if form.is_valid():
-            recaptcha_response = request.POST.get("g-recaptcha-response")
-            url = "https://www.google.com/recaptcha/api/siteverify"
-            values = {"secret": settings.GOOGLE_RECAPTCHA_SECRET_KEY, "response": recaptcha_response}
-            data = urllib.parse.urlencode(values).encode()
-            req = urllib.request.Request(url, data=data)
-            response = urllib.request.urlopen(req)
-            result = json.loads(response.read().decode())
-
-            if result["success"]:
-                messages.success(request, "Gracias por tu mensaje, te responderemos lo antes posible.")
-                form.send_email()
-                return redirect("web:soporte")
-
-        messages.error(request, "Ha habido un error")
-        return redirect("web:soporte")
-
-    return render(request, "soporte.html", context)
 
 
 class ExcelRedirectView(RedirectView):

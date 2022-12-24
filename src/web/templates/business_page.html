@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+{% load static i18n extra crispy_forms_tags %}
+
+<head>
+    {% block meta %}{% include "meta/meta.html" %}{% endblock meta %}
+    {% block css %}{% include "complements/web_intro_styling.html" %}{% endblock css %}
+</head>
+
+<body>
+    <main>
+        <section class="section-header pb-9 pb-lg-12 bg-primary text-white">
+            <div class="container">
+                <div class="row justify-content-center mb-5">
+                    <div class="col-12 col-sm-8 col-md-7 col-lg-6 text-center">
+                        <img src="{% static 'general/assets/img/general/inversionesyfinanzas.WebP' %}" class="mb-4"
+                            height="65" alt="Logo Impact">
+                        <h1 class="display-4 mb-5 font-weight-normal">
+                            Te brindamos las mejores herramientas para agilizar tu negocio
+                        </h1>
+                        <a href="mailto:contacto@inversionesyfinanzas.xyz?Subject=Informacion%20acerca%20de%20los%20servicios"
+                            target="_blank" class="btn btn-secondary animate-up-2">
+                            <span class="icon icon-xs mr-3"><i class="fas fa-arrow-right"></i></span>
+                            Contáctanos
+                            <span class="icon icon-xs ml-3"><i class="fas fa-arrow-left"></i></span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="section pt-0">
+            <div class="container mt-n10 mt-lg-n12 z-2">
+                <div class="row justify-content-center">
+                    <div class="col-12">
+                        <img src="https://demos.creative-tim.com/impact-design-system-pro/front/assets/img/presentation-mockup.png"
+                            alt="illustration">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <section class="section section-lg pt-2 line-bottom-light">
+            <div class="container">
+                <div class="row justify-content-center mb-6">
+                    <div class="col-12 col-md-8 text-center">
+                        <h1 class="display-3 mb-4">Confían en nosotros</h1>
+                    </div>
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col-6 col-md-3 text-center mb-4">
+                        <div
+                            class="icon icon-shape icon-lg bg-white shadow-lg border-light rounded-circle icon-primary mb-4">
+                            <img src="https://bootstrapmade.com/demo/templates/HeroBiz/assets/img/clients/client-1.png"
+                                class="img-fluid" alt="">
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3 text-center mb-4">
+                        <div
+                            class="icon icon-shape icon-lg bg-white shadow-lg border-light rounded-circle icon-primary mb-4">
+                            <img src="https://bootstrapmade.com/demo/templates/HeroBiz/assets/img/clients/client-2.png"
+                                class="img-fluid" alt="">
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3 text-center mb-4">
+                        <div
+                            class="icon icon-shape icon-lg bg-white shadow-lg border-light rounded-circle icon-primary mb-4">
+                            <img src="https://bootstrapmade.com/demo/templates/HeroBiz/assets/img/clients/client-3.png"
+                                class="img-fluid" alt="">
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3 text-center mb-4">
+                        <div
+                            class="icon icon-shape icon-lg bg-white shadow-lg border-light rounded-circle icon-primary mb-4">
+                            <img src="https://bootstrapmade.com/demo/templates/HeroBiz/assets/img/clients/client-4.png"
+                                class="img-fluid" alt="">
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3 text-center mb-4">
+                        <div
+                            class="icon icon-shape icon-lg bg-white shadow-lg border-light rounded-circle icon-primary mb-4">
+                            <img src="https://bootstrapmade.com/demo/templates/HeroBiz/assets/img/clients/client-5.png"
+                                class="img-fluid" alt="">
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3 text-center mb-4">
+                        <div
+                            class="icon icon-shape icon-lg bg-white shadow-lg border-light rounded-circle icon-primary mb-4">
+                            <img src="https://bootstrapmade.com/demo/templates/HeroBiz/assets/img/clients/client-6.png"
+                                class="img-fluid" alt="">
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3 text-center mb-4">
+                        <div
+                            class="icon icon-shape icon-lg bg-white shadow-lg border-light rounded-circle icon-primary mb-4">
+                            <img src="https://bootstrapmade.com/demo/templates/HeroBiz/assets/img/clients/client-7.png"
+                                class="img-fluid" alt="">
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3 text-center mb-4">
+                        <div
+                            class="icon icon-shape icon-lg bg-white shadow-lg border-light rounded-circle icon-primary mb-4">
+                            <img src="https://bootstrapmade.com/demo/templates/HeroBiz/assets/img/clients/client-8.png"
+                                class="img-fluid" alt="">
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <section class="section section-lg bg-primary text-white">
+            <div class="container">
+                <div class="row justify-content-center mb-5 mb-lg-6">
+                    <div class="col-12 text-center">
+                        <h2 class="h1 px-lg-5">Aspectos clave</h2>
+                        <p class="lead px-lg-8">
+                            Estos son algunos puntos importantes con los que te ayudaremos a llegar a tus objetivos
+                        </p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-12 col-sm-6 col-lg-3">
+                        <div class="card bg-white shadow-soft text-primary rounded mb-4">
+                            <div class="px-3 px-lg-4 py-5 text-center">
+                                <span class="icon icon-lg mb-4"><i class="fa-solid fa-certificate"></i></span>
+                                <h5 class="font-weight-normal text-primary">Regulaciones</h5>
+                                <p>RGPC, PCI, KYC... te ayudamos a cumplir con todos los requisitos</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-lg-3">
+                        <div class="card bg-white shadow-soft text-primary rounded mb-4">
+                            <div class="px-3 px-lg-4 py-5 text-center">
+                                <span class="icon icon-lg mb-4"><i class="fa-solid fa-robot"></i></span>
+                                <h5 class="font-weight-normal text-primary">IA</h5>
+                                <p>Usamos modelos de IA para incremenar los ingresos y reducir gastos</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-lg-3">
+                        <div class="card bg-white shadow-soft text-primary rounded mb-4">
+                            <div class="px-3 px-lg-4 py-5 text-center">
+                                <span class="icon icon-lg mb-4"><i class="fas fa-mobile-alt"></i></span>
+                                <h5 class="font-weight-normal text-primary">SEO</h5>
+                                <p>Convertimos tu empresa en la principal respuesta para las búsquedas</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-lg-3">
+                        <div class="card bg-white shadow-soft text-primary rounded mb-4">
+                            <div class="px-3 px-lg-4 py-5 text-center">
+                                <span class="icon icon-lg mb-4"><i class="fa-solid fa-chart-line"></i></span>
+                                <h5 class="font-weight-normal text-primary">KPI</h5>
+                                <p>Te ayudamos a sobrepasar tus objetivos con software personalizado</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-lg-3">
+                        <div class="card bg-white shadow-soft text-primary rounded mb-4">
+                            <div class="px-3 px-lg-4 py-5 text-center">
+                                <span class="icon icon-lg mb-4"><i class="fa-solid fa-code"></i></span>
+                                <h5 class="font-weight-normal text-primary">Portabilidad</h5>
+                                <p>Llevamos tu negocio a las pantallas de tus clientes</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-lg-3">
+                        <div class="card bg-white shadow-soft text-primary rounded mb-4">
+                            <div class="px-3 px-lg-4 py-5 text-center">
+                                <span class="icon icon-lg mb-4"><i class="far fa-file-alt"></i></span>
+                                <h5 class="font-weight-normal text-primary">Documentación</h5>
+                                <p>Herramientas fácilmente integrables</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-lg-3">
+                        <div class="card bg-white shadow-soft text-primary rounded mb-4">
+                            <div class="px-3 px-lg-4 py-5 text-center">
+                                <span class="icon icon-lg mb-4"><i class="fas fa-medkit"></i></span>
+                                <h5 class="font-weight-normal text-primary">Soporte premium</h5>
+                                <p>Soporte y atención las 24 horas</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-sm-6 col-lg-3">
+                        <div class="card bg-white shadow-soft text-primary rounded mb-4">
+                            <div class="px-3 px-lg-4 py-5 text-center">
+                                <span class="icon icon-lg mb-4"><i class="fa-solid fa-bullhorn"></i></span>
+                                <h5 class="font-weight-normal text-primary">Alcance</h5>
+                                <p>Aumentamos el alancance de tu marca</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="row justify-content-center mt-4">
+                <div class="col col-md-10 text-center">
+                    <a href="mailto:contacto@inversionesyfinanzas.xyz?Subject=Informacion%20acerca%20de%20los%20servicios"
+                        target="_blank" class="btn btn-secondary animate-up-2">
+                        <span class="icon icon-xs mr-3"><i class="fas fa-arrow-right"></i></span>
+                        Contáctanos
+                        <span class="icon icon-xs ml-3"><i class="fas fa-arrow-left"></i></span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <section class="section section-lg">
+            <div class="container">
+                <div class="row">
+                    <div class="col-12">
+                        <h2 class="display-2 text-center mb-5 mb-lg-7">Nuestras categorías</h2>
+                    </div>
+                </div>
+                <div class="row justify-content-between align-items-center mb-5 mb-lg-7">
+                    <div class="col-lg-5">
+                        <h2 class="h1">Servicios de desarrollo</h2>
+                        <p class="lead mb-4">Software a medida</p>
+                        <p class="mb-5">Desarrollo de software, como la creación de páginas web, el desarrollo de
+                            aplicaciones móviles y el uso de la inteligencia artificial para mejorar la rentabilidad y
+                            KPIs</p>
+                        <div class="d-flex justify-content-between align-items-center mt-lg-4 mb-4">
+                            <div class="d-block">
+                                <a href="#contact-section"
+                                    class="btn btn-primary mr-3 animate-up-2 mb-3">Información</a>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6">
+                        <img src="https://demos.creative-tim.com/impact-design-system/front/assets/img/presentation-mockup-3.jpg"
+                            alt="Dashboard Preview">
+                    </div>
+                </div>
+                <div class="row justify-content-center">
+                    <div class="col-6 col-md-3 text-center mb-4">
+                        <div
+                            class="icon icon-shape icon-lg bg-white shadow-lg border-light rounded-circle icon-primary mb-4">
+                            <i class="fa-solid fa-robot"></i>
+                        </div>
+                        <h3 class="font-weight-bolder">IA</h3>
+                        <p class="text-gray">Utiliza datos para mejorar</p>
+                    </div>
+                    <div class="col-6 col-md-3 text-center mb-4">
+                        <div
+                            class="icon icon-shape icon-lg bg-white shadow-lg border-light rounded-circle icon-primary mb-4">
+                            <i class="fas fa-puzzle-piece"></i>
+                        </div>
+                        <h3 class="font-weight-bolder">+100</h3>
+                        <p class="text-gray">Componentes seleccionables</p>
+                    </div>
+                    <div class="col-6 col-md-3 text-center">
+                        <div
+                            class="icon icon-shape icon-lg bg-white shadow-lg border-light rounded-circle icon-primary mb-4">
+                            <i class="fa-solid fa-magnifying-glass-chart"></i>
+                        </div>
+                        <h3 class="font-weight-bolder">Análisis</h3>
+                        <p class="text-gray">Analiza tus datos</p>
+                    </div>
+                    <div class="col-6 col-md-3 text-center">
+                        <div
+                            class="icon icon-shape icon-lg bg-white shadow-lg border-light rounded-circle icon-primary mb-4">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <h3 class="font-weight-bolder">Totalmente</h3>
+                        <p class="text-gray">Documentado</p>
+                    </div>
+                </div>
+
+                <div class="row justify-content-between align-items-center mb-5 mb-lg-7">
+                    <div class="col-lg-5 order-lg-2">
+                        <h2 class="h1">Servicios de marketing digital</h2>
+                        <p class="lead mb-4">Mejora tu presencia en línea</p>
+                        <p class="mb-5">Servicios relacionados con la promoción y la presencia en línea de su empresa,
+                            como el posicionamiento SEO, la creación de contenido, el manejo de redes sociales y la
+                            generación y exportación de reportes.</p>
+                        <div class="d-flex justify-content-between align-items-center mt-lg-4 mb-4">
+                            <div class="d-block">
+                                <a href="#contact-section"
+                                    class="btn btn-secondary mr-3 animate-up-2 mb-3">Información</a>
+
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-6 order-lg-1">
+                        <img src="https://demos.creative-tim.com/impact-design-system/front/assets/img/presentation-mockup-2.jpg"
+                            alt="Front pages overview">
+                    </div>
+                </div>
+                <div class="row justify-content-center mb-5 mb-lg-7">
+                    <div class="col-6 col-md-3 text-center mb-4">
+                        <div
+                            class="icon icon-shape icon-lg bg-white shadow-lg border-light rounded-circle icon-secondary mb-4">
+                            <i class="fa-solid fa-chart-simple"></i>
+                        </div>
+                        <h3 class="font-weight-bolder">RRSS</h3>
+                        <p class="text-gray">LLeva tu marca a todas las redes</p>
+                    </div>
+                    <div class="col-6 col-md-3 text-center mb-4">
+                        <div
+                            class="icon icon-shape icon-lg bg-white shadow-lg border-light rounded-circle icon-secondary mb-4">
+                            <i class="fa-solid fa-magnifying-glass-dollar"></i>
+                        </div>
+                        <h3 class="font-weight-bolder">SEO</h3>
+                        <p class="text-gray">Posiciona tu marca</p>
+                    </div>
+                    <div class="col-6 col-md-3 text-center">
+                        <div
+                            class="icon icon-shape icon-lg bg-white shadow-lg border-light rounded-circle icon-secondary mb-4">
+                            <i class="fa-solid fa-arrows-to-eye"></i>
+                        </div>
+                        <h3 class="font-weight-bolder">Web</h3>
+                        <p class="text-gray">Mejora tu presencia digital</p>
+                    </div>
+                    <div class="col-6 col-md-3 text-center">
+                        <div
+                            class="icon icon-shape icon-lg bg-white shadow-lg border-light rounded-circle icon-secondary mb-4">
+                            <i class="fa-solid fa-paper-plane"></i>
+                        </div>
+                        <h3 class="font-weight-bolder">Comunicación</h3>
+                        <p class="text-gray">Agiliza la comunicación interna</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section-header bg-primary text-white" id="contact-section">
+            {% include "complements/messages.html" %}
+            <div class="container">
+                <div class="row justify-content-center mb-6">
+                    <div class="col-12 col-md-10 text-center">
+                        <h1 class="display-2 mb-3">Háblanos</h1>
+                        <p class="lead px-5">
+                            Contáctanos y coméntanos qué necesitas. Nuestro equipo de expertos se pondrá en contacto
+                            contigo enseguida para proponerte una lista de soluciones con precios que se adaptan a tu
+                            presupuesto
+                        </p>
+                    </div>
+                </div>
+                {% include "support_form.html" %}
+            </div>
+        </section>
+
+
+        <section class="section section-lg bg-soft">
+            <div class="container">
+                <div class="row justify-content-center">
+                    <div class="col-12">
+                        <h3 class="mb-5 text-center">Métodos de pago acceptados.</h3>
+                    </div>
+                    <div class="col-12 text-black text-center mb-5">
+                        <div class="icon icon-lg mr-2 mr-sm-3">
+                            <i class="fab fa-cc-visa"></i>
+                        </div>
+                        <div class="icon icon-lg mr-2 mr-sm-3">
+                            <i class="fab fa-bitcoin"></i>
+                        </div>
+                        <div class="icon icon-lg mr-2 mr-sm-3">
+                            <i class="fab fa-cc-mastercard"></i>
+                        </div>
+                        <div class="icon icon-lg mr-2 mr-sm-3">
+                            <i class="fab fa-cc-stripe"></i>
+                        </div>
+                        <div class="icon icon-lg mr-2 mr-sm-3">
+                            <i class="fab fa-cc-amazon-pay"></i>
+                        </div>
+                        <div class="icon icon-lg mr-2 mr-sm-3">
+                            <i class="fab fa-cc-paypal"></i>
+                        </div>
+                    </div>
+                    <div class="col-12 text-center">
+                        Contáctanos <a
+                            href="mailto:contacto@inversionesyfinanzas.xyz?Subject=Informacion%20acerca%20de%20los%20servicios">
+                            <strong>contacto@inversionesyfinanzas.xyz</strong></a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    {% block javascript %}{% include "complements/web_intro_scripts.html" %}
+
+    {% endblock javascript %}
+
+</body>
+
+</html>

@@ -15,7 +15,7 @@ from src.web.views import (
     ManageWebView,
     RoadmapDetailView,
     RoadmapListView,
-    soporte_view,
+    SupportFormView,
 )
 
 app_name = "web"
@@ -23,7 +23,7 @@ urlpatterns = [
     path("", HomePage.as_view(), name="inicio"),
     path("asuntos-legales/<slug>/", LegalPages.as_view(), name="asuntos_legales"),
     path("excel-analisis/", ExcelRedirectView.as_view(), name="excel"),
-    path("soporte/", soporte_view, name="soporte"),
+    path("soporte/", SupportFormView.as_view(), name="soporte"),
     path("manage-web/", ManageWebView.as_view(), name="manage_web"),
     path("roadmap/", RoadmapListView.as_view(), name="roadmap"),
     path("roadmap-item/<slug>/", RoadmapDetailView.as_view(), name="roadmap_item"),

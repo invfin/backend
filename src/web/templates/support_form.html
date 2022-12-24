@@ -1,0 +1,33 @@
+{% load static i18n extra crispy_forms_tags %}
+<div class="card text-black">
+    <form method="POST" action="{% url post_url %}">
+        {% csrf_token %}
+        {% for field in form %}
+        {% if field.errors %}
+        <div class="alert alert-danger" role="alert">
+            {{ field.errors|striptags }}
+        </div>
+        {% endif %}
+        {% endfor %}
+        <div class="card-body">
+            <div class="row">
+                <div class="col-lg-6 col-sm-12">
+                    {{ form.name|as_crispy_field}}
+                </div>
+                <div class="col-lg-6 col-sm-12">
+                    {{ form.email|as_crispy_field}}
+                </div>
+                <div class="col-12">
+                    {{ form.message|as_crispy_field}}
+                </div>
+                <div class="col-12">
+                    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+                    <div name='g-recaptcha' class="g-recaptcha" data-sitekey="{{public_key}}"></div>
+                </div>
+                <div class="col-12">
+                    <button type="submit" class="btn btn-primary col-12">Enviar</button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

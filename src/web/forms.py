@@ -23,11 +23,18 @@ class ContactForm(Form):
     email = EmailField(label="Email", required=True)
     message = CharField(widget=Textarea, label="Mensaje", required=True)
 
+    def __init__(self, email_source: str = "soporte", *args, **kwargs) -> None:
+        super().__init__(*args, **kwargs)
+        self.email_source = email_source
+
     def send_email(self):
         name = self.cleaned_data["name"]
         email = self.cleaned_data["email"]
         message = self.cleaned_data["message"]
-        EmailingSystem.simple_email("Nuevo mensaje desde suport", f"{name} con el email {email} ha enviado {message}")
+        EmailingSystem.simple_email(
+            f"Nuevo mensaje desde {self.email_source}",
+            f"{name}<br>Con el email: {email}<br>{message}",
+        )
 
 
 class WebEmailForm(ModelForm):

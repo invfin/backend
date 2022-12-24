@@ -445,16 +445,40 @@ MESSAGE_TAGS = {
 # ------------------------------------------------------------------------------
 GEOIP_PATH = str(ROOT_DIR / "geoip")
 
+GOOGLE_RECAPTCHA_SECRET_KEY_NAME = "TEST_GOOGLE_RECAPTCHA_SECRET_KEY"
+GOOGLE_RECAPTCHA_PUBLIC_KEY_NAME = "TEST_GOOGLE_RECAPTCHA_PUBLIC_KEY"
+
+STRIPE_PRIVATE_KEY = "TEST_STRIPE_PRIVATE"
+STRIPE_PUBLIC_KEY = "TEST_STRIPE_PUBLIC"
+WEBHOOK_SECRET_KEY = "WEBHOOK_SECRET"
+
+if IS_PROD:
+    GOOGLE_RECAPTCHA_SECRET_KEY_NAME = "GOOGLE_RECAPTCHA_SECRET_KEY"
+    GOOGLE_RECAPTCHA_PUBLIC_KEY_NAME = "GOOGLE_RECAPTCHA_PUBLIC_KEY"
+
+    STRIPE_PRIVATE_KEY = "STRIPE_PRIVATE"
+    STRIPE_PUBLIC_KEY = "STRIPE_PUBLIC"
+    WEBHOOK_SECRET_KEY = "WEBHOOK_SECRET"
+
+# GOOGLE KEYS
+# ------------------------------------------------------------------------------
+GOOGLE_RECAPTCHA_SECRET_KEY = env.str(GOOGLE_RECAPTCHA_SECRET_KEY_NAME, "not-set")
+GOOGLE_RECAPTCHA_PUBLIC_KEY = env.str(GOOGLE_RECAPTCHA_PUBLIC_KEY_NAME, "not-set")
+
+
+# STRIPE
+# ------------------------------------------------------------------------------
+STRIPE_PRIVATE = env.str(STRIPE_PRIVATE_KEY, "not-set")
+STRIPE_PUBLIC = env.str(STRIPE_PUBLIC_KEY, "not-set")
+WEBHOOK_SECRET = env.str(WEBHOOK_SECRET_KEY, "not-set")
+
+
 # Financial data KEYS
 # ------------------------------------------------------------------------------
 FINNHUB_TOKEN = env.str("FINNHUB_TOKEN", "not-set")
 FINNHUB_SANDBOX_TOKEN = env.str("FINNHUB_SANDBOX_TOKEN", "not-set")
 FINPREP_KEY = env.str("FINPREP_KEY", "not-set")
 
-# GOOGLE KEYS
-# ------------------------------------------------------------------------------
-GOOGLE_RECAPTCHA_SECRET_KEY = env.str("GOOGLE_RECAPTCHA_SECRET_KEY", "not-set")
-GOOGLE_RECAPTCHA_PUBLIC_KEY = env.str("GOOGLE_RECAPTCHA_PUBLIC_KEY", "not-set")
 
 # FACEBOOK KEYS
 # ------------------------------------------------------------------------------
@@ -504,17 +528,3 @@ if env.bool("USE_IMAGEKIT", False):
     IMAGE_KIT = ImageKit(
         private_key=IMAGEKIT_PRIVATE_KEY, public_key=IMAGEKIT_PUBLIC_KEY, url_endpoint=IMAGEKIT_URL_ENDPOINT
     )
-
-STRIPE_PRIVATE_KEY = "TEST_STRIPE_PRIVATE"
-STRIPE_PUBLIC_KEY = "TEST_STRIPE_PUBLIC"
-WEBHOOK_SECRET_KEY = "WEBHOOK_SECRET"
-if IS_PROD:
-    STRIPE_PRIVATE_KEY = "STRIPE_PRIVATE"
-    STRIPE_PUBLIC_KEY = "STRIPE_PUBLIC"
-    WEBHOOK_SECRET_KEY = "WEBHOOK_SECRET"
-
-# STRIPE
-# ------------------------------------------------------------------------------
-STRIPE_PRIVATE = env.str(STRIPE_PRIVATE_KEY, "not-set")
-STRIPE_PUBLIC = env.str(STRIPE_PUBLIC_KEY, "not-set")
-WEBHOOK_SECRET = env.str(WEBHOOK_SECRET_KEY, "not-set")

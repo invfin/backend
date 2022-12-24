@@ -7,3 +7,6 @@ HEADERS = {
 }
 
 REQUESTS_MAX_RETRIES = 10
+
+
+BUSINESS_SUBDOMAIN = "business"

@@ -4,6 +4,7 @@ import functools
 import json
 import os
 import random
+from typing import Optional, Type
 from urllib.parse import urlunparse
 
 from django.conf import settings
@@ -13,6 +14,8 @@ from django.template.defaultfilters import slugify
 from django.urls import reverse as simple_reverse
 
 from src.public_blog.models import WritterProfile
+
+from .constants import BUSINESS_SUBDOMAIN
 
 User = get_user_model()
 FULL_DOMAIN = settings.FULL_DOMAIN
@@ -104,7 +107,7 @@ class UniqueCreator:
 class HostChecker:
     def __init__(self, request) -> None:
         self.request = request
-        self.host = self.request.get_host().split(".")[0]
+        self.host = self.get_host()
         self.urlconf = "src.public_blog.urls"
         #: :func:`reverse` bound to insecure (non-HTTPS) URLs scheme
         self.insecure_reverse = functools.partial(self.reverse, scheme="http")
@@ -115,12 +118,18 @@ class HostChecker:
         #: :func:`reverse` bound to be relative to the current scheme
         self.relative_reverse = functools.partial(self.reverse, scheme="")
 
-    def check_writter(self):
-        return WritterProfile.objects.filter(host_name=self.host).exists()
+    def get_host(self) -> str:
+        return self.request.get_host().split(".")[0]
 
-    def return_writter(self):
-        if self.check_writter():
-            return WritterProfile.objects.get(host_name=self.host).user
+    def host_is_business(self) -> bool:
+        return self.host == BUSINESS_SUBDOMAIN
+
+    def get_writter(self) -> Optional[WritterProfile]:
+        return WritterProfile.objects.filter(host_name=self.host).first()
+
+    def return_user_writter(self) -> Optional[Type]:
+        writter = self.get_writter()
+        return writter.user if writter else None
 
     def current_site_domain(self):
         domain = settings.CURRENT_DOMAIN
@@ -158,7 +167,7 @@ class HostChecker:
         """
         urlconf = settings.SUBDOMAIN_URLCONFS.get(subdomain, settings.ROOT_URLCONF)
 
-        domain = self.get_domain()
+        domain = self.current_site_domain()
         if subdomain is not None:
             domain = "%s.%s" % (subdomain, domain)
 

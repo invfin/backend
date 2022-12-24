@@ -27,6 +27,9 @@ up-b:
 up:
 	docker compose -f local.yml up $(ar)
 
+up-mail:
+	docker compose -f local.yml up mailhog
+
 up-complements:
 	docker compose -f local.yml up redis celeryworker mailhog celerybeat flower
 
