@@ -33,7 +33,11 @@ class TestNotificationSystem(TestCase):
         DjangoTestingModel.create(WritterProfile, user=cls.writter)
         DjangoTestingModel.create(Profile, user=cls.user_1)
         DjangoTestingModel.create(Profile, user=cls.user_2)
-        cls.question = DjangoTestingModel.create(Question, author=cls.user_1)
+        cls.question = DjangoTestingModel.create(
+            Question,
+            author=cls.user_1,
+            content="contenido de la pregunta",
+        )
         cls.answer = DjangoTestingModel.create(
             Answer,
             author=DjangoTestingModel.create(
@@ -203,7 +207,11 @@ class TestNotificationSystem(TestCase):
         first_notif = Notification.objects.all().first()
         title = self.question.title[:15]
         assert f"{constants.NEW_QUESTION} {title}..." == announce_new_question["subject"]
-        assert self.question.content == announce_new_question["content"]
+        assert (
+            "Hay una nueva pregunta: \ncontenido de la pregunta\n ¿Conoces la respuesta?"
+            == announce_new_question["content"]
+        )
+        assert "Se el primero en ayudar y gana créditos extras" == announce_new_question["call_to_action"]
         assert self.question.shareable_link == announce_new_question["url_to_join"]
         assert "notifications" == announce_new_question["app_label"]
         assert "Notification" == announce_new_question["object_name"]

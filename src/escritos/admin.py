@@ -1,11 +1,12 @@
 from django.contrib import admin
 from django.db import models
-from django.utils.html import format_html
 from django.urls import reverse
+from django.utils.html import format_html
 
 from django_json_widget.widgets import JSONEditorWidget
 from import_export.admin import ImportExportActionModelAdmin
 
+from .filters import TermsHasInformationCleanFilter, TermsHasRequestImprovementFilter
 from .models import Term, TermContent, TermCorrection, TermsComment, TermsRelatedToResume
 
 
@@ -72,6 +73,8 @@ class TermAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
     ]
     list_filter = [
         "status",
+        TermsHasRequestImprovementFilter,
+        TermsHasInformationCleanFilter,
     ]
     search_fields = [
         "title",
