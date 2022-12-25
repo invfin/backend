@@ -33,7 +33,7 @@ class TermManager(BaseManager):
                 "checkings__has_information_clean__state": "no",
                 "checkings__has_request_improvement__state": "no",
             }
-        )
+        ).order_by("total_views")
 
     def cleaning_requested(self):
         return self.filter(

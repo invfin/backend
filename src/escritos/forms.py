@@ -18,6 +18,7 @@ class TermAndTermContentForm(BaseEscritoForm):
     def save(self, *args, **kwrags):
         if kwrags.pop("modify_checking"):
             self.instance.modify_checking("information_clean", True)
+            self.instance.modify_checking("request_improvement", True)
         return super().save(*args, **kwrags)
 
 

@@ -52,7 +52,8 @@ class TermAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
 
     list_display = [
         "id",
-        "term_link",
+        "edit_term",
+        "view_term",
         "title",
         "slug",
         "category",
@@ -60,9 +61,6 @@ class TermAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
         "total_votes",
         "total_views",
         "times_shared",
-        "published_at",
-        "created_at",
-        "updated_at",
     ]
 
     list_editable = [
@@ -84,15 +82,17 @@ class TermAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
         ("content", "Term parts"),
     ]
 
-    def save_model(self, request, obj, form, change) -> None:
-        return super().save_model(request, obj, form, change)
-
-    def term_link(self, obj):
+    def edit_term(self, obj):
         link = reverse("web:manage_single_term", args=(obj.slug,))
-        # link = obj.get_absolute_url()
         return format_html(f'<a target="_blank" href="{link}">{obj.title}</a>')
 
-    term_link.short_description = "term"
+    edit_term.short_description = "Edit term"
+
+    def view_term(self, obj):
+        link = obj.get_absolute_url()
+        return format_html(f'<a target="_blank" href="{link}">{obj.title}</a>')
+
+    view_term.short_description = "View term"
 
 
 @admin.register(TermCorrection)

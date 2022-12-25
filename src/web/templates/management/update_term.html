@@ -33,7 +33,7 @@
             {% endif %}
             {% endfor %}
             <div class="card-body">
-
+                <input type="submit" name="del_btn{{ form.instance.id }}" value="Delete" />
                 {{ form|crispy }}
             </div>
         </div>
