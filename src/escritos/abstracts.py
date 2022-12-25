@@ -1,3 +1,5 @@
+from typing import List
+
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db.models import (
@@ -59,14 +61,10 @@ class AbstractWrittenContent(AbstractTimeStampedModel, CommentsMixin, VotesMixin
     def __str__(self):
         return self.title
 
-    def add_tags(self, tags):
-        for tag in tags:
-            if tag == "":
-                continue
-            tag, created = Tag.objects.get_or_create(slug=tag.lower())
-            if tag in self.tags.all():
-                continue
-            self.tags.add(tag)
+    def add_tags(self, tags: List[str]) -> None:
+        tags = Tag.objects.get_content_tags(tags)
+        self.tags.add(*tags)
+        return None
 
 
 class AbstractPublishableContent(AbstractWrittenContent):

@@ -1,9 +1,8 @@
-from django.contrib.auth import get_user_model
 from django.db.models import CharField, Model
 
 from src.general.mixins import BaseToAllMixin
 
-User = get_user_model()
+from .managers import TagManager
 
 
 class AbstractClassification(Model, BaseToAllMixin):
@@ -39,6 +38,8 @@ class Category(AbstractClassification):
 
 
 class Tag(AbstractClassification):
+    objects = TagManager()
+
     class Meta:
         verbose_name = "Tag"
         db_table = "tags"

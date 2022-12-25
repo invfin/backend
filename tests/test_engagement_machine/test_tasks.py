@@ -22,17 +22,46 @@ from src.web.models import WebsiteEmail
 class TestEmailEngamentTask(TestCase):
     @classmethod
     def setUpTestData(cls) -> None:
-        cls.user_for_all = DjangoTestingModel.create(User, is_bot=False, for_testing=False, first_name="for_all", last_name="na",)
-        cls.user_for_category = DjangoTestingModel.create(User, id=987, is_bot=False, for_testing=False, first_name="for_category", last_name="na",)
-        cls.user_selected = DjangoTestingModel.create(User, is_bot=False, for_testing=False, first_name="selected", last_name="na",)
-        cls.user_bot = DjangoTestingModel.create(User, is_bot=True, for_testing=False)
-        cls.user_testing = DjangoTestingModel.create(User, is_bot=False, for_testing=True)
+        cls.user_for_all = DjangoTestingModel.create(
+            User,
+            is_bot=False,
+            for_testing=False,
+            first_name="for_all",
+            last_name="na",
+        )
+        cls.user_for_category = DjangoTestingModel.create(
+            User,
+            id=987,
+            is_bot=False,
+            for_testing=False,
+            first_name="for_category",
+            last_name="na",
+        )
+        cls.user_selected = DjangoTestingModel.create(
+            User,
+            is_bot=False,
+            for_testing=False,
+            first_name="selected",
+            last_name="na",
+        )
+        cls.user_bot = DjangoTestingModel.create(
+            User,
+            is_bot=True,
+            for_testing=False,
+            first_name="r",
+        )
+        cls.user_testing = DjangoTestingModel.create(
+            User,
+            is_bot=False,
+            for_testing=True,
+            first_name="s",
+        )
         cls.email_for_all = DjangoTestingModel.create(
             WebsiteEmail,
             id=86,
             whom_to_send=web_constants.EMAIL_ALL,
             sent=False,
-            date_to_send=datetime(2022, 10 ,5),
+            date_to_send=datetime(2022, 10, 5),
         )
         users_category = DjangoTestingModel.create(UsersCategory)
         users_category.users.add(cls.user_for_category)
