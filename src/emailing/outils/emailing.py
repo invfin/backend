@@ -68,8 +68,8 @@ class EmailingSystem:
 
     @staticmethod
     def append_slash_to_call_to_action_url(call_to_action_url: str) -> str:
-        if not call_to_action_url.startswith("/"):
-            call_to_action_url = f"/{call_to_action_url}"
+        # if not call_to_action_url.startswith("/"):
+        #     call_to_action_url = f"/{call_to_action_url}"
         return call_to_action_url
 
     @classmethod

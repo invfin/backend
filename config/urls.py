@@ -5,10 +5,9 @@ from django.contrib.sitemaps.views import sitemap
 from django.urls import include, path
 from django.views import defaults as default_views
 
-from rest_framework.documentation import include_docs_urls
-
 from src.api.views import obtain_auth_key
 from src.seo.sitemaps import CompanySitemap, PublicBlogSitemap, QuestionSitemap, TermSitemap, SuperinvestorSitemap
+from src.general.views import Handler404
 
 sitemaps = {
     "blogs": PublicBlogSitemap,
@@ -50,7 +49,7 @@ urlpatterns += [
 ]
 
 handler403 = "src.general.views.handler403"
-handler404 = "src.general.views.handler404"
+handler404 = Handler404.as_view()
 handler500 = "src.general.views.handler500"
 
 if settings.DEBUG:

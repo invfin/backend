@@ -1,21 +1,17 @@
 import json
 
-from django.apps import apps
+from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.db.models import Q
-from django.http.response import HttpResponse, JsonResponse
+from django.http.response import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.shortcuts import redirect, render
-from django.utils.encoding import force_text
-from django.utils.http import urlsafe_base64_decode
 from django.views.generic import ListView, RedirectView, TemplateView
 
 from src.empresas.models import Company
 from src.escritos.models import FavoritesTermsHistorial, FavoritesTermsList, Term
-from src.notifications import constants
 from src.notifications.models import Notification
-from src.notifications.tasks import prepare_notification_task
 from src.screener.models import FavoritesStocksHistorial
 from src.super_investors.models import FavoritesSuperinvestorsHistorial, FavoritesSuperinvestorsList, Superinvestor
 
@@ -28,12 +24,25 @@ def handler403(request, exception):
     return render(request, "errors/403.html")
 
 
-def handler404(request, exception):
-    return render(request, "errors/404.html")
-
-
 def handler500(request):
     return render(request, "errors/500.html")
+
+
+class Handler404(TemplateView):
+    template_name = "errors/404.html"
+
+    def handle_wrong_urls(self):
+        if settings.FULL_DOMAIN in self.request.get_full_path_info():
+            full_path = self.request.build_absolute_uri()
+            full_path = full_path.replace(f"{settings.FULL_DOMAIN}/{settings.FULL_DOMAIN}", settings.FULL_DOMAIN)
+            return full_path
+        return None
+
+    def get(self, request, *args, **kwargs):
+        corrected_url = self.handle_wrong_urls()
+        if corrected_url:
+            return HttpResponseRedirect(corrected_url)
+        return super().get(request, *args, **kwargs)
 
 
 def suggest_list_search(request):
