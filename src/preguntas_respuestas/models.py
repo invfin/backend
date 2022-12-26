@@ -15,7 +15,7 @@ from .managers import QuestionManager
 
 
 class Question(AbstractWrittenContent):
-    content = RichTextField(config_name="writter")
+    content = RichTextField(config_name="writer")
     is_answered = BooleanField(default=False)
     hide_question = BooleanField(default=False)
     has_accepted_answer = BooleanField(default=False)
@@ -129,7 +129,7 @@ class Answer(AbstractTimeStampedModel, CommentsMixin, VotesMixin):
         null=True,
         related_name="answers_apported",
     )
-    content = RichTextField(config_name="writter")
+    content = RichTextField(config_name="writer")
     question_related = ForeignKey(
         Question,
         on_delete=CASCADE,

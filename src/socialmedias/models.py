@@ -20,7 +20,7 @@ from src.escritos.models import Term
 from src.general.abstracts import AbstractTimeStampedModel
 from src.general.mixins import BaseToAllMixin
 from src.preguntas_respuestas.models import Question
-from src.public_blog.models import PublicBlog, WritterProfile
+from src.public_blog.models import PublicBlog, WriterProfile
 
 from .constants import SOCIAL_MEDIAS
 from .managers import SocialmediaAuthManager
@@ -85,9 +85,7 @@ class BlogSharedHistorial(AbstractContentShared):
 
 
 class ProfileSharedHistorial(AbstractContentShared):
-    content_shared = ForeignKey(
-        WritterProfile, on_delete=CASCADE, null=True, blank=True, related_name="profiles_shared"
-    )
+    content_shared = ForeignKey(WriterProfile, on_delete=CASCADE, null=True, blank=True, related_name="profiles_shared")
 
     class Meta:
         verbose_name = "Profile shared"

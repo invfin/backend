@@ -112,7 +112,7 @@ class UserAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
                     "last_name",
                     "email",
                     "username",
-                    "is_writter",
+                    "is_writer",
                     "just_newsletter",
                 ],
             },
@@ -145,7 +145,7 @@ class UserAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
 
     list_display = [
         "username",
-        "is_writter",
+        "is_writer",
         "just_newsletter",
         "just_correction",
         "for_testing",
@@ -157,7 +157,7 @@ class UserAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
     search_fields = ["first_name", "last_name", "username", "email"]
 
     list_editable = [
-        "is_writter",
+        "is_writer",
         "just_newsletter",
         "just_correction",
         "for_testing",
@@ -165,7 +165,7 @@ class UserAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
     ]
 
     list_filter = [
-        "is_writter",
+        "is_writer",
         "just_newsletter",
         "just_correction",
         "for_testing",
@@ -175,7 +175,7 @@ class UserAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
     jazzmin_form_tabs = [
         ("general", "User"),
         ("profile", "Profile"),
-        ("writter", "Writter"),
+        ("writer", "writer"),
         ("meta", "Meta"),
         ("credits", "Credits"),
         ("purchases", "Purchases"),

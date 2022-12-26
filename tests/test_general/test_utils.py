@@ -3,7 +3,7 @@ from django.test import TestCase, override_settings
 from bfet import DjangoTestingModel
 
 from src.general.utils import HostChecker
-from src.public_blog.models import WritterProfile
+from src.public_blog.models import WriterProfile
 from src.users.models import User
 from src.general.constants import BUSINESS_SUBDOMAIN
 
@@ -22,8 +22,8 @@ class TestHostChecker(TestCase):
         cls.request = MockRequest("host_name")
         cls.business_request = MockRequest(BUSINESS_SUBDOMAIN)
         cls.user = DjangoTestingModel.create(User)
-        cls.writter = DjangoTestingModel.create(
-            WritterProfile,
+        cls.writer = DjangoTestingModel.create(
+            WriterProfile,
             user=cls.user,
             host_name="host_name",
         )
@@ -32,13 +32,13 @@ class TestHostChecker(TestCase):
         assert HostChecker(self.request).get_host() == "host_name"
         assert HostChecker(self.business_request).get_host() == "business"
 
-    def test_get_writter(self):
-        assert HostChecker(self.business_request).get_writter() is None
-        assert HostChecker(self.request).get_writter() == self.writter
+    def test_get_writer(self):
+        assert HostChecker(self.business_request).get_writer() is None
+        assert HostChecker(self.request).get_writer() == self.writer
 
-    def test_return_user_writter(self):
-        assert HostChecker(self.business_request).return_user_writter() is None
-        assert HostChecker(self.request).return_user_writter() == self.user
+    def test_return_user_writer(self):
+        assert HostChecker(self.business_request).return_user_writer() is None
+        assert HostChecker(self.request).return_user_writer() == self.user
 
     def test_host_is_business(self):
         assert HostChecker(self.business_request).host_is_business() is True

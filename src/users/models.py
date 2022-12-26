@@ -38,7 +38,7 @@ def default_dict():
 class User(AbstractUser, UserExtended):
     first_name = CharField(_("Nombre"), blank=True, max_length=255)
     last_name = CharField(_("Apellidos"), blank=True, max_length=255)
-    is_writter = BooleanField(default=False)
+    is_writer = BooleanField(default=False)
     just_newsletter = BooleanField(default=False)
     just_correction = BooleanField(default=False)
     last_time_seen = DateTimeField(blank=True, null=True)

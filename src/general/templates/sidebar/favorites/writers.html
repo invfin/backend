@@ -1,0 +1,19 @@
+{% for writer in request.user.fav_writers %}
+<li class="nav-item">
+  <a href="{{writer.custom_url}}" class="nav-link">
+    <span class="sidenav-mini-icon"> D </span>
+    <span class="sidenav-normal">
+      {{writer.full_name}}
+    </span>
+  </a>
+</li>
+{% empty %}
+<li class="nav-item">
+  <a href="{% url 'public_blog:blog_list' %}" class="nav-link">
+    <span class="sidenav-mini-icon"> D </span>
+    <span class="sidenav-normal btn btn-primary btn-sm">
+      Añade un escritor
+    </span>
+  </a>
+</li>
+{% endfor %}

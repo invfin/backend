@@ -117,10 +117,10 @@ class EmailTest(TestCase):
         """
         TODO test it with all the web objectives
         """
-        public_blog_sender = EmailingSystem(constants.EMAIL_FOR_PUBLIC_BLOG)._prepare_sender("writter")
+        public_blog_sender = EmailingSystem(constants.EMAIL_FOR_PUBLIC_BLOG)._prepare_sender("writer")
         notif_sender = EmailingSystem(constants.EMAIL_FOR_NOTIFICATION)._prepare_sender()
         web_sender = EmailingSystem(constants.EMAIL_FOR_WEB, "Not in web objective")._prepare_sender()
-        assert "writter <EMAIL_NEWSLETTER@example.com>" == public_blog_sender
+        assert "writer <EMAIL_NEWSLETTER@example.com>" == public_blog_sender
         assert "InvFin <EMAIL_DEFAULT@example.com>" == notif_sender
         assert "Lucas - InvFin <MAIN_EMAIL@example.com>" == web_sender
 

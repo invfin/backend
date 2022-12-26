@@ -9,7 +9,7 @@ from src.notifications import constants
 from src.notifications.models import Notification
 from src.notifications.outils.notifications import NotificationSystem
 from src.preguntas_respuestas.models import Answer, AnswerComment, QuesitonComment, Question
-from src.public_blog.models import NewsletterFollowers, PublicBlog, WritterProfile
+from src.public_blog.models import NewsletterFollowers, PublicBlog, WriterProfile
 from src.users.models import Profile
 
 User = get_user_model()
@@ -18,18 +18,18 @@ User = get_user_model()
 class TestNotificationSystem(TestCase):
     @classmethod
     def setUpTestData(cls) -> None:
-        DjangoTestingModel.create(User, is_writter=False, is_bot=True)
-        cls.writter = DjangoTestingModel.create(User, is_writter=True, is_bot=False)
+        DjangoTestingModel.create(User, is_writer=False, is_bot=True)
+        cls.writer = DjangoTestingModel.create(User, is_writer=True, is_bot=False)
         cls.user_1 = DjangoTestingModel.create(
             User,
-            is_writter=False,
+            is_writer=False,
             first_name="question",
             last_name="author",
             is_bot=False,
         )
-        cls.user_2 = DjangoTestingModel.create(User, is_writter=False, is_bot=False)
-        DjangoTestingModel.create(Profile, user=cls.writter)
-        DjangoTestingModel.create(WritterProfile, user=cls.writter)
+        cls.user_2 = DjangoTestingModel.create(User, is_writer=False, is_bot=False)
+        DjangoTestingModel.create(Profile, user=cls.writer)
+        DjangoTestingModel.create(WriterProfile, user=cls.writer)
         DjangoTestingModel.create(Profile, user=cls.user_1)
         DjangoTestingModel.create(Profile, user=cls.user_2)
         cls.question = DjangoTestingModel.create(
@@ -67,8 +67,8 @@ class TestNotificationSystem(TestCase):
                 question_related=DjangoTestingModel.create(Question, author=DjangoTestingModel.create(User)),
             ),
         )
-        cls.followers = DjangoTestingModel.create(NewsletterFollowers, user=cls.writter)
-        cls.blog = DjangoTestingModel.create(PublicBlog, author=cls.writter)
+        cls.followers = DjangoTestingModel.create(NewsletterFollowers, user=cls.writer)
+        cls.blog = DjangoTestingModel.create(PublicBlog, author=cls.writer)
         cls.followers.followers.add(cls.user_1, cls.user_2)
 
     def test_save_notif(self):

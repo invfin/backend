@@ -19,7 +19,7 @@ from src.content_creation.outils.content_creator import (
 from src.empresas.models import Company, IncomeStatement
 from src.escritos.models import Term
 from src.preguntas_respuestas.models import Question
-from src.public_blog.models import PublicBlog, WritterProfile
+from src.public_blog.models import PublicBlog, WriterProfile
 from src.socialmedias import constants
 from src.socialmedias.models import TermSharedHistorial
 from src.socialmedias.outils.poster import SocialPosting
@@ -42,8 +42,8 @@ class TestSocialPosting(TestCase):
         )
         DjangoTestingModel.create(IncomeStatement, company=cls.clean_company)
         user = DjangoTestingModel.create(get_user_model(), id=1, username="lucas")
-        writter_profile = DjangoTestingModel.create(
-            WritterProfile, user=user, host_name="lucas", long_description="long ass description for writter"
+        writer_profile = DjangoTestingModel.create(
+            WriterProfile, user=user, host_name="lucas", long_description="long ass description for writer"
         )
         cls.term = DjangoTestingModel.create(Term, title="term title", resume="term resume")
         cls.blog = DjangoTestingModel.create(PublicBlog, title="blog title", resume="blog resume", author=user)

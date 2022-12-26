@@ -11,8 +11,8 @@ class UserExtended:
     @property
     def custom_url(self):
         url = self.get_absolute_url()
-        if self.is_writter:
-            host_name = self.writter_profile.host_name
+        if self.is_writer:
+            host_name = self.writer_profile.host_name
             current_domain = CURRENT_DOMAIN
             if not settings.IS_PROD:
                 current_domain = f"{CURRENT_DOMAIN}:8000"
@@ -87,7 +87,7 @@ class UserExtended:
 
     @property
     def blogs_written(self):
-        if self.is_writter:
+        if self.is_writer:
             return self.publicblog_set.filter(status=1)  # TODO use a constants
         return []
 
@@ -104,12 +104,12 @@ class UserExtended:
         return self.favorites_superinvestors.superinvestor.all()
 
     @property
-    def fav_writters(self):
+    def fav_writers(self):
         from src.public_blog.models import NewsletterFollowers
 
-        fav_writters = NewsletterFollowers.objects.filter(followers=self)
-        if fav_writters.count() != 0:
-            return [writter.user for writter in fav_writters]
+        fav_writers = NewsletterFollowers.objects.filter(followers=self)
+        if fav_writers.count() != 0:
+            return [writer.user for writer in fav_writers]
         return []
 
     def update_credits(self, number_of_credits: int) -> None:
@@ -121,21 +121,21 @@ class UserExtended:
         # TODO move to an outiils
         from src.public_blog.models import FollowingHistorial
 
-        if self.is_writter:
+        if self.is_writer:
             following_historial = FollowingHistorial.objects.create(user_followed=self, user_following=user)
-            writter_followers = self.main_writter_followed
+            writer_followers = self.main_writer_followed
             if action == "stop":
                 following_historial.stop_following = True
-                writter_followers.followers.remove(user)
+                writer_followers.followers.remove(user)
             elif action == "start":
-                if user in writter_followers.followers.all():
+                if user in writer_followers.followers.all():
                     return "already follower"
                 following_historial.started_following = True
-                writter_followers.followers.add(user)
+                writer_followers.followers.add(user)
                 # TODO enviar email para avisar que tiene un nuevo seguidor
 
             following_historial.save(update_fields=["stop_following", "started_following"])
-            writter_followers.save()
+            writer_followers.save()
 
             return True
 

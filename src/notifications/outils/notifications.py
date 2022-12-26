@@ -88,12 +88,12 @@ class NotificationSystem:
         }
 
     @classmethod
-    def announce_new_follower(cls, writter, notif_type):
+    def announce_new_follower(cls, writer, notif_type):
         return [
             {
                 "email": cls.save_notif(
-                    writter,
-                    writter,
+                    writer,
+                    writer,
                     notif_type,
                     {
                         "subject": constants.NEW_FOLLOWER,
@@ -103,7 +103,7 @@ class NotificationSystem:
                         ),
                     },
                 ),
-                "receiver_id": writter.id,
+                "receiver_id": writer.id,
                 "is_for": EMAIL_FOR_NOTIFICATION,
             }
         ]
@@ -165,10 +165,10 @@ class NotificationSystem:
 
     @classmethod
     def announce_new_blog(cls, blog, notif_type):
-        # blog.author.main_writter_followed.followers.all()
-        # that should be the actual loop over, all the writter's followers
+        # blog.author.main_writer_followed.followers.all()
+        # that should be the actual loop over, all the writer's followers
         notif_info = []
-        for user in blog.author.main_writter_followed.followers.exclude(is_bot=True):
+        for user in blog.author.main_writer_followed.followers.exclude(is_bot=True):
             email = cls.save_notif(
                 blog,
                 user,

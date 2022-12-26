@@ -10,7 +10,7 @@ from django.views.generic import RedirectView
 from django.views.generic.edit import FormMixin
 
 from src.general.utils import HostChecker
-from src.public_blog.models import WritterProfile
+from src.public_blog.models import WriterProfile
 from src.seo.views import SEODetailView, SEOFormView, SEOListView, SEOTemplateView
 from src.web.forms import ContactForm
 from src.web.models import Roadmap, WebsiteLegalPage
@@ -51,17 +51,17 @@ class CaptchaFormMixin(FormMixin):
 class HomePage(SEOTemplateView, CaptchaFormMixin):
     success_url = "web:inicio"
 
-    def return_writter_page_data(self, user_writter: type) -> Tuple[Dict, str]:
+    def return_writer_page_data(self, user_writer: type) -> Tuple[Dict, str]:
         context = {
-            "meta_description": user_writter.user_profile.bio,
-            "meta_title": user_writter.full_name,
-            "meta_image": user_writter.foto,
-            "current_profile": user_writter,
+            "meta_description": user_writer.user_profile.bio,
+            "meta_title": user_writer.full_name,
+            "meta_image": user_writer.foto,
+            "current_profile": user_writer,
         }
         return context, "public/profile.html"
 
     def return_home_page_data(self) -> Tuple[Dict, str]:
-        escritores = WritterProfile.objects.all()
+        escritores = WriterProfile.objects.all()
         context = {
             "escritor1": escritores[0],
             "escritor2": escritores[1],
@@ -83,9 +83,9 @@ class HomePage(SEOTemplateView, CaptchaFormMixin):
 
     def return_page_data(self) -> Tuple[Dict, str]:
         host_checker = HostChecker(self.request)
-        user_writter = host_checker.return_user_writter()
-        if user_writter:
-            return self.return_writter_page_data(user_writter)
+        user_writer = host_checker.return_user_writer()
+        if user_writer:
+            return self.return_writer_page_data(user_writer)
         elif host_checker.host_is_business():
             return self.return_business_page_data()
         return self.return_home_page_data()

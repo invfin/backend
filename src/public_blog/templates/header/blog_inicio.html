@@ -1,31 +1,32 @@
 {% load static i18n extra %}
 <div class="row align-items-center py-4">
   <div class="col-lg-6 col-7">
-     <h6 class="h2 d-inline-block mb-0 mr-5">Descubre los blogs y newsletters de los escritores de la comunidad</h6>
+    <h6 class="h2 d-inline-block mb-0 mr-5">Descubre los blogs y newsletters de los escritores de la comunidad</h6>
     <!--<a href="#" class="btn btn-sm btn-neutral">Nuevas</a>
     <a href="#" class="btn btn-sm btn-neutral">Sin responder</a>
     <a href="#" class="btn btn-sm btn-neutral">Más visitadas</a>             -->
   </div>
   <div class="col-lg-6 col-5 text-right">
-      {% if request.user.is_writter %}
-      <a href="{% url 'public_blog:create_blog' %}" class="btn btn-md bg-gradient-yellow">Escribir</a>
+    {% if request.user.is_writer %}
+    <a href="{% url 'public_blog:create_blog' %}" class="btn btn-md bg-gradient-yellow">Escribir</a>
     {% else %}
-    <a href="#!" data-bs-toggle="modal" data-bs-target="#BecomingWritterModal" class="btn btn-md bg-gradient-yellow">Escribir</a>
+    <a href="#!" data-bs-toggle="modal" data-bs-target="#BecomingwriterModal"
+      class="btn btn-md bg-gradient-yellow">Escribir</a>
     {% endif %}
   </div>
 </div>
 <!-- Card stats -->
 <div class="row">
   <div class="col-xl-3 col-md-6">
-    
+
   </div>
   <div class="col-xl-3 col-md-6">
-    
+
   </div>
   <div class="col-xl-3 col-md-6">
-    
+
   </div>
   <div class="col-xl-3 col-md-6">
-    
+
   </div>
 </div>

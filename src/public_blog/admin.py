@@ -8,7 +8,7 @@ from .models import (
     PublicBlog,
     PublicBlogAsNewsletter,
     PublicBlogComment,
-    WritterProfile,
+    WriterProfile,
 )
 
 
@@ -17,8 +17,8 @@ class NewsletterFollowersAdmin(admin.ModelAdmin):
     list_display = ["id", "user"]
 
 
-@admin.register(WritterProfile)
-class WritterProfileAdmin(admin.ModelAdmin):
+@admin.register(WriterProfile)
+class WriterProfileAdmin(admin.ModelAdmin):
     list_display = ["id", "user", "host_name", "created_at"]
 
     search_fields = ["user_username"]

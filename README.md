@@ -33,8 +33,8 @@ An extensive dictionnary fullfiled with financial, economical, accounting, inves
 users can learn about. They can also participate improving the definitions, examples, images and the overall explanation.
 
 ## Blog
-Users can become writters and send newsletter, have their own domain (subdomain) and create a fan base to send them their newsletters through email.
-In this part the writters can see all related to their content, views, times shared, interactions, emails opening rate, and so on.
+Users can become writers and send newsletter, have their own domain (subdomain) and create a fan base to send them their newsletters through email.
+In this part the writers can see all related to their content, views, times shared, interactions, emails opening rate, and so on.
 
 ## Screener
 In this part, users can look for over 30000 companies around the globe. They can see their financial statements and financial metrics to make their due diligence. They can introduce their own values to analyse the future value of the company, submit FODA analysis and know which superinvestors have the given company in their portfolio.

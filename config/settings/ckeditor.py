@@ -96,7 +96,7 @@ SIMPLE_EDITOR = {
     ],
     "width": "full",
 }
-WRITTER_EDITOR = {
+WRITER_EDITOR = {
     "toolbar": [
         {"name": "clipboard", "items": ["Undo", "Redo"]},
         {"name": "styles", "items": ["Styles", "Format"]},
@@ -154,5 +154,5 @@ WRITTER_EDITOR = {
 CKEDITOR_CONFIGS = {
     "default": DEFAULT_EDITOR,
     "simple": SIMPLE_EDITOR,
-    "writter": WRITTER_EDITOR,
+    "writer": WRITER_EDITOR,
 }

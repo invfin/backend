@@ -1,23 +1,20 @@
 from django.forms import ChoiceField, ModelForm
 
-from .models import PublicBlog, WritterProfile
+from .models import PublicBlog, WriterProfile
 
 
-class WritterProfileForm(ModelForm):
+class WriterProfileForm(ModelForm):
     class Meta:
-        model = WritterProfile
+        model = WriterProfile
         fields = [
             "long_description",
             "facebook",
             "twitter",
-            "insta",
+            "instagram",
             "youtube",
             "linkedin",
             "tiktok",
         ]
-        labels = {
-            "insta": "Instagram",
-        }
 
 
 class PublicBlogForm(ModelForm):

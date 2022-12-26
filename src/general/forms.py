@@ -25,7 +25,7 @@ class BaseEscritoForm(ModelForm):
 
 class DefaultNewsletterForm(Form):
     title = CharField()
-    content = CharField(widget=CKEditorWidget(config_name="writter"))
+    content = CharField(widget=CKEditorWidget(config_name="writer"))
     date_to_send = DateTimeField()
 
     def annotate_changes(self, user):

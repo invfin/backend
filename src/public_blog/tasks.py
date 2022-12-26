@@ -18,7 +18,7 @@ def check_programmed_blog_posts_task():
 
 
 @celery_app.task()
-def send_newsletter_to_followers_task(writter_id: int, newsletter: Dict):
-    writter = User.objects.get(id=writter_id)
-    for follower in NewsletterFollowers.objects.get(user=writter):
+def send_newsletter_to_followers_task(writer_id: int, newsletter: Dict):
+    writer = User.objects.get(id=writer_id)
+    for follower in NewsletterFollowers.objects.get(user=writer):
         send_email_task.delay(newsletter, follower.id, "news")

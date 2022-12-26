@@ -13,7 +13,7 @@ from django.http import HttpResponse
 from django.template.defaultfilters import slugify
 from django.urls import reverse as simple_reverse
 
-from src.public_blog.models import WritterProfile
+from src.public_blog.models import WriterProfile
 
 from .constants import BUSINESS_SUBDOMAIN
 
@@ -124,12 +124,12 @@ class HostChecker:
     def host_is_business(self) -> bool:
         return self.host == BUSINESS_SUBDOMAIN
 
-    def get_writter(self) -> Optional[WritterProfile]:
-        return WritterProfile.objects.filter(host_name=self.host).first()
+    def get_writer(self) -> Optional[WriterProfile]:
+        return WriterProfile.objects.filter(host_name=self.host).first()
 
-    def return_user_writter(self) -> Optional[Type]:
-        writter = self.get_writter()
-        return writter.user if writter else None
+    def return_user_writer(self) -> Optional[Type]:
+        writer = self.get_writer()
+        return writer.user if writer else None
 
     def current_site_domain(self):
         domain = settings.CURRENT_DOMAIN

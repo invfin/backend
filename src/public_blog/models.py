@@ -23,21 +23,21 @@ from src.public_blog.managers import PublicBlogManager
 User = get_user_model()
 
 
-class WritterProfile(Model):
-    user = OneToOneField(User, on_delete=SET_NULL, null=True, related_name="writter_profile")
+class WriterProfile(Model):
+    user = OneToOneField(User, on_delete=SET_NULL, null=True, related_name="writer_profile")
     created_at = DateTimeField(auto_now_add=True)
     host_name = CharField(max_length=500, null=True, blank=True, unique=True)
-    long_description = RichTextField(default="", config_name="writter")
+    long_description = RichTextField(default="", config_name="writer", blank=True)
     facebook = CharField(max_length=500, null=True, blank=True)
     twitter = CharField(max_length=500, null=True, blank=True)
-    insta = CharField(max_length=500, null=True, blank=True)
+    instagram = CharField(max_length=500, null=True, blank=True)
     youtube = CharField(max_length=500, null=True, blank=True)
     linkedin = CharField(max_length=500, null=True, blank=True)
     tiktok = CharField(max_length=500, null=True, blank=True)
 
     class Meta:
-        verbose_name = "User writter profile"
-        db_table = "writter_profile"
+        verbose_name = "User writer profile"
+        db_table = "writer_profile"
 
     @property
     def all_self_blogs(self):
@@ -62,7 +62,7 @@ class WritterProfile(Model):
 
     @property
     def total_followers(self):
-        return self.user.main_writter_followed.followers.all().count()
+        return self.user.main_writer_followed.followers.all().count()
 
 
 class FollowingHistorial(Model):
@@ -74,7 +74,7 @@ class FollowingHistorial(Model):
 
     class Meta:
         verbose_name = "Users following historial"
-        db_table = "writter_followers_historial"
+        db_table = "writer_followers_historial"
 
 
 class NewsletterFollowers(Model):
@@ -83,18 +83,18 @@ class NewsletterFollowers(Model):
         User,
         on_delete=SET_NULL,
         null=True,
-        related_name="main_writter_followed",
+        related_name="main_writer_followed",
     )
     followers = ManyToManyField(User, blank=True)
 
     class Meta:
         verbose_name = "Base de seguidores del blog"
-        db_table = "writter_followers_newsletters"
+        db_table = "writer_followers_newsletters"
 
 
 class PublicBlog(AbstractPublishableContent):
     send_as_newsletter = BooleanField(default=False)
-    content = RichTextField(config_name="writter")
+    content = RichTextField(config_name="writer")
     upvotes = ManyToManyField(User, blank=True, related_name="user_upvote_blog")
     downvotes = ManyToManyField(User, blank=True, related_name="user_downvote_blog")
     published_correctly = BooleanField(default=False)
