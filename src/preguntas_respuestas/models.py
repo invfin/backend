@@ -45,13 +45,13 @@ class Question(AbstractWrittenContent):
     @property
     def related_users(self):
         answers_users = self.related_answers.values_list("author_id", flat=True)
-        upvotes_users = self.upvotes.all().values_list("pk", flat=True)
-        downvotes_users = self.downvotes.all().values_list("pk", flat=True)
+        upvotes_users = self.upvotes.values_list("pk", flat=True)
+        downvotes_users = self.downvotes.values_list("pk", flat=True)
         comments_users = self.related_comments.values_list("author", flat=True)
         all_users = (
             list(answers_users) + list(upvotes_users) + list(downvotes_users) + list(comments_users) + [self.author.pk]
         )
-        all_users = User.objects.filter(id__in=all_users)
+        all_users = User.objects.filter(id__in=all_users).exclude(is_bot=True)
         return list(all_users)
 
     @property

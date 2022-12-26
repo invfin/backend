@@ -1,10 +1,11 @@
 import time
-from typing import Callable, Dict, List, Tuple
+from typing import Callable, Dict, List, Tuple, Union
 
 from django.apps import apps
 from django.contrib.auth import get_user_model
+from django.db.models import Q
 
-from src.emailing import constants as emailing_constants
+from src.emailing.constants import EMAIL_FOR_NOTIFICATION
 from src.notifications import constants
 from src.notifications.models import Notification
 
@@ -78,6 +79,14 @@ class NotificationSystem:
         notification_fnct = cls.get_notification_method(notif_type)
         return notification_fnct(object_related, notif_type)
 
+    @staticmethod
+    def prepare_notification_dict(email: Dict, receiver_id: int) -> Dict[str, Union[Dict, int, str]]:
+        return {
+            "email": email,
+            "receiver_id": receiver_id,
+            "is_for": EMAIL_FOR_NOTIFICATION,
+        }
+
     @classmethod
     def announce_new_follower(cls, writter, notif_type):
         return [
@@ -95,7 +104,7 @@ class NotificationSystem:
                     },
                 ),
                 "receiver_id": writter.id,
-                "is_for": emailing_constants.EMAIL_FOR_NOTIFICATION,
+                "is_for": EMAIL_FOR_NOTIFICATION,
             }
         ]
 
@@ -113,7 +122,7 @@ class NotificationSystem:
                     },
                 ),
                 "receiver_id": obj.content_related.author.id,
-                "is_for": emailing_constants.EMAIL_FOR_NOTIFICATION,
+                "is_for": EMAIL_FOR_NOTIFICATION,
             }
         ]
 
@@ -131,14 +140,14 @@ class NotificationSystem:
                     },
                 ),
                 "receiver_id": obj.author.id,
-                "is_for": emailing_constants.EMAIL_FOR_NOTIFICATION,
+                "is_for": EMAIL_FOR_NOTIFICATION,
             }
         ]
 
     @classmethod
     def announce_new_question(cls, question, notif_type):
         notif_info = []
-        for user in User.objects.all().exclude(pk=question.author.pk):
+        for user in User.objects.exclude(Q(pk=question.author.pk) | Q(is_bot=True)):
             title = question.title[:15]
             subject = f"{constants.NEW_QUESTION} {title}..."
             email = cls.save_notif(
@@ -151,16 +160,15 @@ class NotificationSystem:
                     "call_to_action": "Se el primero en ayudar y gana créditos extras",
                 },
             )
-            notif_info.append(
-                {"email": email, "receiver_id": user.id, "is_for": emailing_constants.EMAIL_FOR_NOTIFICATION}
-            )
+            notif_info.append(cls.prepare_notification_dict(email, user.id))
         return notif_info
 
     @classmethod
     def announce_new_blog(cls, blog, notif_type):
-        # blog.author.main_writter_followed.followers.all() that should be the actual loop over, all the writter's followers
+        # blog.author.main_writter_followed.followers.all()
+        # that should be the actual loop over, all the writter's followers
         notif_info = []
-        for user in blog.author.main_writter_followed.followers.all():
+        for user in blog.author.main_writter_followed.followers.exclude(is_bot=True):
             email = cls.save_notif(
                 blog,
                 user,
@@ -170,9 +178,7 @@ class NotificationSystem:
                     "content": blog.resume,
                 },
             )
-            notif_info.append(
-                {"email": email, "receiver_id": user.id, "is_for": emailing_constants.EMAIL_FOR_NOTIFICATION}
-            )
+            notif_info.append(cls.prepare_notification_dict(email, user.id))
         return notif_info
 
     @classmethod
@@ -196,9 +202,7 @@ class NotificationSystem:
                         "content": answer.content,
                     },
                 )
-                notif_info.append(
-                    {"email": email, "receiver_id": user.id, "is_for": emailing_constants.EMAIL_FOR_NOTIFICATION}
-                )
+                notif_info.append(cls.prepare_notification_dict(email, user.id))
 
         return notif_info
 
@@ -222,7 +226,5 @@ class NotificationSystem:
                     "content": content,
                 },
             )
-            notif_info.append(
-                {"email": email, "receiver_id": user.id, "is_for": emailing_constants.EMAIL_FOR_NOTIFICATION}
-            )
+            notif_info.append(cls.prepare_notification_dict(email, user.id))
         return notif_info
