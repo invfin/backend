@@ -11,7 +11,12 @@ class BaseQuerySet(QuerySet):
         return self.filter(**{f"checkings__has_{checking}__state": state})
 
     def filter_checking_not_seen(self, checking: str):
-        return self.filter(**{f"checkings__has_{checking}__state": "no", f"checkings__has_{checking}__time": ""})
+        return self.filter(
+            **{
+                f"checkings__has_{checking}__state": "no",
+                f"checkings__has_{checking}__time": "",
+            },
+        )
 
     def filter_checkings(self, list_checkings: List[Dict[str, bool]]):
         all_checkings = dict()
