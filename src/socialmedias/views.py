@@ -39,11 +39,11 @@ class FacebookAuthRedirectView(RedirectView):
 
     def get_facebook_params_response(self):
         try:
-            facebook_response_code = self.request.GET["code"]
-            facebook_response_state = self.request.GET["state"]
-            messages.success(self.request, f"No error")
+            self.request.GET["code"]
+            self.request.GET["state"]
+            messages.success(self.request, "No error")
         except KeyError:
-            messages.error(self.request, f"Error")
+            messages.error(self.request, "Error")
 
     def get(self, request, *args, **kwargs):
         self.get_facebook_params_response()

@@ -1,6 +1,6 @@
-from datetime import timedelta, datetime
-from unittest.mock import patch
+from datetime import datetime, timedelta
 from unittest import skip
+from unittest.mock import patch
 
 from django.test import TestCase
 from django.utils import timezone
@@ -9,9 +9,9 @@ from bfet import DjangoTestingModel
 
 from src.emailing.constants import EMAIL_FOR_WEB
 from src.engagement_machine.tasks import (
+    EmailEngamentTask,
     check_and_start_send_email_engagement_task,
     send_email_engagement_task,
-    EmailEngamentTask,
 )
 from src.promotions.models import Campaign
 from src.users.models import User, UsersCategory

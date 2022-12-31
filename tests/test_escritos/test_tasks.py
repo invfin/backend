@@ -8,6 +8,7 @@ from src.escritos.models import Term
 from src.escritos.tasks import prepare_term_newsletter_task
 from src.socialmedias.models import DefaultTilte
 
+
 class TestTask(TestCase):
     @classmethod
     def setUpTestData(cls) -> None:

@@ -2,13 +2,12 @@ from itertools import chain
 
 from django.contrib import messages
 from django.contrib.auth import get_user_model
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
 from django.urls import reverse
 
 from src.public_blog.forms import WriterProfileForm
-from src.seo.views import SEOTemplateView, SEODetailView, FormView
+from src.seo.views import SEODetailView, SEOTemplateView
 
 from .forms import UserForm, UserProfileForm
 from .models import Profile

@@ -1,4 +1,4 @@
-from typing import List, Tuple, Type
+from typing import List, Tuple
 
 from django.db.models import Manager
 from django.template.defaultfilters import slugify

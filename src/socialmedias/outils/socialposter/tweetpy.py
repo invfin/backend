@@ -5,8 +5,6 @@ import time
 from typing import Dict
 import urllib
 
-from django.conf import settings
-
 import tweepy
 
 from src.content_creation import constants

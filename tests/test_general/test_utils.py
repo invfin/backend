@@ -2,10 +2,10 @@ from django.test import TestCase, override_settings
 
 from bfet import DjangoTestingModel
 
+from src.general.constants import BUSINESS_SUBDOMAIN
 from src.general.utils import HostChecker
 from src.public_blog.models import WriterProfile
 from src.users.models import User
-from src.general.constants import BUSINESS_SUBDOMAIN
 
 
 class MockRequest:

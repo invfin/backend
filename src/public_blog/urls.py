@@ -6,10 +6,10 @@ from .views import (
     PublicBlogsListView,
     UpdateBlogNewsletterView,
     UpdatePublicBlogPostView,
-    writerOwnBlogsListView,
     create_newsletter_for_blog,
     following_management_view,
     user_become_writer_view,
+    writerOwnBlogsListView,
 )
 
 app_name = "public_blog"

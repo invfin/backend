@@ -143,10 +143,10 @@ class Facebook:
         return self.handle_responses(response, "access_token")
 
     def post(self, **kwargs):
-        media_url = kwargs.get("media", "")
-        scheduled_publish_time = kwargs.get("scheduled_publish_time", "")
+        kwargs.get("media", "")
+        kwargs.get("scheduled_publish_time", "")
         post_type = kwargs["post_type"]
-        post_now = kwargs.get("post_now", True)
+        kwargs.get("post_now", True)
         link = kwargs["link"]
         title = kwargs["title"]
 
@@ -157,14 +157,14 @@ class Facebook:
             post_type == content_creation_constants.POST_TYPE_TEXT
             or post_type == content_creation_constants.POST_TYPE_REPOST
         ):
-            content_type = constants.FACEBOOK_POST_TEXT_PAGE
+            constants.FACEBOOK_POST_TEXT_PAGE
         elif (
             post_type == content_creation_constants.POST_TYPE_IMAGE
             or post_type == content_creation_constants.POST_TYPE_TEXT_IMAGE
         ):
-            content_type = constants.FACEBOOK_POST_IMAGE_PAGE
+            constants.FACEBOOK_POST_IMAGE_PAGE
         else:
-            content_type = constants.FACEBOOK_POST_VIDEO_PAGE
+            constants.FACEBOOK_POST_VIDEO_PAGE
 
         # post_content, file = self.generate_post_content(
         #     content_type,

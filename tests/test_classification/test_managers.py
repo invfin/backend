@@ -10,7 +10,7 @@ class TestAbstractWrittenContent(TestCase):
     @classmethod
     def setUpTestData(cls) -> None:
         cls.tag = DjangoTestingModel.create(Tag, name="onemore", slug="onemore")
-    
+
     def test_clean_tag(self):
         tag_name, tag_slug = TagManager.clean_tag("this tag")
         assert "this tag" == tag_name
@@ -19,7 +19,7 @@ class TestAbstractWrittenContent(TestCase):
         tag_name, tag_slug = TagManager.clean_tag("tHiS taG")
         assert "this tag" == tag_name
         assert "this-tag" == tag_slug
-    
+
     def test_retrieve_tag(self):
         assert 1 == Tag.objects.count()
         this_tag = Tag.objects.retrieve_tag("this tag")
@@ -34,6 +34,3 @@ class TestAbstractWrittenContent(TestCase):
     def test_get_content_tags(self):
         content_tags = Tag.objects.get_content_tags(["this tag", "", "OneMore"])
         assert 2 == len(content_tags)
-
-    
-    

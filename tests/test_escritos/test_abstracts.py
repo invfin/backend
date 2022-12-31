@@ -2,8 +2,8 @@ from django.test import TestCase
 
 from bfet import DjangoTestingModel
 
-from src.escritos.models import Term
 from src.classifications.models import Tag
+from src.escritos.models import Term
 
 
 class TestAbstractWrittenContent(TestCase):

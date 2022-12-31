@@ -4,7 +4,6 @@ import urllib
 
 from django.conf import settings
 from django.contrib import messages
-from django.shortcuts import redirect, render
 from django.urls import reverse
 from django.views.generic import RedirectView
 from django.views.generic.edit import FormMixin

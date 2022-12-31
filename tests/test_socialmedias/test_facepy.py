@@ -6,7 +6,6 @@ from django.test import TestCase, override_settings
 import vcr
 
 from src.content_creation.constants import POST_TYPE_TEXT
-from src.socialmedias import constants
 from src.socialmedias.outils.socialposter.facepy import Facebook
 
 facebook_vcr = vcr.VCR(
@@ -45,7 +44,8 @@ class TestFacePoster(TestCase):
             "Twitter : https://twitter.com/InvFinz\n"
             "LinkedIn : https://www.linkedin.com/company/inversiones-finanzas\n"
             ".\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n#list #de #hashtags"
-        ) == description
+            == description
+        )
 
     @skip("not ready")
     def test_post(self):

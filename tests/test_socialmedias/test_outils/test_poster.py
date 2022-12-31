@@ -42,7 +42,7 @@ class TestSocialPosting(TestCase):
         )
         DjangoTestingModel.create(IncomeStatement, company=cls.clean_company)
         user = DjangoTestingModel.create(get_user_model(), id=1, username="lucas")
-        writer_profile = DjangoTestingModel.create(
+        DjangoTestingModel.create(
             WriterProfile, user=user, host_name="lucas", long_description="long ass description for writer"
         )
         cls.term = DjangoTestingModel.create(Term, title="term title", resume="term resume")

@@ -1,4 +1,3 @@
-from unittest import skip
 from django.contrib.auth import get_user_model
 from django.core import mail
 from django.test import TestCase
@@ -7,8 +6,8 @@ from bfet import DjangoTestingModel
 
 from src.emailing import constants
 from src.emailing.outils.emailing import EmailingSystem
-from src.web.models import WebsiteEmail, WebsiteEmailTrack
 from src.web.constants import CONTENT_FOR_WELCOME
+from src.web.models import WebsiteEmail, WebsiteEmailTrack
 
 User = get_user_model()
 

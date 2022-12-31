@@ -1,12 +1,6 @@
 from django.urls import path
 
-from .views import (
-    UserDetailView,
-    UserHistorialView,
-    UserPublicProfileDetailView,
-    invitation_view,
-    UpdateProfileView,
-)
+from .views import UpdateProfileView, UserDetailView, UserHistorialView, UserPublicProfileDetailView, invitation_view
 
 app_name = "users"
 urlpatterns = [
