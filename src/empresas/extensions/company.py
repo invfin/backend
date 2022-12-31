@@ -552,7 +552,7 @@ class CompanyExtended(ChartSerializer):
                     "url": "#!",
                     "percent": "false",
                     "short": "false",
-                    "values": [data.accounts_receivables for data in cf],
+                    "values": [data.accounts_receivable for data in cf],
                 },
                 {
                     "title": "Inventario",
