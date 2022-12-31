@@ -3,6 +3,7 @@ from django.contrib.auth import get_user_model
 from django.utils.translation import gettext_lazy as _
 
 from import_export.admin import ImportExportActionModelAdmin
+from allauth.account.models import EmailAddress
 
 from src.business.admin import ProductCommentInline
 from src.preguntas_respuestas.admin import AnswerInline, QuestionInline
@@ -23,6 +24,12 @@ class UsersCategoryAdmin(admin.ModelAdmin):
     filter_horizontal = [
         "users",
     ]
+
+
+class EmailAddressInline(admin.StackedInline):
+    model = EmailAddress
+    extra = 0
+    jazzmin_tab_id = "emails"
 
 
 class MetaProfileInfoInline(admin.StackedInline):
@@ -93,6 +100,7 @@ class ProfileInline(admin.StackedInline):
 @admin.register(User)
 class UserAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
     inlines = [
+        EmailAddressInline,
         CreditUsageHistorialInline,
         ProfileInline,
         MetaProfileInfoInline,
@@ -170,10 +178,12 @@ class UserAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
         "just_correction",
         "for_testing",
         "is_bot",
+        "is_active",
     ]
 
     jazzmin_form_tabs = [
         ("general", "User"),
+        ("emails", "Emails"),
         ("profile", "Profile"),
         ("writer", "writer"),
         ("meta", "Meta"),

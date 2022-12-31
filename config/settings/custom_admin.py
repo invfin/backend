@@ -113,6 +113,18 @@ SIDE_MENU = [
         "icon": "fas fa-pen-nib",
         "models": (
             {
+                "model": "content_creation.DefaultTilte",
+            },
+            {
+                "model": "content_creation.DefaultContent",
+            },
+            {
+                "model": "content_creation.Emoji",
+            },
+            {
+                "model": "content_creation.Hashtag",
+            },
+            {
                 "model": "socialmedias.SocialmediaAuth",
             },
             {
@@ -136,21 +148,14 @@ SIDE_MENU = [
         ),
     },
     {
-        "label": "Content",
+        "label": "PublicBlog",
         "icon": "fas fa-pen-nib",
         "models": (
-            {
-                "model": "content_creation.DefaultTilte",
-            },
-            {
-                "model": "content_creation.DefaultContent",
-            },
-            {
-                "model": "content_creation.Emoji",
-            },
-            {
-                "model": "content_creation.Hashtag",
-            },
+            {"model": "public_blog.NewsletterFollowers"},
+            {"model": "public_blog.WriterProfile"},
+            {"model": "public_blog.FollowingHistorial"},
+            {"model": "public_blog.PublicBlog"},
+            {"model": "public_blog.PublicBlogComment"},
         ),
     },
     {
