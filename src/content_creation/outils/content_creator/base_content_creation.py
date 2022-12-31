@@ -69,7 +69,8 @@ class ContentCreation:
         Returns
         -------
             Tuple[List[Hashtag], str]
-                The list of hashtag fetched for the socialmedia and a string returning the hashtags with # ready to publish
+                The list of hashtag fetched for the socialmedia and a
+                string returning the hashtags with # ready to publish
         """
         hashtags_list = Hashtag.objects.random_hashtags(platform)
         if need_slice and hashtags_list:

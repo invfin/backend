@@ -7,7 +7,6 @@ from django.db.models import (
     DateTimeField,
     ForeignKey,
     ManyToManyField,
-    Model,
     PositiveBigIntegerField,
     SlugField,
     TextField,

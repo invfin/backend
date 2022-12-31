@@ -1,8 +1,16 @@
+import yahooquery as yq
+
 from src.empresas.parse.y_finance import YFinanceInfo
 
 
 def simple_stock_analysis(empresa):
     inf = YFinanceInfo(empresa).request_info_yfinance
+    current_price = inf.get("currentPrice")
+    if not current_price:
+        yahooquery_info = yq.Ticker(empresa.ticker).price
+        key = yahooquery_info.keys()[0]
+        if yahooquery_info[key] != "Quote not found for ticker symbol: LB":
+            current_price = yahooquery_info[key]["regularMarketPrice"]
 
     result_buy = {"result": 1}
 
@@ -22,24 +30,24 @@ def simple_stock_analysis(empresa):
     else:
         if "targetMeanPrice" in inf:
             targetMeanPrice = inf["targetMeanPrice"]
-            if targetMeanPrice < currentPrice:
+            if targetMeanPrice < current_price:
                 result = result_sell
-            elif targetMeanPrice > currentPrice:
+            elif targetMeanPrice > current_price:
                 result = result_buy
-            elif targetMeanPrice == currentPrice:
+            elif targetMeanPrice == current_price:
                 result = result_hold
 
         else:
-            if "currentPrice" in inf:
-                currentPrice = inf["currentPrice"]
-                try:
-                    per = empresa.per_share_values.latest().eps / currentPrice
-                    if per < 10:
-                        result = result_buy
-                    elif per > 20:
-                        result = result_sell
-                    elif per > 10 and per < 20:
-                        result = result_hold
-                except:
-                    result = {"result": 4}
+            current_price = inf["currentPrice"]
+            try:
+                per = empresa.per_share_values.latest().eps / current_price
+                if per < 10:
+                    result = result_buy
+                elif per > 20:
+                    result = result_sell
+                elif per > 10 and per < 20:
+                    result = result_hold
+            except Exception:
+                result = {"result": 4}
+
     return result

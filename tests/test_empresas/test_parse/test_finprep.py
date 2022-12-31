@@ -45,7 +45,7 @@ class TestNormalizeFinprep(TestCase):
     @classmethod
     def setUpTestData(cls) -> None:
         cls.parser = NormalizeFinprep()
-        cls.company = DTM.create(Company, ticker="AAPL")
+        cls.company = DTM.create(Company, ticker="AAPL", name="Apple")
         cls.parser.company = cls.company
         cls.income_statement = finprep_data.INCOME_STATEMENT[0]
         cls.balance_sheet = finprep_data.BALANCE_SHEET[0]

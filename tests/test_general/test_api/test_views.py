@@ -1,14 +1,14 @@
-from unittest.mock import patch
 from unittest import skip
-
-from rest_framework.test import APITestCase
-from bfet import DjangoTestingModel
+from unittest.mock import patch
 
 from django.contrib.auth import get_user_model
 
+from bfet import DjangoTestingModel
+from rest_framework.test import APITestCase
+
+from src.escritos.models import Term
 from src.general.api.views import CreateCommentView, VoteView
-from src.escritos.models import Term, TermsComment
-from src.preguntas_respuestas.models import Question, Answer
+from src.preguntas_respuestas.models import Answer, Question
 
 
 class BaseVoteAndCommentViewTestMixin:
@@ -61,7 +61,7 @@ class BaseVoteAndCommentViewTestMixin:
                     # TODO test that message is set
                     pass
             with self.subTest("Test success"):
-                response = self.view_class().response()
+                self.view_class().response()
                 mock_prepare_notification_task.assert_called_once_with(obj, self.notification_type)
 
 

@@ -2,7 +2,7 @@ from unittest import skip
 
 from django.test import TestCase
 
-from bfet import DataCreator, DjangoTestingModel
+from bfet import DjangoTestingModel
 
 from src.content_creation.outils.content_creator import CompanyContentCreation
 from src.empresas.models import BalanceSheet, CashflowStatement, Company, IncomeStatement

@@ -1,7 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db.models import (
-    CASCADE,
     SET_NULL,
     BooleanField,
     CharField,
@@ -194,7 +193,7 @@ class RoboAdvisorUserServiceActivity(Model):
             extra = asset
         if self.temp_profile_related:
             service_question = self.temporaryinvestorprofile
-            title = f"Parece que tienes un perfil de inversor"
+            title = "Parece que tienes un perfil de inversor"
             result = service_question.risk_profile
             explanation = service_question.explanation
 

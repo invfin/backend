@@ -1,4 +1,3 @@
-from datetime import datetime
 from typing import Callable, Type
 
 import pandas as pd

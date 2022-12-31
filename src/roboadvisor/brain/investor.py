@@ -1,4 +1,4 @@
-from ..constants import *
+from .. import constants
 from ..models import (
     InvestorProfile,
     RoboAdvisorQuestionInvestorExperience,
@@ -30,31 +30,31 @@ def get_investor_type(user, service_activity):
         if objectif == 3:
             result = "Muy conservador"
             risk_profile = 4
-            profile_explanation = PROFILE_VERY_CONSERVATIVE
+            profile_explanation = constants.PROFILE_VERY_CONSERVATIVE
 
         else:
             result = "Conservador"
             risk_profile = 3
-            profile_explanation = PROFILE_CONSERVATIVE
+            profile_explanation = constants.PROFILE_CONSERVATIVE
 
     else:
         if zero_five > 0:
             result = "Muy agresivo"
             risk_profile = 1
-            profile_explanation = PROFILE_VERY_AGRESIVE
+            profile_explanation = constants.PROFILE_VERY_AGRESIVE
 
         else:
             if one_five >= 50:
                 investor_type = 1
                 result = "Agresivo"
                 risk_profile = 2
-                profile_explanation = PROFILE_AGRESIVE
+                profile_explanation = constants.PROFILE_AGRESIVE
 
             else:
                 investor_type = 2
                 result = "Moderado"
                 risk_profile = 5
-                profile_explanation = PROFILE_REGULAR
+                profile_explanation = constants.PROFILE_REGULAR
 
     type_profile_investor = {"horizon": horizon, "risk_profile": risk_profile, "investor_type": investor_type}
 

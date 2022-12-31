@@ -1,4 +1,4 @@
-from typing import Callable, Dict, List, Union
+from typing import Callable, Dict, List, Type, Union
 
 from src.empresas.models import BalanceSheetFinprep, CashflowStatementFinprep, IncomeStatementFinprep
 from src.empresas.parse.finprep.normalize_data import NormalizeFinprep
@@ -12,7 +12,11 @@ class FinprepInfo(NormalizeFinprep, ParseFinprep):
     def create_statement_finprep(
         self,
         list_statements_finprep: List,
-        statement_model: Union[BalanceSheetFinprep, IncomeStatementFinprep, CashflowStatementFinprep],
+        statement_model: Union[
+            Type[BalanceSheetFinprep],
+            Type[IncomeStatementFinprep],
+            Type[CashflowStatementFinprep],
+        ],
         normalize_data: Callable,
     ) -> List:
         data_saved = []

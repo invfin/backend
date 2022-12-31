@@ -75,4 +75,5 @@ __all__ = [
     "IncomeStatementYahooQuery",
     "KeyStatsYahooQuery",
     "StatementsFinnhub",
+    "BaseStatement",
 ]

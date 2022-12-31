@@ -17,7 +17,8 @@ from .views import (
 
 # import sys, inspect
 
-# list_of_serializers = inspect.getmembers(sys.modules['src.empresas.api.serializers'], lambda member: inspect.isclass(member) and member.__module__ == 'src.empresas.api.serializers')
+# list_of_serializers = inspect.getmembers(sys.modules['src.empresas.api.serializers'],
+# lambda member: inspect.isclass(member) and member.__module__ == 'src.empresas.api.serializers')
 
 
 app_name = "screener"

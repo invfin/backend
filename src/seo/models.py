@@ -133,7 +133,7 @@ class BaseModelVisited(Model):
     def __str__(self) -> str:
         try:
             response = self.user.username
-        except:
+        except Exception:
             response = f"Visiteur - {self.user.id}"
         return response
 

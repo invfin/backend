@@ -168,7 +168,7 @@ class BaseCompanyVisitedRecommendationView(BaseRecommendationView):
         if "companies_visited" in self.request.session:
             companies_visited = self.request.session["companies_visited"]
             for company_visited in companies_visited:
-                if not "sector_id" in company_visited:
+                if "sector_id" not in company_visited:
                     company = Company.objects.get(ticker=company_visited["ticker"])
                     company_visited.update(
                         {

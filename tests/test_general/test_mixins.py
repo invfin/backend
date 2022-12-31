@@ -2,10 +2,10 @@ from django.test import TestCase
 
 from bfet import DjangoTestingModel
 
-from src.users.models import User
 from src.escritos.models import Term
-from src.preguntas_respuestas.models import Question
 from src.general.mixins import VotesMixin
+from src.preguntas_respuestas.models import Question
+from src.users.models import User
 
 
 class TestMixins(TestCase):

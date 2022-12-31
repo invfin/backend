@@ -6,7 +6,6 @@ from src.content_creation import constants
 from src.content_creation.models import DefaultContent, DefaultTilte, Emoji, Hashtag
 from src.content_creation.outils.content_creator import ContentCreation
 from src.socialmedias import constants as social_constants
-from src.socialmedias.models import TermSharedHistorial
 
 
 class TestContentCreation(TestCase):
@@ -266,7 +265,7 @@ class TestContentCreation(TestCase):
 
         assert self.content_creator.create_content(content="first content") == {"content": "first content"}
 
-        default_content_web = DjangoTestingModel.create(DefaultContent, for_content=constants.WEB)
+        DjangoTestingModel.create(DefaultContent, for_content=constants.WEB)
 
         assert self.content_creator.create_content(
             content="first content",

@@ -1,16 +1,3 @@
-from django.conf import settings
-from django.db.models import signals
-
-from src.business.models import (
-    Customer,
-    Product,
-    ProductComplementary,
-    ProductComplementaryPaymentLink,
-    ProductDiscount,
-    TransactionHistorial,
-)
-from src.business.signals.handlers import BusinessSignal
-
 # signals.pre_save.connect(BusinessSignal.product_pre_save, sender=Product)
 # signals.pre_save.connect(BusinessSignal.product_complementary_pre_save, sender=ProductComplementary)
 # signals.pre_save.connect(BusinessSignal.complementary_payment_link_pre_save, sender=ProductComplementaryPaymentLink)

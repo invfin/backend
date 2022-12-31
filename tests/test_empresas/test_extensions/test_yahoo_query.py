@@ -22,8 +22,8 @@ class TestAverageStatementsYahooQuery(TestCase):
         assert inc_st_yahooquery_dict["cost_of_revenue"] == self.inc_st_yahooquery.reconciled_cost_of_revenue
         assert inc_st_yahooquery_dict["gross_profit"] == self.inc_st_yahooquery.gross_profit
         assert inc_st_yahooquery_dict["rd_expenses"] == self.inc_st_yahooquery.research_and_development
-        assert inc_st_yahooquery_dict["general_administrative_expenses"] == None
-        assert inc_st_yahooquery_dict["selling_marketing_expenses"] == None
+        assert inc_st_yahooquery_dict["general_administrative_expenses"] is None
+        assert inc_st_yahooquery_dict["selling_marketing_expenses"] is None
         assert inc_st_yahooquery_dict["sga_expenses"] == self.inc_st_yahooquery.selling_general_and_administration
         assert inc_st_yahooquery_dict["other_expenses"] == self.inc_st_yahooquery.other_income_expense
         assert inc_st_yahooquery_dict["operating_expenses"] == self.inc_st_yahooquery.operating_expense
@@ -41,7 +41,7 @@ class TestAverageStatementsYahooQuery(TestCase):
         )
         assert (
             inc_st_yahooquery_dict["weighted_average_diluated_shares_outstanding"]
-            == self.inc_st_yahooquery.diluted_average_shares,
+            == self.inc_st_yahooquery.diluted_average_shares
         )
 
     def test_return_standard_balance_sheet(self):
@@ -50,50 +50,50 @@ class TestAverageStatementsYahooQuery(TestCase):
         assert bs_yahooquery_dict["short_term_investments"] == self.bs_yahooquery.other_short_term_investments
         assert (
             bs_yahooquery_dict["cash_and_short_term_investments"]
-            == self.bs_yahooquery.cash_cash_equivalents_and_short_term_investments,
+            == self.bs_yahooquery.cash_cash_equivalents_and_short_term_investments
         )
         assert bs_yahooquery_dict["net_receivables"] == self.bs_yahooquery.receivables
         assert bs_yahooquery_dict["inventory"] == self.bs_yahooquery.inventory
         assert bs_yahooquery_dict["other_current_assets"] == self.bs_yahooquery.other_current_assets
         assert bs_yahooquery_dict["total_current_assets"] == self.bs_yahooquery.current_assets
         assert bs_yahooquery_dict["property_plant_equipment"] == self.bs_yahooquery.net_ppe
-        assert bs_yahooquery_dict["goodwill"] == None
-        assert bs_yahooquery_dict["intangible_assets"] == None
-        assert bs_yahooquery_dict["goodwill_and_intangible_assets"] == None
+        assert bs_yahooquery_dict["goodwill"] is None
+        assert bs_yahooquery_dict["intangible_assets"] is None
+        assert bs_yahooquery_dict["goodwill_and_intangible_assets"] is None
         assert bs_yahooquery_dict["long_term_investments"] == self.bs_yahooquery.investments_and_advances
-        assert bs_yahooquery_dict["tax_assets"] == None
+        assert bs_yahooquery_dict["tax_assets"] is None
         assert bs_yahooquery_dict["other_non_current_assets"] == self.bs_yahooquery.other_non_current_assets
         assert bs_yahooquery_dict["total_non_current_assets"] == self.bs_yahooquery.total_non_current_assets
-        assert bs_yahooquery_dict["other_assets"] == None
+        assert bs_yahooquery_dict["other_assets"] is None
         assert bs_yahooquery_dict["total_assets"] == self.bs_yahooquery.total_assets
-        assert bs_yahooquery_dict["account_payables"] == self.bs_yahooquery.payables_and_accrued_expenses
+        assert bs_yahooquery_dict["accounts_payable"] == self.bs_yahooquery.payables_and_accrued_expenses
         assert bs_yahooquery_dict["short_term_debt"] == self.bs_yahooquery.current_debt_and_capital_lease_obligation
-        assert bs_yahooquery_dict["tax_payables"] == None
+        assert bs_yahooquery_dict["tax_payables"] is None
         assert bs_yahooquery_dict["deferred_revenue"] == self.bs_yahooquery.current_deferred_revenue
         assert bs_yahooquery_dict["other_current_liabilities"] == self.bs_yahooquery.other_current_liabilities
         assert bs_yahooquery_dict["total_current_liabilities"] == self.bs_yahooquery.current_liabilities
         assert bs_yahooquery_dict["long_term_debt"] == self.bs_yahooquery.long_term_debt_and_capital_lease_obligation
-        assert bs_yahooquery_dict["deferred_revenue_non_current"] == None
-        assert bs_yahooquery_dict["deferred_tax_liabilities_non_current"] == None
+        assert bs_yahooquery_dict["deferred_revenue_non_current"] is None
+        assert bs_yahooquery_dict["deferred_tax_liabilities_non_current"] is None
         assert bs_yahooquery_dict["other_non_current_liabilities"] == self.bs_yahooquery.other_non_current_liabilities
         assert (
             bs_yahooquery_dict["total_non_current_liabilities"]
-            == self.bs_yahooquery.total_non_current_liabilities_net_minority_interest,
+            == self.bs_yahooquery.total_non_current_liabilities_net_minority_interest
         )
-        assert bs_yahooquery_dict["other_liabilities"] == None
+        assert bs_yahooquery_dict["other_liabilities"] is None
         assert bs_yahooquery_dict["total_liabilities"] == self.bs_yahooquery.total_liabilities_net_minority_interest
         assert bs_yahooquery_dict["common_stocks"] == self.bs_yahooquery.common_stock
         assert bs_yahooquery_dict["retained_earnings"] == self.bs_yahooquery.retained_earnings
         assert (
             bs_yahooquery_dict["accumulated_other_comprehensive_income_loss"]
-            == self.bs_yahooquery.gains_losses_not_affecting_retained_earnings,
+            == self.bs_yahooquery.gains_losses_not_affecting_retained_earnings
         )
-        assert bs_yahooquery_dict["othertotal_stockholders_equity"] == None
+        assert bs_yahooquery_dict["othertotal_stockholders_equity"] is None
         assert (
             bs_yahooquery_dict["total_stockholders_equity"] == self.bs_yahooquery.total_equity_gross_minority_interest
         )
         assert bs_yahooquery_dict["total_liabilities_and_total_equity"] == self.bs_yahooquery.total_assets
-        assert bs_yahooquery_dict["total_investments"] == None
+        assert bs_yahooquery_dict["total_investments"] is None
         assert bs_yahooquery_dict["total_debt"] == self.bs_yahooquery.total_debt
         assert bs_yahooquery_dict["net_debt"] == self.bs_yahooquery.net_debt
 
@@ -102,25 +102,25 @@ class TestAverageStatementsYahooQuery(TestCase):
         assert cf_st_yahooquery_dict["net_income"] == self.cf_st_yahooquery.net_income
         assert cf_st_yahooquery_dict["depreciation_amortization"] == self.cf_st_yahooquery.depreciation_and_amortization
         assert cf_st_yahooquery_dict["deferred_income_tax"] == self.cf_st_yahooquery.deferred_income_tax
-        assert cf_st_yahooquery_dict["stock_based_compesation"] == self.cf_st_yahooquery.stock_based_compensation
+        assert cf_st_yahooquery_dict["stock_based_compensation"] == self.cf_st_yahooquery.stock_based_compensation
         assert cf_st_yahooquery_dict["change_in_working_capital"] == self.cf_st_yahooquery.change_in_working_capital
-        assert cf_st_yahooquery_dict["accounts_receivables"] == self.cf_st_yahooquery.changes_in_account_receivables
+        assert cf_st_yahooquery_dict["accounts_receivable"] == self.cf_st_yahooquery.changes_in_account_receivables
         assert cf_st_yahooquery_dict["inventory"] == self.cf_st_yahooquery.change_in_inventory
-        assert cf_st_yahooquery_dict["accounts_payable"] == None
+        assert cf_st_yahooquery_dict["accounts_payable"] is None
         assert cf_st_yahooquery_dict["other_working_capital"] == self.cf_st_yahooquery.change_in_other_working_capital
         assert cf_st_yahooquery_dict["other_non_cash_items"] == self.cf_st_yahooquery.other_non_cash_items
         assert (
             cf_st_yahooquery_dict["operating_activities_cf"]
-            == self.cf_st_yahooquery.cash_flow_from_continuing_operating_activities,
+            == self.cf_st_yahooquery.cash_flow_from_continuing_operating_activities
         )
-        assert cf_st_yahooquery_dict["investments_property_plant_equipment"] == None
+        assert cf_st_yahooquery_dict["investments_property_plant_equipment"] is None
         assert cf_st_yahooquery_dict["acquisitions_net"] == self.cf_st_yahooquery.purchase_of_business
         assert cf_st_yahooquery_dict["purchases_investments"] == self.cf_st_yahooquery.purchase_of_investment
         assert cf_st_yahooquery_dict["sales_maturities_investments"] == self.cf_st_yahooquery.sale_of_investment
         assert cf_st_yahooquery_dict["other_investing_activites"] == self.cf_st_yahooquery.net_other_investing_changes
         assert (
             cf_st_yahooquery_dict["investing_activities_cf"]
-            == self.cf_st_yahooquery.cash_flow_from_continuing_investing_activities,
+            == self.cf_st_yahooquery.cash_flow_from_continuing_investing_activities
         )
         assert cf_st_yahooquery_dict["debt_repayment"] == self.cf_st_yahooquery.repayment_of_debt
         assert cf_st_yahooquery_dict["common_stock_issued"] == self.cf_st_yahooquery.issuance_of_capital_stock
@@ -129,10 +129,10 @@ class TestAverageStatementsYahooQuery(TestCase):
         assert cf_st_yahooquery_dict["other_financing_activities"] == self.cf_st_yahooquery.net_other_financing_charges
         assert (
             cf_st_yahooquery_dict["financing_activities_cf"]
-            == self.cf_st_yahooquery.cash_flow_from_continuing_financing_activities,
+            == self.cf_st_yahooquery.cash_flow_from_continuing_financing_activities
         )
-        assert cf_st_yahooquery_dict["effect_forex_exchange"] == None
-        assert cf_st_yahooquery_dict["net_change_cash"] == None
+        assert cf_st_yahooquery_dict["effect_forex_exchange"] is None
+        assert cf_st_yahooquery_dict["net_change_cash"] is None
         assert cf_st_yahooquery_dict["cash_end_period"] == self.cf_st_yahooquery.end_cash_position
         assert cf_st_yahooquery_dict["cash_beginning_period"] == self.cf_st_yahooquery.beginning_cash_position
         assert cf_st_yahooquery_dict["operating_cf"] == self.cf_st_yahooquery.operating_cash_flow

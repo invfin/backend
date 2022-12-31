@@ -95,7 +95,8 @@ TERM_CONTENT = [
             " esencialmente el valor dado por el mercado por cada d&oacute;lar del patrimonio neto de la"
             " compa&ntilde;&iacute;a.</p>\r\n\r\n<p>Recordemos que el patrimonio neto se calcula restando los pasivos a"
             " los activos de la empresa que est&aacute;n inscritos en el <strong><a"
-            ' href="https://inversionesyfinanzas.xyz/definicion/contabilidad/estados-financieros/el-balance-sheet-en-espanol/">balance'
+            ' href="https://inversionesyfinanzas.xyz/definicion/contabilidad/estados-financieros/'
+            'el-balance-sheet-en-espanol/">balance'
             " general</a></strong>.</p>\r\n\r\n<p>Patrimonio neto = Activos - Pasivos</p>\r\n\r\n<p>El valor en&nbsp;"
             " libros es tambi&eacute;n el valor de activos netos tangibles de una empresa calculada como, los activos"
             " totales menos los activos intangibles, por ejemplo: Patentes, goodwill y pasivos.</p>\r\n\r\n<p>Las"

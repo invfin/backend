@@ -1,5 +1,7 @@
 from django.contrib import admin
 
+from import_export.admin import ExportActionModelAdmin
+
 from src.empresas.admin.base import BaseCompanyAdmin, BaseJSONWidgetInline, BaseStatementAdmin
 from src.empresas.admin.filters.base import HasQuarterFilter
 from src.empresas.models import (
@@ -33,17 +35,17 @@ class BaseFinalAdmin(BaseStatementAdmin):
 
 
 @admin.register(IncomeStatement)
-class IncomeStatementAdmin(BaseFinalAdmin):
+class IncomeStatementAdmin(ExportActionModelAdmin, BaseFinalAdmin):
     pass
 
 
 @admin.register(BalanceSheet)
-class BalanceSheetAdmin(BaseFinalAdmin):
+class BalanceSheetAdmin(ExportActionModelAdmin, BaseFinalAdmin):
     pass
 
 
 @admin.register(CashflowStatement)
-class CashflowStatementAdmin(BaseFinalAdmin):
+class CashflowStatementAdmin(ExportActionModelAdmin, BaseFinalAdmin):
     pass
 
 

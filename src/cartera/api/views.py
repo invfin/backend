@@ -1,8 +1,6 @@
 from django.contrib import messages
-from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import HttpResponse
-from django.shortcuts import redirect
 
 from src.empresas.models import Company
 from src.seo.views import SEOFormView
@@ -79,17 +77,3 @@ class AddNewAssetView(CurrencyInitial):
         empresa_busqueda = Company.objects.get(ticker=ticker)
         form.save(self.request, empresa_busqueda)
         return self.successful_return()
-
-
-@login_required(login_url="login")
-def DeleteMove(request, id):
-    user = request.user
-    cartera = PATRIMONIO.objects.get(usuario=user)
-    MOVIMIENTO.objects.get(id=id).delete()
-    moves_user = MOVIMIENTO.objects.filter(user=user)
-    if len(moves_user) == 0:
-        for position in cartera.holds.all():
-            position.delete()
-
-    messages.success(request, f"Borrado correctamente")
-    return redirect(request.META.get("HTTP_REFERER"))

@@ -6,8 +6,8 @@ from django.test import TestCase, override_settings
 import vcr
 
 from src.content_creation.constants import POST_TYPE_TEXT
-from src.socialmedias.outils.socialposter.facepy import Facebook
 from src.socialmedias import constants
+from src.socialmedias.outils.socialposter.facepy import Facebook
 
 facebook_vcr = vcr.VCR(
     cassette_library_dir="cassettes/facebook/",

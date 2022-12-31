@@ -46,7 +46,13 @@ class BaseFinalStatement(BaseStatement):
 
 
 class IncomeStatement(BaseFinalStatement):
-    company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="inc_statements")
+    company = ForeignKey(
+        Company,
+        on_delete=SET_NULL,
+        null=True,
+        blank=True,
+        related_name="inc_statements",
+    )
     revenue = FloatField(default=0, blank=True, null=True)
     cost_of_revenue = FloatField(default=0, blank=True, null=True)
     gross_profit = FloatField(default=0, blank=True, null=True)
@@ -75,7 +81,13 @@ class IncomeStatement(BaseFinalStatement):
 
 
 class BalanceSheet(BaseFinalStatement):
-    company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="balance_sheets")
+    company = ForeignKey(
+        Company,
+        on_delete=SET_NULL,
+        null=True,
+        blank=True,
+        related_name="balance_sheets",
+    )
     cash_and_cash_equivalents = FloatField(default=0, blank=True, null=True)
     short_term_investments = FloatField(default=0, blank=True, null=True)
     cash_and_short_term_investments = FloatField(default=0, blank=True, null=True)
@@ -93,7 +105,7 @@ class BalanceSheet(BaseFinalStatement):
     total_non_current_assets = FloatField(default=0, blank=True, null=True)
     other_assets = FloatField(default=0, blank=True, null=True)
     total_assets = FloatField(default=0, blank=True, null=True)
-    account_payables = FloatField(default=0, blank=True, null=True)
+    accounts_payable = FloatField(default=0, blank=True, null=True)
     short_term_debt = FloatField(default=0, blank=True, null=True)
     tax_payables = FloatField(default=0, blank=True, null=True)
     deferred_revenue = FloatField(default=0, blank=True, null=True)
@@ -107,6 +119,7 @@ class BalanceSheet(BaseFinalStatement):
     other_liabilities = FloatField(default=0, blank=True, null=True)
     total_liabilities = FloatField(default=0, blank=True, null=True)
     common_stocks = FloatField(default=0, blank=True, null=True)
+    preferred_stocks = FloatField(default=0, blank=True, null=True)
     retained_earnings = FloatField(default=0, blank=True, null=True)
     accumulated_other_comprehensive_income_loss = FloatField(default=0, blank=True, null=True)
     othertotal_stockholders_equity = FloatField(default=0, blank=True, null=True)
@@ -123,13 +136,19 @@ class BalanceSheet(BaseFinalStatement):
 
 
 class CashflowStatement(BaseFinalStatement):
-    company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="cf_statements")
+    company = ForeignKey(
+        Company,
+        on_delete=SET_NULL,
+        null=True,
+        blank=True,
+        related_name="cf_statements",
+    )
     net_income = FloatField(default=0, blank=True, null=True)
     depreciation_amortization = FloatField(default=0, blank=True, null=True)
     deferred_income_tax = FloatField(default=0, blank=True, null=True)
-    stock_based_compesation = FloatField(default=0, blank=True, null=True)  # stock_based_compensation
+    stock_based_compensation = FloatField(default=0, blank=True, null=True)  # stock_based_compensation
     change_in_working_capital = FloatField(default=0, blank=True, null=True)
-    accounts_receivables = FloatField(default=0, blank=True, null=True)
+    accounts_receivable = FloatField(default=0, blank=True, null=True)
     inventory = FloatField(default=0, blank=True, null=True)
     accounts_payable = FloatField(default=0, blank=True, null=True)
     other_working_capital = FloatField(default=0, blank=True, null=True)
@@ -251,7 +270,7 @@ class NonGaap(BaseFinalStatement):
     nopat = FloatField(default=0, blank=True, null=True)
     net_working_cap = FloatField(default=0, blank=True, null=True)
     average_inventory = FloatField(default=0, blank=True, null=True)
-    average_payables = FloatField(default=0, blank=True, null=True)
+    average_accounts_payable = FloatField(default=0, blank=True, null=True)
     dividend_yield = FloatField(default=0, blank=True, null=True)
     earnings_yield = FloatField(default=0, blank=True, null=True)
     fcf_yield = FloatField(default=0, blank=True, null=True)
@@ -327,12 +346,12 @@ class EficiencyRatio(BaseFinalStatement):
     asset_turnover = FloatField(default=0, blank=True, null=True)
     inventory_turnover = FloatField(default=0, blank=True, null=True)
     fixed_asset_turnover = FloatField(default=0, blank=True, null=True)
-    payables_turnover = FloatField(default=0, blank=True, null=True)
+    accounts_payable_turnover = FloatField(default=0, blank=True, null=True)
     cash_conversion_cycle = FloatField(default=0, blank=True, null=True)
     days_inventory_outstanding = FloatField(default=0, blank=True, null=True)
     days_payables_outstanding = FloatField(default=0, blank=True, null=True)
     days_sales_outstanding = FloatField(default=0, blank=True, null=True)
-    fcf_to_operating_cf = FloatField(default=0, blank=True, null=True)
+    free_cashflow_to_operating_cashflow = FloatField(default=0, blank=True, null=True)
     operating_cycle = FloatField(default=0, blank=True, null=True)
     cash_conversion_ratio = FloatField(default=0, blank=True, null=True)
 

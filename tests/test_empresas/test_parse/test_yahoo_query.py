@@ -1,6 +1,5 @@
 from datetime import datetime
 from unittest import skip
-from unittest.mock import patch
 
 from django.test import TestCase
 
@@ -16,6 +15,7 @@ from src.empresas.models import (
 )
 from src.empresas.parse.yahoo_query import YahooQueryInfo
 from src.periods.models import Period
+
 
 # TODO patch the requests and responses
 @skip("needs to be patched")

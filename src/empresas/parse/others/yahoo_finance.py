@@ -1,3 +1,8 @@
+import requests
+
+from src.general.constants import HEADERS
+
+
 class ParseYahooFinance:
     def scrap_price_yahoo(self):
         url_current_price = f"https://query1.finance.yahoo.com/v8/finance/chart/{self.ticker}"

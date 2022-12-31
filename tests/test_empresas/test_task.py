@@ -1,4 +1,3 @@
-from unittest import skip
 from unittest.mock import patch
 
 from django.core import mail

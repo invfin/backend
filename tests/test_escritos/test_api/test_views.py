@@ -59,7 +59,10 @@ class TestAllTermsAPIView(BaseAPIViewTestMixin, APITestCase):
                 "veces_compartido": 0,
                 "categoria": None,
                 "autor": "Lucas Montes",
-                "imagen": "https://cdn.wallstreetmojo.com/wp-content/uploads/2019/11/Comparative-Balance-Sheet-Example-1.1-1.png",
+                "imagen": (
+                    "https://cdn.wallstreetmojo.com/wp-content/uploads/2019/11/"
+                    "Comparative-Balance-Sheet-Example-1.1-1.png"
+                ),
             },
         ]
         self.assertEqual(expected_data, json.loads(json.dumps(response.data)))

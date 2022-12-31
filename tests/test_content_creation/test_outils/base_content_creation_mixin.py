@@ -1,9 +1,9 @@
-from typing import Dict, List, Optional, Type, Union
+from typing import Type
 
-from bfet import DataCreator, DjangoTestingModel
+from bfet import DjangoTestingModel
 
 from src.content_creation import constants
-from src.content_creation.models import DefaultContent, DefaultTilte, Emoji, Hashtag
+from src.content_creation.models import DefaultTilte, Emoji, Hashtag
 from src.content_creation.outils.content_creator import ContentCreation
 from src.escritos.models import Term
 from src.socialmedias import constants as social_constants

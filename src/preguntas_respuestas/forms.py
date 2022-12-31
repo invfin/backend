@@ -1,8 +1,6 @@
-from django.forms import CharField, ModelForm, ValidationError
+from django.forms import ModelForm, ValidationError
 
-from ckeditor.widgets import CKEditorWidget
-
-from .models import Answer, Question
+from .models import Question
 
 
 class CreateQuestionForm(ModelForm):

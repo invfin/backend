@@ -6,7 +6,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.shortcuts import redirect
 from django.urls import reverse
-from django.utils.translation import gettext_lazy as _
 
 from src.public_blog.forms import WriterProfileForm
 from src.seo.views import SEOTemplateView, SEODetailView, FormView

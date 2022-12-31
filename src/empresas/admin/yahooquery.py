@@ -9,6 +9,7 @@ from src.empresas.models import (
     IncomeStatementYahooQuery,
     KeyStatsYahooQuery,
 )
+from src.empresas.outils.retrieve_data import RetrieveCompanyData
 
 
 @admin.register(BalanceSheetYahooQuery)

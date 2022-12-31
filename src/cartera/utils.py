@@ -1,5 +1,3 @@
-from .models import Income, PositionMovement, Spend
-
 # class MovementsManagement:
 
 #     def add_asset():

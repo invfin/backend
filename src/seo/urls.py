@@ -1,6 +1,6 @@
 from django.urls import path
 
-from src.seo.views import PromotionRedirectView, UrlShorterRedirectView, redirect_old_urls, robots_txt
+from src.seo.views import PromotionRedirectView, redirect_old_urls, robots_txt
 
 app_name = "seo"
 urlpatterns = [

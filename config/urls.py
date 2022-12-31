@@ -6,7 +6,7 @@ from django.urls import include, path
 from django.views import defaults as default_views
 
 from src.api.views import obtain_auth_key
-from src.seo.sitemaps import CompanySitemap, PublicBlogSitemap, QuestionSitemap, TermSitemap, SuperinvestorSitemap
+from src.seo.sitemaps import CompanySitemap, PublicBlogSitemap, QuestionSitemap, SuperinvestorSitemap, TermSitemap
 from src.general.views import Handler404
 
 sitemaps = {

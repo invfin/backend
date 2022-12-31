@@ -1,5 +1,5 @@
 import random
-from typing import Dict, List, Type
+from typing import Dict
 
 from django.db.models import Manager
 

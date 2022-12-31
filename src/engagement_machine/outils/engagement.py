@@ -44,7 +44,7 @@ class EngagementMachine:
         campaign, created = Campaign.objects.get_or_create(
             slug=web_email_type, defaults={"title": constants.CONTENT_PURPOSES_MAP[web_email_type]}
         )
-        link = newsletter_content_from_object.pop("link")
+        newsletter_content_from_object.pop("link")
         newsletter_content_from_object.update(
             {
                 "object": newsletter_content_from_object.pop("content_shared"),

@@ -4,11 +4,11 @@ from django.core.mail import send_mail
 from django.http import HttpResponse
 from django.views.decorators.csrf import csrf_exempt
 
-User = get_user_model()
-
 import stripe
 
 from .models import StripeWebhookResponse
+
+User = get_user_model()
 
 stripe.api_key = settings.STRIPE_PRIVATE
 
@@ -24,20 +24,21 @@ def stripe_webhook(request):
 
     try:
         event = stripe.Webhook.construct_event(payload, sig_header, settings.WEBHOOK_SECRET)
-    except ValueError as e:
+    except ValueError:
         # Invalid payload
         return HttpResponse(status=400)
-    except stripe.error.SignatureVerificationError as e:
+    except stripe.error.SignatureVerificationError:
         # Invalid signature
         return HttpResponse(status=400)
 
     StripeWebhookResponse.objects.create(stripe_id=event["id"], full_response=event)
     # if event["type"] == "payment_intent.created":
-    #     event['data']['object']['receipt_email'] = stripe.Customer.retrieve(event['data']['object']["customer"])['email']
+    # event['data']['object']['receipt_email'] =
+    # stripe.Customer.retrieve(event['data']['object']["customer"])['email']
 
     # Handle the checkout.session.completed event
     if event["type"] == "checkout.session.completed":
-        session = event["data"]["object"]
+        event["data"]["object"]
 
         # send_mail('Solicitud recibida',
     # f'{session}' ,
@@ -48,7 +49,7 @@ def stripe_webhook(request):
         intent = event["data"]["object"]
         stripe_customer_id = intent["customer"]
         stripe_customer = stripe.Customer.retrieve(stripe_customer_id)
-        customer_email = stripe_customer["email"]
+        stripe_customer["email"]
 
         send_mail(
             "Compra realizada",

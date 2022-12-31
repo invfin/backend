@@ -130,8 +130,8 @@ class TestScrapCompanyInfo(TestCase):
 
     def test_requests(self):
         up_comp = UpdateCompany(self.zinga)
-        inc = up_comp.request_income_statements_finprep()
+        up_comp.request_income_statements_finprep()
         time.sleep(5)
-        bls = up_comp.request_balance_sheets_finprep()
+        up_comp.request_balance_sheets_finprep()
         time.sleep(5)
-        cfs = up_comp.request_cashflow_statements_finprep()
+        up_comp.request_cashflow_statements_finprep()

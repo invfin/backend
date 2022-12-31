@@ -1,6 +1,6 @@
-from typing import Any, Dict, Type
+from typing import Any, Dict
 
-from django.db.models import Count, F, Manager, Prefetch, Q, QuerySet
+from django.db.models import Count, F, Manager, Prefetch, Q
 
 from src.general.managers import BaseManager, BaseQuerySet
 

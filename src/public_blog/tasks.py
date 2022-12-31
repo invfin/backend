@@ -5,7 +5,7 @@ from django.utils import timezone
 
 from config import celery_app
 from src.emailing.tasks import send_email_task
-from src.public_blog.models import NewsletterFollowers, PublicBlog, PublicBlogAsNewsletter
+from src.public_blog.models import NewsletterFollowers, PublicBlog
 
 User = get_user_model()
 

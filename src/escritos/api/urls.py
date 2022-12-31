@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import AllTermsAPIView, TermAPIView, TermContentAPIView
+from .views import AllTermsAPIView, TermAPIView
 
 urlpatterns = [
     path("lista-terminos/", AllTermsAPIView.as_view(), name="all_terms_api"),

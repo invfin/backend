@@ -18,15 +18,15 @@ class UrlShorterRedirectView(RedirectView):
 
 
 def redirect_old_urls(request, ques_slug=False, term_slug=False, publs_slug=False):
-    if ques_slug == False and term_slug == False:
+    if ques_slug is False and term_slug is False:
         model = PublicBlog.objects
         slug = publs_slug
 
-    elif term_slug == False and publs_slug == False:
+    elif term_slug is False and publs_slug is False:
         model = Question.objects
         slug = ques_slug
 
-    elif publs_slug == False and ques_slug == False:
+    elif publs_slug is False and ques_slug is False:
         model = Term.objects
         slug = term_slug
 

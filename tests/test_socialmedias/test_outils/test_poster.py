@@ -165,7 +165,7 @@ class TestSocialPosting(TestCase):
                 f"{self.term.resume} <br>Si quieres conocer más a fondo puedes leer la definición entera"
                 f" http://example.com:8000/{self.term.slug}. <br>Estos son los puntos claves que encontrarás:"
             ),
-            f"link": "http://example.com:8000/{self.term.slug}",
+            "link": "http://example.com:8000/{self.term.slug}",
             "content_shared": self.term,
             "media": self.term.image,
             "shared_model_historial": TermSharedHistorial,

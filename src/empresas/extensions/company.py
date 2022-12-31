@@ -17,7 +17,7 @@ class CompanyExtended(ChartSerializer):
         if not self.currency:
             try:
                 currency = statement[0].reported_currency
-            except:
+            except Exception:
                 currency = None
             else:
                 self.currency = currency
@@ -192,7 +192,7 @@ class CompanyExtended(ChartSerializer):
     def comparing_income_json(self, limit):
         comparing_json, inc = self.income_json(limit)
         chartData = self.generate_json(comparing_json)
-        revenue_vs_net_income = self.generate_json(comparing_json, [0, 18], "bar")
+        self.generate_json(comparing_json, [0, 18], "bar")
 
         data = {"table": comparing_json, "chart": chartData}
         return data, inc
@@ -337,7 +337,7 @@ class CompanyExtended(ChartSerializer):
                     "url": "#!",
                     "percent": "false",
                     "short": "false",
-                    "values": [data.account_payables for data in bls],
+                    "values": [data.accounts_payable for data in bls],
                 },
                 {
                     "title": "Deuda a corto plazo",
@@ -538,7 +538,7 @@ class CompanyExtended(ChartSerializer):
                     "url": "#!",
                     "percent": "false",
                     "short": "false",
-                    "values": [data.stock_based_compesation for data in cf],
+                    "values": [data.stock_based_compensation for data in cf],
                 },
                 {
                     "title": "Cambios en working capital",
@@ -1108,7 +1108,7 @@ class CompanyExtended(ChartSerializer):
                     "url": "#!",
                     "percent": "true",
                     "short": "true",
-                    "values": [data.average_payables for data in nongaap],
+                    "values": [data.average_accounts_payable for data in nongaap],
                 },
                 {
                     "title": "Dividend yield",
@@ -1472,7 +1472,7 @@ class CompanyExtended(ChartSerializer):
                     "url": "#!",
                     "percent": "false",
                     "short": "true",
-                    "values": [data.payables_turnover for data in cf],
+                    "values": [data.accounts_payable_turnover for data in cf],
                 },
                 {
                     "title": "Ciclo conversión de efectivo",
@@ -1507,7 +1507,7 @@ class CompanyExtended(ChartSerializer):
                     "url": "#!",
                     "percent": "true",
                     "short": "true",
-                    "values": [data.fcf_to_operating_cf for data in cf],
+                    "values": [data.free_cashflow_to_operating_cashflow for data in cf],
                 },
                 {
                     "title": "Ciclo operativo",
@@ -1761,7 +1761,9 @@ class CompanyExtended(ChartSerializer):
         average_fixed_asset_turnover = all_efficiency_ratios.aggregate(
             average_fixed_asset_turnover=Avg("fixed_asset_turnover")
         )
-        average_payables_turnover = all_efficiency_ratios.aggregate(average_payables_turnover=Avg("payables_turnover"))
+        average_accounts_payable_turnover = all_efficiency_ratios.aggregate(
+            average_accounts_payable_turnover=Avg("accounts_payable_turnover")
+        )
         average_cash_conversion_cycle = all_efficiency_ratios.aggregate(
             average_cash_conversion_cycle=Avg("cash_conversion_cycle")
         )
@@ -1774,8 +1776,8 @@ class CompanyExtended(ChartSerializer):
         average_days_sales_outstanding = all_efficiency_ratios.aggregate(
             average_days_sales_outstanding=Avg("days_sales_outstanding")
         )
-        average_fcf_to_operating_cf = all_efficiency_ratios.aggregate(
-            average_fcf_to_operating_cf=Avg("fcf_to_operating_cf")
+        average_free_cashflow_to_operating_cashflow = all_efficiency_ratios.aggregate(
+            average_free_cashflow_to_operating_cashflow=Avg("free_cashflow_to_operating_cashflow")
         )
         average_operating_cycle = all_efficiency_ratios.aggregate(average_operating_cycle=Avg("operating_cycle"))
         # Growth
@@ -1858,12 +1860,12 @@ class CompanyExtended(ChartSerializer):
             **average_asset_turnover,
             **average_inventory_turnover,
             **average_fixed_asset_turnover,
-            **average_payables_turnover,
+            **average_accounts_payable_turnover,
             **average_cash_conversion_cycle,
             **average_days_inventory_outstanding,
             **average_days_payables_outstanding,
             **average_days_sales_outstanding,
-            **average_fcf_to_operating_cf,
+            **average_free_cashflow_to_operating_cashflow,
             **average_operating_cycle,
             **average_revenue_growth,
             **average_cost_revenue_growth,
@@ -2253,15 +2255,15 @@ class CompanyExtended(ChartSerializer):
         important_ratios, all_important_ratios = self.important_ratios(limit)
         secondary_ratios, all_secondary_ratios = self.secondary_ratios(limit)
 
-        all_rentability_ratios = all_important_ratios["rentability_ratios"]
-        all_liquidity_ratios = all_important_ratios["liquidity_ratios"]
-        all_margins = all_important_ratios["margins"]
+        all_important_ratios["rentability_ratios"]
+        all_important_ratios["liquidity_ratios"]
+        all_important_ratios["margins"]
 
-        all_efficiency_ratios = all_secondary_ratios["efficiency_ratios"]
-        all_op_risk_ratios = all_secondary_ratios["op_risk_ratios"]
-        all_non_gaap = all_secondary_ratios["non_gaap"]
-        all_per_share = all_secondary_ratios["per_share"]
-        all_fcf_ratios = all_secondary_ratios["fcf_ratios"]
+        all_secondary_ratios["efficiency_ratios"]
+        all_secondary_ratios["op_risk_ratios"]
+        all_secondary_ratios["non_gaap"]
+        all_secondary_ratios["per_share"]
+        all_secondary_ratios["fcf_ratios"]
 
         comparing_ev_ratios_json, all_ev_ratios = self.comparing_ev_ratios_json(limit)
         comparing_growth_rates_json, all_growth_rates = self.comparing_growth_rates_json(limit)
