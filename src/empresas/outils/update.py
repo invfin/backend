@@ -68,7 +68,7 @@ class UpdateCompany(CalculateFinancialRatios, AverageStatements):
         return "updated"
 
     @log_company()
-    def update_average_financials_statements(self, period)->None:
+    def update_average_financials_statements(self, period) -> None:
         """
         TODO
         Move all the calculation logic into SQL

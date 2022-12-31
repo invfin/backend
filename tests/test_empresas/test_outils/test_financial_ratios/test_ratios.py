@@ -5,21 +5,11 @@ from django.utils import timezone
 
 from bfet import DjangoTestingModel
 
-from src.empresas.models import (
-    BalanceSheet,
-    CashflowStatement,
-    Company,
-    IncomeStatement,
-)
+from src.empresas.models import BalanceSheet, CashflowStatement, Company, IncomeStatement
 from src.empresas.outils.financial_ratios import CalculateFinancialRatios
-from src.periods.models import Period
 from src.periods.constants import PERIOD_FOR_YEAR
-
-from tests.data.empresas import (
-    balance_sheets_final_statment,
-    income_final_statment,
-    cashflow_final_statment,
-)
+from src.periods.models import Period
+from tests.data.empresas import balance_sheets_final_statment, cashflow_final_statment, income_final_statment
 
 
 class TestCalculateFinancialRatios(TestCase):
@@ -76,9 +66,7 @@ class TestCalculateFinancialRatios(TestCase):
         )
 
     def test_split_statements_by_year(self):
-        current, previous = CalculateFinancialRatios(
-            self.company
-        ).split_statements_by_year(2022, 5)
+        current, previous = CalculateFinancialRatios(self.company).split_statements_by_year(2022, 5)
         assert [
             self.current_income,
             self.current_balance,
@@ -91,15 +79,9 @@ class TestCalculateFinancialRatios(TestCase):
         ] == previous
 
     def test_prepare_base_data(self):
-        inc_statements = self.company.inc_statements.filter(
-            period__period=PERIOD_FOR_YEAR
-        )
-        balance_sheets = self.company.balance_sheets.filter(
-            period__period=PERIOD_FOR_YEAR
-        )
-        cf_statements = self.company.cf_statements.filter(
-            period__period=PERIOD_FOR_YEAR
-        )
+        inc_statements = self.company.inc_statements.filter(period__period=PERIOD_FOR_YEAR)
+        balance_sheets = self.company.balance_sheets.filter(period__period=PERIOD_FOR_YEAR)
+        cf_statements = self.company.cf_statements.filter(period__period=PERIOD_FOR_YEAR)
         base_data = CalculateFinancialRatios.prepare_base_data(
             inc_statements.filter(period__year=self.current_year).values(),
             balance_sheets.filter(period__year=self.current_year).values(),
@@ -406,9 +388,7 @@ class TestCalculateFinancialRatios(TestCase):
             "last_year_current_assets": 35.46,
             "last_year_current_liabilities": 567,
         }
-        assert expected_result == CalculateFinancialRatios.filter_previous_year_data(
-            data
-        )
+        assert expected_result == CalculateFinancialRatios.filter_previous_year_data(data)
 
     def test_calculate_other_ratios(self):
         data = {
@@ -473,9 +453,7 @@ class TestCalculateFinancialRatios(TestCase):
             "nopat_roic": 3343.0,
             "rogic": 24.0,
         }
-        assert expected_result == CalculateFinancialRatios.calculate_rentability_ratios(
-            data
-        )
+        assert expected_result == CalculateFinancialRatios.calculate_rentability_ratios(data)
 
     def test_calculate_liquidity_ratios(self):
         data = {
@@ -495,9 +473,7 @@ class TestCalculateFinancialRatios(TestCase):
             "operating_cashflow_ratio": 0.01,
             "debt_to_equity": 0.18,
         }
-        assert expected_result == CalculateFinancialRatios.calculate_liquidity_ratios(
-            data
-        )
+        assert expected_result == CalculateFinancialRatios.calculate_liquidity_ratios(data)
 
     def test_calculate_margin_ratios(self):
         data = {
@@ -541,10 +517,7 @@ class TestCalculateFinancialRatios(TestCase):
             "unlevered_fcf_ebit": 22865.34569832,
             "owners_earnings": 1001345.34569832,
         }
-        assert (
-            expected_result
-            == CalculateFinancialRatios.calculate_free_cashflow_ratios(data)
-        )
+        assert expected_result == CalculateFinancialRatios.calculate_free_cashflow_ratios(data)
 
     def test_calculate_per_share_value(self):
         data = {
@@ -570,9 +543,7 @@ class TestCalculateFinancialRatios(TestCase):
             "capex_ps": 0.0008,
             "total_assets_ps": 0.0001,
         }
-        assert expected_result == CalculateFinancialRatios.calculate_per_share_value(
-            data
-        )
+        assert expected_result == CalculateFinancialRatios.calculate_per_share_value(data)
 
     def test_calculate_non_gaap(self):
         data = {
@@ -642,10 +613,7 @@ class TestCalculateFinancialRatios(TestCase):
             "long_term_debt_to_capitalization": 1.0,
             "total_debt_to_capitalization": 4.05,
         }
-        assert (
-            expected_result
-            == CalculateFinancialRatios.calculate_operation_risk_ratios(data)
-        )
+        assert expected_result == CalculateFinancialRatios.calculate_operation_risk_ratios(data)
 
     def test_calculate_enterprise_value_ratios(self):
         data = {
@@ -669,10 +637,7 @@ class TestCalculateFinancialRatios(TestCase):
             "company_equity_multiplier": 0.95,
             "ev_multiple": 0,
         }
-        assert (
-            expected_result
-            == CalculateFinancialRatios.calculate_enterprise_value_ratios(data)
-        )
+        assert expected_result == CalculateFinancialRatios.calculate_enterprise_value_ratios(data)
 
     def test_calculate_company_growth(self):
         data = {
@@ -709,9 +674,7 @@ class TestCalculateFinancialRatios(TestCase):
             "capex_growth": 27.0,
             "rd_expenses_growth": 12551.0,
         }
-        assert expected_result == CalculateFinancialRatios.calculate_company_growth(
-            data
-        )
+        assert expected_result == CalculateFinancialRatios.calculate_company_growth(data)
 
     def test_calculate_efficiency_ratios(self):
         expected_result = {
@@ -740,9 +703,7 @@ class TestCalculateFinancialRatios(TestCase):
             "free_cash_flow": 1000,
             "net_cash_provided_by_operating_activities": 1100,
         }
-        assert expected_result == CalculateFinancialRatios.calculate_efficiency_ratios(
-            data
-        )
+        assert expected_result == CalculateFinancialRatios.calculate_efficiency_ratios(data)
 
     def test_calculate_price_to_ratios(self):
         expected_result = {
@@ -768,6 +729,4 @@ class TestCalculateFinancialRatios(TestCase):
             "operating_cf_ps": 0,
             "tangible_ps": 12.12,
         }
-        assert expected_result == CalculateFinancialRatios.calculate_price_to_ratios(
-            data
-        )
+        assert expected_result == CalculateFinancialRatios.calculate_price_to_ratios(data)

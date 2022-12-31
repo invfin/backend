@@ -1,4 +1,4 @@
-from typing import Dict, List, Union, Tuple
+from typing import Dict, List, Tuple, Union
 
 from django.db.models import QuerySet
 from django.utils import timezone
@@ -82,21 +82,28 @@ class CalculateFinancialRatios(
             "last_year_current_liabilities": last_year_current_liabilities,
         }
 
-    def split_statements_by_year(self, year: int = timezone.now().year, period: int = PERIOD_FOR_YEAR,) ->Tuple[List, List]:
+    def split_statements_by_year(
+        self,
+        year: int = timezone.now().year,
+        period: int = PERIOD_FOR_YEAR,
+    ) -> Tuple[List, List]:
         current_year = year
         previous_year = current_year - 1
         inc_statements = self.company.inc_statements.filter(period__period=period)
         balance_sheets = self.company.balance_sheets.filter(period__period=period)
         cf_statements = self.company.cf_statements.filter(period__period=period)
-        return ([
-                    inc_statements.filter(period__year=current_year).first(),
-                    balance_sheets.filter(period__year=current_year).first(),
-                    cf_statements.filter(period__year=current_year).first(),
-        ], [
-            inc_statements.filter(period__year=previous_year).first(),
-            balance_sheets.filter(period__year=previous_year).first(),
-            cf_statements.filter(period__year=previous_year).first(),
-        ])
+        return (
+            [
+                inc_statements.filter(period__year=current_year).first(),
+                balance_sheets.filter(period__year=current_year).first(),
+                cf_statements.filter(period__year=current_year).first(),
+            ],
+            [
+                inc_statements.filter(period__year=previous_year).first(),
+                balance_sheets.filter(period__year=previous_year).first(),
+                cf_statements.filter(period__year=previous_year).first(),
+            ],
+        )
 
     @classmethod
     def prepare_base_data(

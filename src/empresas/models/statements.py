@@ -46,7 +46,13 @@ class BaseFinalStatement(BaseStatement):
 
 
 class IncomeStatement(BaseFinalStatement):
-    company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="inc_statements",)
+    company = ForeignKey(
+        Company,
+        on_delete=SET_NULL,
+        null=True,
+        blank=True,
+        related_name="inc_statements",
+    )
     revenue = FloatField(default=0, blank=True, null=True)
     cost_of_revenue = FloatField(default=0, blank=True, null=True)
     gross_profit = FloatField(default=0, blank=True, null=True)
@@ -75,7 +81,13 @@ class IncomeStatement(BaseFinalStatement):
 
 
 class BalanceSheet(BaseFinalStatement):
-    company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="balance_sheets",)
+    company = ForeignKey(
+        Company,
+        on_delete=SET_NULL,
+        null=True,
+        blank=True,
+        related_name="balance_sheets",
+    )
     cash_and_cash_equivalents = FloatField(default=0, blank=True, null=True)
     short_term_investments = FloatField(default=0, blank=True, null=True)
     cash_and_short_term_investments = FloatField(default=0, blank=True, null=True)
@@ -124,7 +136,13 @@ class BalanceSheet(BaseFinalStatement):
 
 
 class CashflowStatement(BaseFinalStatement):
-    company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="cf_statements",)
+    company = ForeignKey(
+        Company,
+        on_delete=SET_NULL,
+        null=True,
+        blank=True,
+        related_name="cf_statements",
+    )
     net_income = FloatField(default=0, blank=True, null=True)
     depreciation_amortization = FloatField(default=0, blank=True, null=True)
     deferred_income_tax = FloatField(default=0, blank=True, null=True)
