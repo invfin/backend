@@ -22,10 +22,6 @@ class Migration(migrations.Migration):
     ]
 
     operations = [
-        migrations.AlterModelOptions(
-            name="writterprofile",
-            options={},
-        ),
         migrations.AlterField(
             model_name="newsletterfollowers",
             name="user",
@@ -36,13 +32,6 @@ class Migration(migrations.Migration):
                 to=settings.AUTH_USER_MODEL,
             ),
         ),
-        migrations.AlterField(
-            model_name="writterprofile",
-            name="user",
-            field=models.OneToOneField(
-                null=True, on_delete=django.db.models.deletion.SET_NULL, to=settings.AUTH_USER_MODEL
-            ),
-        ),
         migrations.AlterModelTable(
             name="followinghistorial",
             table="writer_followers_historial",
@@ -50,10 +39,6 @@ class Migration(migrations.Migration):
         migrations.AlterModelTable(
             name="newsletterfollowers",
             table="writer_followers_newsletters",
-        ),
-        migrations.AlterModelTable(
-            name="writterprofile",
-            table=None,
         ),
         migrations.CreateModel(
             name="WriterProfile",
