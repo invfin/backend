@@ -15,52 +15,52 @@ from tests.data.empresas import balance_sheets_final_statment, cashflow_final_st
 class TestCalculateFinancialRatios(TestCase):
     @classmethod
     def setUpTestData(cls) -> None:
-        cls.current_year = timezone.now().year
-        cls.previous_year = cls.current_year - 1
-        current_period = DjangoTestingModel.create(
+        current_year = timezone.now().year
+        previous_year = current_year - 1
+        cls.current_period = DjangoTestingModel.create(
             Period,
             period=PERIOD_FOR_YEAR,
-            year=cls.current_year,
+            year=current_year,
         )
-        previous_period = DjangoTestingModel.create(
+        cls.previous_period = DjangoTestingModel.create(
             Period,
             period=PERIOD_FOR_YEAR,
-            year=cls.previous_year,
+            year=previous_year,
         )
         cls.company = DjangoTestingModel.create(Company)
         cls.current_income = DjangoTestingModel.create(
             IncomeStatement,
-            period=current_period,
+            period=cls.current_period,
             company=cls.company,
             **income_final_statment.CURRENT_YEAR,
         )
         cls.current_balance = DjangoTestingModel.create(
             BalanceSheet,
-            period=current_period,
+            period=cls.current_period,
             company=cls.company,
             **balance_sheets_final_statment.CURRENT_YEAR,
         )
         cls.current_cashflow = DjangoTestingModel.create(
             CashflowStatement,
-            period=current_period,
+            period=cls.current_period,
             company=cls.company,
             **cashflow_final_statment.CURRENT_YEAR,
         )
         cls.previous_income = DjangoTestingModel.create(
             IncomeStatement,
-            period=previous_period,
+            period=cls.previous_period,
             company=cls.company,
             **income_final_statment.PAST_YEAR,
         )
         cls.previous_balance = DjangoTestingModel.create(
             BalanceSheet,
-            period=previous_period,
+            period=cls.previous_period,
             company=cls.company,
             **balance_sheets_final_statment.PAST_YEAR,
         )
         cls.previous_cashflow = DjangoTestingModel.create(
             CashflowStatement,
-            period=previous_period,
+            period=cls.previous_period,
             company=cls.company,
             **cashflow_final_statment.PAST_YEAR,
         )
@@ -79,16 +79,13 @@ class TestCalculateFinancialRatios(TestCase):
         ] == previous
 
     def test_prepare_base_data(self):
-        inc_statements = self.company.inc_statements.filter(period__period=PERIOD_FOR_YEAR)
-        balance_sheets = self.company.balance_sheets.filter(period__period=PERIOD_FOR_YEAR)
-        cf_statements = self.company.cf_statements.filter(period__period=PERIOD_FOR_YEAR)
         base_data = CalculateFinancialRatios.prepare_base_data(
-            inc_statements.filter(period__year=self.current_year).values(),
-            balance_sheets.filter(period__year=self.current_year).values(),
-            cf_statements.filter(period__year=self.current_year).values(),
-            inc_statements.filter(period__year=self.previous_year).values(),
-            balance_sheets.filter(period__year=self.previous_year).values(),
-            cf_statements.filter(period__year=self.previous_year).values(),
+            self.company.inc_statements.filter(period=self.current_period).values(),
+            self.company.balance_sheets.filter(period=self.current_period).values(),
+            self.company.cf_statements.filter(period=self.current_period).values(),
+            self.company.inc_statements.filter(period=self.previous_period).values(),
+            self.company.balance_sheets.filter(period=self.previous_period).values(),
+            self.company.cf_statements.filter(period=self.previous_period).values(),
             {"current_price": 34.65},
         )
         assert isinstance(base_data, dict)
@@ -112,11 +109,11 @@ class TestCalculateFinancialRatios(TestCase):
             "id": 155305,
             "date": 2021,
             "year": datetime.date(2022, 3, 17),
-            "period_id": 1,
+            "period_id": 10,
             "reported_currency_id": None,
             "is_ttm": False,
             "from_average": False,
-            "company_id": 1,
+            "company_id": 22,
             "revenue": 365817000000.0,
             "cost_of_revenue": 212981000000.0,
             "gross_profit": 152836000000.0,
@@ -205,6 +202,7 @@ class TestCalculateFinancialRatios(TestCase):
             "fcf": 92953000000.0,
             "current_price": 34.65,
         }
+
         assert expected_data == base_data
 
     def test_calculate_all_ratios(self):
@@ -342,12 +340,12 @@ class TestCalculateFinancialRatios(TestCase):
             },
         }
         assert expected_result == CalculateFinancialRatios.calculate_all_ratios(
-            IncomeStatement.objects.filter(period__year=self.current_year).values(),
-            BalanceSheet.objects.filter(period__year=self.current_year).values(),
-            CashflowStatement.objects.filter(period__year=self.current_year).values(),
-            IncomeStatement.objects.filter(period__year=self.previous_year).values(),
-            BalanceSheet.objects.filter(period__year=self.previous_year).values(),
-            CashflowStatement.objects.filter(period__year=self.previous_year).values(),
+            IncomeStatement.objects.filter(period=self.current_period).values(),
+            BalanceSheet.objects.filter(period=self.current_period).values(),
+            CashflowStatement.objects.filter(period=self.current_period).values(),
+            IncomeStatement.objects.filter(period=self.previous_period).values(),
+            BalanceSheet.objects.filter(period=self.previous_period).values(),
+            CashflowStatement.objects.filter(period=self.previous_period).values(),
             {"current_price": 45.32},
         )
 
