@@ -82,8 +82,7 @@ class HomePage(SEOTemplateView, CaptchaFormMixin):
 
     def return_page_data(self) -> Tuple[Dict, str]:
         host_checker = HostChecker(self.request)
-        user_writer = host_checker.return_user_writer()
-        if user_writer:
+        if user_writer := host_checker.return_user_writer():
             return self.return_writer_page_data(user_writer)
         elif host_checker.host_is_business():
             return self.return_business_page_data()
