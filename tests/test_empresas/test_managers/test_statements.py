@@ -1,24 +1,40 @@
 from django.test import TestCase
 
+from bfet import DjangoTestingModel
+
+from src.empresas.models import Company
+
 
 class TestBaseStatementManager(TestCase):
     @classmethod
     def setUpTestData(cls):
-        pass
+        cls.company = DjangoTestingModel.create(Company)
 
-    # def test_quarterly(self, **kwargs) -> QuerySet:
-    #     assert 30 == IncomeStatement.objects.all().count()
-    #     return self.filter(~Q(period__period=constants.PERIOD_FOR_YEAR), **kwargs)
-    #
-    # def test_yearly(self, include_ttm: bool = True, **kwargs) -> QuerySet:
-    #     yearly_filtered = self.filter(Q(is_ttm=include_ttm) | Q(period__period=constants.PERIOD_FOR_YEAR), **kwargs)
-    #     if yearly_filtered:
-    #         return yearly_filtered
-    #     else:
-    #         if kwargs:
-    #             return self.filter(**kwargs)
-    #         else:
-    #             return self.all()
-    #
-    # def test_yearly_exclude_ttm(self, **kwargs) -> QuerySet:
-    #     return self.yearly(False, **kwargs)
+    def test_average_margins(self):
+        self.company.inc_statements.all().average_margins()
+        assert 1111 == 2222
+
+    def test_average_efficiency_ratios(self):
+        assert 1111 == 2222
+
+    def test_average_growth_rates(self):
+        assert 1111 == 2222
+
+    def test_average_per_share_values(self):
+        assert 1111 == 2222
+
+    def test_average_price_to_ratios(self):
+        assert 1111 == 2222
+
+    def test_average_liquidity_ratios(self):
+        assert 1111 == 2222
+
+    def test_average_rentability_ratios(self):
+        assert 1111 == 2222
+
+    def test_average_operation_risks_ratios(self):
+        assert 1111 == 2222
+
+    def test_average_ev_ratios(self):
+        assert 1111 == 2222
+

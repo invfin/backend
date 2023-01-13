@@ -31,10 +31,18 @@ class TestCompanyData(TestCase):
         )
 
     def test_get_statements(self):
-        company_statement = CompanyData(self.company).get_statements(
-            "inc_statements",
-            1,
-        )
-        print(company_statement)
-        expected_result = IncomeStatement.objects.filter(date=2)
-        self.assertEqual(company_statement, expected_result)
+        statements = CompanyData(self.company).get_statements()
+        assert "inc_statements" in statements
+        assert "balance_sheets" in statements
+        assert "cf_statements" in statements
+        assert "rentability_ratios" in statements
+        assert "liquidity_ratios" in statements
+        assert "margins" in statements
+        assert "fcf_ratios" in statements
+        assert "per_share_values" in statements
+        assert "non_gaap_figures" in statements
+        assert "operation_risks_ratios" in statements
+        assert "ev_ratios" in statements
+        assert "growth_rates" in statements
+        assert "efficiency_ratios" in statements
+        assert "price_to_ratios" in statements
