@@ -114,19 +114,19 @@ class UpdateCompany(CalculateFinancialRatios, AverageStatements):
             statement_manager.create(**ttm_dict)
 
     @log_company()
-    def create_or_update_all_ratios(self, all_ratios: dict) -> None:
-        self.create_or_update_current_stock_price(price=all_ratios["current_data"]["currentPrice"])
-        self.create_or_update_rentability_ratios(all_ratios["rentability_ratios"])
-        self.create_or_update_liquidity_ratio(all_ratios["liquidity_ratio"])
-        self.create_or_update_margin_ratio(all_ratios["margin_ratio"])
-        self.create_or_update_fcf_ratio(all_ratios["fcf_ratio"])
-        self.create_or_update_ps_value(all_ratios["ps_value"])
-        self.create_or_update_non_gaap(all_ratios["non_gaap"])
-        self.create_or_update_operation_risk_ratio(all_ratios["operation_risk_ratio"])
-        self.create_or_update_price_to_ratio(all_ratios["price_to_ratio"])
-        self.create_or_update_enterprise_value_ratio(all_ratios["enterprise_value_ratio"])
-        self.create_or_update_efficiency_ratio(all_ratios["efficiency_ratio"])
-        self.create_or_update_company_growth(all_ratios["company_growth"])
+    def create_or_update_all_ratios(self, all_ratios: dict, period=None) -> None:
+        self.create_or_update_current_stock_price(price=all_ratios["current_price"], period=period)
+        self.create_or_update_rentability_ratios(all_ratios["rentability_ratios"], period=period)
+        self.create_or_update_liquidity_ratio(all_ratios["liquidity_ratio"], period=period)
+        self.create_or_update_margin_ratio(all_ratios["margin_ratio"], period=period)
+        self.create_or_update_fcf_ratio(all_ratios["fcf_ratio"], period=period)
+        self.create_or_update_ps_value(all_ratios["ps_value"], period=period)
+        self.create_or_update_non_gaap(all_ratios["non_gaap"], period=period)
+        self.create_or_update_operation_risk_ratio(all_ratios["operation_risk_ratio"], period=period)
+        self.create_or_update_price_to_ratio(all_ratios["price_to_ratio"], period=period)
+        self.create_or_update_enterprise_value_ratio(all_ratios["enterprise_value_ratio"], period=period)
+        self.create_or_update_efficiency_ratio(all_ratios["efficiency_ratio"], period=period)
+        self.create_or_update_company_growth(all_ratios["company_growth"], period=period)
         return None
 
     @classmethod

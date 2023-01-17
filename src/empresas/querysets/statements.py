@@ -1,7 +1,17 @@
-from django.db.models import QuerySet, Avg
+from django.db.models import Avg
+from src.general.managers import BaseQuerySet
+from src.periods import constants
 
 
-class StatementQuerySet(QuerySet):
+class BaseStatementQuerySet(BaseQuerySet):
+    def quarterly(self):
+        return self.exclude(period__period=constants.PERIOD_FOR_YEAR)
+
+    def yearly(self):
+        return self.filter(period__period=constants.PERIOD_FOR_YEAR)
+
+
+class StatementQuerySet(BaseStatementQuerySet):
     def average_margins(self):
         return self.aggregate(
         average_gross_margin=Avg("gross_margin"),
