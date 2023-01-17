@@ -28,17 +28,15 @@ class BaseQuerySet(QuerySet):
 
 
 class BaseManager(Manager):
-    def get_queryset(self):
-        return BaseQuerySet(self.model, using=self._db)
 
     def filter_checkings(self, checkings: List[Dict[str, bool]]):
-        return self.get_queryset().filter_checkings(checkings)
+        return super().filter_checkings(checkings)
 
     def filter_checking(self, checking: str, has_it: bool):
-        return self.get_queryset().filter_checking(checking, has_it)
+        return super().filter_checking(checking, has_it)
 
     def filter_checking_not_seen(self, checking: str):
-        return self.get_queryset().filter_checking_not_seen(checking)
+        return super().filter_checking_not_seen(checking)
 
     def get_random(self, query: QuerySet = None):
         query = query or self.all()

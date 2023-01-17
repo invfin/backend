@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, Union
 
 from django.db.models import QuerySet
 
@@ -28,3 +28,24 @@ class CompanyData:
             "efficiency_ratios": self.company.efficiency_ratios.yearly_exclude_ttm(),
             "price_to_ratios": self.company.price_to_ratios.yearly_exclude_ttm(),
         }
+
+    def get_averages(self, statements: Dict[str, QuerySet]) -> Dict[str, Dict[str, Union[int, float]]]:
+        # statements["inc_statements_averages"] = statements["inc_statements"].average_inc_statements()
+        # statements["balance_sheets_averages"] = statements["balance_sheets"].average_balance_sheets()
+        # statements["cf_statements_averages"] = statements["cf_statements"].average_cf_statements()
+        statements["rentability_ratios_averages"] = statements["rentability_ratios"].average_rentability_ratios()
+        statements["liquidity_ratios_averages"] = statements["liquidity_ratios"].average_liquidity_ratios()
+        statements["margins_averages"] = statements["margins"].average_margins()
+        # statements["fcf_ratios_averages"] = statements["fcf_ratios"].average_fcf_ratios()
+        statements["per_share_values_averages"] = statements["per_share_values"].average_per_share_values()
+        # statements["non_gaap_figures_averages"] = statements["non_gaap_figures"].average_non_gaap_figures()
+        statements["operation_risks_ratios_averages"] = statements["operation_risks_ratios"].average_operation_risks_ratios()
+        statements["ev_ratios_averages"] = statements["ev_ratios"].average_ev_ratios()
+        statements["growth_rates_averages"] = statements["growth_rates"].average_growth_rates()
+        statements["efficiency_ratios_averages"] = statements["efficiency_ratios"].average_efficiency_ratios()
+        statements["price_to_ratios_averages"] = statements["price_to_ratios"].average_price_to_ratios()
+        return statements
+
+    def get_complete_information(self) -> Dict[str, Dict[str, Union[int, float]]]:
+        statements = self.get_averages(self.get_statements())
+        return statements
