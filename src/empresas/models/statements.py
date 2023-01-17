@@ -1,8 +1,8 @@
 from django.db.models import SET_NULL, BooleanField, DateField, FloatField, ForeignKey, IntegerField, Model
 
 from src.empresas.managers import BaseStatementManager
-from src.empresas.querysets.statements import StatementQuerySet, BaseStatementQuerySet
 from src.empresas.models import Company
+from src.empresas.querysets.statements import BaseStatementQuerySet, StatementQuerySet
 from src.general.mixins import BaseToAllMixin
 from src.periods.models import Period
 
@@ -200,7 +200,13 @@ class RentabilityRatio(BaseFinalStatement):
 
 
 class LiquidityRatio(BaseFinalStatement):
-    company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="liquidity_ratios",)
+    company = ForeignKey(
+        Company,
+        on_delete=SET_NULL,
+        null=True,
+        blank=True,
+        related_name="liquidity_ratios",
+    )
     cash_ratio = FloatField(default=0, blank=True, null=True)
     current_ratio = FloatField(default=0, blank=True, null=True)
     quick_ratio = FloatField(default=0, blank=True, null=True)
@@ -214,7 +220,13 @@ class LiquidityRatio(BaseFinalStatement):
 
 
 class MarginRatio(BaseFinalStatement):
-    company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="margins",)
+    company = ForeignKey(
+        Company,
+        on_delete=SET_NULL,
+        null=True,
+        blank=True,
+        related_name="margins",
+    )
     gross_margin = FloatField(default=0, blank=True, null=True)
     ebitda_margin = FloatField(default=0, blank=True, null=True)
     net_income_margin = FloatField(default=0, blank=True, null=True)
@@ -231,7 +243,13 @@ class MarginRatio(BaseFinalStatement):
 
 
 class FreeCashFlowRatio(BaseFinalStatement):
-    company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="fcf_ratios",)
+    company = ForeignKey(
+        Company,
+        on_delete=SET_NULL,
+        null=True,
+        blank=True,
+        related_name="fcf_ratios",
+    )
     fcf_equity = FloatField(default=0, blank=True, null=True)
     unlevered_fcf = FloatField(default=0, blank=True, null=True)
     unlevered_fcf_ebit = FloatField(default=0, blank=True, null=True)
@@ -244,7 +262,13 @@ class FreeCashFlowRatio(BaseFinalStatement):
 
 
 class PerShareValue(BaseFinalStatement):
-    company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="per_share_values",)
+    company = ForeignKey(
+        Company,
+        on_delete=SET_NULL,
+        null=True,
+        blank=True,
+        related_name="per_share_values",
+    )
     sales_ps = FloatField(default=0, blank=True, null=True)
     book_ps = FloatField(default=0, blank=True, null=True)
     tangible_ps = FloatField(default=0, blank=True, null=True)
@@ -262,7 +286,13 @@ class PerShareValue(BaseFinalStatement):
 
 
 class NonGaap(BaseFinalStatement):
-    company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="non_gaap_figures",)
+    company = ForeignKey(
+        Company,
+        on_delete=SET_NULL,
+        null=True,
+        blank=True,
+        related_name="non_gaap_figures",
+    )
     normalized_income = FloatField(default=0, blank=True, null=True)
     effective_tax_rate = FloatField(default=0, blank=True, null=True)
     nopat = FloatField(default=0, blank=True, null=True)
@@ -287,7 +317,13 @@ class NonGaap(BaseFinalStatement):
 
 
 class OperationRiskRatio(BaseFinalStatement):
-    company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="operation_risks_ratios",)
+    company = ForeignKey(
+        Company,
+        on_delete=SET_NULL,
+        null=True,
+        blank=True,
+        related_name="operation_risks_ratios",
+    )
     asset_coverage_ratio = FloatField(default=0, blank=True, null=True)
     cash_flow_coverage_ratios = FloatField(default=0, blank=True, null=True)
     cash_coverage = FloatField(default=0, blank=True, null=True)

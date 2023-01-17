@@ -1,12 +1,11 @@
 from django.test import TestCase
-from django.db.models import QuerySet
 
 from bfet import DjangoTestingModel
 
+from src.empresas.extensions.new_company_extension import CompanyData
+from src.empresas.models import Company, IncomeStatement
 from src.periods.constants import PERIOD_FOR_YEAR
 from src.periods.models import Period
-from src.empresas.models import Company, IncomeStatement
-from src.empresas.extensions.new_company_extension import CompanyData
 
 
 class TestCompanyData(TestCase):
