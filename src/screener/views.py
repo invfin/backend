@@ -52,7 +52,6 @@ class CompanyScreenerInicioView(SEOListView):
         " años de información."
     )
     meta_tags = "empresas, inversiones, analisis de empresas, invertir"
-    # meta_title =
 
     def get_queryset(self, **kwargs):
         return Company.objects.clean_companies_by_main_exchange(self.kwargs["slug"])
@@ -120,10 +119,10 @@ class CompanyDetailsView(SEODetailView):
                 {
                     "ticker": empresa.ticker,
                     "img": empresa.image,
-                    "sector_id": empresa.sector.id,
-                    "industry_id": empresa.industry.id,
-                    "country_id": empresa.country.id,
-                    "exchange_id": empresa.exchange.id,
+                    "sector_id": empresa.sector_id,
+                    "industry_id": empresa.industry_id,
+                    "country_id": empresa.country_id,
+                    "exchange_id": empresa.exchange_id,
                 }
             )
         if len(companies_visited) > 10:
