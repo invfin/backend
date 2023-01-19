@@ -30,27 +30,26 @@ def add_new_default_check(checking, json_file):
 
 
 class ChartSerializer:
-    def generate_json(self, comparing_json: dict, items: list = [], chart_type: str = "line") -> dict:
+    def generate_json(self, comparing_json: dict, items: list = None, chart_type: str = "line") -> dict:
         labels = comparing_json["labels"]
-        chartData = {"labels": labels, "fields": []}
+        chart_data = {"labels": labels, "fields": []}
         if not items:
             items = [i for i in range(len(comparing_json["fields"]))]
 
-        fields_for_chart = [comparing_json["fields"][num] for num in items]
+        for field in [comparing_json["fields"][num] for num in items]:
+            chart_data["fields"].append(
+                {
+                    "label": field["title"],
+                    "data": field["values"],
+                    "backgroundColor": "",
+                    "borderColor": "",
+                    "yAxisID": "right",
+                    "order": 0,
+                    "type": chart_type,
+                }
+            )
 
-        for field in fields_for_chart:
-            comparaison_dict = {
-                "label": field["title"],
-                "data": field["values"],
-                "backgroundColor": "",
-                "borderColor": "",
-                "yAxisID": "right",
-                "order": 0,
-                "type": chart_type,
-            }
-            chartData["fields"].append(comparaison_dict)
-
-        return chartData
+        return chart_data
 
     def generate_portfolio_charts(self):
         return {

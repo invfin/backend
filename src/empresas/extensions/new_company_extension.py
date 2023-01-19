@@ -3,15 +3,22 @@ from typing import Dict, Union
 from django.db.models import QuerySet
 
 from src.empresas.models import Company
+from src.general.utils import ChartSerializer
 
 
-class CompanyData:
+class CompanyData(ChartSerializer):
     company: Company
 
     def __init__(self, company: Company):
         self.company = company
 
+    def get_complete_information(self) -> Dict[str, Dict[str, Union[int, float]]]:
+        initial_statements = self.get_statements()
+        statements_with_averages = self.get_averages(initial_statements)
+        return statements_with_averages
+
     def get_statements(self) -> Dict[str, QuerySet]:
+        # TODO add a prefetch to get all at once
         return {
             "inc_statements": self.company.inc_statements.yearly_exclude_ttm(),
             "balance_sheets": self.company.balance_sheets.yearly_exclude_ttm(),
@@ -29,7 +36,8 @@ class CompanyData:
             "price_to_ratios": self.company.price_to_ratios.yearly_exclude_ttm(),
         }
 
-    def get_averages(self, statements: Dict[str, QuerySet]) -> Dict[str, Dict[str, Union[int, float]]]:
+    @staticmethod
+    def get_averages(statements: Dict[str, QuerySet]) -> Dict[str, Dict[str, Union[int, float]]]:
         # statements["inc_statements_averages"] = statements["inc_statements"].average_inc_statements()
         # statements["balance_sheets_averages"] = statements["balance_sheets"].average_balance_sheets()
         # statements["cf_statements_averages"] = statements["cf_statements"].average_cf_statements()
@@ -46,6 +54,13 @@ class CompanyData:
         statements["price_to_ratios_averages"] = statements["price_to_ratios"].average_price_to_ratios()
         return statements
 
-    def get_complete_information(self) -> Dict[str, Dict[str, Union[int, float]]]:
-        statements = self.get_averages(self.get_statements())
-        return statements
+    @staticmethod
+    def generate_limit(statement: QuerySet, limit: int) -> list:
+        return statement[:limit] if limit != 0 else statement
+
+    @staticmethod
+    def build_table_and_chart(self, limit):
+        comparing_json, rr = self.rentability_ratios_json(limit)
+        chartData = self.generate_json(comparing_json)
+        data = {"table": comparing_json, "chart": chartData}
+        return data, rr

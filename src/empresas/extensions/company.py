@@ -193,7 +193,6 @@ class CompanyExtended(ChartSerializer):
         comparing_json, inc = self.income_json(limit)
         chartData = self.generate_json(comparing_json)
         self.generate_json(comparing_json, [0, 18], "bar")
-
         data = {"table": comparing_json, "chart": chartData}
         return data, inc
 

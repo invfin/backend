@@ -112,3 +112,7 @@ class TestCompanyData(TestCase):
         assert "growth_rates" in statements
         assert "efficiency_ratios" in statements
         assert "price_to_ratios" in statements
+
+    def test_generate_limit(self):
+        assert 2 == len(CompanyData.generate_limit(self.company.inc_statements.all(), 0))
+        assert 1 == len(CompanyData.generate_limit(self.company.inc_statements.all(), 1))
