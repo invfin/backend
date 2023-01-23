@@ -28,7 +28,6 @@ class BaseQuerySet(QuerySet):
 
 
 class BaseManager(Manager):
-
     def filter_checkings(self, checkings: List[Dict[str, bool]]):
         return super().filter_checkings(checkings)
 
