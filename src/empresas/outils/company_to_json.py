@@ -1,7 +1,13 @@
+from abc import abstractmethod
+
 from django.db.models import QuerySet
 
 
 class CompanyValueToJsonConverter:
+    @abstractmethod
+    def get_currency(self, statement):
+        raise NotImplementedError("Need to implement")
+
     def income_json(self, statement: QuerySet):
         return {
             "currency": self.get_currency(statement),
@@ -431,6 +437,7 @@ class CompanyValueToJsonConverter:
             ],
         }
 
+
     def cashflow_json(self, statement: QuerySet):
         return {
             "currency": self.get_currency(statement),
@@ -649,7 +656,86 @@ class CompanyValueToJsonConverter:
             ],
         }
 
-    def ev_ratios_json(self, statement: QuerySet):
+    @staticmethod
+    def efficiency_ratios_json(statement: QuerySet):
+        return {
+            "labels": [data.date_year for data in statement],
+            "fields": [
+                {
+                    "title": "Rotación de activos",
+                    "url": "#!",
+                    "percent": "false",
+                    "short": "true",
+                    "values": [data.asset_turnover for data in statement],
+                },
+                {
+                    "title": "Rotación del inventario",
+                    "url": "#!",
+                    "percent": "false",
+                    "short": "true",
+                    "values": [data.inventory_turnover for data in statement],
+                },
+                {
+                    "title": "Rotación de activos tangibles",
+                    "url": "#!",
+                    "percent": "false",
+                    "short": "true",
+                    "values": [data.fixed_asset_turnover for data in statement],
+                },
+                {
+                    "title": "Rotación de cuentas por pagar",
+                    "url": "#!",
+                    "percent": "false",
+                    "short": "true",
+                    "values": [data.accounts_payable_turnover for data in statement],
+                },
+                {
+                    "title": "Ciclo conversión de efectivo",
+                    "url": "#!",
+                    "percent": "false",
+                    "short": "true",
+                    "values": [data.cash_conversion_cycle for data in statement],
+                },
+                {
+                    "title": "Inventario disponible (Días)",
+                    "url": "#!",
+                    "percent": "false",
+                    "short": "true",
+                    "values": [data.days_inventory_outstanding for data in statement],
+                },
+                {
+                    "title": "Cuentas por pagar en circulación (Días)",
+                    "url": "#!",
+                    "percent": "false",
+                    "short": "true",
+                    "values": [data.days_payables_outstanding for data in statement],
+                },
+                {
+                    "title": "Ventas activas (Días)",
+                    "url": "#!",
+                    "percent": "false",
+                    "short": "true",
+                    "values": [data.days_sales_outstanding for data in statement],
+                },
+                {
+                    "title": "Ratio FCF a flujo de efectivo operativo",
+                    "url": "#!",
+                    "percent": "true",
+                    "short": "true",
+                    "values": [data.free_cashflow_to_operating_cashflow for data in statement],
+                },
+                {
+                    "title": "Ciclo operativo",
+                    "url": "#!",
+                    "percent": "false",
+                    "short": "true",
+                    "values": [data.operating_cycle for data in statement],
+                },
+            ],
+        }
+
+    @staticmethod
+    def ev_ratios_json(statement: QuerySet):
         return {
             "labels": [data.date_year for data in statement],
             "fields": [
@@ -705,7 +791,8 @@ class CompanyValueToJsonConverter:
             ],
         }
 
-    def operation_risks_ratios_json(self, statement: QuerySet):
+    @staticmethod
+    def operation_risks_ratios_json(statement: QuerySet):
         return {
             "labels": [data.date_year for data in statement],
             "fields": [
@@ -775,7 +862,8 @@ class CompanyValueToJsonConverter:
             ],
         }
 
-    def non_gaap_json(self, statement: QuerySet):
+    @staticmethod
+    def non_gaap_json(statement: QuerySet):
         return {
             "labels": [data.date_year for data in statement],
             "fields": [
@@ -894,7 +982,8 @@ class CompanyValueToJsonConverter:
             ],
         }
 
-    def per_share_values_json(self, statement: QuerySet):
+    @staticmethod
+    def per_share_values_json(statement: QuerySet):
         return {
             "labels": [data.date_year for data in statement],
             "fields": [
@@ -964,7 +1053,8 @@ class CompanyValueToJsonConverter:
             ],
         }
 
-    def fcf_ratios_json(self, statement: QuerySet):
+    @staticmethod
+    def fcf_ratios_json(statement: QuerySet):
         return {
             "labels": [data.date_year for data in statement],
             "fields": [
@@ -999,7 +1089,8 @@ class CompanyValueToJsonConverter:
             ],
         }
 
-    def margins_json(self, statement: QuerySet):
+    @staticmethod
+    def margins_json(statement: QuerySet):
         return {
             "labels": [data.date_year for data in statement],
             "fields": [
@@ -1062,7 +1153,8 @@ class CompanyValueToJsonConverter:
             ],
         }
 
-    def liquidity_ratios_json(self, statement: QuerySet):
+    @staticmethod
+    def liquidity_ratios_json(statement: QuerySet):
         return {
             "labels": [data.date_year for data in statement],
             "fields": [
@@ -1104,7 +1196,8 @@ class CompanyValueToJsonConverter:
             ],
         }
 
-    def rentability_ratios_json(self, statement: QuerySet):
+    @staticmethod
+    def rentability_ratios_json(statement: QuerySet):
         return {
             "labels": [data.date_year for data in statement],
             "fields": [
@@ -1149,7 +1242,8 @@ class CompanyValueToJsonConverter:
             ],
         }
 
-    def growth_rates_json(self, statement: QuerySet):
+    @staticmethod
+    def growth_rates_json(statement: QuerySet):
         return {
             "labels": [data.date_year for data in statement],
             "fields": [
@@ -1222,6 +1316,77 @@ class CompanyValueToJsonConverter:
                     "percent": "true",
                     "short": "true",
                     "values": [data.rd_expenses_growth for data in statement],
+                },
+            ],
+        }
+
+    @staticmethod
+    def price_to_ratios_json(statement: QuerySet):
+        return {
+            "labels": [data.date_year for data in statement],
+            "fields": [
+                {
+                    "title": "Precio valor en libros",
+                    "url": "#!",
+                    "percent": "false",
+                    "short": "true",
+                    "values": [data.price_book for data in statement],
+                },
+                {
+                    "title": "Precio cashflow",
+                    "url": "#!",
+                    "percent": "false",
+                    "short": "true",
+                    "values": [data.price_cf for data in statement],
+                },
+                {
+                    "title": "Precio beneficio",
+                    "url": "#!",
+                    "percent": "false",
+                    "short": "true",
+                    "values": [data.price_earnings for data in statement],
+                },
+                {
+                    "title": "PEG",
+                    "url": "#!",
+                    "percent": "false",
+                    "short": "true",
+                    "values": [data.price_earnings_growth for data in statement],
+                },
+                {
+                    "title": "Precio por ventas",
+                    "url": "#!",
+                    "percent": "false",
+                    "short": "true",
+                    "values": [data.price_sales for data in statement],
+                },
+                {
+                    "title": "Precio activos totales",
+                    "url": "#!",
+                    "percent": "false",
+                    "short": "true",
+                    "values": [data.price_total_assets for data in statement],
+                },
+                {
+                    "title": "Precio FCF",
+                    "url": "#!",
+                    "percent": "false",
+                    "short": "true",
+                    "values": [data.price_fcf for data in statement],
+                },
+                {
+                    "title": "Precio cashflow operativo",
+                    "url": "#!",
+                    "percent": "false",
+                    "short": "true",
+                    "values": [data.price_operating_cf for data in statement],
+                },
+                {
+                    "title": "Precio activos tangibles",
+                    "url": "#!",
+                    "percent": "false",
+                    "short": "true",
+                    "values": [data.price_tangible_assets for data in statement],
                 },
             ],
         }

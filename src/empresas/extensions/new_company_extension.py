@@ -1,7 +1,7 @@
 import math
 import operator
 
-from typing import Any, Callable, Dict, Union
+from typing import Any, Callable, Dict, Union, List, Type
 
 from django.db.models import QuerySet
 
@@ -16,73 +16,132 @@ class CompanyData(CompanyValueToJsonConverter):
     def __init__(self, company: Company):
         self.company = company
 
-    def get_complete_information(self) -> Dict[str, Dict[str, Union[int, float]]]:
+    def get_complete_information(self) -> Dict[str, Union[Dict[str, Union[int, float]], List]]:
         initial_statements = self.get_statements()
         self.get_averages(initial_statements)
+        comparing_income_json = self.build_table_and_chart(initial_statements["inc_statements"], self.income_json,)
+        comparing_balance_json = self.build_table_and_chart(initial_statements["balance_sheets"], self.balance_json,)
+        comparing_cashflows = self.build_table_and_chart(initial_statements["cf_statements"], self.cashflow_json,)
         return {
             "comparing_income_json": comparing_income_json,
             "comparing_balance_json": comparing_balance_json,
             "comparing_cashflows": comparing_cashflows,
-            "important_ratios": important_ratios,
-            "secondary_ratios": secondary_ratios,
-            "marketcap": marketcap,
+            "important_ratios": self.get_important_ratios(initial_statements),
+            "secondary_ratios": self.get_secondary_ratios(initial_statements),
         }
 
-    def get_currency(self, statement: QuerySet) -> str:
-        if not self.company.currency:
-            try:
-                currency = statement[0].reported_currency
-            except Exception:
-                currency = None
-            else:
-                self.company.currency = currency
-                self.company.save(update_fields=["currency"])
-        else:
-            currency = self.company.currency
-        return currency.currency if currency else "$"
+    def get_important_ratios(self, statements: Dict) -> List:
+        comparing_rentability_ratios_json = self.build_table_and_chart(statements["rentability_ratios"], self.rentability_ratios_json,)
+        comparing_liquidity_ratios_json = self.build_table_and_chart(statements["liquidity_ratios"], self.liquidity_ratios_json,)
+        comparing_margins_json = self.build_table_and_chart(statements["margins"], self.margins_json,)
+
+        return [
+            {
+                "kind": "rentability",
+                "title": "Ratios de rentabilidad",
+                "table": comparing_rentability_ratios_json["table"],
+                "chart": comparing_rentability_ratios_json["chart"],
+            },
+            {
+                "kind": "liquidity",
+                "title": "Ratios de liquidez",
+                "table": comparing_liquidity_ratios_json["table"],
+                "chart": comparing_liquidity_ratios_json["chart"],
+            },
+            {
+                "kind": "margins",
+                "title": "Márgenes",
+                "table": comparing_margins_json["table"],
+                "chart": comparing_margins_json["chart"],
+            },
+        ]
+
+    def get_secondary_ratios(self, statements: Dict) -> List:
+        comparing_efficiency_ratios_json = self.build_table_and_chart(statements["efficiency_ratios"], self.efficiency_ratios_json,)
+        comparing_operation_risks_ratios_json = self.build_table_and_chart(statements["operation_risks_ratios"], self.operation_risks_ratios_json,)
+        comparing_non_gaap_json = self.build_table_and_chart(statements["non_gaap_figures"], self.non_gaap_json,)
+        comparing_per_share_values_json = self.build_table_and_chart(statements["per_share_values"], self.per_share_values_json,)
+        comparing_fcf_ratios_json = self.build_table_and_chart(statements["fcf_ratios"], self.fcf_ratios_json,)
+
+        return [
+            {
+                "kind": "efficiency",
+                "title": "Ratios de eficiencia",
+                "table": comparing_efficiency_ratios_json["table"],
+                "chart": comparing_efficiency_ratios_json["chart"],
+            },
+            {
+                "kind": "operations",
+                "title": "Ratios de riesgo de operaciones",
+                "table": comparing_operation_risks_ratios_json["table"],
+                "chart": comparing_operation_risks_ratios_json["chart"],
+            },
+            {
+                "kind": "nongaap",
+                "title": "Non GAAP",
+                "table": comparing_non_gaap_json["table"],
+                "chart": comparing_non_gaap_json["chart"],
+            },
+            {
+                "kind": "pershare",
+                "title": "Valor por acción",
+                "table": comparing_per_share_values_json["table"],
+                "chart": comparing_per_share_values_json["chart"],
+            },
+            {
+                "kind": "fcfratios",
+                "title": "FCF ratios",
+                "table": comparing_fcf_ratios_json["table"],
+                "chart": comparing_fcf_ratios_json["chart"],
+            },
+        ]
 
     def get_statements(self) -> Dict[str, QuerySet]:
         # TODO add a prefetch to get all at once
         return {
-            "inc_statements": self.company.inc_statements.yearly_exclude_ttm(),
-            "balance_sheets": self.company.balance_sheets.yearly_exclude_ttm(),
-            "cf_statements": self.company.cf_statements.yearly_exclude_ttm(),
-            "rentability_ratios": self.company.rentability_ratios.yearly_exclude_ttm(),
-            "liquidity_ratios": self.company.liquidity_ratios.yearly_exclude_ttm(),
-            "margins": self.company.margins.yearly_exclude_ttm(),
-            "fcf_ratios": self.company.fcf_ratios.yearly_exclude_ttm(),
-            "per_share_values": self.company.per_share_values.yearly_exclude_ttm(),
-            "non_gaap_figures": self.company.non_gaap_figures.yearly_exclude_ttm(),
-            "operation_risks_ratios": self.company.operation_risks_ratios.yearly_exclude_ttm(),
-            "ev_ratios": self.company.ev_ratios.yearly_exclude_ttm(),
-            "growth_rates": self.company.growth_rates.yearly_exclude_ttm(),
-            "efficiency_ratios": self.company.efficiency_ratios.yearly_exclude_ttm(),
-            "price_to_ratios": self.company.price_to_ratios.yearly_exclude_ttm(),
+            "inc_statements": self.company.inc_statements.yearly_exclude_ttm(), #type: ignore
+            "balance_sheets": self.company.balance_sheets.yearly_exclude_ttm(), #type: ignore
+            "cf_statements": self.company.cf_statements.yearly_exclude_ttm(), #type: ignore
+            "rentability_ratios": self.company.rentability_ratios.yearly_exclude_ttm(), #type: ignore
+            "liquidity_ratios": self.company.liquidity_ratios.yearly_exclude_ttm(), #type: ignore
+            "margins": self.company.margins.yearly_exclude_ttm(), #type: ignore
+            "fcf_ratios": self.company.fcf_ratios.yearly_exclude_ttm(), #type: ignore
+            "per_share_values": self.company.per_share_values.yearly_exclude_ttm(), #type: ignore
+            "non_gaap_figures": self.company.non_gaap_figures.yearly_exclude_ttm(), #type: ignore
+            "operation_risks_ratios": self.company.operation_risks_ratios.yearly_exclude_ttm(), #type: ignore
+            "ev_ratios": self.company.ev_ratios.yearly_exclude_ttm(), #type: ignore
+            "growth_rates": self.company.growth_rates.yearly_exclude_ttm(), #type: ignore
+            "efficiency_ratios": self.company.efficiency_ratios.yearly_exclude_ttm(), #type: ignore
+            "price_to_ratios": self.company.price_to_ratios.yearly_exclude_ttm(), #type: ignore
         }
 
     @staticmethod
-    def get_averages(statements: Dict[str, QuerySet]) -> Dict[str, Dict[str, Union[int, float]]]:
-        # statements["inc_statements_averages"] = statements["inc_statements"].average_inc_statements()
-        # statements["balance_sheets_averages"] = statements["balance_sheets"].average_balance_sheets()
-        # statements["cf_statements_averages"] = statements["cf_statements"].average_cf_statements()
-        statements["rentability_ratios_averages"] = statements["rentability_ratios"].average_rentability_ratios()
-        statements["liquidity_ratios_averages"] = statements["liquidity_ratios"].average_liquidity_ratios()
-        statements["margins_averages"] = statements["margins"].average_margins()
+    def get_averages(statements: Dict[str, QuerySet]) -> Dict[str, Union[QuerySet,Dict[str, Union[int, float]]]]:
+        # statements["inc_statements_averages"] = statements[
+        # "inc_statements"].average_inc_statements()
+        # statements["balance_sheets_averages"] = statements[
+        # "balance_sheets"].average_balance_sheets()
+        # statements["cf_statements_averages"] = statements[
+        # "cf_statements"].average_cf_statements()
+        statements["rentability_ratios_averages"] = statements["rentability_ratios"].average_rentability_ratios() #type: ignore
+        statements["liquidity_ratios_averages"] = statements["liquidity_ratios"].average_liquidity_ratios() #type: ignore
+        statements["margins_averages"] = statements["margins"].average_margins() #type: ignore
         # statements["fcf_ratios_averages"] = statements["fcf_ratios"].average_fcf_ratios()
-        statements["per_share_values_averages"] = statements["per_share_values"].average_per_share_values()
-        # statements["non_gaap_figures_averages"] = statements["non_gaap_figures"].average_non_gaap_figures()
+        statements["per_share_values_averages"] = statements["per_share_values"].average_per_share_values() #type: ignore
+        # statements["non_gaap_figures_averages"] = statements[
+        # "non_gaap_figures"].average_non_gaap_figures()
         statements["operation_risks_ratios_averages"] = statements[
             "operation_risks_ratios"
-        ].average_operation_risks_ratios()
-        statements["ev_ratios_averages"] = statements["ev_ratios"].average_ev_ratios()
-        statements["growth_rates_averages"] = statements["growth_rates"].average_growth_rates()
-        statements["efficiency_ratios_averages"] = statements["efficiency_ratios"].average_efficiency_ratios()
-        statements["price_to_ratios_averages"] = statements["price_to_ratios"].average_price_to_ratios()
-        return statements
+        ].average_operation_risks_ratios() #type: ignore
+        statements["ev_ratios_averages"] = statements["ev_ratios"].average_ev_ratios() #type: ignore
+        statements["growth_rates_averages"] = statements["growth_rates"].average_growth_rates() #type: ignore
+        statements["efficiency_ratios_averages"] = statements["efficiency_ratios"].average_efficiency_ratios() #type: ignore
+        statements["price_to_ratios_averages"] = statements["price_to_ratios"].average_price_to_ratios() #type: ignore
+        return statements #type: ignore
 
     @staticmethod
     def generate_limit(statement: QuerySet, limit: int) -> list:
-        return statement[:limit] if limit != 0 else statement
+        return statement[:limit] if limit != 0 else statement #type: ignore
 
     @staticmethod
     def build_table_and_chart(
@@ -397,7 +456,7 @@ class CompanyData(CompanyValueToJsonConverter):
         min_low: int,
         max_low: int,
         max_high: int,
-        min_high_operator: operator = operator.le,
+        min_high_operator: Type[operator] = operator.le,
     ) -> dict:
         valuation_result = {
             "name": name,
@@ -425,3 +484,16 @@ class CompanyData(CompanyValueToJsonConverter):
             valuation_result["average_veredict"] = "Neutral"
             valuation_result["average_color"] = "warning"
         return valuation_result
+
+    def get_currency(self, statement: QuerySet) -> str:
+        if not self.company.currency:
+            try:
+                currency = statement[0].reported_currency
+            except Exception:
+                currency = None
+            else:
+                self.company.currency = currency
+                self.company.save(update_fields=["currency"])
+        else:
+            currency = self.company.currency
+        return currency.currency if currency else "$"
