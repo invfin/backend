@@ -166,7 +166,7 @@ class CompanyDetailsView(SEODetailView):
 
         context["has_bought"] = has_bought
         context["company_is_fav"] = company_is_fav
-        context["complete_info"] = CompanyData(object).get_complete_information()
+        context["complete_info"] = CompanyData(object, limit_years).get_complete_information()
         return context
 
     def get_context_data(self, object, **kwargs):

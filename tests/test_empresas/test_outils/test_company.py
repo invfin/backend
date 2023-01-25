@@ -131,8 +131,8 @@ class TestCompanyData(TestCase):
         assert "price_to_ratios_averages" in statements
 
     def test_generate_limit(self):
-        assert 2 == len(CompanyData.generate_limit(self.company.inc_statements.all(), 0))
-        assert 1 == len(CompanyData.generate_limit(self.company.inc_statements.all(), 1))
+        assert 2 == len(CompanyData(None).generate_limit(self.company.inc_statements.all()))
+        assert 1 == len(CompanyData(None, 1).generate_limit(self.company.inc_statements.all()))
 
     @patch("src.empresas.outils.company.CompanyData.income_json")
     @patch("src.general.utils.ChartSerializer.generate_json")
@@ -140,7 +140,7 @@ class TestCompanyData(TestCase):
         mock_generate_json.return_value = "value"
         mock_income_json.return_value = "value"
         statement = self.company.inc_statements.all()
-        result = CompanyData.build_table_and_chart(
+        result = CompanyData(None).build_table_and_chart(
             statement,
             CompanyData.income_json,
         )

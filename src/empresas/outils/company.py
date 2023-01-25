@@ -16,8 +16,9 @@ from src.general.utils import ChartSerializer
 class CompanyData(CompanyValueToJsonConverter):
     company: Company
 
-    def __init__(self, company: Company):
+    def __init__(self, company: Company, limit: int = 0):
         self.company = company
+        self.limit = limit
 
     def get_complete_information(self) -> Dict[str, Union[Dict[str, Union[int, float]], List]]:
         initial_statements = self.get_statements()
@@ -98,7 +99,7 @@ class CompanyData(CompanyValueToJsonConverter):
         statements: Dict[str, QuerySet],
     ) -> dict:
         # TODO test
-        averages = statements.pop("avergages")
+        averages = statements.pop("averages")
         current_price = self.get_most_recent_price()["current_price"]
         last_balance_sheet = statements["balance_sheets"].first()
         last_per_share = statements["per_share_values"].first()
@@ -369,17 +370,17 @@ class CompanyData(CompanyValueToJsonConverter):
             },
         ]
 
-    @staticmethod
-    def generate_limit(statement: QuerySet, limit: int) -> list:
-        return statement[:limit] if limit != 0 else statement  # type: ignore
+    def generate_limit(self, statement: QuerySet) -> list:
+        return statement[: self.limit] if self.limit != 0 else statement  # type: ignore
 
-    @staticmethod
     def build_table_and_chart(
-        statement_data: QuerySet,
+        self,
+        statement: QuerySet,
         statement_to_json: Callable,
         items: list = None,
         chart_type: str = "line",
     ) -> Dict[str, Any]:
+        statement_data = self.generate_limit(statement)
         comparing_json = statement_to_json(statement_data)
         return {
             "table": comparing_json,
