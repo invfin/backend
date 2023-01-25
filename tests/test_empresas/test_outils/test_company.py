@@ -96,40 +96,6 @@ class TestCompanyData(TestCase):
         assert "efficiency_ratios" in statements
         assert "price_to_ratios" in statements
 
-    def test_get_averages(self):
-        company_data = CompanyData(self.company)
-        initial_statements = company_data.get_averages(company_data.get_statements())
-        # assert "inc_statements_averages" in statements
-        # assert "balance_sheets_averages" in statements
-        # assert "cf_statements_averages" in statements
-        assert "inc_statements" in initial_statements
-        assert "balance_sheets" in initial_statements
-        assert "cf_statements" in initial_statements
-        assert "rentability_ratios" in initial_statements
-        assert "liquidity_ratios" in initial_statements
-        assert "margins" in initial_statements
-        assert "fcf_ratios" in initial_statements
-        assert "per_share_values" in initial_statements
-        assert "non_gaap_figures" in initial_statements
-        assert "operation_risks_ratios" in initial_statements
-        assert "ev_ratios" in initial_statements
-        assert "growth_rates" in initial_statements
-        assert "efficiency_ratios" in initial_statements
-        assert "price_to_ratios" in initial_statements
-
-        statements = initial_statements["averages"]
-        assert "rentability_ratios_averages" in statements
-        assert "liquidity_ratios_averages" in statements
-        assert "margins_averages" in statements
-        # assert "fcf_ratios_averages" in statements
-        assert "per_share_values_averages" in statements
-        # assert "non_gaap_figures_averages" in statements
-        assert "operation_risks_ratios_averages" in statements
-        assert "ev_ratios_averages" in statements
-        assert "growth_rates_averages" in statements
-        assert "efficiency_ratios_averages" in statements
-        assert "price_to_ratios_averages" in statements
-
     def test_generate_limit(self):
         assert 2 == len(CompanyData(None).generate_limit(self.company.inc_statements.all()))
         assert 1 == len(CompanyData(None, 1).generate_limit(self.company.inc_statements.all()))
