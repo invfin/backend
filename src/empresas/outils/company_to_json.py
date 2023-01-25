@@ -437,7 +437,6 @@ class CompanyValueToJsonConverter:
             ],
         }
 
-
     def cashflow_json(self, statement: QuerySet):
         return {
             "currency": self.get_currency(statement),
@@ -1201,9 +1200,27 @@ class CompanyValueToJsonConverter:
         return {
             "labels": [data.date_year for data in statement],
             "fields": [
-                {"title": "ROA", "url": "#!", "percent": "true", "short": "true", "values": [data.roa for data in statement]},
-                {"title": "ROE", "url": "#!", "percent": "true", "short": "true", "values": [data.roe for data in statement]},
-                {"title": "ROC", "url": "#!", "percent": "true", "short": "true", "values": [data.roc for data in statement]},
+                {
+                    "title": "ROA",
+                    "url": "#!",
+                    "percent": "true",
+                    "short": "true",
+                    "values": [data.roa for data in statement],
+                },
+                {
+                    "title": "ROE",
+                    "url": "#!",
+                    "percent": "true",
+                    "short": "true",
+                    "values": [data.roe for data in statement],
+                },
+                {
+                    "title": "ROC",
+                    "url": "#!",
+                    "percent": "true",
+                    "short": "true",
+                    "values": [data.roc for data in statement],
+                },
                 {
                     "title": "ROCE",
                     "url": "#!",

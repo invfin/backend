@@ -4,8 +4,8 @@ from django.test import TestCase
 
 from bfet import DjangoTestingModel
 
-from src.empresas.extensions.new_company_extension import CompanyData
 from src.empresas.models import BalanceSheet, CashflowStatement, Company, IncomeStatement
+from src.empresas.outils.company import CompanyData
 from src.empresas.outils.financial_ratios import CalculateFinancialRatios
 from src.empresas.outils.update import UpdateCompany
 from src.periods.constants import PERIOD_FOR_YEAR
@@ -66,6 +66,19 @@ class TestCompanyData(TestCase):
         )
         UpdateCompany(cls.company).create_or_update_all_ratios(all_ratios, cls.current_period)
 
+    def test_min(self):
+        DjangoTestingModel.create(IncomeStatement, quantity=10, force_create=True)
+        all_inc = IncomeStatement.objects.all()
+        num_ics = 10 if len(all_inc) >= 10 else len(all_inc)
+        assert num_ics == 10
+        num_ics = min(len(all_inc), 10)
+        assert num_ics == 10
+        all_inc = IncomeStatement.objects.filter(company=self.company)
+        num_ics = 10 if len(all_inc) >= 10 else len(all_inc)
+        assert num_ics == 2
+        num_ics = min(len(all_inc), 10)
+        assert num_ics == 2
+
     def test_get_statements(self):
         statements = CompanyData(self.company).get_statements()
         assert "inc_statements" in statements
@@ -85,10 +98,26 @@ class TestCompanyData(TestCase):
 
     def test_get_averages(self):
         company_data = CompanyData(self.company)
-        statements = company_data.get_averages(company_data.get_statements())
+        initial_statements = company_data.get_averages(company_data.get_statements())
         # assert "inc_statements_averages" in statements
         # assert "balance_sheets_averages" in statements
         # assert "cf_statements_averages" in statements
+        assert "inc_statements" in initial_statements
+        assert "balance_sheets" in initial_statements
+        assert "cf_statements" in initial_statements
+        assert "rentability_ratios" in initial_statements
+        assert "liquidity_ratios" in initial_statements
+        assert "margins" in initial_statements
+        assert "fcf_ratios" in initial_statements
+        assert "per_share_values" in initial_statements
+        assert "non_gaap_figures" in initial_statements
+        assert "operation_risks_ratios" in initial_statements
+        assert "ev_ratios" in initial_statements
+        assert "growth_rates" in initial_statements
+        assert "efficiency_ratios" in initial_statements
+        assert "price_to_ratios" in initial_statements
+
+        statements = initial_statements["averages"]
         assert "rentability_ratios_averages" in statements
         assert "liquidity_ratios_averages" in statements
         assert "margins_averages" in statements
@@ -100,26 +129,12 @@ class TestCompanyData(TestCase):
         assert "growth_rates_averages" in statements
         assert "efficiency_ratios_averages" in statements
         assert "price_to_ratios_averages" in statements
-        assert "inc_statements" in statements
-        assert "balance_sheets" in statements
-        assert "cf_statements" in statements
-        assert "rentability_ratios" in statements
-        assert "liquidity_ratios" in statements
-        assert "margins" in statements
-        assert "fcf_ratios" in statements
-        assert "per_share_values" in statements
-        assert "non_gaap_figures" in statements
-        assert "operation_risks_ratios" in statements
-        assert "ev_ratios" in statements
-        assert "growth_rates" in statements
-        assert "efficiency_ratios" in statements
-        assert "price_to_ratios" in statements
 
     def test_generate_limit(self):
         assert 2 == len(CompanyData.generate_limit(self.company.inc_statements.all(), 0))
         assert 1 == len(CompanyData.generate_limit(self.company.inc_statements.all(), 1))
 
-    @patch("src.empresas.extensions.new_company_extension.CompanyData.income_json")
+    @patch("src.empresas.outils.company.CompanyData.income_json")
     @patch("src.general.utils.ChartSerializer.generate_json")
     def test_build_table_and_chart(self, mock_generate_json, mock_income_json):
         mock_generate_json.return_value = "value"
@@ -127,7 +142,7 @@ class TestCompanyData(TestCase):
         statement = self.company.inc_statements.all()
         result = CompanyData.build_table_and_chart(
             statement,
-            CompanyData.income_to_json,
+            CompanyData.income_json,
         )
         mock_income_json.assert_called_once_with(statement)
         mock_generate_json.assert_called_once_with("value", None, "line")

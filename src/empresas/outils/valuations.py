@@ -1,3 +1,9 @@
+import math
+from typing import Union
+
+from src.empresas.outils.financial_ratios.utils import divide_or_zero
+
+
 def discounted_cashflow(
     last_revenue,
     revenue_growth,
@@ -9,19 +15,16 @@ def discounted_cashflow(
     perpetual_growth=0.025,
 ):
     today_value = 0
-
+    revenue_expected = last_revenue
+    shares_outs = average_shares_out
     for i in range(1, 6):
-        if i <= 1:
-            revenue_expected = last_revenue
-            shares_outs = average_shares_out
-
         revenue_expected = revenue_expected * (1 + (revenue_growth / 100))
 
         income_expected = revenue_expected * (net_income_margin / 100)
 
         fcf_expected = income_expected * (fcf_margin / 100)
 
-        discount_factor = (1 + required_return) ** (i)
+        discount_factor = (1 + required_return) ** i
 
         shares_outs = shares_outs * (1 - (buyback / 100))
 
@@ -35,3 +38,20 @@ def discounted_cashflow(
     fair_value = today_value / shares_outs if shares_outs != 0 else 0
 
     return round(fair_value.real, 2)
+
+
+def graham_value(
+    current_eps: Union[int, float],
+    book_per_share: Union[int, float],
+) -> Union[int, float]:
+    # TODO test
+    current_eps = max(current_eps, 0)
+    return math.sqrt(22.5 * current_eps * book_per_share)
+
+
+def margin_of_safety(
+    value: Union[int, float],
+    current_price: Union[int, float],
+) -> Union[int, float]:
+    # TODO test
+    return divide_or_zero(value, current_price) * 100

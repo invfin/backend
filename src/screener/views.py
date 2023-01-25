@@ -8,6 +8,7 @@ from django.urls import reverse
 from django.views.generic import DetailView, ListView, RedirectView
 
 from src.empresas.models import Company, ExchangeOrganisation
+from src.empresas.outils.company import CompanyData
 from src.empresas.outils.update import UpdateCompany
 from src.empresas.utils import FinprepRequestCheck, company_searched
 from src.etfs.models import Etf
@@ -166,7 +167,7 @@ class CompanyDetailsView(SEODetailView):
 
         context["has_bought"] = has_bought
         context["company_is_fav"] = company_is_fav
-        context["complete_info"] = object.complete_info(limit_years)
+        context["complete_info"] = CompanyData(object).complete_info(limit_years)
         return context
 
     def get_context_data(self, object, **kwargs):
