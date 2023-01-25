@@ -8,6 +8,7 @@ from django.urls import reverse
 from django.views.generic import DetailView, ListView, RedirectView
 
 from src.empresas.models import Company, ExchangeOrganisation
+from src.empresas.outils.company import CompanyData
 from src.empresas.outils.update import UpdateCompany
 from src.empresas.utils import FinprepRequestCheck, company_searched
 from src.etfs.models import Etf
@@ -165,7 +166,7 @@ class CompanyDetailsView(SEODetailView):
 
         context["has_bought"] = has_bought
         context["company_is_fav"] = company_is_fav
-        context["complete_info"] = object.complete_info(limit_years)
+        context["complete_info"] = CompanyData(object).complete_info(limit_years)
         return context
 
     def get_context_data(self, object, **kwargs):
@@ -183,10 +184,8 @@ class CompanyDetailsView(SEODetailView):
         if not self.object:
             messages.error(
                 self.request,
-                (
-                    "Lo sentimos, esta empresa todavía no tiene información ahora mismo vamos a recabar información y"
-                    " estará lista en poco tiempo"
-                ),
+                "Lo sentimos, esta empresa todavía no tiene información ahora mismo vamos a recabar información y"
+                " estará lista en poco tiempo",
             )
             return redirect(reverse("screener:screener_inicio"))
         context = self.get_context_data(object=self.object)

@@ -2,7 +2,6 @@
 
 from django.db import migrations, models
 import django.db.models.deletion
-import src.empresas.extensions.company
 import src.empresas.extensions.finprep
 import src.empresas.extensions.y_finance
 import src.empresas.extensions.yahoo_query
@@ -69,7 +68,7 @@ class Migration(migrations.Migration):
                 'db_table': 'assets_companies',
                 'ordering': ['ticker'],
             },
-            bases=(models.Model, src.general.mixins.BaseToAllMixin, src.empresas.extensions.company.CompanyExtended, src.general.mixins.CheckingsMixin),
+            bases=(models.Model, src.general.mixins.BaseToAllMixin, src.general.mixins.CheckingsMixin),
         ),
         migrations.CreateModel(
             name='ExchangeOrganisation',

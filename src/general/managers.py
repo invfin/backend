@@ -19,16 +19,15 @@ class BaseQuerySet(QuerySet):
         )
 
     def filter_checkings(self, list_checkings: List[Dict[str, bool]]):
-        all_checkings = dict()
+        all_checkings = {}
         for checking in list_checkings:
             for key, value in checking.items():
                 state = "yes" if value else "no"
-                all_checkings.update({f"checkings__has_{key}__state": state})
-
+                all_checkings[f"checkings__has_{key}__state"] = state
         return self.filter(**all_checkings)
 
 
-class BaseManager(Manager.from_queryset(BaseQuerySet)):
+class BaseManager(Manager):
     def filter_checkings(self, checkings: List[Dict[str, bool]]):
         return super().filter_checkings(checkings)
 
@@ -39,6 +38,6 @@ class BaseManager(Manager.from_queryset(BaseQuerySet)):
         return super().filter_checking_not_seen(checking)
 
     def get_random(self, query: QuerySet = None):
-        query = query if query else self.all()
+        query = query or self.all()
         models_list = list(query)
         return random.choice(models_list) if models_list else None

@@ -1,21 +1,10 @@
 from django.db.models import Q
 
-from src.general.managers import BaseManager, BaseQuerySet
+from src.general.managers import BaseManager
 from src.periods import constants
 
 
-class BaseStatementQuerySet(BaseQuerySet):
-    def quarterly(self):
-        return self.exclude(period__period=constants.PERIOD_FOR_YEAR)
-
-    def yearly(self):
-        return self.filter(period__period=constants.PERIOD_FOR_YEAR)
-
-
 class BaseStatementManager(BaseManager):
-    def get_queryset(self):
-        return BaseStatementQuerySet(self.model, using=self._db)
-
     def quarterly(self, **kwargs):
         return self.get_queryset().quarterly(**kwargs)
 

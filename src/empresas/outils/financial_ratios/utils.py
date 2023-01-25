@@ -14,10 +14,16 @@ def get_most_recent_price(ticker: str) -> float:
     return current_price
 
 
+def calculate_compound_growth(
+    numerator: Union[int, float],
+    denominator: Union[int, float],
+    years: int,
+) -> Union[int, float]:
+    return ((divide_or_zero(numerator, denominator) ** (1 / years)) - 1) * 100
+
+
 def modify_for_percentage(value: Union[int, float], as_percentage: bool = True) -> Union[int, float]:
-    if as_percentage:
-        return round(value * 100, 2)
-    return value
+    return round(value * 100, 2) if as_percentage else value
 
 
 def divide_or_zero(

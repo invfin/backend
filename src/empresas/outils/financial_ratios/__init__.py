@@ -817,4 +817,5 @@ class CalculateFinancialRatios(
             "company_growth": company_growth,
             "non_gaap": non_gaap,
             "other_ratios": other_ratios,
+            "current_price": current_price,
         }
