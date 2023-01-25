@@ -132,11 +132,11 @@ if env("LOGGING") == "yes":
         },
         "root": {"level": "INFO", "handlers": ["console"]},
         "loggers": {
-            "django": {
-                "handlers": ["mail_admins"],
-                "level": "ERROR",
-                "propagate": True,
-            },
+            # "django": {
+            #     "handlers": ["mail_admins"],
+            #     "level": "ERROR",
+            #     "propagate": True,
+            # },
         },
     }
 
