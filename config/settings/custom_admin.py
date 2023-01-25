@@ -1,7 +1,4 @@
-from .base import FULL_DOMAIN, IS_PROD
-
-WEB_ICON = "general/assets/img/favicon/favicon.ico"
-WEB_MANIFEST = "/webmanifest.json"
+from .base import FULL_DOMAIN, IS_PROD, WEB_ICON, WEB_MANIFEST
 
 TOP_MENU_LEFT = [
     # Url that gets reversed (Permissions can be added)

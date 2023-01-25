@@ -184,8 +184,10 @@ class CompanyDetailsView(SEODetailView):
         if not self.object:
             messages.error(
                 self.request,
-                "Lo sentimos, esta empresa todavía no tiene información ahora mismo vamos a recabar información y"
-                " estará lista en poco tiempo",
+                (
+                    "Lo sentimos, esta empresa todavía no tiene información ahora mismo vamos a recabar información y"
+                    " estará lista en poco tiempo"
+                ),
             )
             return redirect(reverse("screener:screener_inicio"))
         context = self.get_context_data(object=self.object)

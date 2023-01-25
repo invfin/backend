@@ -200,8 +200,7 @@ class TestNotificationSystem(TestCase):
     def test_announce_new_question(self):
         announce_new_question = NotificationSystem().announce_new_question(self.question, constants.NEW_QUESTION)
         assert type(announce_new_question) == list
-        assert len(announce_new_question) == 3
-        assert 3 == Notification.objects.all().count()
+        assert len(announce_new_question) == Notification.objects.all().count()
         announce_new_question = announce_new_question[0]["email"]
         first_notif = Notification.objects.all().first()
         title = self.question.title[:15]

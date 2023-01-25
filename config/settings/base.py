@@ -27,6 +27,8 @@ CURRENT_DOMAIN = env("CURRENT_DOMAIN", default="example.com")
 MAIN_DOMAIN = env("MAIN_DOMAIN", default="inversionesyfinanzas.xyz")
 FULL_DOMAIN = env("FULL_DOMAIN", default="http://example.com:8000")
 
+WEB_ICON = "general/assets/img/favicon/favicon.ico"
+WEB_MANIFEST = "/webmanifest.json"
 
 DATA_UPLOAD_MAX_NUMBER_FIELDS = None
 

@@ -76,25 +76,17 @@ class CompanyData(CompanyValueToJsonConverter):
         # statements["cf_statements_averages"] = statements[
         # "cf_statements"].average_cf_statements()
         statements["averages"] = dict(  # type: ignore
-            rentability_ratios_averages=statements[
-                "rentability_ratios"].average_rentability_ratios(),  # type: ignore
-            liquidity_ratios_averages=statements[
-                "liquidity_ratios"].average_liquidity_ratios(), # type: ignore
-            margins_averages=statements[
-                "margins"].average_margins(),  # type: ignore
-            per_share_values_averages=statements[
-                "per_share_values"].average_per_share_values(),  # type: ignore
+            rentability_ratios_averages=statements["rentability_ratios"].average_rentability_ratios(),  # type: ignore
+            liquidity_ratios_averages=statements["liquidity_ratios"].average_liquidity_ratios(),  # type: ignore
+            margins_averages=statements["margins"].average_margins(),  # type: ignore
+            per_share_values_averages=statements["per_share_values"].average_per_share_values(),  # type: ignore
             operation_risks_ratios_averages=statements[
                 "operation_risks_ratios"
             ].average_operation_risks_ratios(),  # type: ignore
-            ev_ratios_averages=statements[
-                "ev_ratios"].average_ev_ratios(),  # type: ignore
-            growth_rates_averages=statements[
-                "growth_rates"].average_growth_rates(),  # type: ignore
-            price_to_ratios_averages=statements[
-                "price_to_ratios"].average_price_to_ratios(), # type: ignore
-            efficiency_ratios_averages=statements[
-                "efficiency_ratios"].average_efficiency_ratios(),# type: ignore
+            ev_ratios_averages=statements["ev_ratios"].average_ev_ratios(),  # type: ignore
+            growth_rates_averages=statements["growth_rates"].average_growth_rates(),  # type: ignore
+            price_to_ratios_averages=statements["price_to_ratios"].average_price_to_ratios(),  # type: ignore
+            efficiency_ratios_averages=statements["efficiency_ratios"].average_efficiency_ratios(),  # type: ignore
         )
         # statements["fcf_ratios_averages"] = statements["fcf_ratios"].average_fcf_ratios()
         # statements["non_gaap_figures_averages"] = statements[

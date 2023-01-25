@@ -19,6 +19,7 @@ class TestCalculateFinancialRatios(TestCase):
         previous_year = current_year - 1
         cls.current_period = DjangoTestingModel.create(
             Period,
+            id=10,
             period=PERIOD_FOR_YEAR,
             year=current_year,
         )
@@ -27,7 +28,7 @@ class TestCalculateFinancialRatios(TestCase):
             period=PERIOD_FOR_YEAR,
             year=previous_year,
         )
-        cls.company = DjangoTestingModel.create(Company)
+        cls.company = DjangoTestingModel.create(Company, id=22)
         cls.current_income = DjangoTestingModel.create(
             IncomeStatement,
             period=cls.current_period,
@@ -66,7 +67,7 @@ class TestCalculateFinancialRatios(TestCase):
         )
 
     def test_split_statements_by_year(self):
-        current, previous = CalculateFinancialRatios(self.company).split_statements_by_year(2022, 5)
+        current, previous = CalculateFinancialRatios(self.company).split_statements_by_year(period=5)
         assert [
             self.current_income,
             self.current_balance,
@@ -207,6 +208,7 @@ class TestCalculateFinancialRatios(TestCase):
 
     def test_calculate_all_ratios(self):
         expected_result = {
+            'current_price': {'current_price': 45.32},
             "price_to_ratio": {
                 "price_book": 12.11,
                 "price_cf": 12.2,

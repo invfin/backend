@@ -170,7 +170,7 @@ class BaseAPIView(APIView):
         Improve the way that we get the searched model (Company, superinvestor or Term)
         """
         search = queryset
-        if type(queryset).__name__ == "BaseStatementQuerySet" or type(queryset) == QuerySet or type(queryset) == list:
+        if "QuerySet" in type(queryset).__name__ or type(queryset) == QuerySet or type(queryset) == list:
             first_item_queryset = queryset[0]
             if "ticker" in self.url_parameters and first_item_queryset._meta.app_label == "empresas":
                 search = first_item_queryset.company
