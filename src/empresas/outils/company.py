@@ -76,18 +76,17 @@ class CompanyData(CompanyValueToJsonConverter):
         # "balance_sheets"].average_balance_sheets()
         # statements["cf_statements_averages"] = statements[
         # "cf_statements"].average_cf_statements()
-        statements["averages"] = {}  # type: ignore
-        statements["averages"].update(  # type: ignore
-            statements["rentability_ratios"].average_rentability_ratios(),  # type: ignore
-            statements["liquidity_ratios"].average_liquidity_ratios(),  # type: ignore
-            statements["margins"].average_margins(),  # type: ignore
-            statements["per_share_values"].average_per_share_values(),  # type: ignore
-            statements["operation_risks_ratios"].average_operation_risks_ratios(),  # type: ignore
-            statements["ev_ratios"].average_ev_ratios(),  # type: ignore
-            statements["growth_rates"].average_growth_rates(),  # type: ignore
-            statements["price_to_ratios"].average_price_to_ratios(),  # type: ignore
-            statements["efficiency_ratios"].average_efficiency_ratios(),  # type: ignore
-        )
+        statements["averages"] = {
+            **statements["rentability_ratios"].average_rentability_ratios(),  # type: ignore
+            **statements["liquidity_ratios"].average_liquidity_ratios(),  # type: ignore
+            **statements["margins"].average_margins(),  # type: ignore
+            **statements["per_share_values"].average_per_share_values(),  # type: ignore
+            **statements["operation_risks_ratios"].average_operation_risks_ratios(),  # type: ignore
+            **statements["ev_ratios"].average_ev_ratios(),  # type: ignore
+            **statements["growth_rates"].average_growth_rates(),  # type: ignore
+            **statements["price_to_ratios"].average_price_to_ratios(),  # type: ignore
+            **statements["efficiency_ratios"].average_efficiency_ratios(),  # type: ignore
+        }  # type: ignore
         # statements["fcf_ratios_averages"] = statements["fcf_ratios"].average_fcf_ratios()
         # statements["non_gaap_figures_averages"] = statements[
         # "non_gaap_figures"].average_non_gaap_figures()
