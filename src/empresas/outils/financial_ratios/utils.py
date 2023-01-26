@@ -27,8 +27,8 @@ def modify_for_percentage(value: Union[int, float], as_percentage: bool = True) 
 
 
 def divide_or_zero(
-    numerator: Union[int, float],
-    denominator: Union[int, float],
+    numerator: Union[int, float, complex],
+    denominator: Union[int, float, complex],
     numbers_after_coma: int = 2,
 ) -> Union[int, float]:
     """A method to calculate a division that returns de product or 0 if the denominator is 0
@@ -48,6 +48,6 @@ def divide_or_zero(
         The product of the division
     """
     try:
-        return round(numerator / denominator, numbers_after_coma)
+        return round((numerator / denominator).real, numbers_after_coma)
     except ZeroDivisionError:
         return 0
