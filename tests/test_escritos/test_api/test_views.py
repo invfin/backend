@@ -21,7 +21,7 @@ class TestAllTermsAPIView(BaseAPIViewTestMixin, APITestCase):
     def setUpTestData(cls) -> None:
         super().setUpTestData()
         category = DjangoTestingModel.create(Category, name="category")
-        author = DjangoTestingModel.create(User, first_name="Lucas", last_name="Montes")
+        author = DjangoTestingModel.create(User, username="lucasMontes", first_name="Lucas", last_name="Montes")
         DjangoTestingModel.create(Term, category=category, author=author, **escritos_data.TERM)
         DjangoTestingModel.create(Term, author=author, **escritos_data.EMPTY_TERM)
         DjangoTestingModel.create(Term, author=author, **escritos_data.BALANCE_SHEET_TERM)
@@ -77,7 +77,7 @@ class TestTermAPIView(BaseAPIViewTestMixin, APITestCase):
     def setUpTestData(cls) -> None:
         super().setUpTestData()
         category = DjangoTestingModel.create(Category, name="category")
-        author = DjangoTestingModel.create(User, first_name="Lucas", last_name="Montes")
+        author = DjangoTestingModel.create(User, username="lucas3245Montes", first_name="Lucas", last_name="Montes")
         term = DjangoTestingModel.create(Term, category=category, author=author, **escritos_data.TERM)
         for term_content in escritos_data.TERM_CONTENT:
             DjangoTestingModel.create(TermContent, term_related=term, **term_content)

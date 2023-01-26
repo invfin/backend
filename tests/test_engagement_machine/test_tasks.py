@@ -52,6 +52,7 @@ class TestEmailEngamentTask(TestCase):
         )
         cls.user_testing = DjangoTestingModel.create(
             User,
+            username="algo45",
             is_bot=False,
             for_testing=True,
             first_name="s",
