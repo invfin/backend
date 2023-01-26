@@ -1,7 +1,7 @@
 import math
 from typing import Union
 
-from src.empresas.outils.financial_ratios.utils import divide_or_zero
+from src.empresas.outils.financial_ratios.utils import divide_or_zero, modify_for_percentage
 
 
 def discounted_cashflow(
@@ -44,14 +44,12 @@ def graham_value(
     current_eps: Union[int, float],
     book_per_share: Union[int, float],
 ) -> Union[int, float]:
-    # TODO test
     current_eps = max(current_eps, 0)
-    return math.sqrt(22.5 * current_eps * book_per_share)
+    return round(math.sqrt(22.5 * current_eps * book_per_share), 2)
 
 
 def margin_of_safety(
     value: Union[int, float],
     current_price: Union[int, float],
 ) -> Union[int, float]:
-    # TODO test
-    return divide_or_zero(value, current_price) * 100
+    return modify_for_percentage(1 - divide_or_zero(current_price, value))

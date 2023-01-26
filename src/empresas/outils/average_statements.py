@@ -71,8 +71,7 @@ class AverageStatements:
         return reunited_data
 
     def return_averaged_data(self, period, statements: List[Type]) -> Optional[Dict[str, Any]]:
-        reunited_data = self.prepare_data(statements)
-        if reunited_data:
+        if reunited_data := self.prepare_data(statements):
             currency = self.find_correct_currency(reunited_data)
             reunited_data = self.calculate_averages(reunited_data)
             reunited_data.update({"date": period.year, "period_id": period.id, **currency})
