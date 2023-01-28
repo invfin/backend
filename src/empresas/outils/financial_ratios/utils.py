@@ -1,18 +1,5 @@
 from typing import Union
 
-import yahooquery as yq
-import yfinance as yf
-
-
-def get_most_recent_price(ticker: str) -> float:
-    yfinance_info = yf.Ticker(ticker).info
-    current_price = yfinance_info.get("currentPrice")
-    if not current_price:
-        yahooquery_info = yq.Ticker(ticker).price
-        for key in yahooquery_info.keys():
-            current_price = yahooquery_info[key].get("regularMarketPrice", 0.0)
-    return current_price
-
 
 def calculate_compound_growth(
     numerator: Union[int, float],

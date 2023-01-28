@@ -16,21 +16,6 @@ class RetrieveCompanyData:
         to_date = datetime.now().strftime("%Y-%m-%d")
         return FinnhubInfo(self.company).company_news(self.company.ticker, from_date, to_date)
 
-    def get_most_recent_price(self):
-        yfinance_info = YFinanceInfo(self.company).request_info_yfinance
-        if "currentPrice" in yfinance_info:
-            current_price = yfinance_info["currentPrice"]
-        elif "regularMarketPrice" in yfinance_info:
-            current_price = yfinance_info["regularMarketPrice"]
-        else:
-            yahooquery_info = YahooQueryInfo(self.company).request_price_info_yahooquery
-            try:
-                for key in yahooquery_info.keys():
-                    current_price = yahooquery_info[key]["regularMarketPrice"]
-            except TickerNotFound:
-                current_price = None
-        return {"currentPrice": current_price}
-
     @log_company("latest_financials_finprep_info")
     def create_financials_finprep(self):
         return FinprepInfo(self.company).create_financials_finprep()

@@ -22,7 +22,6 @@ class CompanyData(CompanyValueToJsonConverter):
 
     def get_complete_information(self) -> Dict[str, Union[Dict[str, Union[int, float]], List]]:
         initial_statements = self.get_statements()
-        self.get_averages(initial_statements)
         comparing_income_json = self.build_table_and_chart(
             initial_statements["inc_statements"],
             self.income_json,
@@ -35,17 +34,18 @@ class CompanyData(CompanyValueToJsonConverter):
             initial_statements["cf_statements"],
             self.cashflow_json,
         )
-        averages_and_ratios = self.get_current_ratios(initial_statements)
-        averages_and_ratios.update(
-            {
-                "comparing_income_json": comparing_income_json,
-                "comparing_balance_json": comparing_balance_json,
-                "comparing_cashflows": comparing_cashflows,
-                "important_ratios": self.get_important_ratios(initial_statements),
-                "secondary_ratios": self.get_secondary_ratios(initial_statements),
-            }
-        )
-        return averages_and_ratios
+        return {
+            "comparing_income_json": comparing_income_json,
+            "comparing_balance_json": comparing_balance_json,
+            "comparing_cashflows": comparing_cashflows,
+            "important_ratios": self.get_important_ratios(initial_statements),
+            "secondary_ratios": self.get_secondary_ratios(initial_statements),
+        }
+
+    def get_ratios_information(self):
+        initial_statements = self.get_statements()
+        self.get_averages(initial_statements)
+        return self.get_current_ratios(initial_statements)
 
     def get_statements(self) -> Dict[str, QuerySet]:
         # TODO add a prefetch to get all at once
@@ -98,7 +98,7 @@ class CompanyData(CompanyValueToJsonConverter):
     ) -> dict:
         # TODO test
         averages = statements.pop("averages")
-        current_price = self.get_most_recent_price()["current_price"]
+        current_price = self.get_most_recent_price(self.company.ticker)["current_price"]
         last_balance_sheet = statements["balance_sheets"].first()
         last_per_share = statements["per_share_values"].first()
         last_margins = statements["margins"].first()
@@ -435,11 +435,11 @@ class CompanyData(CompanyValueToJsonConverter):
             currency = self.company.currency
         return currency.currency if currency else "$"
 
-    def get_most_recent_price(self):
-        ticker = self.company.ticker
-        price, currency = self.get_yfinance_price(ticker)
+    @classmethod
+    def get_most_recent_price(cls, ticker):
+        price, currency = cls.get_yfinance_price(ticker)
         if not price:
-            price, currency = self.get_yahooquery_price(ticker)
+            price, currency = cls.get_yahooquery_price(ticker)
         if not price:
             price = 0
             currency = ""
