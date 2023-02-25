@@ -323,10 +323,10 @@ EMAIL_SUGGESTIONS = env("EMAIL_SUGGESTIONS", default=f"EMAIL_SUGGESTIONS@example
 # Django Admin URL.
 ADMIN_URL = "admin/"
 SECOND_ADMIN_URL = "admin2/"
-# https://docs.djangoproject.com/en/dev/ref/settings/#admins
-ADMINS = [("""Lucas montes""", "lluc23@hotmail.com")]
-# https://docs.djangoproject.com/en/dev/ref/settings/#managers
-MANAGERS = ADMINS
+# # https://docs.djangoproject.com/en/dev/ref/settings/#admins
+# ADMINS = [("""Lucas montes""", "lluc23@hotmail.com")]
+# # https://docs.djangoproject.com/en/dev/ref/settings/#managers
+# MANAGERS = ADMINS
 
 
 # django-allauth
