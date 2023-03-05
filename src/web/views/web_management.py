@@ -13,7 +13,6 @@ from src.web.models import WebsiteEmail
 
 class BasePrivateWebView(LoginRequiredMixin, UserPassesTestMixin, SEOViewMixin):
     private_view = True
-    object = None
 
     def test_func(self):
         return self.request.user.is_superuser
