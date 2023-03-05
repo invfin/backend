@@ -10,7 +10,6 @@ class FastContextView:
     custom_context_data: Dict[str, Any] = {}
 
     def get_context_data(self, **kwargs):
-        self.object = self.get_object()
         context = super().get_context_data(**kwargs)
         context.update(**self.custom_context_data)
         return context
