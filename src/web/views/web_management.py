@@ -11,7 +11,7 @@ from src.web.forms import AutomaticNewsletterForm, WebEmailForm
 from src.web.models import WebsiteEmail
 
 
-class BasePrivateWebView(LoginRequiredMixin, UserPassesTestMixin, SEOViewMixin):
+class BasePrivateWebView(LoginRequiredMixin, UserPassesTestMixin):
     private_view = True
 
     def test_func(self):
