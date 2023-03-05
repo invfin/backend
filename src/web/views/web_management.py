@@ -122,7 +122,7 @@ class ManageTermListView(PrivateWebListView):
         return self.model._default_manager.cleaning_requested()
 
 
-class ManageTermUpdateView(PrivateWebDetailView):
+class ManageTermUpdateView(PrivateWebUpdateView):
     model = Term
     template_name = "management/update_term.html"
     slug_field = "slug"
