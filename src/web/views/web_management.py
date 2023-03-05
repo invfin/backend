@@ -149,6 +149,6 @@ class ManageTermUpdateView(PrivateWebDetailView):
         formset = term_content_formset(request.POST, instance=object)
         form = TermAndTermContentForm(request.POST, instance=object)
         if all([form.is_valid(), formset.is_valid()]):
-            self.save_all(form, formset, request)
+            return self.save_all(form, formset, request)
         else:
             return self.render_to_response(self.get_context_data(form=form, formset=formset))
