@@ -11,7 +11,7 @@ from src.web.forms import AutomaticNewsletterForm, WebEmailForm
 from src.web.models import WebsiteEmail
 
 
-class BasePrivateWebView(LoginRequiredMixin, UserPassesTestMixin):
+class BasePrivateWebView(LoginRequiredMixin, UserPassesTestMixin, SEOViewMixin):
     private_view = True
 
     def test_func(self):
@@ -122,7 +122,7 @@ class ManageTermListView(PrivateWebListView):
         return self.model._default_manager.cleaning_requested()
 
 
-class ManageTermUpdateView(PrivateWebUpdateView):
+class ManageTermUpdateView(PrivateWebDetailView):
     model = Term
     template_name = "management/update_term.html"
     slug_field = "slug"
@@ -131,20 +131,24 @@ class ManageTermUpdateView(PrivateWebUpdateView):
         return reverse("web:manage_all_terms")
 
     def get_context_data(self, **kwargs):
+        self.object = self.get_object()
         context = super().get_context_data(**kwargs)
         context["formset_content"] = term_content_formset(instance=self.object)
         context["form"] = TermAndTermContentForm(instance=self.object)
         return context
 
+    def save_all(self, form, formset, request):
+        modify_checking = True if "save_definetly" in request.POST else False
+        form.save(modify_checking=modify_checking)
+        formset.save()
+        messages.success(request, "Guardado correctamente")
+        return HttpResponseRedirect(self.get_success_url())
+
     def post(self, request, *args: str, **kwargs) -> HttpResponse:
         object = self.get_object()
         formset = term_content_formset(request.POST, instance=object)
         form = TermAndTermContentForm(request.POST, instance=object)
-        modify_checking = True if "save_definetly" in request.POST else False
         if all([form.is_valid(), formset.is_valid()]):
-            form.save(modify_checking=modify_checking)
-            formset.save()
-            messages.success(request, "Guardado correctamente")
-            return HttpResponseRedirect(self.get_success_url())
+            self.save_all(form, formset, request)
         else:
             return self.render_to_response(self.get_context_data(form=form, formset=formset))
