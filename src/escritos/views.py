@@ -8,9 +8,10 @@ from django.shortcuts import redirect
 from django.urls import reverse
 
 from src.seo.views import SEOCreateView, SEODetailView, SEOListView
+from src.web.views.web_management import PrivateWebListView, PrivateWebDetailView
 
 from .forms import CreateCorrectionForm
-from .models import Term, TermContent
+from .models import Term, TermContent, TermCorrection
 
 User = get_user_model()
 
@@ -104,3 +105,18 @@ class TermCorrectionView(SEOCreateView):
         model = form.save()
         messages.success(self.request, self.success_message)
         return redirect(model.get_absolute_url())
+
+
+class ManageUserTermCorrectionListView(PrivateWebListView):
+    model = TermCorrection
+    template_name = "users/users_corrections.html"
+    context_object_name = "corrections"
+
+    def get_queryset(self):
+        return self.model._default_manager.filter(is_approved=False).select_related("term_content_related")
+
+
+class ManageUserTermCorrectionDetailView(PrivateWebDetailView):
+    model = TermCorrection
+    template_name = "users/check_correction.html"
+    context_object_name = "correction"

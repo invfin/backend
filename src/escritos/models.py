@@ -1,3 +1,4 @@
+from typing import List
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db.models import (
@@ -80,13 +81,14 @@ class TermContent(Model):
 
 class TermCorrection(Model):
     term_content_related = ForeignKey("escritos.TermContent", null=True, blank=True, on_delete=SET_NULL)
-    title = CharField(max_length=3000, null=True, blank=True)
+    title = CharField(max_length=3000, blank=True, default="")
     date_suggested = DateTimeField(default=timezone.now)
     is_approved = BooleanField(default=False)
     date_approved = DateTimeField(blank=True, null=True)
-    content = RichTextField(config_name="writer")
+    content = RichTextField(config_name="writer", default="")
+    original_title = CharField(max_length=3000, default="")
+    original_content = RichTextField(config_name="writer", default="")
     reviwed_by = ForeignKey(User, null=True, blank=True, related_name="corrector", on_delete=SET_NULL)
-
     approved_by = ForeignKey(User, null=True, blank=True, related_name="revisor", on_delete=SET_NULL)
 
     class Meta:
@@ -97,7 +99,10 @@ class TermCorrection(Model):
     def __str__(self):
         return f"{self.term_content_related.title} corregido por {self.reviwed_by.username}"
 
-    def save(self, *args, **kwargs):  # new
+    def save(self, *args, **kwargs):
+        # TODO : test
+        self.original_title = self.term_content_related.title
+        self.original_content = self.term_content_related.content
         if self.is_approved is True:
             """
             TODO
@@ -105,6 +110,21 @@ class TermCorrection(Model):
             Perfil.ADD_CREDITS(self.user, 5)
             """
         return super().save(*args, **kwargs)
+
+    def replace_content_with_correction(self):
+        # TODO : test
+        updated_title = self.update_related_field("title")
+        updated_content = self.update_related_field("content")
+        self.term_content_related.save(update_fields=updated_title + updated_content)
+
+    def update_related_field(self, field: str) -> List[str]:
+        # TODO : test
+        original = getattr(self.term_content_related, field)
+        correction = getattr(self, field)
+        if all([original, correction, original != correction]):
+            setattr(self.term_content_related, field, correction)
+            return [field]
+        return []
 
     def get_absolute_url(self):
         return self.term_content_related.get_absolute_url()

@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.views.generic import CreateView, DetailView, FormView, ListView, TemplateView, UpdateView
 
 from src.escritos.forms import TermAndTermContentForm, term_content_formset
-from src.escritos.models import Term
+from src.escritos.models import Term, TermCorrection
 from src.seo.views import SEOViewMixin
 from src.web.forms import AutomaticNewsletterForm, WebEmailForm
 from src.web.models import WebsiteEmail
@@ -138,16 +138,16 @@ class ManageTermUpdateView(PrivateWebDetailView):
         return context
 
     def save_all(self, form, formset, request):
-        modify_checking = True if "save_definetly" in request.POST else False
+        modify_checking = "save_definetly" in request.POST
         form.save(modify_checking=modify_checking)
         formset.save()
         messages.success(request, "Guardado correctamente")
         return HttpResponseRedirect(self.get_success_url())
 
     def post(self, request, *args: str, **kwargs) -> HttpResponse:
-        object = self.get_object()
-        formset = term_content_formset(request.POST, instance=object)
-        form = TermAndTermContentForm(request.POST, instance=object)
+        obj = self.get_object()
+        formset = term_content_formset(request.POST, instance=obj)
+        form = TermAndTermContentForm(request.POST, instance=obj)
         if all([form.is_valid(), formset.is_valid()]):
             return self.save_all(form, formset, request)
         else:

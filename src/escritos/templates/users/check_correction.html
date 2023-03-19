@@ -1,0 +1,35 @@
+{% extends "bases/base_forms.html" %}
+{% load static crispy_forms_tags %}
+{% block header %}{% include "headers/inicio.html" %}{% endblock header%}
+{% block FormContent %}
+
+<form method="POST" enctype="multipart/form-data">
+    <div class="row">
+        {% csrf_token %}
+        <div class="col-lg-6 col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    {{correction.title}}
+                    <p id="correction-content">
+                        {{correction.content | safe}}
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    {{correction.term_content_related.title}}
+                    <p id="original-content">
+                        {{correction.term_content_related.content | safe}}
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 mt-4">
+            <input class="btn btn-primary col-12" type="submit" value="Validar cambio" name="save">
+        </div>
+    </div>
+</form>
+
+{% endblock FormContent %}

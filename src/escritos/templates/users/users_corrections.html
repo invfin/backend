@@ -1,0 +1,33 @@
+{% extends "bases/base_content.html" %}
+{% load static i18n extra %}
+{% block header %}{% include "headers/inicio.html" %}{% endblock header%}
+
+{% block FirstContent %}
+{% for correction in corrections %}
+<div class="card">
+    <div class="card-body p-3">
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex flex-column h-100">
+                    <a href="{% url 'escritos:manage_user_correction' correction.pk %}">
+                        <p class="h1 mb-1 pt-2 text-bold">
+                            {{correction.term_content_related.title}}
+                        </p>
+                    </a>
+                    <p class="mb-5"><a href="{% url 'escritos:manage_user_correction' correction.pk %}">
+                            Date edited: {{correction.date_suggested}}
+                            <br></br>
+                            Edited by: {{correction.reviwed_by}}
+                        </a></p>
+                    <a class="text-body text-sm font-weight-bold mb-0 icon-move-right mt-auto"
+                        href="{% url 'escritos:manage_user_correction' correction.pk %}">
+                        Review
+                        <i class="fas fa-arrow-right text-sm ms-1" aria-hidden="true"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endfor %}
+{% endblock FirstContent%}
