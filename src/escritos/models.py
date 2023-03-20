@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db.models import (
@@ -97,34 +97,41 @@ class TermCorrection(Model):
         db_table = "term_content_correction"
 
     def __str__(self):
-        return f"{self.term_content_related.title} corregido por {self.reviwed_by.username}"
+        return f"{self.term_content_related} corregido por {self.reviwed_by}"
 
     def save(self, *args, **kwargs):
-        # TODO : test
-        self.original_title = self.term_content_related.title
-        self.original_content = self.term_content_related.content
-        if self.is_approved is True:
-            """
-            TODO
-            enviar email de agradecimiento
-            Perfil.ADD_CREDITS(self.user, 5)
-            """
+        self.populate_original()
+        """
+        TODO
+        enviar email de agradecimiento
+        Perfil.ADD_CREDITS(self.user, 5)
+        """
         return super().save(*args, **kwargs)
 
-    def replace_content_with_correction(self):
-        # TODO : test
-        updated_title = self.update_related_field("title")
-        updated_content = self.update_related_field("content")
-        self.term_content_related.save(update_fields=updated_title + updated_content)
+    def populate_original(self) -> None:
+        if not self.id:
+            self.original_title = self.term_content_related.title
+            self.original_content = self.term_content_related.content
 
-    def update_related_field(self, field: str) -> List[str]:
-        # TODO : test
-        original = getattr(self.term_content_related, field)
+    def accept_correction(self, approved_by, fields: List[str]) -> None:
+        self.is_approved = True
+        self.date_approved = timezone.now()
+        self.approved_by = approved_by
+        self.replace_content_with_correction(fields)
+        self.save(update_fields=["is_approved", "date_approved", "approved_by"])
+
+    def replace_content_with_correction(self, fields: List[str]) -> None:
+        fields_to_update = list(filter(self.update_related_field, fields))
+        self.term_content_related.save(update_fields=fields_to_update)
+        return None
+
+    def update_related_field(self, field: str) -> Optional[str]:
+        original = getattr(self.term_content_related, field) if self.term_content_related else None
         correction = getattr(self, field)
         if all([original, correction, original != correction]):
             setattr(self.term_content_related, field, correction)
-            return [field]
-        return []
+            return field
+        return None
 
     def get_absolute_url(self):
         return self.term_content_related.get_absolute_url()

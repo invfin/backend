@@ -80,3 +80,18 @@ def prepare_term_newsletter_task():
     if notify:
         notify_term_to_improve_task.delay()
     return EmailingSystem.simple_email(subject, message)
+
+
+def task_send_correction_approved_email():
+    {
+        "subject": 
+        "content":
+        "sender":
+        "app_label": str
+            The app where the model lives
+        "object_name": str
+            The model to retrieve
+        "id": int
+            The id of the obj from the model to create the tracker tag
+    }
+    return EmailingSystem.simple_email(subject, message)

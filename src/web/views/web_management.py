@@ -5,7 +5,7 @@ from django.urls import reverse
 from django.views.generic import CreateView, DetailView, FormView, ListView, TemplateView, UpdateView
 
 from src.escritos.forms import TermAndTermContentForm, term_content_formset
-from src.escritos.models import Term, TermCorrection
+from src.escritos.models import Term
 from src.seo.views import SEOViewMixin
 from src.web.forms import AutomaticNewsletterForm, WebEmailForm
 from src.web.models import WebsiteEmail

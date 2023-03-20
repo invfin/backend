@@ -1,11 +1,14 @@
 import json
 import urllib
 
+from typing import List
+
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.shortcuts import redirect
 from django.urls import reverse
+from django.http import HttpResponseRedirect
 
 from src.seo.views import SEOCreateView, SEODetailView, SEOListView
 from src.web.views.web_management import PrivateWebListView, PrivateWebDetailView
@@ -120,3 +123,18 @@ class ManageUserTermCorrectionDetailView(PrivateWebDetailView):
     model = TermCorrection
     template_name = "users/check_correction.html"
     context_object_name = "correction"
+
+    @staticmethod
+    def get_fields(request_data) -> List[str]:
+        return [field[7:] for field in request_data if field.startswith("accept")]
+
+    def manage_correction(self):
+        # TODO : test
+        fields = self.get_fields(self.request.POST)
+        self.get_object().accept_correction(self.request.user, fields)
+
+    def post(self, request, *args: str, **kwargs):
+        # TODO : test
+        self.manage_correction()
+        messages.success(request, "Guardado correctamente")
+        return HttpResponseRedirect(reverse("escritos:manage_all_corrections"))
