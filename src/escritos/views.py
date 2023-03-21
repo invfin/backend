@@ -60,6 +60,11 @@ class TermDetailsView(SEODetailView):
         except Exception:
             return
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context.update({"contributors": TermCorrection.objects.get_contributors(self.object)})  # type: ignore
+        return context
+
 
 class TermCorrectionView(SEOCreateView):
     form_class = CreateCorrectionForm
@@ -105,7 +110,7 @@ class TermCorrectionView(SEOCreateView):
         return self.form_invalid(form)
 
     def form_valid(self, form, user):
-        form.instance.reviwed_by = user
+        form.instance.corrected_by = user
         model = form.save()
         messages.success(self.request, self.success_message)
         return redirect(model.get_absolute_url())

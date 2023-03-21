@@ -94,10 +94,10 @@ class NotificationSystem:
             {
                 "email": cls.save_notif(
                     obj,
-                    obj.reviwed_by,
+                    obj.corrected_by,
                     notif_type,
                     {
-                        "subject": f"Gracias {obj.reviwed_by} tu corrección ha sido aprovada.",
+                        "subject": f"Gracias {obj.corrected_by} tu corrección ha sido aprovada.",
                         "content": (
                             f"Enhorabuena, tu correción para <a href='{obj.shareable_link}' "
                             f"target='_blank'>{obj.title}</a> ha sido aprovada."
@@ -107,7 +107,7 @@ class NotificationSystem:
                         ),
                     },
                 ),
-                "receiver_id": obj.reviwed_by.id,
+                "receiver_id": obj.corrected_by.id,
                 "is_for": EMAIL_FOR_NOTIFICATION,
             }
         ]

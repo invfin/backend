@@ -24,6 +24,7 @@ from src.general.abstracts import AbstractComment, AbstractFavoritesHistorial
 from src.general.mixins import BaseToAllMixin
 
 from .managers import TermManager
+from .querysets import TermCorrectionQuerySet
 
 DOMAIN = settings.FULL_DOMAIN
 User = get_user_model()
@@ -88,8 +89,9 @@ class TermCorrection(Model, BaseToAllMixin):
     content = RichTextField(config_name="writer", default="")
     original_title = CharField(max_length=3000, default="", blank=True)
     original_content = RichTextField(config_name="writer", default="", blank=True)
-    reviwed_by = ForeignKey(User, null=True, blank=True, related_name="corrector", on_delete=SET_NULL)
+    corrected_by = ForeignKey(User, null=True, blank=True, related_name="corrector", on_delete=SET_NULL)
     approved_by = ForeignKey(User, null=True, blank=True, related_name="revisor", on_delete=SET_NULL)
+    objects = TermCorrectionQuerySet.as_manager()
 
     class Meta:
         ordering = ["id"]
@@ -97,7 +99,7 @@ class TermCorrection(Model, BaseToAllMixin):
         db_table = "term_content_correction"
 
     def __str__(self):
-        return f"{self.term_content_related} corregido por {self.reviwed_by}"
+        return f"{self.term_content_related} corregido por {self.corrected_by}"
 
     def save(self, *args, **kwargs):
         self.populate_original()

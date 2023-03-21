@@ -1,4 +1,5 @@
 import json
+import itertools
 
 from django.conf import settings
 from django.contrib import messages
@@ -10,10 +11,11 @@ from django.shortcuts import redirect, render
 from django.views.generic import ListView, RedirectView, TemplateView
 
 from src.empresas.models import Company
-from src.escritos.models import FavoritesTermsHistorial, FavoritesTermsList, Term
+from src.escritos.models import FavoritesTermsHistorial, FavoritesTermsList, Term, TermContent
 from src.notifications.models import Notification
 from src.screener.models import FavoritesStocksHistorial
 from src.super_investors.models import FavoritesSuperinvestorsHistorial, FavoritesSuperinvestorsList, Superinvestor
+from src.escritos.constants import BASE_ESCRITO_PUBLISHED
 
 
 class MessagesTemplateview(TemplateView):
@@ -39,33 +41,37 @@ class Handler404(TemplateView):
         return None
 
     def get(self, request, *args, **kwargs):
-        corrected_url = self.handle_wrong_urls()
-        if corrected_url:
+        if corrected_url := self.handle_wrong_urls():
             return HttpResponseRedirect(corrected_url)
         return super().get(request, *args, **kwargs)
 
 
 def suggest_list_search(request):
+    # TODO : make it a class
     if request.is_ajax():
         query = request.GET.get("term", "")
-        companies_availables = Company.objects.filter(
+        companies = Company.objects.filter(
             Q(name__icontains=query) | Q(ticker__icontains=query),
             no_incs=False,
             no_bs=False,
             no_cfs=False,
-        )[:4]
+        ).only("name", "ticker")[:7]
 
-        # terms_availables = Term.objects.filter(Q(title__icontains=query), status = 1)[:3]
-        terms_availables = Term.objects.filter(Q(title__icontains=query))[:4]
+        terms = Term.objects.filter(title__icontains=query, status=BASE_ESCRITO_PUBLISHED).only("title")[:7]
+
+        terms_content = TermContent.objects.filter(
+            title__icontains=query, term_related__status=BASE_ESCRITO_PUBLISHED
+        ).only("term_related__title")[:7]
 
         results = []
-        for company in companies_availables:
-            result = f"Empresa: {company.name} [{company.ticker}]"
-            results.append(result)
 
-        for term in terms_availables:
-            result = f"Término: {term.title}"
-            results.append(result)
+        for company, term, term_content in itertools.zip_longest(companies, terms, terms_content):
+            if company:
+                results.append(f"Empresa: {company.name} [{company.ticker}]")
+            if term:
+                results.append(f"Término: {term.title}")
+            if term_content:
+                results.append(f"Término: {term_content.title}")
 
         data = json.dumps(results)
         mimetype = "application/json"
@@ -86,10 +92,17 @@ def search_results(request):
         elif query == "Término":
             title = term.split(":")[1]
             title = title[1:]
-            try:
-                term_busqueda = Term.objects.get(title=title)
-            except Term.MultipleObjectsReturned:
-                term_busqueda = Term.objects.filter(title=title).first()
+            terms = TermContent.objects.filter(
+                Q(title__icontains=title) | Q(term_related__title=title),
+                term_related__status=BASE_ESCRITO_PUBLISHED,
+            )
+            if terms.count() == 1:
+                term_busqueda = terms.first()
+            else:
+                try:
+                    term_busqueda = Term.objects.get(title=title)
+                except Term.MultipleObjectsReturned:
+                    term_busqueda = Term.objects.filter(title=title).first()
             redirect_to = term_busqueda.get_absolute_url()
 
         else:
