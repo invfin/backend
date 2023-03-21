@@ -69,6 +69,7 @@ class NotificationSystem:
             constants.NEW_QUESTION: cls.announce_new_question,
             constants.NEW_ANSWER: cls.announce_new_answer,
             constants.ANSWER_ACCEPTED: cls.announce_answer_accepted,
+            constants.CORRECTION_APPROVED: cls.announce_approved_correction,
         }
         return notif_type_fnct[notif_type]
 
@@ -86,6 +87,30 @@ class NotificationSystem:
             "receiver_id": receiver_id,
             "is_for": EMAIL_FOR_NOTIFICATION,
         }
+
+    @classmethod
+    def announce_approved_correction(cls, obj, notif_type):
+        return [
+            {
+                "email": cls.save_notif(
+                    obj,
+                    obj.reviwed_by,
+                    notif_type,
+                    {
+                        "subject": f"Gracias {obj.reviwed_by} tu corrección ha sido aprovada.",
+                        "content": (
+                            f"Enhorabuena, tu correción para <a href='{obj.shareable_link}' "
+                            f"target='_blank'>{obj.title}</a> ha sido aprovada."
+                            "<br></br>"
+                            "Desde el equipo de InvFin te damos las gracias por ayudar a mejorar el contenido para "
+                            "poder seguir ayudando al resto de la comunidad."
+                        ),
+                    },
+                ),
+                "receiver_id": obj.reviwed_by.id,
+                "is_for": EMAIL_FOR_NOTIFICATION,
+            }
+        ]
 
     @classmethod
     def announce_new_follower(cls, writer, notif_type):

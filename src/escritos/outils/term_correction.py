@@ -3,8 +3,8 @@ from typing import List, Optional
 from django.utils import timezone
 
 from ..models import TermCorrection, TermContent
-from ..tasks import task_send_correction_approved_email
-
+from src.notifications.tasks import prepare_notification_task
+from src.notifications.constants import CORRECTION_APPROVED
 
 class TermCorrectionManagement:
     term_correction: TermCorrection
@@ -16,14 +16,7 @@ class TermCorrectionManagement:
 
     def approve_correction(self, approved_by, fields: List[str]) -> None:
         self.update_correction_data_when_approved(approved_by, fields)
-        email = self.term_correction.dict_for_task
-        email.update(
-            {
-                "subject": f"Gracias {self.term_correction.reviwed_by} tu corrección ha sido aprovada.",
-                "content": self.create_content(),
-            }
-        )
-        task_send_correction_approved_email.delay(email, self.term_correction.reviwed_by.id)  # type: ignore
+        prepare_notification_task.delay(self.term_correction.dict_for_task, CORRECTION_APPROVED)  # type: ignore
         return None
 
     def create_content(self):

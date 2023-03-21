@@ -11,6 +11,7 @@ NEW_QUESTION = "Nueva pregunta"
 NEW_ANSWER = "Nueva respuesta"
 ANSWER_ACCEPTED = "Respuesta aceptada"
 PURCHASE_SUCCESSFUL = "Compra efectuada"
+CORRECTION_APPROVED = "Corrección aprovada"
 
 
 NOTIFICATIONS_TYPE = (
@@ -22,4 +23,5 @@ NOTIFICATIONS_TYPE = (
     (NEW_ANSWER, "Nueva respuesta"),
     (ANSWER_ACCEPTED, "Respuesta aceptada"),
     (PURCHASE_SUCCESSFUL, "Compra efectuada"),
+    (CORRECTION_APPROVED, "Corrección aprovada"),
 )

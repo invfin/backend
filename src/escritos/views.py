@@ -13,6 +13,7 @@ from django.http import HttpResponseRedirect
 from src.seo.views import SEOCreateView, SEODetailView, SEOListView
 from src.web.views.web_management import PrivateWebListView, PrivateWebDetailView
 
+from .outils.term_correction import TermCorrectionManagement
 from .forms import CreateCorrectionForm
 from .models import Term, TermContent, TermCorrection
 
@@ -73,9 +74,9 @@ class TermCorrectionView(SEOCreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["public_key"] = settings.GOOGLE_RECAPTCHA_PUBLIC_KEY
-        object = self.get_object()
-        context["object"] = object
-        initial = {"title": object.title, "content": object.content, "term_content_related": object}
+        obj = self.get_object()
+        context["object"] = obj
+        initial = {"title": obj.title, "content": obj.content, "term_content_related": obj}
         context["form"] = CreateCorrectionForm(initial)
         return context
 
@@ -131,7 +132,7 @@ class ManageUserTermCorrectionDetailView(PrivateWebDetailView):
     def manage_correction(self):
         # TODO : test
         fields = self.get_fields(self.request.POST)
-        self.get_object().approve_correction(self.request.user, fields)
+        TermCorrectionManagement(self.get_object()).approve_correction(self.request.user, fields)  # type: ignore
 
     def post(self, request, *args: str, **kwargs):
         # TODO : test

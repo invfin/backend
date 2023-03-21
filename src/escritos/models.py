@@ -86,8 +86,8 @@ class TermCorrection(Model, BaseToAllMixin):
     is_approved = BooleanField(default=False)
     date_approved = DateTimeField(blank=True, null=True)
     content = RichTextField(config_name="writer", default="")
-    original_title = CharField(max_length=3000, default="")
-    original_content = RichTextField(config_name="writer", default="")
+    original_title = CharField(max_length=3000, default="", blank=True)
+    original_content = RichTextField(config_name="writer", default="", blank=True)
     reviwed_by = ForeignKey(User, null=True, blank=True, related_name="corrector", on_delete=SET_NULL)
     approved_by = ForeignKey(User, null=True, blank=True, related_name="revisor", on_delete=SET_NULL)
 
@@ -109,7 +109,7 @@ class TermCorrection(Model, BaseToAllMixin):
         return super().save(*args, **kwargs)
 
     def populate_original(self) -> None:
-        if not self.id:
+        if not self.id or not self.original_title:
             self.original_title = self.term_content_related.title
             self.original_content = self.term_content_related.content
 

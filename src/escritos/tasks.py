@@ -81,8 +81,3 @@ def prepare_term_newsletter_task():
     if notify:
         notify_term_to_improve_task.delay()
     return EmailingSystem.simple_email(subject, message)
-
-
-@shared_task(autoretry_for=(Exception,), max_retries=3)
-def task_send_correction_approved_email(email, receiver_id):
-    return EmailingSystem(EMAIL_FOR_NOTIFICATION).rich_email(email, receiver_id)
