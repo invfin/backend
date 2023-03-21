@@ -101,9 +101,6 @@ class AbstractPublishableContent(AbstractWrittenContent):
 
     @property
     def image(self):
-        image = self.non_thumbnail_url
-        if self.thumbnail:
-            image = self.thumbnail.url
-        if not image:
-            image = "/static/general/assets/img/general/why-us.webp"
-        return image
+        return (
+            self.thumbnail.url if self.thumbnail else self.non_thumbnail_url
+        ) or "/static/general/assets/img/general/why-us.webp"

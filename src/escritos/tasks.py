@@ -6,6 +6,7 @@ from src.engagement_machine.outils.engagement import EngagementMachine
 from src.escritos.models import Term
 from src.web import constants as web_constants
 from src.web.models import WebsiteEmail
+from src.emailing.constants import EMAIL_FOR_NOTIFICATION
 
 
 @shared_task(autoretry_for=(Exception,), max_retries=3)
@@ -82,16 +83,6 @@ def prepare_term_newsletter_task():
     return EmailingSystem.simple_email(subject, message)
 
 
-def task_send_correction_approved_email():
-    {
-        "subject": 
-        "content":
-        "sender":
-        "app_label": str
-            The app where the model lives
-        "object_name": str
-            The model to retrieve
-        "id": int
-            The id of the obj from the model to create the tracker tag
-    }
-    return EmailingSystem.simple_email(subject, message)
+@shared_task(autoretry_for=(Exception,), max_retries=3)
+def task_send_correction_approved_email(email, receiver_id):
+    return EmailingSystem(EMAIL_FOR_NOTIFICATION).rich_email(email, receiver_id)

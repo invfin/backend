@@ -1,4 +1,4 @@
-from typing import List, Optional
+from typing import Dict
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db.models import (
@@ -19,8 +19,9 @@ from django.utils import timezone
 
 from ckeditor.fields import RichTextField
 
-from src.escritos.abstracts import AbstractPublishableContent
+from .abstracts import AbstractPublishableContent
 from src.general.abstracts import AbstractComment, AbstractFavoritesHistorial
+from src.general.mixins import BaseToAllMixin
 
 from .managers import TermManager
 
@@ -56,7 +57,7 @@ class Term(AbstractPublishableContent):
         return f"{DOMAIN}{url}"
 
 
-class TermContent(Model):
+class TermContent(Model, BaseToAllMixin):
     term_related = ForeignKey("escritos.Term", on_delete=SET_NULL, null=True, related_name="term_content_parts")
     title = CharField(max_length=3000)
     order = PositiveIntegerField(default=0)
@@ -71,15 +72,14 @@ class TermContent(Model):
         return f"{self.title}"
 
     def get_absolute_url(self):
-        slug = slugify(self.title)
         path = self.term_related.get_absolute_url()
-        return f"{path}#{slug}"
+        return f"{path}#{slugify(self.title)}"
 
     def link(self):
         return f"{DOMAIN}{self.get_absolute_url()}"
 
 
-class TermCorrection(Model):
+class TermCorrection(Model, BaseToAllMixin):
     term_content_related = ForeignKey("escritos.TermContent", null=True, blank=True, on_delete=SET_NULL)
     title = CharField(max_length=3000, blank=True, default="")
     date_suggested = DateTimeField(default=timezone.now)
@@ -112,26 +112,6 @@ class TermCorrection(Model):
         if not self.id:
             self.original_title = self.term_content_related.title
             self.original_content = self.term_content_related.content
-
-    def accept_correction(self, approved_by, fields: List[str]) -> None:
-        self.is_approved = True
-        self.date_approved = timezone.now()
-        self.approved_by = approved_by
-        self.replace_content_with_correction(fields)
-        self.save(update_fields=["is_approved", "date_approved", "approved_by"])
-
-    def replace_content_with_correction(self, fields: List[str]) -> None:
-        fields_to_update = list(filter(self.update_related_field, fields))
-        self.term_content_related.save(update_fields=fields_to_update)
-        return None
-
-    def update_related_field(self, field: str) -> Optional[str]:
-        original = getattr(self.term_content_related, field) if self.term_content_related else None
-        correction = getattr(self, field)
-        if all([original, correction, original != correction]):
-            setattr(self.term_content_related, field, correction)
-            return field
-        return None
 
     def get_absolute_url(self):
         return self.term_content_related.get_absolute_url()

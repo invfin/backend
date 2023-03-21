@@ -12,6 +12,46 @@ from src.web import constants as web_constants
 User = get_user_model()
 
 
+class EmailSender:
+    is_for: str
+    web_objective: str
+
+    def __init__(self, is_for: str, web_objective: str) -> None:
+        self.is_for = is_for
+        self.web_objective = web_objective
+
+    def __call__(self, sender: str = "") -> str:
+        if self._is_for_public_blog():
+            return self._return_public_blog_author_as_sender(sender)
+        elif self._is_for_notifications():
+            return self._return_default_sender()
+        else:
+            return self._return_lucas_as_sender()
+
+    def _is_for_public_blog(self) -> bool:
+        return self.is_for == constants.EMAIL_FOR_PUBLIC_BLOG
+
+    def _is_for_notifications(self) -> bool:
+        return self.is_for == constants.EMAIL_FOR_NOTIFICATION
+
+    def _return_public_blog_author_as_sender(self, sender: str) -> str:
+        return self._return_email_and_sender_name(settings.EMAIL_NEWSLETTER, sender)
+
+    def _return_default_sender(self) -> str:
+        return self._return_email_and_sender_name(settings.EMAIL_DEFAULT, "InvFin")
+
+    def _return_lucas_as_sender(self) -> str:
+        if self.web_objective in web_constants.WEB_OBJECTIVES:
+            email = settings.EMAIL_SUGGESTIONS
+        else:
+            email = settings.MAIN_EMAIL
+        return self._return_email_and_sender_name(email, "Lucas - InvFin")
+
+    @staticmethod
+    def _return_email_and_sender_name(email: str, sender: str) -> str:
+        return f"{sender} <{email}>"
+
+
 class EmailingSystem:
     """
     Emailingsystem recieve information most of the times from celery, so all the data will be serialized.
@@ -20,16 +60,6 @@ class EmailingSystem:
     is_for: str
     web_objective: str
     email_template: str
-
-    # EMAIL_CONTACT = env("EMAIL_CONTACT", default=f"EMAIL_CONTACT@{CURRENT_DOMAIN}")
-    # EMAIL_SUBJECT_PREFIX = env("EMAIL_SUBJECT_PREFIX",
-    #                            default=f"EMAIL_SUBJECT_PREFIX@{CURRENT_DOMAIN}")
-    # DEFAULT_EMAIL = env("DEFAULT_EMAIL", default=f"DEFAULT_EMAIL@{CURRENT_DOMAIN}")
-    # EMAIL_NEWSLETTER = env("EMAIL_NEWSLETTER", default=f"EMAIL_NEWSLETTER@{CURRENT_DOMAIN}")
-    # MAIN_EMAIL = env("MAIN_EMAIL", default=f"MAIN_EMAIL@{CURRENT_DOMAIN}")
-    # EMAIL_ACCOUNTS = env("EMAIL_ACCOUNTS", default=f"EMAIL_ACCOUNTS@{CURRENT_DOMAIN}")
-    # EMAIL_DEFAULT = env("EMAIL_DEFAULT", default=f"EMAIL_DEFAULT@{CURRENT_DOMAIN}")
-    # EMAIL_SUGGESTIONS = env("EMAIL_SUGGESTIONS", default=f"EMAIL_SUGGESTIONS@{CURRENT_DOMAIN}")
 
     def __init__(self, is_for: str = "", web_objective: str = "") -> None:
         """
@@ -43,12 +73,12 @@ class EmailingSystem:
         self.web_objective = web_objective.split("-")[0]
         self.email_template = self.get_email_template()
 
-    def is_for_the_website(self) -> bool:
-        return self.is_for == constants.EMAIL_FOR_WEB
-
     def verify_there_is_web_objective(self, web_objective) -> None:
         if self.is_for_the_website() and not web_objective:
             raise NotImplementedError("You must set a web_objective")
+
+    def is_for_the_website(self) -> bool:
+        return self.is_for == constants.EMAIL_FOR_WEB
 
     def get_email_template(self) -> str:
         template = f"{self.is_for}/{self.web_objective}" if self.web_objective else self.is_for
@@ -106,39 +136,8 @@ class EmailingSystem:
             **cta,
         }
 
-    def is_for_public_blog(self) -> bool:
-        return self.is_for == constants.EMAIL_FOR_PUBLIC_BLOG
-
-    def is_for_notifications(self) -> bool:
-        return self.is_for == constants.EMAIL_FOR_NOTIFICATION
-
-    def return_default_sender(self) -> str:
-        return self.return_email_and_sender_name(settings.EMAIL_DEFAULT, "InvFin")
-
-    def return_lucas_as_sender(self) -> str:
-        if self.web_objective in web_constants.WEB_OBJECTIVES:
-            email = settings.EMAIL_SUGGESTIONS
-        else:
-            email = settings.MAIN_EMAIL
-        return self.return_email_and_sender_name(email, "Lucas - InvFin")
-
-    def return_public_blog_author_as_sender(self, sender: str) -> str:
-        return self.return_email_and_sender_name(settings.EMAIL_NEWSLETTER, sender)
-
-    @classmethod
-    def return_email_and_sender_name(cls, email: str, sender: str) -> str:
-        return f"{sender} <{email}>"
-
-    def _prepare_sender(self, sender: str = "") -> str:
-        if self.is_for_public_blog():
-            return self.return_public_blog_author_as_sender(sender)
-        elif self.is_for_notifications():
-            return self.return_default_sender()
-        else:
-            return self.return_lucas_as_sender()
-
     def _prepare_email(self, email: Dict[str, str], receiver: Type) -> Tuple[str, Dict]:
-        sender = self._prepare_sender(email.pop("sender", ""))
+        sender = EmailSender(self.is_for, self.web_objective)(email.pop("sender", ""))
         content = self._prepare_content(email, receiver)
         return sender, content
 
