@@ -129,10 +129,11 @@ class ManageUserTermCorrectionDetailView(PrivateWebDetailView):
     model = TermCorrection
     template_name = "users/check_correction.html"
     context_object_name = "correction"
+    meta_description = "Correction"
 
     @staticmethod
     def get_fields(request_data) -> List[str]:
-        return [field[7:] for field in request_data if field.startswith("accept")]
+        return [field.replace("accept-", "") for field in request_data if field.startswith("accept")]
 
     def manage_correction(self):
         # TODO : test
