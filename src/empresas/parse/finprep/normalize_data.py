@@ -8,7 +8,8 @@ class NormalizeFinprep:
     company = None
 
     def initial_data(
-        self, finprep_dict: Dict[str, Union[float, int, str, Any]]
+        self,
+        finprep_dict: Dict[str, Union[float, int, str, Any]],
     ) -> Dict[str, Union[float, int, str, Any]]:
         return dict(
             date=finprep_dict["calendarYear"],
@@ -23,7 +24,8 @@ class NormalizeFinprep:
         )
 
     def normalize_income_statements_finprep(
-        self, finprep_dict: Dict[str, Union[float, int, str, Any]]
+        self,
+        finprep_dict: Dict[str, Union[float, int, str, Any]],
     ) -> Dict[str, Union[float, int, str, Any]]:
         return dict(
             self.initial_data(finprep_dict),
@@ -61,7 +63,8 @@ class NormalizeFinprep:
         )
 
     def normalize_balance_sheets_finprep(
-        self, finprep_dict: Dict[str, Union[float, int, str, Any]]
+        self,
+        finprep_dict: Dict[str, Union[float, int, str, Any]],
     ) -> Dict[str, Union[float, int, str, Any]]:
         return dict(
             self.initial_data(finprep_dict),
@@ -115,7 +118,8 @@ class NormalizeFinprep:
         )
 
     def normalize_cashflow_statements_finprep(
-        self, finprep_dict: Dict[str, Union[float, int, str, Any]]
+        self,
+        finprep_dict: Dict[str, Union[float, int, str, Any]],
     ) -> Dict[str, Union[float, int, str, Any]]:
         return dict(
             self.initial_data(finprep_dict),
