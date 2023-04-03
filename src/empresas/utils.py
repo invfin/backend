@@ -12,6 +12,8 @@ from src.empresas.models import Company, CompanyUpdateLog
 from src.periods import constants
 from src.periods.models import Period
 
+np.random
+
 
 class FinprepRequestCheck:
     # TODO see if convert that to a decorator to save some seconds

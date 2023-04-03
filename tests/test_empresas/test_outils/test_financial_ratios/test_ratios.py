@@ -208,7 +208,7 @@ class TestCalculateFinancialRatios(TestCase):
 
     def test_calculate_all_ratios(self):
         expected_result = {
-            'current_price': {'current_price': 45.32},
+            "current_price": {"current_price": 45.32},
             "price_to_ratio": {
                 "price_book": 12.11,
                 "price_cf": 12.2,
