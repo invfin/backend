@@ -62,7 +62,7 @@ class TestEmailEngamentTask(TestCase):
             id=86,
             whom_to_send=web_constants.EMAIL_ALL,
             sent=False,
-            date_to_send=datetime(2022, 10, 5),
+            date_to_send=DjangoTestingModel.create_random_datetime(5, 10, 2022),
         )
         users_category = DjangoTestingModel.create(UsersCategory)
         users_category.users.add(cls.user_for_category)

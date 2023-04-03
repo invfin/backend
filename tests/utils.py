@@ -62,9 +62,21 @@ class BaseAPIViewTestMixin:
 
     @classmethod
     def setUpTestData(cls) -> None:
-        user_key_sub = DjangoTestingModel.create(User)
-        user_key_removed = DjangoTestingModel.create(User)
-        user_key = DjangoTestingModel.create(User)
+        user_key_sub = DjangoTestingModel.create(
+            User,
+            email="a@gmail.com",
+            date_joined=DjangoTestingModel.create_random_datetime(5, 10, 2022),
+        )
+        user_key_removed = DjangoTestingModel.create(
+            User,
+            email="b@gmail.com",
+            date_joined=DjangoTestingModel.create_random_datetime(5, 10, 2022),
+        )
+        user_key = DjangoTestingModel.create(
+            User,
+            email="c@gmail.com",
+            date_joined=DjangoTestingModel.create_random_datetime(5, 10, 2022),
+        )
         product = DjangoTestingModel.create(Product, title="Excel", slug="excel", is_active=True)
         product_complementary = DjangoTestingModel.create(
             ProductComplementary,

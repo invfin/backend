@@ -1,5 +1,5 @@
 import operator
-from typing import Any, Callable, Dict, List, Union
+from typing import Any, Callable, Dict, List, Optional, Union
 
 from django.db.models import QuerySet
 
@@ -22,7 +22,6 @@ class CompanyData(CompanyValueToJsonConverter):
 
     def get_complete_information(self) -> Dict[str, Union[Dict[str, Union[int, float]], List]]:
         initial_statements = self.get_statements()
-        self.get_averages(initial_statements)
         comparing_income_json = self.build_table_and_chart(
             initial_statements["inc_statements"],
             self.income_json,
@@ -35,17 +34,18 @@ class CompanyData(CompanyValueToJsonConverter):
             initial_statements["cf_statements"],
             self.cashflow_json,
         )
-        averages_and_ratios = self.get_current_ratios(initial_statements)
-        averages_and_ratios.update(
-            {
-                "comparing_income_json": comparing_income_json,
-                "comparing_balance_json": comparing_balance_json,
-                "comparing_cashflows": comparing_cashflows,
-                "important_ratios": self.get_important_ratios(initial_statements),
-                "secondary_ratios": self.get_secondary_ratios(initial_statements),
-            }
-        )
-        return averages_and_ratios
+        return {
+            "comparing_income_json": comparing_income_json,
+            "comparing_balance_json": comparing_balance_json,
+            "comparing_cashflows": comparing_cashflows,
+            "important_ratios": self.get_important_ratios(initial_statements),
+            "secondary_ratios": self.get_secondary_ratios(initial_statements),
+        }
+
+    def get_ratios_information(self):
+        initial_statements = self.get_statements()
+        self.get_averages(initial_statements)
+        return self.get_current_ratios(initial_statements)
 
     def get_statements(self) -> Dict[str, QuerySet]:
         # TODO add a prefetch to get all at once
@@ -98,14 +98,14 @@ class CompanyData(CompanyValueToJsonConverter):
     ) -> dict:
         # TODO test
         averages = statements.pop("averages")
-        current_price = self.get_most_recent_price()["current_price"]
+        current_price = self.get_most_recent_price(self.company.ticker)["current_price"]
         last_balance_sheet = statements["balance_sheets"].first()
         last_per_share = statements["per_share_values"].first()
         last_margins = statements["margins"].first()
         all_inc_statements = statements["inc_statements"]
         last_income_statement = all_inc_statements.first()
-        last_revenue = last_income_statement.revenue
-        average_shares_out = last_income_statement.weighted_average_shares_outstanding
+        last_revenue = last_income_statement.revenue or 0
+        average_shares_out = last_income_statement.weighted_average_shares_outstanding or 0
         num_ics = min(all_inc_statements.count(), 10)
         number = num_ics - 1
         sharesbuyback = abs(
@@ -116,27 +116,27 @@ class CompanyData(CompanyValueToJsonConverter):
             )
         )
         cagr = calculate_compound_growth(last_revenue, all_inc_statements[number].revenue, num_ics)
-        current_eps = last_per_share.eps
+        current_eps = last_per_share.eps or 0
         marketcap = average_shares_out * current_price
-        pfcf = divide_or_zero(current_price, last_per_share.fcf_ps)
-        pb = divide_or_zero(current_price, last_per_share.book_ps)
-        pta = divide_or_zero(current_price, last_per_share.tangible_ps)
-        pcps = divide_or_zero(current_price, last_per_share.cash_ps)
-        pocf = divide_or_zero(current_price, last_per_share.operating_cf_ps)
+        pfcf = divide_or_zero(current_price, last_per_share.fcf_ps or 0)
+        pb = divide_or_zero(current_price, last_per_share.book_ps or 0)
+        pta = divide_or_zero(current_price, last_per_share.tangible_ps or 0)
+        pcps = divide_or_zero(current_price, last_per_share.cash_ps or 0)
+        pocf = divide_or_zero(current_price, last_per_share.operating_cf_ps or 0)
         per = divide_or_zero(current_price, current_eps)
-        pas = divide_or_zero(current_price, last_per_share.total_assets_ps)
+        pas = divide_or_zero(current_price, last_per_share.total_assets_ps or 0)
         peg = divide_or_zero(per, cagr).real
-        ps = divide_or_zero(current_price, last_per_share.sales_ps)
-        ev = marketcap + last_balance_sheet.total_debt - last_balance_sheet.cash_and_short_term_investments
-        evebitda = divide_or_zero(ev, last_income_statement.ebitda)
+        ps = divide_or_zero(current_price, last_per_share.sales_ps or 0)
+        ev = marketcap + last_balance_sheet.total_debt or 0 - last_balance_sheet.cash_and_short_term_investments or 0
+        evebitda = divide_or_zero(ev, last_income_statement.ebitda or 0)
         evsales = divide_or_zero(ev, last_revenue)
-        gramvalu = graham_value(current_eps, last_per_share.book_ps)
+        gramvalu = graham_value(current_eps, last_per_share.book_ps or 0)
         safety_margin_pes = margin_of_safety(gramvalu, current_price)
         fair_value = discounted_cashflow(
             last_revenue=last_revenue,
             revenue_growth=cagr,
-            net_income_margin=last_margins.net_income_margin,
-            fcf_margin=last_margins.fcf_margin,
+            net_income_margin=last_margins.net_income_margin or 0,
+            fcf_margin=last_margins.fcf_margin or 0,
             buyback=sharesbuyback,
             average_shares_out=average_shares_out,
         )
@@ -375,7 +375,7 @@ class CompanyData(CompanyValueToJsonConverter):
         self,
         statement: QuerySet,
         statement_to_json: Callable,
-        items: list = None,
+        items: Optional[list] = None,
         chart_type: str = "line",
     ) -> Dict[str, Any]:
         statement_data = self.generate_limit(statement)
@@ -435,11 +435,11 @@ class CompanyData(CompanyValueToJsonConverter):
             currency = self.company.currency
         return currency.currency if currency else "$"
 
-    def get_most_recent_price(self):
-        ticker = self.company.ticker
-        price, currency = self.get_yfinance_price(ticker)
+    @classmethod
+    def get_most_recent_price(cls, ticker):
+        price, currency = cls.get_yfinance_price(ticker)
         if not price:
-            price, currency = self.get_yahooquery_price(ticker)
+            price, currency = cls.get_yahooquery_price(ticker)
         if not price:
             price = 0
             currency = ""
@@ -455,6 +455,8 @@ class CompanyData(CompanyValueToJsonConverter):
     @staticmethod
     def get_yahooquery_price(ticker):
         yahooquery_info = yq.Ticker(ticker).price.get(ticker, {})
+        if yahooquery_info == f"Quote not found for ticker symbol: {ticker}":
+            yahooquery_info = {}
         current_price = yahooquery_info.get("regularMarketPrice")
         current_currency = yahooquery_info.get("currency")
         return current_price, current_currency

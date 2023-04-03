@@ -1,0 +1,58 @@
+{% extends "bases/base_forms.html" %}
+{% load static crispy_forms_tags %}
+{% block header %}{% include "headers/inicio.html" %}{% endblock header%}
+{% block FormContent %}
+
+<form method="POST" enctype="multipart/form-data">
+    <div class="row">
+        {% csrf_token %}
+        <div class="col-lg-6 col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <p id="correction-title">
+                        {{correction.title}}
+                    </p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <p id="correction-content">
+                        {{correction.content | safe}}
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-lg-6 col-sm-12">
+            <div class="card">
+                <div class="card-body">
+                    <p id="original-title">
+                        {{correction.term_content_related.title}}
+                    </p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <p id="original-content">
+                        {{correction.term_content_related.content | safe}}
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 mt-4">
+            <div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" name="accept-title" id="accept-title"
+                        value="accept-title">
+                    <label class="form-check-label" for="inlineCheckbox1">Accept title</label>
+                </div>
+                <div class="form-check form-check-inline">
+                    <input class="form-check-input" type="checkbox" name="accept-content" id="accept-content"
+                        value="accept-content">
+                    <label class="form-check-label" for="inlineCheckbox2">Accept content</label>
+                </div>
+            </div>
+            <input class="btn btn-primary col-12" type="submit" value="Validar cambio" name="save">
+        </div>
+    </div>
+</form>
+{% endblock FormContent %}

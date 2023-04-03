@@ -6,6 +6,7 @@ from src.engagement_machine.outils.engagement import EngagementMachine
 from src.escritos.models import Term
 from src.web import constants as web_constants
 from src.web.models import WebsiteEmail
+from src.emailing.constants import EMAIL_FOR_NOTIFICATION
 
 
 @shared_task(autoretry_for=(Exception,), max_retries=3)

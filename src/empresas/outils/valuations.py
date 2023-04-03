@@ -45,6 +45,7 @@ def graham_value(
     book_per_share: Union[int, float],
 ) -> Union[int, float]:
     current_eps = max(current_eps, 0)
+    book_per_share = max(book_per_share, 0)
     return round(math.sqrt(22.5 * current_eps * book_per_share), 2)
 
 

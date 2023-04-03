@@ -2,45 +2,51 @@
 <div class="card text-center">
     <div class="card-header">
         Contribuidores
-    </div>    
+    </div>
     <div class="card-body">
         <div class="row">
-            <div class="col-12">                
-                <div class="avatar-group">                    
+            <div class="col-12">
+                <div class="avatar-group">
                     <a href="{{object.author.custom_url}}" class="avatar rounded-circle">
-                        <img alt="a"  src="{{object.author.foto}}">
+                        <img alt="a" src="{{object.author.foto}}">
                     </a>
-                    <a href="#!" class="avatar rounded-circle">
+                    {% for contributor in contributors %}
+                    <a href="{{contributor.corrected_by.custom_url}}" class="avatar rounded-circle">
+                        <img alt="a" src="{{contributor.corrected_by.foto}}">
+                    </a>
+                    {% endfor %}
+                    {% if contributors.count < 4 %} <a href="#!" class="avatar rounded-circle">
                         <img alt="a" src="{% static 'general/assets/img/general/inversorinteligente.WebP' %}">
-                    </a>
-                    <a href="#!" class="avatar rounded-circle">
-                        <img alt="a" src="{% static 'general/assets/img/general/inversorinteligente.WebP' %}">
-                    </a>
-                    <a href="#!" class="avatar rounded-circle">
-                        <img alt="a" src="{% static 'general/assets/img/general/inversorinteligente.WebP' %}">
-                    </a>
+                        </a>
+                        <a href="#!" class="avatar rounded-circle">
+                            <img alt="a" src="{% static 'general/assets/img/general/inversorinteligente.WebP' %}">
+                        </a>
+                        <a href="#!" class="avatar rounded-circle">
+                            <img alt="a" src="{% static 'general/assets/img/general/inversorinteligente.WebP' %}">
+                        </a>
+                        {% endif %}
                 </div>
             </div>
-            
+
             <div class="col-12 mt-4">
-                <a href="https://www.facebook.com/sharer/sharer.php?u={{object.shareable_link}}{% utm content='glosario' term=term medium='user-shared' source='facebook' campaign='website-shared' %}"  
-                target="_blank" class="btn btn-facebook btn-icon-only rounded-circle">
+                <a href="https://www.facebook.com/sharer/sharer.php?u={{object.shareable_link}}{% utm content='glosario' term=term medium='user-shared' source='facebook' campaign='website-shared' %}"
+                    target="_blank" class="btn btn-facebook btn-icon-only rounded-circle">
                     <span class="btn-inner--icon"><i class="fab fa-facebook"></i></span>
                 </a>
-                <a href="https://twitter.com/intent/tweet?text={{object.shareable_link}}{% utm content='glosario' term=term medium='user-shared' source='facebook' campaign='website-shared' %}"  
-                target="_blank" class="btn btn-twitter btn-icon-only rounded-circle">
+                <a href="https://twitter.com/intent/tweet?text={{object.shareable_link}}{% utm content='glosario' term=term medium='user-shared' source='facebook' campaign='website-shared' %}"
+                    target="_blank" class="btn btn-twitter btn-icon-only rounded-circle">
                     <span class="btn-inner--icon"><i class="fab fa-twitter"></i></span>
                 </a>
-                <a href="https://reddit.com/submit/?url={{object.shareable_link}}{% utm content='glosario' term=term medium='user-shared' source='facebook' campaign='website-shared' %}"  
-                target="_blank" class="btn btn-youtube btn-icon-only rounded-circle">
+                <a href="https://reddit.com/submit/?url={{object.shareable_link}}{% utm content='glosario' term=term medium='user-shared' source='facebook' campaign='website-shared' %}"
+                    target="_blank" class="btn btn-youtube btn-icon-only rounded-circle">
                     <span class="btn-inner--icon"><i class="fab fa-reddit"></i></span>
                 </a>
-                <a href="https://www.linkedin.com/shareArticle?url={{object.shareable_link}}{% utm content='glosario' term=term medium='user-shared' source='facebook' campaign='website-shared' %}"  
-                target="_blank" class="btn btn-facebook btn-icon-only rounded-circle">
+                <a href="https://www.linkedin.com/shareArticle?url={{object.shareable_link}}{% utm content='glosario' term=term medium='user-shared' source='facebook' campaign='website-shared' %}"
+                    target="_blank" class="btn btn-facebook btn-icon-only rounded-circle">
                     <span class="btn-inner--icon"><i class="fab fa-linkedin"></i></span>
                 </a>
-                <a href="https://api.whatsapp.com/send?text={{object.shareable_link}}{% utm content='glosario' term=term medium='user-shared' source='facebook' campaign='website-shared' %}"  
-                target="_blank" class="btn btn-slack btn-icon-only rounded-circle">
+                <a href="https://api.whatsapp.com/send?text={{object.shareable_link}}{% utm content='glosario' term=term medium='user-shared' source='facebook' campaign='website-shared' %}"
+                    target="_blank" class="btn btn-slack btn-icon-only rounded-circle">
                     <span class="btn-inner--icon"><i class="fab fa-whatsapp"></i></span>
                 </a>
             </div>

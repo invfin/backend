@@ -131,20 +131,24 @@ class ManageTermUpdateView(PrivateWebDetailView):
         return reverse("web:manage_all_terms")
 
     def get_context_data(self, **kwargs):
+        self.object = self.get_object()
         context = super().get_context_data(**kwargs)
         context["formset_content"] = term_content_formset(instance=self.object)
         context["form"] = TermAndTermContentForm(instance=self.object)
         return context
 
+    def save_all(self, form, formset, request):
+        modify_checking = "save_definetly" in request.POST
+        form.save(modify_checking=modify_checking)
+        formset.save()
+        messages.success(request, "Guardado correctamente")
+        return HttpResponseRedirect(self.get_success_url())
+
     def post(self, request, *args: str, **kwargs) -> HttpResponse:
-        object = self.get_object()
-        formset = term_content_formset(request.POST, instance=object)
-        form = TermAndTermContentForm(request.POST, instance=object)
-        modify_checking = True if "save_definetly" in request.POST else False
+        obj = self.get_object()
+        formset = term_content_formset(request.POST, instance=obj)
+        form = TermAndTermContentForm(request.POST, instance=obj)
         if all([form.is_valid(), formset.is_valid()]):
-            form.save(modify_checking=modify_checking)
-            formset.save()
-            messages.success(request, "Guardado correctamente")
-            return HttpResponseRedirect(self.get_success_url())
+            return self.save_all(form, formset, request)
         else:
             return self.render_to_response(self.get_context_data(form=form, formset=formset))

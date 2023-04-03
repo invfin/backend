@@ -5,11 +5,80 @@ from django.test import TestCase
 from bfet import DjangoTestingModel
 
 from src.emailing import constants
-from src.emailing.outils.emailing import EmailingSystem
+from src.emailing.outils.emailing import EmailingSystem, EmailSender
 from src.web.constants import CONTENT_FOR_WELCOME
 from src.web.models import WebsiteEmail, WebsiteEmailTrack
 
 User = get_user_model()
+
+
+class EmailSenderTest(TestCase):
+    def test___call__(self):
+        """
+        TODO test it with all the web objectives
+        """
+        public_blog_sender = EmailSender(constants.EMAIL_FOR_PUBLIC_BLOG, "")("writer")
+        notif_sender = EmailSender(constants.EMAIL_FOR_NOTIFICATION, "")()
+        web_sender = EmailSender(constants.EMAIL_FOR_WEB, "Not in web objective")()
+        assert "writer <EMAIL_NEWSLETTER@example.com>" == public_blog_sender
+        assert "InvFin <EMAIL_DEFAULT@example.com>" == notif_sender
+        assert "Lucas - InvFin <MAIN_EMAIL@example.com>" == web_sender
+
+    def test_is_for_public_blog(self):
+        assert (
+            EmailSender(
+                constants.EMAIL_FOR_NOTIFICATION,
+                "",
+            )._is_for_public_blog()
+            is False
+        )
+        assert (
+            EmailSender(
+                constants.EMAIL_FOR_PUBLIC_BLOG,
+                "",
+            )._is_for_public_blog()
+            is True
+        )
+
+    def test_is_for_notifications(self):
+        assert (
+            EmailSender(
+                constants.EMAIL_FOR_PUBLIC_BLOG,
+                "",
+            )._is_for_notifications()
+            is False
+        )
+        assert (
+            EmailSender(
+                constants.EMAIL_FOR_NOTIFICATION,
+                "",
+            )._is_for_notifications()
+            is True
+        )
+
+    def test_return_email_and_sender_name(self):
+        assert "sender <email>" == EmailSender._return_email_and_sender_name("email", "sender")
+
+    def test_return_default_sender(self):
+        result = EmailSender(
+            constants.EMAIL_FOR_NOTIFICATION,
+            "",
+        )._return_default_sender()
+        assert "InvFin <EMAIL_DEFAULT@example.com>" == result
+
+    def test_return_lucas_as_sender(self):
+        result = EmailSender(
+            constants.EMAIL_FOR_NOTIFICATION,
+            "",
+        )._return_lucas_as_sender()
+        assert "Lucas - InvFin <MAIN_EMAIL@example.com>" == result
+
+    def test_return_public_blog_author_as_sender(self):
+        result = EmailSender(
+            constants.EMAIL_FOR_NOTIFICATION,
+            "",
+        )._return_public_blog_author_as_sender("sender")
+        assert "sender <EMAIL_NEWSLETTER@example.com>" == result
 
 
 class EmailTest(TestCase):
@@ -26,14 +95,6 @@ class EmailTest(TestCase):
     def test_is_for_the_website(self):
         assert EmailingSystem(constants.EMAIL_FOR_NOTIFICATION).is_for_the_website() is False
         assert EmailingSystem(constants.EMAIL_FOR_WEB, "web-ob").is_for_the_website() is True
-
-    def test_is_for_public_blog(self):
-        assert EmailingSystem(constants.EMAIL_FOR_NOTIFICATION).is_for_public_blog() is False
-        assert EmailingSystem(constants.EMAIL_FOR_PUBLIC_BLOG).is_for_public_blog() is True
-
-    def test_is_for_notifications(self):
-        assert EmailingSystem(constants.EMAIL_FOR_PUBLIC_BLOG).is_for_notifications() is False
-        assert EmailingSystem(constants.EMAIL_FOR_NOTIFICATION).is_for_notifications() is True
 
     def test_verify_there_is_web_objective(self):
         with self.assertRaises(NotImplementedError):
@@ -55,21 +116,6 @@ class EmailTest(TestCase):
         call_to_action, call_to_action_url = EmailingSystem.get_call_to_action_parameters(data)
         assert "call_to_action" == call_to_action
         assert "/call_to_action_url" == call_to_action_url
-
-    def test_return_email_and_sender_name(self):
-        assert "sender <email>" == EmailingSystem.return_email_and_sender_name("email", "sender")
-
-    def test_return_default_sender(self):
-        result = EmailingSystem(constants.EMAIL_FOR_NOTIFICATION).return_default_sender()
-        assert "InvFin <EMAIL_DEFAULT@example.com>" == result
-
-    def test_return_lucas_as_sender(self):
-        result = EmailingSystem(constants.EMAIL_FOR_NOTIFICATION).return_lucas_as_sender()
-        assert "Lucas - InvFin <MAIN_EMAIL@example.com>" == result
-
-    def test_return_public_blog_author_as_sender(self):
-        result = EmailingSystem(constants.EMAIL_FOR_NOTIFICATION).return_public_blog_author_as_sender("sender")
-        assert "sender <EMAIL_NEWSLETTER@example.com>" == result
 
     def test_get_email_template(self):
         email_template = EmailingSystem(constants.EMAIL_FOR_WEB, CONTENT_FOR_WELCOME).get_email_template()
@@ -111,17 +157,6 @@ class EmailTest(TestCase):
         }
         assert "InvFin <EMAIL_DEFAULT@example.com>" == sender
         assert expected_data == message
-
-    def test__prepare_sender(self):
-        """
-        TODO test it with all the web objectives
-        """
-        public_blog_sender = EmailingSystem(constants.EMAIL_FOR_PUBLIC_BLOG)._prepare_sender("writer")
-        notif_sender = EmailingSystem(constants.EMAIL_FOR_NOTIFICATION)._prepare_sender()
-        web_sender = EmailingSystem(constants.EMAIL_FOR_WEB, "Not in web objective")._prepare_sender()
-        assert "writer <EMAIL_NEWSLETTER@example.com>" == public_blog_sender
-        assert "InvFin <EMAIL_DEFAULT@example.com>" == notif_sender
-        assert "Lucas - InvFin <MAIN_EMAIL@example.com>" == web_sender
 
     def test__prepare_call_to_action(self):
         data = {

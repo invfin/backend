@@ -1,3 +1,4 @@
+from typing import Dict
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db.models import (
@@ -18,10 +19,12 @@ from django.utils import timezone
 
 from ckeditor.fields import RichTextField
 
-from src.escritos.abstracts import AbstractPublishableContent
+from .abstracts import AbstractPublishableContent
 from src.general.abstracts import AbstractComment, AbstractFavoritesHistorial
+from src.general.mixins import BaseToAllMixin
 
 from .managers import TermManager
+from .querysets import TermCorrectionQuerySet
 
 DOMAIN = settings.FULL_DOMAIN
 User = get_user_model()
@@ -55,7 +58,7 @@ class Term(AbstractPublishableContent):
         return f"{DOMAIN}{url}"
 
 
-class TermContent(Model):
+class TermContent(Model, BaseToAllMixin):
     term_related = ForeignKey("escritos.Term", on_delete=SET_NULL, null=True, related_name="term_content_parts")
     title = CharField(max_length=3000)
     order = PositiveIntegerField(default=0)
@@ -70,24 +73,25 @@ class TermContent(Model):
         return f"{self.title}"
 
     def get_absolute_url(self):
-        slug = slugify(self.title)
         path = self.term_related.get_absolute_url()
-        return f"{path}#{slug}"
+        return f"{path}#{slugify(self.title)}"
 
     def link(self):
         return f"{DOMAIN}{self.get_absolute_url()}"
 
 
-class TermCorrection(Model):
+class TermCorrection(Model, BaseToAllMixin):
     term_content_related = ForeignKey("escritos.TermContent", null=True, blank=True, on_delete=SET_NULL)
-    title = CharField(max_length=3000, null=True, blank=True)
+    title = CharField(max_length=3000, blank=True, default="")
     date_suggested = DateTimeField(default=timezone.now)
     is_approved = BooleanField(default=False)
     date_approved = DateTimeField(blank=True, null=True)
-    content = RichTextField(config_name="writer")
-    reviwed_by = ForeignKey(User, null=True, blank=True, related_name="corrector", on_delete=SET_NULL)
-
+    content = RichTextField(config_name="writer", default="")
+    original_title = CharField(max_length=3000, default="", blank=True)
+    original_content = RichTextField(config_name="writer", default="", blank=True)
+    corrected_by = ForeignKey(User, null=True, blank=True, related_name="corrector", on_delete=SET_NULL)
     approved_by = ForeignKey(User, null=True, blank=True, related_name="revisor", on_delete=SET_NULL)
+    objects = TermCorrectionQuerySet.as_manager()
 
     class Meta:
         ordering = ["id"]
@@ -95,16 +99,21 @@ class TermCorrection(Model):
         db_table = "term_content_correction"
 
     def __str__(self):
-        return f"{self.term_content_related.title} corregido por {self.reviwed_by.username}"
+        return f"{self.term_content_related} corregido por {self.corrected_by}"
 
-    def save(self, *args, **kwargs):  # new
-        if self.is_approved is True:
-            """
-            TODO
-            enviar email de agradecimiento
-            Perfil.ADD_CREDITS(self.user, 5)
-            """
+    def save(self, *args, **kwargs):
+        self.populate_original()
+        """
+        TODO
+        enviar email de agradecimiento
+        Perfil.ADD_CREDITS(self.user, 5)
+        """
         return super().save(*args, **kwargs)
+
+    def populate_original(self) -> None:
+        if not self.id or not self.original_title:
+            self.original_title = self.term_content_related.title
+            self.original_content = self.term_content_related.content
 
     def get_absolute_url(self):
         return self.term_content_related.get_absolute_url()

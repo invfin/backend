@@ -14,6 +14,8 @@ class TestValuation:
 
     def test_graham_value(self):
         assert 9.19 == graham_value(2.5, 1.5)
+        assert 0 == graham_value(-2.5, 1.5)
+        assert 0 == graham_value(2.5, -1.5)
 
     def test_margin_of_safety(self):
         assert 57.0 == margin_of_safety(23, 10)
