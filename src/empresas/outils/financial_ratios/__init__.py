@@ -796,22 +796,14 @@ class CalculateFinancialRatios(
         non_gaap = cls.calculate_non_gaap(base_data)
         base_data.update(non_gaap)
 
-        price_to_ratio = cls.calculate_price_to_ratios(base_data)
-        efficiency_ratio = cls.calculate_efficiency_ratios(base_data)
-        enterprise_value_ratio = cls.calculate_enterprise_value_ratios(base_data)
-        liquidity_ratio = cls.calculate_liquidity_ratios(base_data)
-        margin_ratio = cls.calculate_margin_ratios(base_data)
-        operation_risk_ratio = cls.calculate_operation_risk_ratios(base_data)
-        rentability_ratios = cls.calculate_rentability_ratios(base_data)
-
         return {
-            "price_to_ratio": price_to_ratio,
-            "efficiency_ratio": efficiency_ratio,
-            "enterprise_value_ratio": enterprise_value_ratio,
-            "liquidity_ratio": liquidity_ratio,
-            "margin_ratio": margin_ratio,
-            "operation_risk_ratio": operation_risk_ratio,
-            "rentability_ratios": rentability_ratios,
+            "price_to_ratio": cls.calculate_price_to_ratios(base_data),
+            "efficiency_ratio": cls.calculate_efficiency_ratios(base_data),
+            "enterprise_value_ratio": cls.calculate_enterprise_value_ratios(base_data),
+            "liquidity_ratio": cls.calculate_liquidity_ratios(base_data),
+            "margin_ratio": cls.calculate_margin_ratios(base_data),
+            "operation_risk_ratio": cls.calculate_operation_risk_ratios(base_data),
+            "rentability_ratios": cls.calculate_rentability_ratios(base_data),
             "fcf_ratio": fcf_ratio,
             "ps_value": ps_value,
             "company_growth": company_growth,

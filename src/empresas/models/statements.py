@@ -13,7 +13,7 @@ class BaseStatement(Model, BaseToAllMixin):
     company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True)
     period = ForeignKey(Period, on_delete=SET_NULL, null=True, blank=True)
     reported_currency = ForeignKey("currencies.Currency", on_delete=SET_NULL, null=True, blank=True)
-    objects = BaseStatementManager.from_queryset(BaseStatementQuerySet)()
+    objects = BaseStatementManager.from_queryset(BaseStatementQuerySet)()  # type: ignore
 
     class Meta:
         abstract = True
@@ -22,14 +22,25 @@ class BaseStatement(Model, BaseToAllMixin):
         base_manager_name = "objects"
 
     def __str__(self) -> str:
-        period = self.period if self.period else self.date
+        period = self.period or self.date
         return f"{self.company} - {period}"
+
+    def save(self, *args, **kwargs) -> None:
+        self.set_date()
+        super().save(*args, **kwargs)
+
+    def set_date(self) -> None:
+        if self.date == 0:
+            if not self.year and self.period:
+                self.date = self.period.year
+            elif self.year:
+                self.date = self.year.year
 
 
 class BaseFinalStatement(BaseStatement):
     is_ttm = BooleanField(default=False)
     from_average = BooleanField(default=False)
-    objects = BaseStatementManager.from_queryset(StatementQuerySet)()
+    objects = BaseStatementManager.from_queryset(StatementQuerySet)()  # type: ignore
 
     class Meta:
         abstract = True
