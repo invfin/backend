@@ -80,6 +80,3 @@ and then store the complete url with date and other info according.
 5. [ ] Enable categories on portfolio
 6. [ ] Add random prize
 7. [ ] Improve tests
-
-
-https://github.com/InterNations/antwort

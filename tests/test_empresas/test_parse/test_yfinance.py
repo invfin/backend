@@ -15,7 +15,7 @@ parse_vcr = vcr.VCR(
 )
 
 
-@skip("needs to be patched")
+@skip("currently yfinacne seems to be failing")
 class TestYFinanceInfo(TestCase):
     @classmethod
     def setUpTestData(cls) -> None:

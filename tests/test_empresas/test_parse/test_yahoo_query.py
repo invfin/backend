@@ -1,9 +1,12 @@
 from datetime import datetime
 from unittest import skip
+from unittest.mock import patch
 
 from django.test import TestCase
 
 from bfet import DjangoTestingModel
+
+from tests.data.empresas.yahooquery import list_to_dataframe
 
 from src.empresas.models import (
     BalanceSheetYahooQuery,
@@ -26,8 +29,13 @@ class TestYahooQueryInfo(TestCase):
         cls.parser = YahooQueryInfo(cls.company)
         cls.current_year = datetime.now().year
 
-    @skip("needs to be patched")
-    def test_create_quarterly_financials_yahooquery(self):
+    @patch("src.empresas.parse.yahoo_query.parse_data.ParseYahooQuery.request_income_statements_yahooquery")
+    @patch("src.empresas.parse.yahoo_query.parse_data.ParseYahooQuery.request_income_statements_yahooquery")
+    @patch("src.empresas.parse.yahoo_query.parse_data.ParseYahooQuery.request_income_statements_yahooquery")
+    def test_create_quarterly_financials_yahooquery(self, mock_inc, mock_bs, mock_cf):
+        mock_inc.return_value = list_to_dataframe()
+        mock_bs.return_value = list_to_dataframe()
+        mock_cf.return_value = list_to_dataframe()
         period_2021 = Period.objects.first_quarter_period(self.current_year - 1)
         period_2022 = Period.objects.first_quarter_period(self.current_year)
         assert 0 == BalanceSheetYahooQuery.objects.filter(period=period_2021).count()

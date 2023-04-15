@@ -15,18 +15,18 @@ class DFInfoCreator:
     normalize_balance_sheet = None
     normalize_cashflow_statement = None
 
-    def create_statements_from_df(self, df: Type[pd.DataFrame], period: Callable, function: Callable, model: Type):
+    def create_statements_from_df(self, df: pd.DataFrame, period: Callable, function: Callable, model: Type):
         return
 
-    def create_statement(self, df: Type[pd.DataFrame], period: Callable, normalizer: Callable, model: Type):
+    def create_statement(self, df: pd.DataFrame, period: Callable, normalizer: Callable, model: Type):
         df = df.fillna(0)
         self.create_statements_from_df(df, period, normalizer, model)
 
     def create_financials(
         self,
-        incomes_df: Type[pd.DataFrame],
-        balance_sheets_df: Type[pd.DataFrame],
-        cashflows_df: Type[pd.DataFrame],
+        incomes_df: pd.DataFrame,
+        balance_sheets_df: pd.DataFrame,
+        cashflows_df: pd.DataFrame,
         period: Union[Period.objects.first_quarter_period, Period.objects.for_year_period],
     ):
         self.create_statement(incomes_df, period, self.normalize_income_statement, self.income_statement_model)

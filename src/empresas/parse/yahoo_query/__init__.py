@@ -38,6 +38,7 @@ class YahooQueryInfo(DFInfoCreator, NormalizeYahooQuery, ParseYahooQuery):
             model.objects.get_or_create(financials=financials_data, defaults=function(data, period))
 
     def create_quarterly_financials_yahooquery(self):
+        # TODO: just accept the period as a parameter
         self.create_financials(
             self.request_income_statements_yahooquery("q"),
             self.request_balance_sheets_yahooquery("q"),

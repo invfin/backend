@@ -32,6 +32,7 @@ class RetrieveCompanyData:
 
     @log_company("first_financials_yahooquery_info")
     def create_financials_yahooquery(self, period: str = "a"):
+        # TODO: remove the if and simply send the period
         if period == "q":
             return YahooQueryInfo(self.company).create_quarterly_financials_yahooquery()
         return YahooQueryInfo(self.company).create_yearly_financials_yahooquery()
