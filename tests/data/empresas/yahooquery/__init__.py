@@ -2,6 +2,10 @@ from typing import List
 
 import pandas as pd
 
+from .balance_sheet import yearly_balance_sheet
+from .cashflow_statement import yearly_cashflow
+from .income_statement import yearly_income
+
 income_statement_columns = [
     "asOfDate",
     "periodType",
@@ -91,7 +95,7 @@ balance_sheet_columns = [
     "WorkingCapital",
 ]
 
-chasflow_columns = [
+cashflow_columns = [
     "asOfDate",
     "periodType",
     "currencyCode",
@@ -159,6 +163,19 @@ def list_to_dataframe(data: List, columns: List[str]) -> pd.DataFrame:
         orient="index",
         columns=columns,
     )
+    df["asOfDate"] = [pd.Timestamp(value) for value in df["asOfDate"].values]
     df.index.names = ["index", "symbol"]
     df = df.droplevel(0)
     return df
+
+
+def income_dataframe() -> pd.DataFrame:
+    return list_to_dataframe(yearly_income, income_statement_columns)
+
+
+def balance_dataframe() -> pd.DataFrame:
+    return list_to_dataframe(yearly_balance_sheet, balance_sheet_columns)
+
+
+def cashflow_dataframe() -> pd.DataFrame:
+    return list_to_dataframe(yearly_cashflow, cashflow_columns)

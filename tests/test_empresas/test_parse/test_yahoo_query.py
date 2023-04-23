@@ -1,78 +1,91 @@
-from datetime import datetime
-from unittest import skip
 from unittest.mock import patch
 
 from django.test import TestCase
 
 from bfet import DjangoTestingModel
 
-from src.empresas.models import (
-    BalanceSheetYahooQuery,
-    CashflowStatementYahooQuery,
-    Company,
-    IncomeStatementYahooQuery,
-    InstitutionalOrganization,
-    TopInstitutionalOwnership,
-)
-from src.empresas.parse.yahoo_query import YahooQueryInfo
+from src.empresas.models import BalanceSheetYahooQuery, Company
+from src.empresas.parse.yahoo_query import NormalizeYahooQuery, YahooQueryInfo
+from src.periods.constants import PERIOD_1_QUARTER
 from src.periods.models import Period
-from tests.data.empresas.yahooquery import list_to_dataframe
+from tests.data.empresas.yahooquery import balance_dataframe
 
 
-# TODO patch the requests and responses
-@skip("needs to be patched")
 class TestYahooQueryInfo(TestCase):
     @classmethod
     def setUpTestData(cls) -> None:
         cls.company = DjangoTestingModel.create(Company, ticker="AAPL")
         cls.parser = YahooQueryInfo(cls.company)
-        cls.current_year = datetime.now().year
 
+    def test_create_statements_from_df_balance(self):
+        # TODO: improve this test
+        assert (
+            0
+            == BalanceSheetYahooQuery.objects.filter(
+                company=self.company,
+                period__period=PERIOD_1_QUARTER,
+            ).count()
+        )
+        self.parser.create_statements_from_df(
+            balance_dataframe().fillna(0),
+            Period.objects.first_quarter_period,
+            NormalizeYahooQuery.normalize_balance_sheets_yahooquery,
+            BalanceSheetYahooQuery,
+        )
+        assert (
+            4
+            == BalanceSheetYahooQuery.objects.filter(
+                company=self.company,
+                period__period=PERIOD_1_QUARTER,
+            ).count()
+        )
+
+    @patch("src.empresas.parse.yahoo_query.YahooQueryInfo.create_financials")
     @patch("src.empresas.parse.yahoo_query.parse_data.ParseYahooQuery.request_income_statements_yahooquery")
-    @patch("src.empresas.parse.yahoo_query.parse_data.ParseYahooQuery.request_income_statements_yahooquery")
-    @patch("src.empresas.parse.yahoo_query.parse_data.ParseYahooQuery.request_income_statements_yahooquery")
-    def test_create_quarterly_financials_yahooquery(self, mock_inc, mock_bs, mock_cf):
-        mock_inc.return_value = list_to_dataframe()
-        mock_bs.return_value = list_to_dataframe()
-        mock_cf.return_value = list_to_dataframe()
-        period_2021 = Period.objects.first_quarter_period(self.current_year - 1)
-        period_2022 = Period.objects.first_quarter_period(self.current_year)
-        assert 0 == BalanceSheetYahooQuery.objects.filter(period=period_2021).count()
-        assert 0 == CashflowStatementYahooQuery.objects.filter(period=period_2021).count()
-        assert 0 == IncomeStatementYahooQuery.objects.filter(period=period_2021).count()
-        assert 0 == BalanceSheetYahooQuery.objects.filter(period=period_2022).count()
-        assert 0 == CashflowStatementYahooQuery.objects.filter(period=period_2022).count()
-        assert 0 == IncomeStatementYahooQuery.objects.filter(period=period_2022).count()
+    @patch("src.empresas.parse.yahoo_query.parse_data.ParseYahooQuery.request_balance_sheets_yahooquery")
+    @patch("src.empresas.parse.yahoo_query.parse_data.ParseYahooQuery.request_cashflow_statements_yahooquery")
+    def test_create_quarterly_financials_yahooquery(
+        self,
+        mock_req_cashflow_statement,
+        mock_req_balance_sheet,
+        mock_req_income_statement,
+        mock_create_financials,
+    ):
+        mock_req_income_statement.return_value = "mock_req_income_statement"
+        mock_req_balance_sheet.return_value = "mock_req_balance_sheet"
+        mock_req_cashflow_statement.return_value = "mock_req_cashflow_statement"
         self.parser.create_quarterly_financials_yahooquery()
-        assert 2 == BalanceSheetYahooQuery.objects.filter(period=period_2021).count()
-        assert 2 == CashflowStatementYahooQuery.objects.filter(period=period_2021).count()
-        assert 2 == IncomeStatementYahooQuery.objects.filter(period=period_2021).count()
-        assert self.company == BalanceSheetYahooQuery.objects.filter(period=period_2021).first().company
-        assert self.company == CashflowStatementYahooQuery.objects.filter(period=period_2021).first().company
-        assert self.company == IncomeStatementYahooQuery.objects.filter(period=period_2021).first().company
-        assert 2 == BalanceSheetYahooQuery.objects.filter(period=period_2022).count()
-        assert 2 == CashflowStatementYahooQuery.objects.filter(period=period_2022).count()
-        assert 2 == IncomeStatementYahooQuery.objects.filter(period=period_2022).count()
-        assert self.company == BalanceSheetYahooQuery.objects.filter(period=period_2022).first().company
-        assert self.company == CashflowStatementYahooQuery.objects.filter(period=period_2022).first().company
-        assert self.company == IncomeStatementYahooQuery.objects.filter(period=period_2022).first().company
+        mock_req_income_statement.assert_called_once_with("q")
+        mock_req_balance_sheet.assert_called_once_with("q")
+        mock_req_cashflow_statement.assert_called_once_with("q")
+        mock_create_financials.assert_called_once_with(
+            "mock_req_income_statement",
+            "mock_req_balance_sheet",
+            "mock_req_cashflow_statement",
+            Period.objects.first_quarter_period,
+        )
 
-    @skip("needs to be patched")
-    def test_create_yearly_financials_yahooquery(self):
-        assert 0 == BalanceSheetYahooQuery.objects.all().count()
-        assert 0 == CashflowStatementYahooQuery.objects.all().count()
-        assert 0 == IncomeStatementYahooQuery.objects.all().count()
+    @patch("src.empresas.parse.yahoo_query.YahooQueryInfo.create_financials")
+    @patch("src.empresas.parse.yahoo_query.parse_data.ParseYahooQuery.request_income_statements_yahooquery")
+    @patch("src.empresas.parse.yahoo_query.parse_data.ParseYahooQuery.request_balance_sheets_yahooquery")
+    @patch("src.empresas.parse.yahoo_query.parse_data.ParseYahooQuery.request_cashflow_statements_yahooquery")
+    def test_create_yearly_financials_yahooquery(
+        self,
+        mock_req_cashflow_statement,
+        mock_req_balance_sheet,
+        mock_req_income_statement,
+        mock_create_financials,
+    ):
+        mock_req_income_statement.return_value = "mock_req_income_statement"
+        mock_req_balance_sheet.return_value = "mock_req_balance_sheet"
+        mock_req_cashflow_statement.return_value = "mock_req_cashflow_statement"
         self.parser.create_yearly_financials_yahooquery()
-        for index in range(1, 4):
-            year = (self.current_year - 4) + index
-            period = Period.objects.for_year_period(year)
-            with self.subTest(period):
-                assert 1 == BalanceSheetYahooQuery.objects.filter(period=period).count()
-                assert 1 == CashflowStatementYahooQuery.objects.filter(period=period).count()
-                assert 1 == IncomeStatementYahooQuery.objects.filter(period=period).count()
-
-    @skip("method needs improvement")
-    def test_create_institutionals_yahooquery(self):
-        assert 0 == InstitutionalOrganization.objects.all().count()
-        assert 0 == TopInstitutionalOwnership.objects.all().count()
-        self.parser.normalize_institutional_yahooquery()
+        mock_req_income_statement.assert_called_once_with()
+        mock_req_balance_sheet.assert_called_once_with()
+        mock_req_cashflow_statement.assert_called_once_with()
+        mock_create_financials.assert_called_once_with(
+            "mock_req_income_statement",
+            "mock_req_balance_sheet",
+            "mock_req_cashflow_statement",
+            Period.objects.for_year_period,
+        )

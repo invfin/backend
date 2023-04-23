@@ -47,10 +47,6 @@ Users can keep track of their finance and investments and share it with the worl
 
 
 # SIDE NOTES
-<!-- ## Creation
-I used cookiecutter to start the project to see how to structure it "correctly".
-The website is deployed on a single core CPU so multithreading is limited. For everything related to sending emails or scraping for information Celery with Redis handle that. Why Redis? Well, Django Cookiecutter came with that so I wanted to give it a try. Before I used RabbitMQ as it is focused on being a message broker I thought that it was more appropriate. Now I'm using Redis to test it and because I can use it to cache. -->
-
 ## TemplateTags
 ### UTM
 A tag to create utm parameters for the urls. source and campaign are at the end as usually medium, content and term are usually changed accross the web.
@@ -80,3 +76,7 @@ and then store the complete url with date and other info according.
 5. [ ] Enable categories on portfolio
 6. [ ] Add random prize
 7. [ ] Improve tests
+8. [ ] Switch to SPA for some parts (MPA)
+
+## Possibles TODO
+1. [ ] Stop using yfinance

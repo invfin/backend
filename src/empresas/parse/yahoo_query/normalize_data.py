@@ -9,13 +9,18 @@ from src.currencies.models import Currency
 class NormalizeYahooQuery:
     company = None
 
+    @staticmethod
     def initial_data(
-        self, date: pd.Timestamp, period_type, period: Callable, currency
+        date: pd.Timestamp,
+        period_type,
+        period: Callable,
+        currency,
+        company,
     ) -> Dict[str, Union[int, datetime.datetime, type]]:
         return dict(
             date=date.date().year,
             year=date.to_pydatetime().date(),
-            company=self.company,
+            company=company,
             period=period(date.year),
             reported_currency=Currency.objects.financial_currency(currency),
             as_of_date=date,
@@ -23,15 +28,20 @@ class NormalizeYahooQuery:
             currency_code=currency,
         )
 
+    @classmethod
     def normalize_balance_sheets_yahooquery(
-        self, yahooquery_serie: pd.Series, period: Callable
+        cls,
+        yahooquery_serie: pd.Series,
+        period: Callable,
+        company,
     ) -> Dict[str, Union[float, int, str, Any]]:
         return dict(
-            **self.initial_data(
+            **cls.initial_data(
                 yahooquery_serie.get("asOfDate"),
                 yahooquery_serie.get("periodType"),
                 period,
                 yahooquery_serie.get("currencyCode"),
+                company,
             ),
             accounts_payable=yahooquery_serie.get("AccountsPayable"),
             accounts_receivable=yahooquery_serie.get("AccountsReceivable"),
@@ -59,6 +69,7 @@ class NormalizeYahooQuery:
             gross_ppe=yahooquery_serie.get("GrossPPE"),
             inventory=yahooquery_serie.get("Inventory"),
             invested_capital=yahooquery_serie.get("InvestedCapital"),
+            # TODO: change investmentin_financial_assets into investment_in_financial_assets
             investmentin_financial_assets=yahooquery_serie.get("InvestmentinFinancialAssets"),
             investments_and_advances=yahooquery_serie.get("InvestmentsAndAdvances"),
             land_and_improvements=yahooquery_serie.get("LandAndImprovements"),
@@ -101,15 +112,20 @@ class NormalizeYahooQuery:
             working_capital=yahooquery_serie.get("WorkingCapital"),
         )
 
+    @classmethod
     def normalize_cashflow_statements_yahooquery(
-        self, yahooquery_serie: pd.Series, period: Callable
+        cls,
+        yahooquery_serie: pd.Series,
+        period: Callable,
+        company,
     ) -> Dict[str, Union[float, int, str, Any]]:
         return dict(
-            **self.initial_data(
+            **cls.initial_data(
                 yahooquery_serie.get("asOfDate"),
                 yahooquery_serie.get("periodType"),
                 period,
                 yahooquery_serie.get("currencyCode"),
+                company,
             ),
             beginning_cash_position=yahooquery_serie.get("BeginningCashPosition"),
             capital_expenditure=yahooquery_serie.get("CapitalExpenditure"),
@@ -175,15 +191,20 @@ class NormalizeYahooQuery:
             stock_based_compensation=yahooquery_serie.get("StockBasedCompensation"),
         )
 
+    @classmethod
     def normalize_income_statements_yahooquery(
-        self, yahooquery_serie: pd.Series, period: Callable
+        cls,
+        yahooquery_serie: pd.Series,
+        period: Callable,
+        company,
     ) -> Dict[str, Union[float, int, str, Any]]:
         return dict(
-            **self.initial_data(
+            **cls.initial_data(
                 yahooquery_serie.get("asOfDate"),
                 yahooquery_serie.get("periodType"),
                 period,
                 yahooquery_serie.get("currencyCode"),
+                company,
             ),
             basic_average_shares=yahooquery_serie.get("BasicAverageShares"),
             basic_eps=yahooquery_serie.get("BasicEPS"),
@@ -232,12 +253,14 @@ class NormalizeYahooQuery:
             total_revenue=yahooquery_serie.get("TotalRevenue"),
         )
 
-    def normalize_institutional_yahooquery(self, df_institution_ownership):
+    @staticmethod
+    def normalize_institutional_yahooquery(df_institution_ownership):
         df = df_institution_ownership.reset_index()
         df = df.drop(columns=["symbol", "row", "maxAge"])
         return df
 
-    def normalize_key_stats_yahooquery(self, key_stats):
+    @staticmethod
+    def normalize_key_stats_yahooquery(key_stats, company):
         last_fiscal_year_end = key_stats.get("lastFiscalYearEnd")
         next_fiscal_year_end = key_stats.get("nextFiscalYearEnd")
         most_recent_quarter = key_stats.get("mostRecentQuarter")
@@ -262,7 +285,7 @@ class NormalizeYahooQuery:
             financials=key_stats,
             date=datetime.datetime.now().year,
             year=datetime.datetime.now().date(),
-            company=self.company,
+            company=company,
             max_age=key_stats.get("maxAge"),
             price_hint=key_stats.get("priceHint"),
             enterprise_value=key_stats.get("enterpriseValue"),

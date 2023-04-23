@@ -4,16 +4,19 @@ from .exceptions import TickerNotFound
 
 
 class ParseYahooQuery:
-    company = None
+    ticker: str
+
+    def __init__(self, ticker: str) -> None:
+        self.ticker = ticker
 
     @property
     def yqcompany(self):
-        return yq.Ticker(self.company.ticker)
+        return yq.Ticker(self.ticker)
 
     @property
     def request_price_info_yahooquery(self):
-        if self.yqcompany.price == {self.company.ticker: f"Quote not found for ticker symbol: {self.company.ticker}"}:
-            raise TickerNotFound(self.company.ticker)
+        if self.yqcompany.price == {self.ticker: f"Quote not found for ticker symbol: {self.ticker}"}:
+            raise TickerNotFound(self.ticker)
         return self.yqcompany.price
 
     @property

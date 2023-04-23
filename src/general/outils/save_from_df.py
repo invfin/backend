@@ -15,13 +15,6 @@ class DFInfoCreator:
     normalize_balance_sheet = None
     normalize_cashflow_statement = None
 
-    def create_statements_from_df(self, df: pd.DataFrame, period: Callable, function: Callable, model: Type):
-        return
-
-    def create_statement(self, df: pd.DataFrame, period: Callable, normalizer: Callable, model: Type):
-        df = df.fillna(0)
-        self.create_statements_from_df(df, period, normalizer, model)
-
     def create_financials(
         self,
         incomes_df: pd.DataFrame,
@@ -29,6 +22,40 @@ class DFInfoCreator:
         cashflows_df: pd.DataFrame,
         period: Union[Period.objects.first_quarter_period, Period.objects.for_year_period],
     ):
-        self.create_statement(incomes_df, period, self.normalize_income_statement, self.income_statement_model)
-        self.create_statement(balance_sheets_df, period, self.normalize_balance_sheet, self.balance_sheet_model)
-        self.create_statement(cashflows_df, period, self.normalize_cashflow_statement, self.cashflow_statement_model)
+        self.create_statement(
+            incomes_df,
+            period,
+            self.normalize_income_statement,
+            self.income_statement_model,
+        )
+        self.create_statement(
+            balance_sheets_df,
+            period,
+            self.normalize_balance_sheet,
+            self.balance_sheet_model,
+        )
+        self.create_statement(
+            cashflows_df,
+            period,
+            self.normalize_cashflow_statement,
+            self.cashflow_statement_model,
+        )
+
+    def create_statement(
+        self,
+        df: pd.DataFrame,
+        period: Callable,
+        normalizer: Callable,
+        model: Type,
+    ):
+        df = df.fillna(0)
+        self.create_statements_from_df(df, period, normalizer, model)
+
+    def create_statements_from_df(
+        self,
+        df: pd.DataFrame,
+        period: Callable,
+        normalizer: Callable,
+        model: Type,
+    ):
+        raise NotImplementedError
