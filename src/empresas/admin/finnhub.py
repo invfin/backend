@@ -47,7 +47,7 @@ class CompanyFinnhubProxyAdmin(admin.ModelAdmin):
 
     jazzmin_form_tabs = [
         ("general", "Company"),
-        ("statements", "Statements")
+        ("statements", "Statements"),
         # ("income-statement", "Income Statement"),
         # ("balance-sheet", "Balance Sheet"),
         # ("cashflow-statement", "Cashflow Statement"),

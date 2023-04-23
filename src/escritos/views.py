@@ -1,21 +1,20 @@
 import json
-import urllib
-
 from typing import List
+import urllib
 
 from django.conf import settings
 from django.contrib import messages
 from django.contrib.auth import get_user_model
+from django.http import HttpResponseRedirect
 from django.shortcuts import redirect
 from django.urls import reverse
-from django.http import HttpResponseRedirect
 
 from src.seo.views import SEOCreateView, SEODetailView, SEOListView
-from src.web.views.web_management import PrivateWebListView, PrivateWebDetailView
+from src.web.views.web_management import PrivateWebDetailView, PrivateWebListView
 
-from .outils.term_correction import TermCorrectionManagement
 from .forms import CreateCorrectionForm
 from .models import Term, TermContent, TermCorrection
+from .outils.term_correction import TermCorrectionManagement
 
 User = get_user_model()
 

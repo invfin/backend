@@ -46,8 +46,10 @@ def user_become_writer_view(request):
         NewsletterFollowers.objects.create(user=request.user)
         messages.success(
             request,
-            "Pon al día tu perfil, añade tus redes sociales, una buena descripción y tu nombre para que la gente"
-            " pueda conocerte.",
+            (
+                "Pon al día tu perfil, añade tus redes sociales, una buena descripción y tu nombre para que la gente"
+                " pueda conocerte."
+            ),
         )
         return redirect("users:update")
 

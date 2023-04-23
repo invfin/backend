@@ -1,12 +1,12 @@
 from datetime import datetime, timezone
 
-from django.test import TestCase
 from django.contrib.auth import get_user_model
+from django.test import TestCase
 
-from freezegun import freeze_time
 from bfet import DjangoTestingModel
+from freezegun import freeze_time
 
-from src.escritos.models import TermContent, TermCorrection, Term
+from src.escritos.models import Term, TermContent, TermCorrection
 from src.escritos.outils.term_correction import TermCorrectionManagement
 
 User = get_user_model()
@@ -34,9 +34,12 @@ class TestTermCorrectionManagement(TestCase):
         print(TermCorrectionManagement(term_correction).create_content())
         self.assertEqual(
             TermCorrectionManagement(term_correction).create_content(),
-            "Enhorabuena, tu correción para <a href='http://example.com:8000/definicion/term%20slug/#term-title' target='_blank'>new title</a> ha sido aprovada.<br></br>Desde el equipo de InvFin te damos las gracias por ayudar a mejorar el contenido para poder seguir ayudando al resto de la comunidad.",
+            (
+                "Enhorabuena, tu correción para <a href='http://example.com:8000/definicion/term%20slug/#term-title'"
+                " target='_blank'>new title</a> ha sido aprovada.<br></br>Desde el equipo de InvFin te damos las"
+                " gracias por ayudar a mejorar el contenido para poder seguir ayudando al resto de la comunidad."
+            ),
         )
-
 
     @freeze_time("2022-04-01 13:30")
     def test_update_correction_data_when_approved(self):

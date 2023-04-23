@@ -1,9 +1,9 @@
-from django.test import TestCase
 from django.contrib.auth import get_user_model
+from django.test import TestCase
 
 from bfet import DjangoTestingModel
 
-from src.escritos.models import TermContent, TermCorrection, Term
+from src.escritos.models import Term, TermContent, TermCorrection
 
 User = get_user_model()
 
@@ -42,7 +42,6 @@ class TestTermCorrectionQuerySet(TestCase):
             corrected_by=cls.user,
             is_approved=True,
         )
-
 
     def test_get_contributors(self):
         result = [_.corrected_by for _ in TermCorrection.objects.get_contributors(self.term)]

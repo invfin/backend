@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from src.escritos.models import TermContent, TermCorrection
+from src.escritos.models import TermContent
 from src.escritos.views import ManageUserTermCorrectionDetailView
 
 

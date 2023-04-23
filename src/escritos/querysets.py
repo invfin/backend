@@ -11,5 +11,4 @@ class TermCorrectionQuerySet(BaseQuerySet):
             .order_by("corrected_by_id")
             .distinct("corrected_by")
             .only("corrected_by")
-
         )

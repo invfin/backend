@@ -2,7 +2,6 @@ from datetime import datetime
 from typing import List, Type
 
 from src.empresas.parse import FinnhubInfo, FinprepInfo, YahooQueryInfo, YFinanceInfo
-from src.empresas.parse.yahoo_query.exceptions import TickerNotFound
 from src.empresas.utils import log_company
 
 

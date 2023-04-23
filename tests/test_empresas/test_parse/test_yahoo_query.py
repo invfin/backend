@@ -6,8 +6,6 @@ from django.test import TestCase
 
 from bfet import DjangoTestingModel
 
-from tests.data.empresas.yahooquery import list_to_dataframe
-
 from src.empresas.models import (
     BalanceSheetYahooQuery,
     CashflowStatementYahooQuery,
@@ -18,6 +16,7 @@ from src.empresas.models import (
 )
 from src.empresas.parse.yahoo_query import YahooQueryInfo
 from src.periods.models import Period
+from tests.data.empresas.yahooquery import list_to_dataframe
 
 
 # TODO patch the requests and responses

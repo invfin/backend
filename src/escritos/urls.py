@@ -2,10 +2,10 @@ from django.urls import path
 
 from .views import (
     GlosarioView,
+    ManageUserTermCorrectionDetailView,
+    ManageUserTermCorrectionListView,
     TermCorrectionView,
     TermDetailsView,
-    ManageUserTermCorrectionListView,
-    ManageUserTermCorrectionDetailView,
 )
 
 app_name = "escritos"

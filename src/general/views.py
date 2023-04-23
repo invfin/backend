@@ -1,5 +1,5 @@
-import json
 import itertools
+import json
 
 from django.conf import settings
 from django.contrib import messages
@@ -11,11 +11,11 @@ from django.shortcuts import redirect, render
 from django.views.generic import ListView, RedirectView, TemplateView
 
 from src.empresas.models import Company
+from src.escritos.constants import BASE_ESCRITO_PUBLISHED
 from src.escritos.models import FavoritesTermsHistorial, FavoritesTermsList, Term, TermContent
 from src.notifications.models import Notification
 from src.screener.models import FavoritesStocksHistorial
 from src.super_investors.models import FavoritesSuperinvestorsHistorial, FavoritesSuperinvestorsList, Superinvestor
-from src.escritos.constants import BASE_ESCRITO_PUBLISHED
 
 
 class MessagesTemplateview(TemplateView):

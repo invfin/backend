@@ -2,9 +2,11 @@ from typing import List, Optional
 
 from django.utils import timezone
 
-from ..models import TermCorrection, TermContent
-from src.notifications.tasks import prepare_notification_task
 from src.notifications.constants import CORRECTION_APPROVED
+from src.notifications.tasks import prepare_notification_task
+
+from ..models import TermContent, TermCorrection
+
 
 class TermCorrectionManagement:
     term_correction: TermCorrection

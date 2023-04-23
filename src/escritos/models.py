@@ -1,4 +1,4 @@
-from typing import Dict
+
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db.models import (
@@ -19,10 +19,10 @@ from django.utils import timezone
 
 from ckeditor.fields import RichTextField
 
-from .abstracts import AbstractPublishableContent
 from src.general.abstracts import AbstractComment, AbstractFavoritesHistorial
 from src.general.mixins import BaseToAllMixin
 
+from .abstracts import AbstractPublishableContent
 from .managers import TermManager
 from .querysets import TermCorrectionQuerySet
 
