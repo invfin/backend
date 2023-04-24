@@ -14,26 +14,23 @@ class StripeManagement:
     stripe_price = stripe.Price
     stripe_customer = stripe.Customer
 
-    def create_product(self, name: str, description: str, active: bool = False) -> dict:
-        product = self.stripe_product.create(
+    def create_product(self, name: str, description: str, active: bool = False,) -> dict:
+        return self.stripe_product.create(
             name=name,
             description=description,
             active=active,
         )
-        return product
 
-    def update_product(self, stripe_id: str, name: str, description: str, active: bool) -> dict:
-        product = self.stripe_product.modify(
+    def update_product(self, stripe_id: str, name: str, description: str, active: bool,) -> dict:
+        return self.stripe_product.modify(
             sid=stripe_id,
             name=name,
             description=description,
             active=active,
         )
-        return product
 
     def disable_product(self, stripe_id: str) -> dict:
-        product = self.stripe_product.modify(sid=stripe_id, active=False)
-        return product
+        return self.stripe_product.modify(sid=stripe_id, active=False)
 
     def create_product_complementary(
         self,
@@ -66,8 +63,7 @@ class StripeManagement:
         return price
 
     def create_customer(self, currency: str, email: str, name: str) -> dict:
-        customer = self.stripe_customer.create(currency=currency, email=email, name=name)
-        return customer
+        return self.stripe_customer.create(currency=currency, email=email, name=name)
 
     def create_subscription(self, customer: Customer, stripe_price_obj: ProductComplementary) -> dict:
         subscription = stripe.Subscription.create(

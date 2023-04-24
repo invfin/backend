@@ -5,6 +5,8 @@ from django.conf import settings
 
 from src.recsys.mixins import RecommenderMixin
 
+DEFAULT_TAGS = "finanzas, blog financiero, blog el financiera, invertir"
+
 
 class FastContextView:
     custom_context_data: Dict[str, Any] = {}
@@ -66,16 +68,10 @@ class SEOViewMixin(FastContextView, RecommenderMixin):
         return meta_field
 
     def get_meta_url(self):
-        meta_url = self.meta_url
-        if not meta_url:
-            meta_url = self.request.path
-        return meta_url
+        return self.meta_url or self.request.path
 
     def get_meta_author(self, instance: object = None):
-        meta_author = self.meta_author
-        if not meta_author:
-            meta_author = self.get_possible_meta_attribute(instance, ["meta_author", "author"], "InvFin")
-        return meta_author
+        return self.meta_author or self.get_possible_meta_attribute(instance, ["meta_author", "author"], "InvFin",)
 
     def get_meta_title(self, instance: object = None):
         meta_title = self.meta_title
@@ -126,37 +122,31 @@ class SEOViewMixin(FastContextView, RecommenderMixin):
         return meta_image
 
     def get_meta_tags(self) -> str:
-        meta_tags = self.meta_tags
-        if not meta_tags:
-            meta_tags = "finanzas, blog financiero, blog el financiera, invertir"
-        return meta_tags
+        return self.meta_tags or DEFAULT_TAGS
 
-    def get_meta_category(self, instance: object = None):
-        meta_category = self.meta_category
-        if not meta_category:
-            meta_category = self.get_possible_meta_attribute(instance, ["category"], "Inversiones")
-        return meta_category
+    def get_meta_category(self, instance: object = None) -> str:
+        return self.meta_category or self.get_possible_meta_attribute(instance, ["category"], "Inversiones",)
 
-    def get_meta_twitter_author(self):
+    def get_meta_twitter_author(self) -> str:
         return "@InvFinz"
 
-    def get_open_graph_type(self):
+    def get_open_graph_type(self) -> str:
         return self.open_graph_type
 
-    def get_meta_published_time(self, instance: object = None):
-        return self.get_possible_meta_attribute(instance, ["published_at"], None)
+    def get_meta_published_time(self, instance: object = None) -> str:
+        return self.get_possible_meta_attribute(instance, ["published_at"], "")
 
-    def get_meta_modified_time(self, instance: object = None):
-        return self.get_possible_meta_attribute(instance, ["updated_at"], None)
+    def get_meta_modified_time(self, instance: object = None) -> str:
+        return self.get_possible_meta_attribute(instance, ["updated_at"], "")
 
     def get_schema_org(self, instance: object = None) -> Dict:
         return getattr(instance, "schema_org", {})
 
-    def get_meta_robots(self):
+    def get_meta_robots(self) -> str:
         if self.private_view:
             return "nofollow,noindex"
         if not self.no_follow and not self.no_index:
-            return None
+            return ""
         elif self.no_follow and not self.no_index:
             return "nofollow"
         elif not self.no_follow and self.no_index:
@@ -164,7 +154,7 @@ class SEOViewMixin(FastContextView, RecommenderMixin):
         else:
             return "nofollow,noindex"
 
-    def get_base_meta_information(self, instance: object = None):
+    def get_base_meta_information(self, instance: object = None) -> Dict[str, Any]:
         return {
             "meta_robots": self.get_meta_robots(),
             "meta_description": self.get_meta_description(instance),
