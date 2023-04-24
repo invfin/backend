@@ -14,14 +14,25 @@ class StripeManagement:
     stripe_price = stripe.Price
     stripe_customer = stripe.Customer
 
-    def create_product(self, name: str, description: str, active: bool = False,) -> dict:
+    def create_product(
+        self,
+        name: str,
+        description: str,
+        active: bool = False,
+    ) -> dict:
         return self.stripe_product.create(
             name=name,
             description=description,
             active=active,
         )
 
-    def update_product(self, stripe_id: str, name: str, description: str, active: bool,) -> dict:
+    def update_product(
+        self,
+        stripe_id: str,
+        name: str,
+        description: str,
+        active: bool,
+    ) -> dict:
         return self.stripe_product.modify(
             sid=stripe_id,
             name=name,

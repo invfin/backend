@@ -1,13 +1,11 @@
+from unittest.mock import MagicMock, patch
+
 from django.test import TestCase
 
-from unittest.mock import patch, MagicMock
-
-
 from src.business import constants
-from src.business.models import Product, ProductComplementary, ProductComplementaryPaymentLink
-from src.currencies.models import Currency
+from src.business.models import Product, ProductComplementary
 from src.business.views import CheckoutRedirectView
-
+from src.currencies.models import Currency
 
 EXAMPLE_URL_PARAMS = "prod=10&session_id=cs_test_a1efUTq7VYePHRp07jtfRK5UmIOepUGV1HMgpAjWIfgo7NFHEwgLkZ1OKT"
 
@@ -47,19 +45,33 @@ class TestCheckoutRedirectView(TestCase):
 
     @patch("src.business.views.CheckoutRedirectView.handle_transaction")
     @patch("django.contrib.messages.success")
-    def test_handle_messages_success(self, mock_success, mock_handle_transaction,):
+    def test_handle_messages_success(
+        self,
+        mock_success,
+        mock_handle_transaction,
+    ):
         mock_handle_transaction.return_value = True
         self.view.handle_messages()
         mock_handle_transaction.assert_called_once()
-        mock_success.assert_called_once_with(self.request, "Gracias por tu confianza.",)
+        mock_success.assert_called_once_with(
+            self.request,
+            "Gracias por tu confianza.",
+        )
 
     @patch("src.business.views.CheckoutRedirectView.handle_transaction")
     @patch("django.contrib.messages.error")
-    def test_handle_messages_error(self, mock_error, mock_handle_transaction, ):
+    def test_handle_messages_error(
+        self,
+        mock_error,
+        mock_handle_transaction,
+    ):
         mock_handle_transaction.return_value = False
         self.view.handle_messages()
         mock_handle_transaction.assert_called_once()
-        mock_error.assert_called_once_with(self.request, "Lo lamentamos ha sucedido un error. Lo estamos resolviendo", )
+        mock_error.assert_called_once_with(
+            self.request,
+            "Lo lamentamos ha sucedido un error. Lo estamos resolviendo",
+        )
 
     @patch("src.business.views.CheckoutRedirectView.get_stripe_info")
     @patch("src.business.views.CheckoutRedirectView.get_customer")
@@ -92,8 +104,15 @@ class TestCheckoutRedirectView(TestCase):
         mock_get_customer.return_value = "customer"
         self.assertTrue(self.view.handle_transaction())
         mock_get_stripe_info.assert_called_once()
-        mock_get_customer.assert_called_once_with("stripe_session", "stripe_customer",)
-        mock_save_transaction.assert_called_once_with("stripe_session", "customer", "product_complementary",)
+        mock_get_customer.assert_called_once_with(
+            "stripe_session",
+            "stripe_customer",
+        )
+        mock_save_transaction.assert_called_once_with(
+            "stripe_session",
+            "customer",
+            "product_complementary",
+        )
 
     def test_get_stripe_info(self):
         self.view.get_stripe_info()
@@ -106,4 +125,3 @@ class TestCheckoutRedirectView(TestCase):
     def test_save_transaction(self):
         self.view.save_transaction()
         assert 1 == 2
-

@@ -71,7 +71,11 @@ class SEOViewMixin(FastContextView, RecommenderMixin):
         return self.meta_url or self.request.path
 
     def get_meta_author(self, instance: object = None):
-        return self.meta_author or self.get_possible_meta_attribute(instance, ["meta_author", "author"], "InvFin",)
+        return self.meta_author or self.get_possible_meta_attribute(
+            instance,
+            ["meta_author", "author"],
+            "InvFin",
+        )
 
     def get_meta_title(self, instance: object = None):
         meta_title = self.meta_title
@@ -125,7 +129,11 @@ class SEOViewMixin(FastContextView, RecommenderMixin):
         return self.meta_tags or DEFAULT_TAGS
 
     def get_meta_category(self, instance: object = None) -> str:
-        return self.meta_category or self.get_possible_meta_attribute(instance, ["category"], "Inversiones",)
+        return self.meta_category or self.get_possible_meta_attribute(
+            instance,
+            ["category"],
+            "Inversiones",
+        )
 
     def get_meta_twitter_author(self) -> str:
         return "@InvFinz"
