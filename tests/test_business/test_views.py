@@ -1,13 +1,15 @@
 from unittest.mock import MagicMock, patch
 
+import stripe
 from django.test import TestCase
 
 from src.business import constants
-from src.business.models import Product, ProductComplementary
+from src.business.models import Product, ProductComplementary, Customer
 from src.business.views import CheckoutRedirectView
 from src.currencies.models import Currency
+from src.users.models import User
 
-EXAMPLE_URL_PARAMS = "prod=10&session_id=cs_test_a1efUTq7VYePHRp07jtfRK5UmIOepUGV1HMgpAjWIfgo7NFHEwgLkZ1OKT"
+from tests.data.business import customer, checkout_session
 
 
 class TestCheckoutRedirectView(TestCase):
@@ -33,7 +35,14 @@ class TestCheckoutRedirectView(TestCase):
             currency=cls.currency,
             payment_type=constants.TYPE_ONE_TIME,
         )
-        cls.request = MagicMock()
+        cls.request = MagicMock(
+            GET={
+                "prod": cls.base_prod_comp.id,
+                "session_id": "cs_test_a1efUTq7VYePHRp07jtfRK5UmIOepUGV1HMgpA"
+            }
+        )
+        cls.stripe_session = stripe.checkout.Session()
+        cls.stripe_session.update(checkout_session.checkout_session)
         cls.view = CheckoutRedirectView()
         cls.view.request = cls.request
 
@@ -114,14 +123,76 @@ class TestCheckoutRedirectView(TestCase):
             "product_complementary",
         )
 
-    def test_get_stripe_info(self):
-        self.view.get_stripe_info()
-        assert 1 == 2
+    @patch("stripe.Customer.retrieve")
+    @patch("stripe.checkout.Session.retrieve")
+    def test_get_stripe_info(
+        self,
+        mock_session_retrieve,
+        mock_customer_retrieve,
+    ):
+        session = MagicMock(customer="customer")
+        stripe_customer = MagicMock()
+        mock_session_retrieve.return_value = session
+        mock_customer_retrieve.return_value = stripe_customer
+        result_session, result_stripe_customer = self.view.get_stripe_info()
+        mock_session_retrieve.assert_called_once_with(
+            "cs_test_a1efUTq7VYePHRp07jtfRK5UmIOepUGV1HMgpA"
+        )
+        mock_customer_retrieve.assert_called_once_with("customer")
+        self.assertEqual(result_session, session)
+        self.assertEqual(result_stripe_customer, stripe_customer)
 
-    def test_get_customer(self):
-        self.view.get_customer()
-        assert 1 == 2
+    @patch("src.users.models.User.objects.get_or_create_quick_user")
+    @patch("src.business.models.Customer.objects.get_or_create")
+    def test_get_customer(
+        self,
+        mock_get_or_create,
+        mock_get_or_create_quick_user,
+    ):
+        user = User()
+        customer = Customer()
+        stripe_session = MagicMock(customer="customer")
+        stripe.Customer()
+        mock_get_or_create_quick_user.return_value = user
+        mock_get_or_create.return_value = customer, True
+        result = self.view.get_customer(
+            stripe_session,
+            dict(email="customer@gmail.com"),
+        )
+        mock_get_or_create_quick_user.assert_called_once_with(
+            self.request,
+            "customer@gmail.com",
+        )
+        mock_get_or_create.assert_called_once_with(
+            user=user,
+            defaults={"stripe_id": stripe_session.customer},
+        )
+        self.assertEqual(result, customer)
 
-    def test_save_transaction(self):
-        self.view.save_transaction()
-        assert 1 == 2
+    @patch("src.currencies.models.Currency.objects.get_or_create")
+    @patch("src.business.models.TransactionHistorial.objects.create")
+    def test_save_transaction(
+        self,
+        mock_create,
+        mock_get_or_create,
+    ):
+        currency = Currency()
+        customer = Customer(user=User(username="hey"))
+        mock_get_or_create.return_value = currency, True
+        self.view.save_transaction(
+            self.stripe_session,
+            customer,
+            self.base_prod_comp,
+        )
+        mock_get_or_create.assert_called_once_with(
+            currency="USD"
+        )
+        mock_create.assert_called_once_with(
+            product=self.base_prod_comp.product,
+            product_complementary=self.base_prod_comp,
+            customer=customer,
+            payment_method="card",
+            currency=currency,
+            final_amount=50.0,
+            stripe_response=self.stripe_session,
+        )

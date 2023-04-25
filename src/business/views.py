@@ -117,8 +117,7 @@ class CheckoutRedirectView(RedirectView):
 
     def get_stripe_info(self) -> Tuple[stripe.checkout.Session, stripe.Customer]:
         session = stripe.checkout.Session.retrieve(self.request.GET.get("session_id"))
-        stripe_customer = stripe.Customer.retrieve(session.customer)
-        return session, stripe_customer
+        return session, stripe.Customer.retrieve(session.customer)
 
     def get_customer(
         self,
@@ -131,9 +130,7 @@ class CheckoutRedirectView(RedirectView):
         )
         customer, created = Customer.objects.get_or_create(
             user=user,
-            defaults={
-                "stripe_id": stripe_session.customer,
-            },
+            defaults={"stripe_id": stripe_session.customer},
         )
         return customer
 
@@ -157,6 +154,3 @@ class CheckoutRedirectView(RedirectView):
 
 class CreateUserFromCustomerRecentPurchase(SEOTemplateView):
     template_name = "post_purchase_waiting.html"
-
-    def get(self, request, *args, **kwargs):
-        return super().get(request, *args, **kwargs)
