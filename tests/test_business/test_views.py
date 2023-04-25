@@ -1,15 +1,15 @@
 from unittest.mock import MagicMock, patch
 
-import stripe
 from django.test import TestCase
 
+import stripe
+
 from src.business import constants
-from src.business.models import Product, ProductComplementary, Customer
+from src.business.models import Customer, Product, ProductComplementary
 from src.business.views import CheckoutRedirectView
 from src.currencies.models import Currency
 from src.users.models import User
-
-from tests.data.business import customer, checkout_session
+from tests.data.business import checkout_session
 
 
 class TestCheckoutRedirectView(TestCase):
@@ -36,10 +36,7 @@ class TestCheckoutRedirectView(TestCase):
             payment_type=constants.TYPE_ONE_TIME,
         )
         cls.request = MagicMock(
-            GET={
-                "prod": cls.base_prod_comp.id,
-                "session_id": "cs_test_a1efUTq7VYePHRp07jtfRK5UmIOepUGV1HMgpA"
-            }
+            GET={"prod": cls.base_prod_comp.id, "session_id": "cs_test_a1efUTq7VYePHRp07jtfRK5UmIOepUGV1HMgpA"}
         )
         cls.stripe_session = stripe.checkout.Session()
         cls.stripe_session.update(checkout_session.checkout_session)
@@ -135,9 +132,7 @@ class TestCheckoutRedirectView(TestCase):
         mock_session_retrieve.return_value = session
         mock_customer_retrieve.return_value = stripe_customer
         result_session, result_stripe_customer = self.view.get_stripe_info()
-        mock_session_retrieve.assert_called_once_with(
-            "cs_test_a1efUTq7VYePHRp07jtfRK5UmIOepUGV1HMgpA"
-        )
+        mock_session_retrieve.assert_called_once_with("cs_test_a1efUTq7VYePHRp07jtfRK5UmIOepUGV1HMgpA")
         mock_customer_retrieve.assert_called_once_with("customer")
         self.assertEqual(result_session, session)
         self.assertEqual(result_stripe_customer, stripe_customer)
@@ -184,9 +179,7 @@ class TestCheckoutRedirectView(TestCase):
             customer,
             self.base_prod_comp,
         )
-        mock_get_or_create.assert_called_once_with(
-            currency="USD"
-        )
+        mock_get_or_create.assert_called_once_with(currency="USD")
         mock_create.assert_called_once_with(
             product=self.base_prod_comp.product,
             product_complementary=self.base_prod_comp,
