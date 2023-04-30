@@ -1,7 +1,7 @@
-from .base_averages import AverageBalanceSheet, AverageCashflowStatement, AverageIncomeStatement
+from .base_normalize import NormalizeBalanceSheet, NormalizeCashflowStatement, NormalizeIncomeStatement
 
 
-class IncomeStatementYahooQueryExtended(AverageIncomeStatement):
+class IncomeStatementYahooQueryExtended(NormalizeIncomeStatement):
     revenue_field = "total_revenue"
     cost_of_revenue_field = "reconciled_cost_of_revenue"
     gross_profit_field = "gross_profit"
@@ -24,7 +24,7 @@ class IncomeStatementYahooQueryExtended(AverageIncomeStatement):
     weighted_average_diluated_shares_outstanding_field = "diluted_average_shares"
 
 
-class BalanceSheetYahooQueryExtended(AverageBalanceSheet):
+class BalanceSheetYahooQueryExtended(NormalizeBalanceSheet):
     cash_and_cash_equivalents_field = "cash_and_cash_equivalents"
     short_term_investments_field = "other_short_term_investments"
     cash_and_short_term_investments_field = "cash_cash_equivalents_and_short_term_investments"
@@ -66,7 +66,7 @@ class BalanceSheetYahooQueryExtended(AverageBalanceSheet):
     net_debt_field = "net_debt"
 
 
-class CashflowStatementYahooQueryExtended(AverageCashflowStatement):
+class CashflowStatementYahooQueryExtended(NormalizeCashflowStatement):
     net_income_field = "net_income"
     depreciation_amortization_field = "depreciation_and_amortization"
     deferred_income_tax_field = "deferred_income_tax"

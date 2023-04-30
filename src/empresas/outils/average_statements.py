@@ -45,39 +45,6 @@ class AverageStatements:
     def __init__(self, company) -> None:
         self.company = company
 
-    def find_correct_currency(self, reunited_data: dict) -> Dict[str, Any]:
-        currency = reunited_data.pop("reported_currency_id", None)
-        if currency:
-            counter = Counter(currency)
-            currency, repetitions = counter.most_common(1)[0]
-        return {"reported_currency_id": currency}
-
-    def calculate_averages(self, reunited_data: Dict) -> Dict[str, Any]:
-        for key in reunited_data.keys():
-            reunited_data[key] = mean(reunited_data[key])
-        return reunited_data
-
-    def prepare_data(self, statements: List) -> Optional[Dict[str, Any]]:
-        reunited_data: Dict = {}
-        for statement in statements:
-            if statement:
-                for key, value in statement.return_standard.items():
-                    if value:
-                        # value = abs(value)
-                        if key in reunited_data:
-                            reunited_data[key].append(value)
-                        else:
-                            reunited_data[key] = [value]
-        return reunited_data
-
-    def return_averaged_data(self, period, statements: List[Type]) -> Optional[Dict[str, Any]]:
-        if reunited_data := self.prepare_data(statements):
-            currency = self.find_correct_currency(reunited_data)
-            reunited_data = self.calculate_averages(reunited_data)
-            reunited_data.update({"date": period.year, "period_id": period.id, **currency})
-            return reunited_data
-        return None
-
     def calculate_average_income_statement(self, period) -> Optional[Dict[str, Any]]:
         return self.return_averaged_data(
             period,
@@ -107,3 +74,38 @@ class AverageStatements:
                 self.company.cashflowstatementyahooquery_set.filter(period=period).first(),
             ],
         )
+
+    def return_averaged_data(self, period, statements: List[Type]) -> Optional[Dict[str, Any]]:
+        if reunited_data := self.prepare_data(statements):
+            currency = self.find_correct_currency(reunited_data)
+            reunited_data = self.calculate_averages(reunited_data)
+            reunited_data.update({"date": period.year, "period_id": period.id, **currency})
+            return reunited_data
+        return None
+
+    def find_correct_currency(self, reunited_data: dict) -> Dict[str, Any]:
+        currency = reunited_data.pop("reported_currency_id", None)
+        if currency:
+            counter = Counter(currency)
+            currency, repetitions = counter.most_common(1)[0]
+        return {"reported_currency_id": currency}
+
+    def calculate_averages(self, reunited_data: Dict) -> Dict[str, Any]:
+        for key in reunited_data.keys():
+            reunited_data[key] = mean(reunited_data[key])
+        return reunited_data
+
+    def prepare_data(self, statements: List) -> Optional[Dict[str, Any]]:
+        reunited_data: Dict = {}
+        for statement in statements:
+            if statement:
+                for key, value in statement.return_standard().items():
+                    if value:
+                        # value = abs(value)
+                        if key in reunited_data:
+                            reunited_data[key].append(value)
+                        else:
+                            reunited_data[key] = [value]
+        return reunited_data
+
+

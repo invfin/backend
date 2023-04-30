@@ -1,7 +1,7 @@
-from .base_averages import AverageBalanceSheet, AverageCashflowStatement, AverageIncomeStatement
+from .base_normalize import NormalizeBalanceSheet, NormalizeCashflowStatement, NormalizeIncomeStatement
 
 
-class IncomeStatementFinprepExtended(AverageIncomeStatement):
+class IncomeStatementFinprepExtended(NormalizeIncomeStatement):
     rd_expenses_field = "research_and_development_expenses"
     general_administrative_expenses_field = "general_and_administrative_expenses"
     selling_marketing_expenses_field = "selling_and_marketing_expenses"
@@ -13,13 +13,13 @@ class IncomeStatementFinprepExtended(AverageIncomeStatement):
     income_tax_expenses_field = "income_tax_expense"
 
 
-class BalanceSheetFinprepExtended(AverageBalanceSheet):
+class BalanceSheetFinprepExtended(NormalizeBalanceSheet):
     property_plant_equipment_field = "property_plant_equipment_net"
     common_stocks_field = "common_stock"
     accounts_payable_field = "account_payables"
 
 
-class CashflowStatementFinprepExtended(AverageCashflowStatement):
+class CashflowStatementFinprepExtended(NormalizeCashflowStatement):
     depreciation_amortization_field = "depreciation_and_amortization"
     stock_based_compensation_field = "stock_based_compensation"
     accounts_payable_field = "accounts_payables"

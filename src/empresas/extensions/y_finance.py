@@ -1,7 +1,7 @@
-from .base_averages import AverageBalanceSheet, AverageCashflowStatement, AverageIncomeStatement
+from .base_normalize import NormalizeBalanceSheet, NormalizeCashflowStatement, NormalizeIncomeStatement
 
 
-class IncomeStatementYFinanceExtended(AverageIncomeStatement):
+class IncomeStatementYFinanceExtended(NormalizeIncomeStatement):
     revenue_field = "total_revenue"
     cost_of_revenue_field = "cost_of_revenue"
     gross_profit_field = "gross_profit"
@@ -24,7 +24,7 @@ class IncomeStatementYFinanceExtended(AverageIncomeStatement):
     weighted_average_diluated_shares_outstanding_field = ""
 
 
-class BalanceSheetYFinanceExtended(AverageBalanceSheet):
+class BalanceSheetYFinanceExtended(NormalizeBalanceSheet):
     cash_and_cash_equivalents_field = "cash"
     short_term_investments_field = "short_term_investments"
     cash_and_short_term_investments_field = ""
@@ -66,7 +66,7 @@ class BalanceSheetYFinanceExtended(AverageBalanceSheet):
     net_debt_field = ""
 
 
-class CashflowStatementYFinanceExtended(AverageCashflowStatement):
+class CashflowStatementYFinanceExtended(NormalizeCashflowStatement):
     net_income_field = "net_income"
     depreciation_amortization_field = "depreciation"
     deferred_income_tax_field = ""

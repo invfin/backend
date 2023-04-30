@@ -26,17 +26,17 @@ class UpdateCompany(CalculateFinancialRatios, AverageStatements):
                 IncomeStatement.objects.filter(
                     company=income_statement.company,
                     period=income_statement.period,
-                ).update(**income_statement.return_standard)
+                ).update(**income_statement.return_standard())
             for balance_sheet in balance_sheets:
                 BalanceSheet.objects.filter(
                     company=balance_sheet.company,
                     period=balance_sheet.period,
-                ).update(**balance_sheet.return_standard)
+                ).update(**balance_sheet.return_standard())
             for cashflow_statement in cashflow_statements:
                 CashflowStatement.objects.filter(
                     company=cashflow_statement.company,
                     period=cashflow_statement.period,
-                ).update(**cashflow_statement.return_standard)
+                ).update(**cashflow_statement.return_standard())
             # TODO add calculate ratios method
         return None
 
@@ -48,7 +48,9 @@ class UpdateCompany(CalculateFinancialRatios, AverageStatements):
 
     @log_company()
     def add_description(self):
-        self.company.description = google_translator().translate(self.company.description, lang_src="en", lang_tgt="es")
+        self.company.description = google_translator().translate(
+            self.company.description, lang_src="en", lang_tgt="es"
+        )
         self.company.description_translated = True
         self.company.save(update_fields=["description_translated", "description"])
 
@@ -61,7 +63,9 @@ class UpdateCompany(CalculateFinancialRatios, AverageStatements):
     @log_company()
     def check_last_filing(self):
         least_recent_date = self.yq_company.balance_sheet()
-        least_recent_date = least_recent_date["asOfDate"].max().value // 10**9  # normalize time
+        least_recent_date = (
+            least_recent_date["asOfDate"].max().value // 10**9
+        )  # normalize time
         least_recent_year = datetime.fromtimestamp(least_recent_date).year
         if least_recent_year != self.company.most_recent_year:
             return "need update"
@@ -91,11 +95,21 @@ class UpdateCompany(CalculateFinancialRatios, AverageStatements):
             self.company.balance_sheets,
             self.company.cf_statements,
         ]:
-            last_statements = statement_manager.filter(~Q(period__period=PERIOD_FOR_YEAR), is_ttm=False)[:4]
+            last_statements = statement_manager.filter(
+                ~Q(period__period=PERIOD_FOR_YEAR), is_ttm=False
+            )[:4]
             ttm_dict = {}
             for statement in last_statements:
                 st_dict = statement.__dict__
-                for field in ["_state", "id", "period_id", "year", "company_id", "is_ttm", "reported_currency_id"]:
+                for field in [
+                    "_state",
+                    "id",
+                    "period_id",
+                    "year",
+                    "company_id",
+                    "is_ttm",
+                    "reported_currency_id",
+                ]:
                     st_dict.pop(field)
                 date = st_dict.pop("date")
                 if "date" not in ttm_dict:
@@ -115,16 +129,24 @@ class UpdateCompany(CalculateFinancialRatios, AverageStatements):
 
     @log_company()
     def create_or_update_all_ratios(self, all_ratios: dict, period=None) -> None:
-        self.create_or_update_current_stock_price(price=all_ratios["current_price"], period=period)
-        self.create_or_update_rentability_ratios(all_ratios["rentability_ratios"], period=period)
+        self.create_or_update_current_stock_price(
+            price=all_ratios["current_price"], period=period
+        )
+        self.create_or_update_rentability_ratios(
+            all_ratios["rentability_ratios"], period=period
+        )
         self.create_or_update_liquidity_ratio(all_ratios["liquidity_ratio"], period=period)
         self.create_or_update_margin_ratio(all_ratios["margin_ratio"], period=period)
         self.create_or_update_fcf_ratio(all_ratios["fcf_ratio"], period=period)
         self.create_or_update_ps_value(all_ratios["ps_value"], period=period)
         self.create_or_update_non_gaap(all_ratios["non_gaap"], period=period)
-        self.create_or_update_operation_risk_ratio(all_ratios["operation_risk_ratio"], period=period)
+        self.create_or_update_operation_risk_ratio(
+            all_ratios["operation_risk_ratio"], period=period
+        )
         self.create_or_update_price_to_ratio(all_ratios["price_to_ratio"], period=period)
-        self.create_or_update_enterprise_value_ratio(all_ratios["enterprise_value_ratio"], period=period)
+        self.create_or_update_enterprise_value_ratio(
+            all_ratios["enterprise_value_ratio"], period=period
+        )
         self.create_or_update_efficiency_ratio(all_ratios["efficiency_ratio"], period=period)
         self.create_or_update_company_growth(all_ratios["company_growth"], period=period)
         return None
@@ -180,7 +202,9 @@ class UpdateCompany(CalculateFinancialRatios, AverageStatements):
 
     @log_company()
     def create_or_update_operation_risk_ratio(self, data: dict, period=None) -> type:
-        return self.create_or_update_statement(data, self.company.operation_risks_ratios, period)
+        return self.create_or_update_statement(
+            data, self.company.operation_risks_ratios, period
+        )
 
     @log_company()
     def create_or_update_enterprise_value_ratio(self, data: dict, period=None) -> type:
