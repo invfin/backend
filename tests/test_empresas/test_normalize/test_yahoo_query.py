@@ -10,7 +10,7 @@ from src.empresas.models import (
 from .mixin import NormalizeStatementMixin
 
 
-class TestAverageStatementsYahooQuery(NormalizeStatementMixin, TestCase):
+class TestNormalizeStatementsYahooQuery(NormalizeStatementMixin, TestCase):
     income_statement: IncomeStatementYahooQuery
     balance_sheet: BalanceSheetYahooQuery
     cashflow_statement: CashflowStatementYahooQuery

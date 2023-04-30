@@ -1,4 +1,12 @@
-from django.db.models import SET_NULL, BooleanField, DateField, FloatField, ForeignKey, IntegerField, Model
+from django.db.models import (
+    SET_NULL,
+    BooleanField,
+    DateField,
+    FloatField,
+    ForeignKey,
+    IntegerField,
+    Model,
+)
 
 from src.empresas.managers import BaseStatementManager
 from src.empresas.models import Company
@@ -12,7 +20,9 @@ class BaseStatement(Model, BaseToAllMixin):
     year = DateField(null=True, blank=True)
     company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True)
     period = ForeignKey(Period, on_delete=SET_NULL, null=True, blank=True)
-    reported_currency = ForeignKey("currencies.Currency", on_delete=SET_NULL, null=True, blank=True)
+    reported_currency = ForeignKey(
+        "currencies.Currency", on_delete=SET_NULL, null=True, blank=True
+    )
     objects = BaseStatementManager.from_queryset(BaseStatementQuerySet)()  # type: ignore
 
     class Meta:
@@ -155,7 +165,9 @@ class CashflowStatement(BaseFinalStatement):
     net_income = FloatField(default=0, blank=True, null=True)
     depreciation_amortization = FloatField(default=0, blank=True, null=True)
     deferred_income_tax = FloatField(default=0, blank=True, null=True)
-    stock_based_compensation = FloatField(default=0, blank=True, null=True)  # stock_based_compensation
+    stock_based_compensation = FloatField(
+        default=0, blank=True, null=True
+    )  # stock_based_compensation
     change_in_working_capital = FloatField(default=0, blank=True, null=True)
     accounts_receivable = FloatField(default=0, blank=True, null=True)
     inventory = FloatField(default=0, blank=True, null=True)
@@ -194,7 +206,13 @@ class CashflowStatement(BaseFinalStatement):
 
 
 class RentabilityRatio(BaseFinalStatement):
-    company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="rentability_ratios")
+    company = ForeignKey(
+        Company,
+        on_delete=SET_NULL,
+        null=True,
+        blank=True,
+        related_name="rentability_ratios",
+    )
     roa = FloatField(default=0, blank=True, null=True)
     roe = FloatField(default=0, blank=True, null=True)
     roc = FloatField(default=0, blank=True, null=True)
@@ -352,7 +370,9 @@ class OperationRiskRatio(BaseFinalStatement):
 
 
 class EnterpriseValueRatio(BaseFinalStatement):
-    company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="ev_ratios")
+    company = ForeignKey(
+        Company, on_delete=SET_NULL, null=True, blank=True, related_name="ev_ratios"
+    )
     market_cap = FloatField(default=0, blank=True, null=True)
     enterprise_value = FloatField(default=0, blank=True, null=True)
     ev_fcf = FloatField(default=0, blank=True, null=True)
@@ -368,7 +388,9 @@ class EnterpriseValueRatio(BaseFinalStatement):
 
 
 class CompanyGrowth(BaseFinalStatement):
-    company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="growth_rates")
+    company = ForeignKey(
+        Company, on_delete=SET_NULL, null=True, blank=True, related_name="growth_rates"
+    )
     revenue_growth = FloatField(default=0, blank=True, null=True)
     cost_revenue_growth = FloatField(default=0, blank=True, null=True)
     operating_expenses_growth = FloatField(default=0, blank=True, null=True)
@@ -387,7 +409,9 @@ class CompanyGrowth(BaseFinalStatement):
 
 
 class EficiencyRatio(BaseFinalStatement):
-    company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="efficiency_ratios")
+    company = ForeignKey(
+        Company, on_delete=SET_NULL, null=True, blank=True, related_name="efficiency_ratios"
+    )
     asset_turnover = FloatField(default=0, blank=True, null=True)
     inventory_turnover = FloatField(default=0, blank=True, null=True)
     fixed_asset_turnover = FloatField(default=0, blank=True, null=True)
@@ -407,7 +431,9 @@ class EficiencyRatio(BaseFinalStatement):
 
 
 class PriceToRatio(BaseFinalStatement):
-    company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="price_to_ratios")
+    company = ForeignKey(
+        Company, on_delete=SET_NULL, null=True, blank=True, related_name="price_to_ratios"
+    )
     price_book = FloatField(default=0, blank=True, null=True)
     price_cf = FloatField(default=0, blank=True, null=True)
     price_earnings = FloatField(default=0, blank=True, null=True)

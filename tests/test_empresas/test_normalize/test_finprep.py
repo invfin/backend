@@ -9,7 +9,7 @@ from src.empresas.models import (
 from .mixin import NormalizeStatementMixin
 
 
-class TestAverageStatementsFinprep(NormalizeStatementMixin, TestCase):
+class TestNormalizeStatementsFinprep(NormalizeStatementMixin, TestCase):
     income_statement: IncomeStatementFinprep
     balance_sheet: BalanceSheetFinprep
     cashflow_statement: CashflowStatementFinprep

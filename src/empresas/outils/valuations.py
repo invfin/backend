@@ -5,16 +5,16 @@ from src.empresas.outils.financial_ratios.utils import divide_or_zero, modify_fo
 
 
 def discounted_cashflow(
-    last_revenue,
-    revenue_growth,
-    net_income_margin,
-    fcf_margin,
-    buyback,
-    average_shares_out,
+    last_revenue: Union[int, float],
+    revenue_growth: Union[int, float],
+    net_income_margin: Union[int, float],
+    fcf_margin: Union[int, float],
+    buyback: Union[int, float],
+    average_shares_out: Union[int, float],
     required_return=0.075,
     perpetual_growth=0.025,
-):
-    today_value = 0
+) -> Union[int, float]:
+    today_value = fcf_expected = discount_factor = 0.0
     revenue_expected = last_revenue
     shares_outs = average_shares_out
     for i in range(1, 6):
@@ -28,25 +28,24 @@ def discounted_cashflow(
 
         shares_outs = shares_outs * (1 - (buyback / 100))
 
-        pv_future_cf = fcf_expected / discount_factor
+        pv_future_cf = divide_or_zero(fcf_expected, discount_factor)
 
         today_value += pv_future_cf
 
-    terminal_value = (fcf_expected * (1 + perpetual_growth)) / (required_return - perpetual_growth)
-    pv_future_cf_tv = terminal_value / discount_factor
+    terminal_value = divide_or_zero(
+        (fcf_expected * (1 + perpetual_growth)),
+        (required_return - perpetual_growth),
+    )
+    pv_future_cf_tv = divide_or_zero(terminal_value, discount_factor)
     today_value += pv_future_cf_tv
-    fair_value = today_value / shares_outs if shares_outs != 0 else 0
-
-    return round(fair_value.real, 2)
+    return round(divide_or_zero(today_value, shares_outs).real, 2)
 
 
 def graham_value(
     current_eps: Union[int, float],
     book_per_share: Union[int, float],
 ) -> Union[int, float]:
-    current_eps = max(current_eps, 0)
-    book_per_share = max(book_per_share, 0)
-    return round(math.sqrt(22.5 * current_eps * book_per_share), 2)
+    return round(math.sqrt(22.5 * max(current_eps, 0) * max(book_per_share, 0)), 2)
 
 
 def margin_of_safety(

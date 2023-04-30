@@ -1,19 +1,14 @@
-from django.test import TestCase
+from unittest.mock import patch
+from collections import defaultdict
 
-from bfet import DataCreator, DjangoTestingModel
+from django.test import TestCase
+from bfet import DjangoTestingModel
 
 from src.currencies.models import Currency
 from src.empresas.models import (
-    BalanceSheetFinprep,
-    BalanceSheetYahooQuery,
-    BalanceSheetYFinance,
-    CashflowStatementFinprep,
-    CashflowStatementYahooQuery,
-    CashflowStatementYFinance,
     Company,
     IncomeStatementFinprep,
     IncomeStatementYahooQuery,
-    IncomeStatementYFinance,
 )
 from src.empresas.outils.average_statements import AverageStatements
 from src.periods.constants import PERIOD_FOR_YEAR
@@ -26,13 +21,14 @@ class TestAverageStatements(TestCase):
         cls.company = DjangoTestingModel.create(Company)
         cls.period = DjangoTestingModel.create(Period, year=2021, period=PERIOD_FOR_YEAR)
         cls.currency = DjangoTestingModel.create(Currency)
-        cls.revenue = DataCreator.create_random_float()
-        cls.cost_of_revenue = DataCreator.create_random_float()
-        cls.gross_profit = DataCreator.create_random_float()
-        cls.research_and_development_expenses = DataCreator.create_random_float()
-        cls.selling_general_and_administrative_expenses = DataCreator.create_random_float()
+        cls.revenue = 13929.27
+        cls.cost_of_revenue = 9046.54
+        cls.gross_profit = 586.94
+        cls.research_and_development_expenses = 153.4
+        cls.selling_general_and_administrative_expenses = 1539.07
         cls.inc_st_finprep = DjangoTestingModel.create(
             IncomeStatementFinprep,
+            fill_all_fields=False,
             reported_currency=cls.currency,
             company=cls.company,
             period=cls.period,
@@ -44,6 +40,7 @@ class TestAverageStatements(TestCase):
         )
         cls.inc_st_yahooquery = DjangoTestingModel.create(
             IncomeStatementYahooQuery,
+            fill_all_fields=False,
             reported_currency=cls.currency,
             company=cls.company,
             period=cls.period,
@@ -53,151 +50,11 @@ class TestAverageStatements(TestCase):
             research_and_development=cls.research_and_development_expenses,
             selling_general_and_administration=cls.selling_general_and_administrative_expenses,
         )
-        cls.inc_st_yfinance = DjangoTestingModel.create(
-            IncomeStatementYFinance,
-            reported_currency=cls.currency,
-            company=cls.company,
-            period=cls.period,
-            total_revenue=cls.revenue,
-            cost_of_revenue=cls.cost_of_revenue,
-            gross_profit=cls.gross_profit,
-            research_development=cls.research_and_development_expenses,
-            selling_general_administrative=cls.selling_general_and_administrative_expenses,
-        )
-        cls.bs_finprep = DjangoTestingModel.create(BalanceSheetFinprep, company=cls.company, period=cls.period)
-        cls.bs_yahooquery = DjangoTestingModel.create(BalanceSheetYahooQuery, company=cls.company, period=cls.period)
-        cls.bs_yfinance = DjangoTestingModel.create(BalanceSheetYFinance, company=cls.company, period=cls.period)
-        cls.cf_st_finprep = DjangoTestingModel.create(CashflowStatementFinprep, company=cls.company, period=cls.period)
-        cls.cf_st_yahooquery = DjangoTestingModel.create(
-            CashflowStatementYahooQuery, company=cls.company, period=cls.period
-        )
-        cls.cf_st_yfinance = DjangoTestingModel.create(
-            CashflowStatementYFinance, company=cls.company, period=cls.period
-        )
-
-    def test_find_correct_currency(self):
-        pass
-
-    def test_return_standard_keys(self):
-        inc_st_finprep_keys = self.inc_st_finprep.return_standard().keys()
-        inc_st_yahooquery_keys = self.inc_st_yahooquery.return_standard().keys()
-        inc_st_yfinance_keys = self.inc_st_yfinance.return_standard().keys()
-        bs_finprep_keys = self.bs_finprep.return_standard().keys()
-        bs_yahooquery_keys = self.bs_yahooquery.return_standard().keys()
-        bs_yfinance_keys = self.bs_yfinance.return_standard().keys()
-        cf_st_finprep_keys = self.cf_st_finprep.return_standard().keys()
-        cf_st_yahooquery_keys = self.cf_st_yahooquery.return_standard().keys()
-        cf_st_yfinance_keys = self.cf_st_yfinance.return_standard().keys()
-        assert inc_st_finprep_keys == inc_st_yahooquery_keys
-        assert inc_st_finprep_keys == inc_st_yfinance_keys
-        assert inc_st_yahooquery_keys == inc_st_yfinance_keys
-        assert bs_finprep_keys == bs_yahooquery_keys
-        assert bs_finprep_keys == bs_yfinance_keys
-        assert bs_yahooquery_keys == bs_yfinance_keys
-        assert cf_st_finprep_keys == cf_st_yahooquery_keys
-        assert cf_st_finprep_keys == cf_st_yfinance_keys
-        assert cf_st_yfinance_keys == cf_st_yahooquery_keys
-
-    def test_return_standard_income_statement_keys(self):
-        inc_st_finprep_keys = self.inc_st_finprep.return_standard().keys()
-        assert ("revenue" in inc_st_finprep_keys)
-        assert ("cost_of_revenue" in inc_st_finprep_keys)
-        assert ("gross_profit" in inc_st_finprep_keys)
-        assert ("rd_expenses" in inc_st_finprep_keys)
-        assert ("general_administrative_expenses" in inc_st_finprep_keys)
-        assert ("selling_marketing_expenses" in inc_st_finprep_keys)
-        assert ("sga_expenses" in inc_st_finprep_keys)
-        assert ("other_expenses" in inc_st_finprep_keys)
-        assert ("operating_expenses" in inc_st_finprep_keys)
-        assert ("cost_and_expenses" in inc_st_finprep_keys)
-        assert ("interest_expense" in inc_st_finprep_keys)
-        assert ("depreciation_amortization" in inc_st_finprep_keys)
-        assert ("ebitda" in inc_st_finprep_keys)
-        assert ("operating_income" in inc_st_finprep_keys)
-        assert ("net_total_other_income_expenses" in inc_st_finprep_keys)
-        assert ("income_before_tax" in inc_st_finprep_keys)
-        assert ("income_tax_expenses" in inc_st_finprep_keys)
-        assert ("net_income" in inc_st_finprep_keys)
-        assert ("weighted_average_shares_outstanding" in inc_st_finprep_keys)
-        assert ("weighted_average_diluated_shares_outstanding" in inc_st_finprep_keys)
-
-    def test_return_standard_balance_sheet_keys(self):
-        bs_finprep_keys = self.bs_finprep.return_standard().keys()
-        assert ("cash_and_cash_equivalents" in bs_finprep_keys)
-        assert ("short_term_investments" in bs_finprep_keys)
-        assert ("cash_and_short_term_investments" in bs_finprep_keys)
-        assert ("net_receivables" in bs_finprep_keys)
-        assert ("inventory" in bs_finprep_keys)
-        assert ("other_current_assets" in bs_finprep_keys)
-        assert ("total_current_assets" in bs_finprep_keys)
-        assert ("property_plant_equipment" in bs_finprep_keys)
-        assert ("goodwill" in bs_finprep_keys)
-        assert ("intangible_assets" in bs_finprep_keys)
-        assert ("goodwill_and_intangible_assets" in bs_finprep_keys)
-        assert ("long_term_investments" in bs_finprep_keys)
-        assert ("tax_assets" in bs_finprep_keys)
-        assert ("other_non_current_assets" in bs_finprep_keys)
-        assert ("total_non_current_assets" in bs_finprep_keys)
-        assert ("other_assets" in bs_finprep_keys)
-        assert ("total_assets" in bs_finprep_keys)
-        assert ("accounts_payable" in bs_finprep_keys)
-        assert ("short_term_debt" in bs_finprep_keys)
-        assert ("tax_payables" in bs_finprep_keys)
-        assert ("deferred_revenue" in bs_finprep_keys)
-        assert ("other_current_liabilities" in bs_finprep_keys)
-        assert ("total_current_liabilities" in bs_finprep_keys)
-        assert ("long_term_debt" in bs_finprep_keys)
-        assert ("deferred_revenue_non_current" in bs_finprep_keys)
-        assert ("deferred_tax_liabilities_non_current" in bs_finprep_keys)
-        assert ("other_non_current_liabilities" in bs_finprep_keys)
-        assert ("total_non_current_liabilities" in bs_finprep_keys)
-        assert ("other_liabilities" in bs_finprep_keys)
-        assert ("total_liabilities" in bs_finprep_keys)
-        assert ("common_stocks" in bs_finprep_keys)
-        assert ("retained_earnings" in bs_finprep_keys)
-        assert ("accumulated_other_comprehensive_income_loss" in bs_finprep_keys)
-        assert ("othertotal_stockholders_equity" in bs_finprep_keys)
-        assert ("total_stockholders_equity" in bs_finprep_keys)
-        assert ("total_liabilities_and_total_equity" in bs_finprep_keys)
-        assert ("total_investments" in bs_finprep_keys)
-        assert ("total_debt" in bs_finprep_keys)
-        assert ("net_debt" in bs_finprep_keys)
-
-    def test_return_standard_cashflow_statement_keys(self):
-        cf_st_finprep_keys = self.cf_st_finprep.return_standard().keys()
-        assert ("net_income" in cf_st_finprep_keys)
-        assert ("depreciation_amortization" in cf_st_finprep_keys)
-        assert ("deferred_income_tax" in cf_st_finprep_keys)
-        assert ("stock_based_compensation" in cf_st_finprep_keys)
-        assert ("change_in_working_capital" in cf_st_finprep_keys)
-        assert ("accounts_receivable" in cf_st_finprep_keys)
-        assert ("inventory" in cf_st_finprep_keys)
-        assert ("accounts_payable" in cf_st_finprep_keys)
-        assert ("other_working_capital" in cf_st_finprep_keys)
-        assert ("other_non_cash_items" in cf_st_finprep_keys)
-        assert ("operating_activities_cf" in cf_st_finprep_keys)
-        assert ("investments_property_plant_equipment" in cf_st_finprep_keys)
-        assert ("acquisitions_net" in cf_st_finprep_keys)
-        assert ("purchases_investments" in cf_st_finprep_keys)
-        assert ("sales_maturities_investments" in cf_st_finprep_keys)
-        assert ("other_investing_activites" in cf_st_finprep_keys)
-        assert ("investing_activities_cf" in cf_st_finprep_keys)
-        assert ("debt_repayment" in cf_st_finprep_keys)
-        assert ("common_stock_issued" in cf_st_finprep_keys)
-        assert ("common_stock_repurchased" in cf_st_finprep_keys)
-        assert ("dividends_paid" in cf_st_finprep_keys)
-        assert ("other_financing_activities" in cf_st_finprep_keys)
-        assert ("financing_activities_cf" in cf_st_finprep_keys)
-        assert ("effect_forex_exchange" in cf_st_finprep_keys)
-        assert ("net_change_cash" in cf_st_finprep_keys)
-        assert ("cash_end_period" in cf_st_finprep_keys)
-        assert ("cash_beginning_period" in cf_st_finprep_keys)
-        assert ("operating_cf" in cf_st_finprep_keys)
-        assert ("capex" in cf_st_finprep_keys)
-        assert ("fcf" in cf_st_finprep_keys)
 
     def test_calculate_average_income_statement(self):
-        average = AverageStatements(self.company).calculate_average_income_statement(self.period)
+        average = AverageStatements(self.company).calculate_average_income_statement(
+            self.period
+        )
         assert type(average) == dict
         assert self.revenue == average["revenue"]
         assert self.cost_of_revenue == average["cost_of_revenue"]
@@ -207,3 +64,112 @@ class TestAverageStatements(TestCase):
         assert self.period.id == average["period_id"]
         assert self.period.year == average["date"]
         assert self.currency.id == average["reported_currency_id"]
+
+    def test_return_averaged_data(self):
+        statements = [
+            self.company.incomestatementfinprep_set.filter(period=self.period).first(),
+            self.company.incomestatementyfinance_set.filter(period=self.period).first(),
+            self.company.incomestatementyahooquery_set.filter(period=self.period).first(),
+        ]
+        self.assertEqual(
+            AverageStatements.return_averaged_data(self.period, statements),
+            {'cost_of_revenue': 9046.54,
+             'date': 2021,
+             'gross_profit': 586.94,
+             'period_id': 1,
+             'rd_expenses': 153.4,
+             'reported_currency_id': 1,
+             'revenue': 13929.27,
+             'sga_expenses': 1539.07},
+        )
+
+    @patch("src.empresas.outils.average_statements.AverageStatements.prepare_data")
+    @patch("src.empresas.outils.average_statements.AverageStatements.find_correct_currency")
+    @patch("src.empresas.outils.average_statements.AverageStatements.calculate_averages")
+    def test_return_averaged_data_patched(
+        self,
+        mock_calculate_averages,
+        mock_find_correct_currency,
+        mock_prepare_data,
+    ):
+        mock_prepare_data.return_value = {"net_income": 5}
+        mock_find_correct_currency.return_value = {"reported_currency_id": 5}
+        mock_calculate_averages.return_value = {"gross_profit": 5, "net_income": 5}
+        self.assertEqual(
+            AverageStatements.return_averaged_data(self.period, []),
+            {
+                "date": self.period.year,
+                "period_id": self.period.id,
+                "reported_currency_id": 5,
+                "net_income": 5,
+                "gross_profit": 5,
+            },
+        )
+        mock_prepare_data.assert_called_once_with([])
+        mock_find_correct_currency.assert_called_once_with({"net_income": 5})
+        mock_calculate_averages.assert_called_once_with({"net_income": 5})
+
+    @patch("src.empresas.outils.average_statements.AverageStatements.prepare_data")
+    @patch("src.empresas.outils.average_statements.AverageStatements.find_correct_currency")
+    @patch("src.empresas.outils.average_statements.AverageStatements.calculate_averages")
+    def test_return_averaged_data_empty(
+        self,
+        mock_calculate_averages,
+        mock_find_correct_currency,
+        mock_prepare_data,
+    ):
+        mock_prepare_data.return_value = defaultdict(list)
+        self.assertIsNone(AverageStatements.return_averaged_data(self.period, []))
+        mock_prepare_data.assert_called_once_with([])
+        mock_find_correct_currency.assert_not_called()
+        mock_calculate_averages.assert_not_called()
+
+    def test_prepare_data(self):
+        result = AverageStatements.prepare_data(
+            [
+                self.company.incomestatementfinprep_set.filter(period=self.period).first(),
+                self.company.incomestatementyfinance_set.filter(period=self.period).first(),
+                self.company.incomestatementyahooquery_set.filter(period=self.period).first(),
+            ]
+        )
+        expected = defaultdict(
+            list,
+            revenue=[self.revenue, self.revenue],
+            cost_of_revenue=[self.cost_of_revenue, self.cost_of_revenue],
+            gross_profit=[self.gross_profit, self.gross_profit],
+            rd_expenses=[
+                self.research_and_development_expenses,
+                self.research_and_development_expenses,
+            ],
+            sga_expenses=[
+                self.selling_general_and_administrative_expenses,
+                self.selling_general_and_administrative_expenses,
+            ],
+            reported_currency_id=[self.currency.id, self.currency.id],
+        )
+        self.assertEqual(result, expected)
+
+    def test_prepare_data_empty(self):
+        self.assertEqual(AverageStatements.prepare_data([]), {})
+
+    def test_find_correct_currency(self):
+        result = AverageStatements.find_correct_currency(
+            defaultdict(reported_currency_id=[1, 3, 5, 1], hey=[1, 2]),
+        )
+        self.assertEqual(
+            result,
+            {"reported_currency_id": 1},
+        )
+
+    def test_find_correct_currency_empty(self):
+        self.assertEqual(
+            AverageStatements.find_correct_currency(defaultdict(hey=[1, 2])),
+            {"reported_currency_id": None},
+        )
+
+    def test_calculate_averages(self):
+        data = defaultdict(net_income=[5, 5, 6], cash=[6, 3, 4])
+        self.assertEqual(
+            AverageStatements.calculate_averages(data),
+            {"net_income": 5.33, "cash": 4.33},
+        )

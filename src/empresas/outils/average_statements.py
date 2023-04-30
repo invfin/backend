@@ -1,6 +1,6 @@
-from collections import Counter
-from statistics import mean
-from typing import Any, Dict, List, Optional, Type
+from collections import Counter, defaultdict
+from statistics import fmean
+from typing import Any, Dict, List, Optional, Type, Union
 
 
 class AverageStatements:
@@ -10,7 +10,7 @@ class AverageStatements:
     Attributes
     ----------
         company
-            The company to get the statements from. Set it when initializing the class.
+            The company to get the statements from.
 
     Methods
     -------
@@ -75,37 +75,35 @@ class AverageStatements:
             ],
         )
 
-    def return_averaged_data(self, period, statements: List[Type]) -> Optional[Dict[str, Any]]:
-        if reunited_data := self.prepare_data(statements):
-            currency = self.find_correct_currency(reunited_data)
-            reunited_data = self.calculate_averages(reunited_data)
-            reunited_data.update({"date": period.year, "period_id": period.id, **currency})
-            return reunited_data
+    @classmethod
+    def return_averaged_data(cls, period, statements: List[Type]) -> Optional[Dict[str, Any]]:
+        if reunited_data := cls.prepare_data(statements):
+            currency = cls.find_correct_currency(reunited_data)
+            final_data = cls.calculate_averages(reunited_data)
+            final_data.update({"date": period.year, "period_id": period.id, **currency})
+            return final_data
         return None
 
-    def find_correct_currency(self, reunited_data: dict) -> Dict[str, Any]:
-        currency = reunited_data.pop("reported_currency_id", None)
-        if currency:
-            counter = Counter(currency)
-            currency, repetitions = counter.most_common(1)[0]
-        return {"reported_currency_id": currency}
-
-    def calculate_averages(self, reunited_data: Dict) -> Dict[str, Any]:
-        for key in reunited_data.keys():
-            reunited_data[key] = mean(reunited_data[key])
-        return reunited_data
-
-    def prepare_data(self, statements: List) -> Optional[Dict[str, Any]]:
-        reunited_data: Dict = {}
+    @staticmethod
+    def prepare_data(statements: List) -> Dict[str, List[Union[int, float]]]:
+        reunited_data = defaultdict(list)
         for statement in statements:
             if statement:
                 for key, value in statement.return_standard().items():
                     if value:
-                        # value = abs(value)
-                        if key in reunited_data:
-                            reunited_data[key].append(value)
-                        else:
-                            reunited_data[key] = [value]
+                        reunited_data[key].append(value)
         return reunited_data
 
+    @staticmethod
+    def find_correct_currency(
+        reunited_data: Dict[str, List[Union[int, float]]]
+    ) -> Dict[str, Optional[Union[int, float]]]:
+        if currency := reunited_data.pop("reported_currency_id", None):
+            currency, repetitions = Counter(currency).most_common(1)[0]  # type: ignore
+        return {"reported_currency_id": currency}  # type: ignore
 
+    @staticmethod
+    def calculate_averages(
+        reunited_data: Dict[str, List[Union[int, float]]]
+    ) -> Dict[str, Union[int, float]]:
+        return {key: round(fmean(value), 2) for key, value in reunited_data.items()}

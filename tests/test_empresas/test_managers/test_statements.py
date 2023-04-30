@@ -7,16 +7,36 @@ from src.empresas.outils.financial_ratios import CalculateFinancialRatios
 from src.empresas.outils.update import UpdateCompany
 from src.periods.constants import PERIOD_1_QUARTER, PERIOD_FOR_YEAR
 from src.periods.models import Period
-from tests.data.empresas import balance_sheets_final_statment, cashflow_final_statment, income_final_statment
+from tests.data.empresas import (
+    balance_sheets_final_statment,
+    cashflow_final_statment,
+    income_final_statment,
+)
 
 
 class TestBaseStatementQuerySet(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.current_period = DjangoTestingModel.create(Period, year=2021, period=PERIOD_FOR_YEAR)
-        cls.previous_period = DjangoTestingModel.create(Period, year=2020, period=PERIOD_FOR_YEAR)
-        cls.current_quarter_period = DjangoTestingModel.create(Period, year=2021, period=PERIOD_1_QUARTER)
-        cls.previous_quarter_period = DjangoTestingModel.create(Period, year=2020, period=PERIOD_1_QUARTER)
+        cls.current_period = DjangoTestingModel.create(
+            Period,
+            year=2021,
+            period=PERIOD_FOR_YEAR,
+        )
+        cls.previous_period = DjangoTestingModel.create(
+            Period,
+            year=2020,
+            period=PERIOD_FOR_YEAR,
+        )
+        cls.current_quarter_period = DjangoTestingModel.create(
+            Period,
+            year=2021,
+            period=PERIOD_1_QUARTER,
+        )
+        cls.previous_quarter_period = DjangoTestingModel.create(
+            Period,
+            year=2020,
+            period=PERIOD_1_QUARTER,
+        )
         cls.company = DjangoTestingModel.create(Company)
         cls.current_income = DjangoTestingModel.create(
             IncomeStatement,
@@ -65,8 +85,12 @@ class TestBaseStatementQuerySet(TestCase):
 class TestStatementQuerySet(TestCase):
     @classmethod
     def setUpTestData(cls):
-        cls.current_period = DjangoTestingModel.create(Period, year=2021, period=PERIOD_FOR_YEAR)
-        cls.previous_period = DjangoTestingModel.create(Period, year=2020, period=PERIOD_FOR_YEAR)
+        cls.current_period = DjangoTestingModel.create(
+            Period, year=2021, period=PERIOD_FOR_YEAR
+        )
+        cls.previous_period = DjangoTestingModel.create(
+            Period, year=2020, period=PERIOD_FOR_YEAR
+        )
         cls.company = DjangoTestingModel.create(Company)
         cls.current_income = DjangoTestingModel.create(
             IncomeStatement,
