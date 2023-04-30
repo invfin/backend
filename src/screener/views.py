@@ -30,8 +30,8 @@ class ScreenerInicioView(SEOListView):
     context_object_name = "organisations"
     template_name = "screener_inicio.html"
     meta_description = (
-        "Estudia todos loas activos que quieras para ser el mejor inversor. Ten acceso a más de 30000 empresas y 30"
-        " años de información."
+        "Estudia todos loas activos que quieras para ser el mejor inversor. Ten acceso a más"
+        " de 30000 empresas y 30 años de información."
     )
     meta_tags = "empresas, inversiones, analisis de empresas, invertir"
     meta_title = "Más de 30 años de información financiera de cualquier activo"
@@ -49,8 +49,8 @@ class CompanyScreenerInicioView(SEOListView):
     paginate_by = 50
     slug_url_kwarg = "slug"
     meta_description = (
-        "Estudia todas las empresas que quieras para ser el mejor inversor. Ten acceso a más de 30000 empresas y 30"
-        " años de información."
+        "Estudia todas las empresas que quieras para ser el mejor inversor. Ten acceso a más"
+        " de 30000 empresas y 30 años de información."
     )
     meta_tags = "empresas, inversiones, analisis de empresas, invertir"
 
@@ -60,7 +60,9 @@ class CompanyScreenerInicioView(SEOListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         name = self.kwargs["slug"]
-        context["meta_title"] = f"Más de 30 años de información financiera de cualquier empresa de {name}"
+        context["meta_title"] = (
+            f"Más de 30 años de información financiera de cualquier empresa de {name}"
+        )
         context["meta_url"] = f"/empresas-de/{name}/"
         return context
 
@@ -100,7 +102,10 @@ class CompanyDetailsView(SEODetailView):
             self.object = response
             return response
         except Company.DoesNotExist:
-            response, created = Company.objects.get_or_create(name="Need-parsing", ticker=ticker)
+            response, created = Company.objects.get_or_create(
+                name="Need-parsing",
+                ticker=ticker,
+            )
             return None
         except Exception:
             """
@@ -109,7 +114,7 @@ class CompanyDetailsView(SEODetailView):
             """
             return None
 
-    def save_company_in_session(self, empresa):
+    def save_company_in_session(self, empresa: Company):
         if "companies_visited" not in self.request.session:
             companies_visited = self.request.session["companies_visited"] = []
         else:
@@ -130,7 +135,7 @@ class CompanyDetailsView(SEODetailView):
             companies_visited.pop(0)
         self.request.session.modified = True
 
-    def check_company_for_updates(self, empresa) -> None:
+    def check_company_for_updates(self, empresa: Company) -> None:
         if all(
             [
                 settings.IS_PROD,
@@ -140,16 +145,19 @@ class CompanyDetailsView(SEODetailView):
         ):
             UpdateCompany(empresa).create_financials_finprep()
 
-    def get_meta_description(self, empresa) -> str:
+    def get_meta_description(self, empresa: Company) -> str:
         return (
-            f"Estudia a fondo la empresa {empresa.name}. Más de 30 años de información, noticias, análisis FODA y"
-            " mucho más"
+            f"Estudia a fondo la empresa {empresa.name}. Más de 30 años de información,"
+            " noticias, análisis FODA y mucho más"
         )
 
     def get_meta_tags(self) -> str:
-        return f"finanzas, blog financiero, blog el financiera, invertir, {self.object.name}, {self.object.ticker}"
+        return (
+            f"finanzas, blog financiero, blog el financiera, invertir, {self.object.name},"
+            f" {self.object.ticker}"
+        )
 
-    def get_meta_title(self, empresa) -> str:
+    def get_meta_title(self, empresa: Company) -> str:
         return f"Análisis completo de {empresa.name}"
 
     def check_user_company_relation(self, object: Company, context: Dict) -> Dict:
@@ -185,8 +193,8 @@ class CompanyDetailsView(SEODetailView):
             messages.error(
                 self.request,
                 (
-                    "Lo sentimos, esta empresa todavía no tiene información ahora mismo vamos a recabar información y"
-                    " estará lista en poco tiempo"
+                    "Lo sentimos, esta empresa todavía no tiene información ahora mismo vamos"
+                    " a recabar información y estará lista en poco tiempo"
                 ),
             )
             return redirect(reverse("screener:screener_inicio"))
@@ -199,12 +207,19 @@ class BuyCompanyInfo(RedirectView):
         company = Company.objects.get(id=self.request.GET["company_id"])
         user = request.user
         CreditUsageHistorial.objects.update_credits(
-            user, 10, users_constants.BOUGHT_COMPANY_INFO, users_constants.REDUCE, company
+            user,
+            10,
+            users_constants.BOUGHT_COMPANY_INFO,
+            users_constants.REDUCE,
+            company,
         )
         CompanyInformationBought.objects.create(user=user, company=company)
         messages.success(
             request,
-            f"Ahora que conoces toda la historia financiera de {company.name}, no olvides hacer un análisis FODA",
+            (
+                f"Ahora que conoces toda la historia financiera de {company.name}, no olvides"
+                " hacer un análisis FODA"
+            ),
         )
         return redirect(reverse("screener:company", kwargs={"ticker": company.ticker}))
 

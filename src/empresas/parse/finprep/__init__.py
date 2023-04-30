@@ -1,6 +1,10 @@
-from typing import Callable, Dict, List, Type, Union, Any
+from typing import Callable, Dict, List, Optional, Type, Union, Any
 
-from src.empresas.models import BalanceSheetFinprep, CashflowStatementFinprep, IncomeStatementFinprep
+from src.empresas.models import (
+    BalanceSheetFinprep,
+    CashflowStatementFinprep,
+    IncomeStatementFinprep,
+)
 from src.empresas.parse.finprep.normalize_data import NormalizeFinprep
 from src.empresas.parse.finprep.parse_data import ParseFinprep
 
@@ -30,27 +34,42 @@ class FinprepInfo(NormalizeFinprep, ParseFinprep):
             data_saved.append(obj)
         return data_saved
 
-    def create_income_statements_finprep(self, list_income_statements_finprep: List = None) -> List:
+    def create_income_statements_finprep(
+        self,
+        list_income_statements_finprep: Optional[List] = None,
+    ) -> List:
         if not list_income_statements_finprep:
-            list_income_statements_finprep = self.request_income_statements_finprep(self.company.ticker)
+            list_income_statements_finprep = self.request_income_statements_finprep(
+                self.company.ticker
+            )
         return self.create_statement_finprep(
             list_income_statements_finprep,
             IncomeStatementFinprep,
             self.normalize_income_statements_finprep,
         )
 
-    def create_balance_sheets_finprep(self, list_balance_sheets_finprep: List = None) -> List:
+    def create_balance_sheets_finprep(
+        self,
+        list_balance_sheets_finprep: Optional[List] = None,
+    ) -> List:
         if not list_balance_sheets_finprep:
-            list_balance_sheets_finprep = self.request_balance_sheets_finprep(self.company.ticker)
+            list_balance_sheets_finprep = self.request_balance_sheets_finprep(
+                self.company.ticker
+            )
         return self.create_statement_finprep(
             list_balance_sheets_finprep,
             BalanceSheetFinprep,
             self.normalize_balance_sheets_finprep,
         )
 
-    def create_cashflow_statements_finprep(self, list_cashflow_statements_finprep: List = None) -> List:
+    def create_cashflow_statements_finprep(
+        self,
+        list_cashflow_statements_finprep: Optional[List] = None,
+    ) -> List:
         if not list_cashflow_statements_finprep:
-            list_cashflow_statements_finprep = self.request_cashflow_statements_finprep(self.company.ticker)
+            list_cashflow_statements_finprep = self.request_cashflow_statements_finprep(
+                self.company.ticker
+            )
         return self.create_statement_finprep(
             list_cashflow_statements_finprep,
             CashflowStatementFinprep,

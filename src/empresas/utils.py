@@ -12,8 +12,6 @@ from src.empresas.models import Company, CompanyUpdateLog
 from src.periods import constants
 from src.periods.models import Period
 
-np.random
-
 
 class FinprepRequestCheck:
     # TODO see if convert that to a decorator to save some seconds
@@ -25,7 +23,9 @@ class FinprepRequestCheck:
     ) -> Tuple:
         now = timezone.now()
         my_tmz = timezone.get_default_timezone()
-        if (now - datetime.fromtimestamp(last_request_time_timestamp, tz=my_tmz)).total_seconds() > 86400:
+        if (
+            now - datetime.fromtimestamp(last_request_time_timestamp, tz=my_tmz)
+        ).total_seconds() > 86400:
             requests_done = number_requests_to_do
             is_auth = True
         else:
@@ -68,6 +68,12 @@ def detect_outlier(list_data):
 
 
 def log_company(checking: str = ""):
+    """
+    Decorator used to log the changes done to a company.
+    For example, when requesting for data if there isn't any problem we log that
+    it works great, otherwise we log the error that ocurred.
+    """
+
     def decorator(func):
         def wrapper(*args, **kwargs):
             company = args[0].company
@@ -87,7 +93,7 @@ def log_company(checking: str = ""):
                 error_message=error_message,
             )
             if checking:
-                has_it = had_error is False
+                has_it = not had_error
                 company.modify_checking(checking, has_it)
 
         return wrapper
@@ -97,8 +103,8 @@ def log_company(checking: str = ""):
 
 def arrange_quarters(company):
     """
-    TODO
-    Fix the try except for when a aurater isn't correctly set becasuse the month is different
+    TODO: TEst
+    Fix the try except for when a quarter isn't correctly set becasuse the month is different
     """
     statements_models = [
         company.incomestatementyahooquery_set,
@@ -110,13 +116,20 @@ def arrange_quarters(company):
     ]
     for statement_obj in statements_models:
         company_statements = statement_obj.all().order_by("year")
-        if company_statements and company_statements.filter(period_period=constants.PERIOD_FOR_YEAR).exists():
+        if (
+            company_statements
+            and company_statements.filter(period_period=constants.PERIOD_FOR_YEAR).exists()
+        ):
             for statement in company_statements:
                 try:
                     if statement.period.period == constants.PERIOD_FOR_YEAR:
                         date_quarter_4 = statement.year
-                        date_quarter_1 = date_quarter_4 + relativedelta(months=+3) + relativedelta(years=+1)
-                        date_quarter_2 = date_quarter_1 + relativedelta(months=+3) + relativedelta(years=-1)
+                        date_quarter_1 = (
+                            date_quarter_4 + relativedelta(months=+3) + relativedelta(years=+1)
+                        )
+                        date_quarter_2 = (
+                            date_quarter_1 + relativedelta(months=+3) + relativedelta(years=-1)
+                        )
                         date_quarter_3 = date_quarter_2 + relativedelta(months=+3)
                         period_dict = {
                             date_quarter_4.month: Period.objects.get_or_create(

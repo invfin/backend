@@ -8,12 +8,19 @@ import yfinance as yf
 
 from src.empresas.models import Company
 from src.empresas.outils.company_to_json import CompanyValueToJsonConverter
-from src.empresas.outils.financial_ratios.utils import calculate_compound_growth, divide_or_zero
+from src.empresas.outils.financial_ratios.utils import (
+    calculate_compound_growth,
+    divide_or_zero,
+)
 from src.empresas.outils.valuations import discounted_cashflow, graham_value, margin_of_safety
 from src.general.utils import ChartSerializer
 
 
 class CompanyData(CompanyValueToJsonConverter):
+    """
+    Used to generate JSON formated data from the company to create charts
+    """
+
     company: Company
 
     def __init__(self, company: Company, limit: int = 0):
@@ -94,7 +101,7 @@ class CompanyData(CompanyValueToJsonConverter):
 
     def get_current_ratios(
         self,
-        statements: Dict[str, QuerySet],
+        statements: Dict[str, Union[QuerySet, Dict]],
     ) -> dict:
         # TODO test
         averages = statements.pop("averages")
@@ -115,7 +122,9 @@ class CompanyData(CompanyValueToJsonConverter):
                 num_ics,
             )
         )
-        cagr = calculate_compound_growth(last_revenue, all_inc_statements[number].revenue, num_ics)
+        cagr = calculate_compound_growth(
+            last_revenue, all_inc_statements[number].revenue, num_ics
+        )
         current_eps = last_per_share.eps or 0
         marketcap = average_shares_out * current_price
         pfcf = divide_or_zero(current_price, last_per_share.fcf_ps or 0)
@@ -127,7 +136,11 @@ class CompanyData(CompanyValueToJsonConverter):
         pas = divide_or_zero(current_price, last_per_share.total_assets_ps or 0)
         peg = divide_or_zero(per, cagr).real
         ps = divide_or_zero(current_price, last_per_share.sales_ps or 0)
-        ev = marketcap + last_balance_sheet.total_debt or 0 - last_balance_sheet.cash_and_short_term_investments or 0
+        ev = (
+            marketcap + last_balance_sheet.total_debt
+            or 0 - last_balance_sheet.cash_and_short_term_investments
+            or 0
+        )
         evebitda = divide_or_zero(ev, last_income_statement.ebitda or 0)
         evsales = divide_or_zero(ev, last_revenue)
         gramvalu = graham_value(current_eps, last_per_share.book_ps or 0)

@@ -15,6 +15,10 @@ from src.periods.models import Period
 
 
 class CompanyTask:
+    """
+    Bootstrap the async tasks
+    """
+
     checking: str
     tasks_map_selector: str
 
@@ -96,7 +100,9 @@ def update_periods_final_statements(company_id):
     """
     company = Company.objects.get(id=company_id)
     for statement in company.inc_statements.filter(period__isnull=True, is_ttm=False):
-        period, created = Period.objects.get_or_create(year=statement.date, period=PERIOD_FOR_YEAR)
+        period, created = Period.objects.get_or_create(
+            year=statement.date, period=PERIOD_FOR_YEAR
+        )
         statement.period = period
         statement.save(update_fields=["period"])
     for statement_manager in [
@@ -115,7 +121,9 @@ def update_periods_final_statements(company_id):
         company.price_to_ratios,
     ]:
         statement_manager.filter(period__isnull=True, is_ttm=False).update(
-            period_id=Subquery(Period.objects.filter(year=OuterRef("date"), period=PERIOD_FOR_YEAR).only("id"))
+            period_id=Subquery(
+                Period.objects.filter(year=OuterRef("date"), period=PERIOD_FOR_YEAR).only("id")
+            )
         )
 
 

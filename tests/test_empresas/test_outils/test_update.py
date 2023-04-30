@@ -101,9 +101,9 @@ class TestUpdateCompany(TestCase):
         self.assertEqual(BalanceSheet.objects.all().count(), 0)
         self.assertEqual(CashflowStatement.objects.all().count(), 0)
         UpdateCompany(self.company).update_average_financials_statements(self.period)
-        self.assertEqual(IncomeStatement.objects.all().count(), 0)
-        self.assertEqual(BalanceSheet.objects.all().count(), 0)
-        self.assertEqual(CashflowStatement.objects.all().count(), 0)
+        self.assertEqual(IncomeStatement.objects.all().count(), 1)
+        self.assertEqual(BalanceSheet.objects.all().count(), 1)
+        self.assertEqual(CashflowStatement.objects.all().count(), 1)
 
     @skip("It will be improved in a future commit")
     def test_create_ttm(self):

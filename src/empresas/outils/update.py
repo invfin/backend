@@ -12,7 +12,7 @@ from src.periods.models import Period
 from src.translate.google_trans_new import google_translator
 
 
-class UpdateCompany(CalculateFinancialRatios, AverageStatements):
+class UpdateCompany(CalculateFinancialRatios):
     def __init__(self, company) -> None:
         self.company = company
 
@@ -42,50 +42,63 @@ class UpdateCompany(CalculateFinancialRatios, AverageStatements):
         return None
 
     @log_company()
-    def add_logo(self):
+    def add_logo(self) -> None:
         self.company.image = self.request_info_yfinance["logo_url"]
         self.company.has_logo = True
         self.company.save(update_fields=["has_logo", "image"])
+        return None
 
     @log_company()
-    def add_description(self):
+    def add_description(self) -> None:
         self.company.description = google_translator().translate(
             self.company.description, lang_src="en", lang_tgt="es"
         )
         self.company.description_translated = True
         self.company.save(update_fields=["description_translated", "description"])
+        return None
 
-    def general_update(self):
+    def general_update(self) -> None:
         if not self.company.image:
             self.add_logo()
         if self.company.description_translated is False:
             self.add_description()
+        return None
 
     @log_company()
-    def check_last_filing(self):
+    def check_last_filing(self) -> str:
         least_recent_date = self.yq_company.balance_sheet()
-        least_recent_date = (
-            least_recent_date["asOfDate"].max().value // 10**9
-        )  # normalize time
+        least_recent_date = least_recent_date["asOfDate"].max().value // 10**9
         least_recent_year = datetime.fromtimestamp(least_recent_date).year
         if least_recent_year != self.company.most_recent_year:
             return "need update"
         return "updated"
 
     @log_company()
-    def update_average_financials_statements(self, period) -> None:
+    def update_average_financials_statements(self, period: Period) -> None:
+        averager = AverageStatements(self.company)  # Inherit or like this?
         for funct_calculate_statement, funct_create_or_update_statement in [
-            (self.calculate_average_income_statement, self.create_or_update_inc_statements),
-            (self.calculate_average_balance_sheet, self.create_or_update_balance_sheets),
-            (self.calculate_average_cashflow_statement, self.create_or_update_cf_statements),
+            (
+                averager.calculate_average_income_statement,
+                self.create_or_update_inc_statements,
+            ),
+            (
+                averager.calculate_average_balance_sheet,
+                self.create_or_update_balance_sheets,
+            ),
+            (
+                averager.calculate_average_cashflow_statement,
+                self.create_or_update_cf_statements,
+            ),
         ]:
             if averaged_stement := funct_calculate_statement(period):
-                averaged_stement.update({"company": self.company, "from_average": True})
+                # Raise expect non arguments that why the type ignore
+                averaged_stement.update({"company": self.company, "from_average": True})  # type: ignore
                 funct_create_or_update_statement(averaged_stement, period)
         return None
 
     @log_company()
-    def create_or_update_ttm(self):
+    def create_or_update_ttm(self) -> None:
+        # TODO: refactor, test and do it right
         for statement_manager in [
             self.company.inc_statements,
             self.company.balance_sheets,
@@ -122,12 +135,12 @@ class UpdateCompany(CalculateFinancialRatios, AverageStatements):
                 }
             )
             statement_manager.create(**ttm_dict)
+        return None
 
     @log_company()
     def create_or_update_all_ratios(self, all_ratios: dict, period: Period) -> None:
         self.create_or_update_current_stock_price(
             price=all_ratios["current_price"],
-            period=period,
         )
         self.create_or_update_rentability_ratios(
             all_ratios["rentability_ratios"],
@@ -151,6 +164,7 @@ class UpdateCompany(CalculateFinancialRatios, AverageStatements):
 
     @classmethod
     def create_or_update_statement(cls, data: dict, financial_model, period: Period) -> type:
+        # Are these methods useless?
         statement, _ = financial_model.update_or_create(period=period, defaults=data)
         return statement
 
