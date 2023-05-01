@@ -2,6 +2,8 @@ from datetime import datetime
 
 from django.db.models import Q
 
+from src.empresas.parse.yahoo_query import ParseYahooQuery
+from src.empresas.parse.y_finance import YFinanceInfo
 from src.empresas.models import BalanceSheet, CashflowStatement, IncomeStatement
 from src.empresas.outils.average_statements import AverageStatements
 from src.empresas.outils.financial_ratios import CalculateFinancialRatios
@@ -43,7 +45,7 @@ class UpdateCompany(CalculateFinancialRatios):
 
     @log_company()
     def add_logo(self) -> None:
-        self.company.image = self.request_info_yfinance["logo_url"]
+        self.company.image = YFinanceInfo(self.company).request_info_yfinance["logo_url"]
         self.company.has_logo = True
         self.company.save(update_fields=["has_logo", "image"])
         return None
@@ -51,7 +53,7 @@ class UpdateCompany(CalculateFinancialRatios):
     @log_company()
     def add_description(self) -> None:
         self.company.description = google_translator().translate(
-            self.company.description, lang_src="en", lang_tgt="es"
+            self.company.description, lang_src="en", lang_tgt="es",
         )
         self.company.description_translated = True
         self.company.save(update_fields=["description_translated", "description"])
@@ -66,7 +68,7 @@ class UpdateCompany(CalculateFinancialRatios):
 
     @log_company()
     def check_last_filing(self) -> str:
-        least_recent_date = self.yq_company.balance_sheet()
+        least_recent_date = ParseYahooQuery(self.company.ticker).balance_sheet()
         least_recent_date = least_recent_date["asOfDate"].max().value // 10**9
         least_recent_year = datetime.fromtimestamp(least_recent_date).year
         if least_recent_year != self.company.most_recent_year:

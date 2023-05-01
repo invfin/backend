@@ -18,16 +18,17 @@ User = get_user_model()
 class TestNotificationSystem(TestCase):
     @classmethod
     def setUpTestData(cls) -> None:
-        DjangoTestingModel.create(User, is_writer=False, is_bot=True)
-        cls.writer = DjangoTestingModel.create(User, is_writer=True, is_bot=False)
+        DjangoTestingModel.create(User, username="skdfh", is_writer=False, is_bot=True,)
+        cls.writer = DjangoTestingModel.create(User, username="skd68", is_writer=True, is_bot=False,)
         cls.user_1 = DjangoTestingModel.create(
             User,
+            username="486s8h",
             is_writer=False,
             first_name="question",
             last_name="author",
             is_bot=False,
         )
-        cls.user_2 = DjangoTestingModel.create(User, is_writer=False, is_bot=False)
+        cls.user_2 = DjangoTestingModel.create(User, username="iop7", is_writer=False, is_bot=False,)
         DjangoTestingModel.create(Profile, user=cls.writer)
         DjangoTestingModel.create(WriterProfile, user=cls.writer)
         DjangoTestingModel.create(Profile, user=cls.user_1)
@@ -41,6 +42,7 @@ class TestNotificationSystem(TestCase):
             Answer,
             author=DjangoTestingModel.create(
                 User,
+                username="zx3c21",
                 first_name="answer",
                 last_name="author",
             ),
@@ -54,6 +56,7 @@ class TestNotificationSystem(TestCase):
             ),
             author=DjangoTestingModel.create(
                 User,
+                username="qwe654",
                 first_name="question comment",
                 last_name="author",
             ),
