@@ -10,14 +10,26 @@ from src.empresas.outils.financial_ratios import CalculateFinancialRatios
 from src.empresas.outils.update import UpdateCompany
 from src.periods.constants import PERIOD_FOR_YEAR
 from src.periods.models import Period
-from tests.data.empresas import balance_sheets_final_statment, cashflow_final_statment, income_final_statment
+from tests.data.empresas import (
+    balance_sheets_final_statment,
+    cashflow_final_statment,
+    income_final_statment,
+)
 
 
 class TestCompanyData(TestCase):
     @classmethod
     def setUpTestData(cls) -> None:
-        cls.current_period = DjangoTestingModel.create(Period, year=2021, period=PERIOD_FOR_YEAR)
-        cls.previous_period = DjangoTestingModel.create(Period, year=2020, period=PERIOD_FOR_YEAR)
+        cls.current_period = DjangoTestingModel.create(
+            Period,
+            year=2021,
+            period=PERIOD_FOR_YEAR,
+        )
+        cls.previous_period = DjangoTestingModel.create(
+            Period,
+            year=2020,
+            period=PERIOD_FOR_YEAR,
+        )
         cls.company = DjangoTestingModel.create(Company)
         cls.current_income = DjangoTestingModel.create(
             IncomeStatement,
@@ -67,7 +79,7 @@ class TestCompanyData(TestCase):
         UpdateCompany(cls.company).create_or_update_all_ratios(all_ratios, cls.current_period)
 
     def test_min(self):
-        DjangoTestingModel.create(IncomeStatement, quantity=10, force_create=True)
+        DjangoTestingModel.create_many(IncomeStatement, quantity=10, force_create=True)
         all_inc = IncomeStatement.objects.all()
         num_ics = 10 if len(all_inc) >= 10 else len(all_inc)
         assert num_ics == 10
@@ -141,7 +153,13 @@ class TestCompanyData(TestCase):
                     "short": "false",
                     "values": [152836000000.0, 104956000000.0],
                 },
-                {"title": "I&D", "url": "#!", "percent": "false", "short": "false", "values": [0.0, 0.0]},
+                {
+                    "title": "I&D",
+                    "url": "#!",
+                    "percent": "false",
+                    "short": "false",
+                    "values": [0.0, 0.0],
+                },
                 {
                     "title": "Gastos administrativos",
                     "url": "#!",
