@@ -151,14 +151,3 @@ def arrange_quarters(company):
                 except KeyError:
                     statement.period = None
                     statement.save(update_fields=["period"])
-
-
-def company_searched(search, request):
-    empresa_ticker = search.split(" [")[1]
-    ticker = empresa_ticker[:-1]
-    try:
-        empresa_busqueda = Company.objects.get(ticker=ticker)
-        redirect_path = empresa_busqueda.get_absolute_url()
-    except Exception:
-        redirect_path = request.META.get("HTTP_REFERER")
-    return redirect_path

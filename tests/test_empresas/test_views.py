@@ -1,12 +1,25 @@
 import json
+from unittest.mock import MagicMock
 
+from django.test import TestCase
 from bfet import DjangoTestingModel
 from rest_framework.test import APITestCase
 
+from src.empresas.views import Suggestor
 from src.empresas.models import BalanceSheet, CashflowStatement, Company, IncomeStatement
 from src.periods import constants
 from src.periods.models import Period
 from tests.utils import BaseAPIViewTestMixin
+
+
+class TestSuggestor(TestCase):
+    def test_suggest_companies(self):
+        DjangoTestingModel.create(Company, ticker="AAPL", name="Apple")
+        self.assertEqual(Suggestor.suggest_companies("AAPL"), ["Apple [AAPL]"])
+
+    def test_companies_searcher(self):
+        result = Suggestor.companies_searcher(MagicMock(GET={"term": "AAPL"}))
+        self.assertEqual(result, {})
 
 
 class TestExcelAPIIncome(BaseAPIViewTestMixin, APITestCase):

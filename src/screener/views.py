@@ -10,7 +10,7 @@ from django.views.generic import DetailView, ListView, RedirectView
 from src.empresas.models import Company, ExchangeOrganisation
 from src.empresas.outils.company import CompanyData
 from src.empresas.outils.update import UpdateCompany
-from src.empresas.utils import FinprepRequestCheck, company_searched
+from src.empresas.utils import FinprepRequestCheck
 from src.etfs.models import Etf
 from src.screener.models import CompanyInformationBought, YahooScreener
 from src.seo.views import SEODetailView, SEOListView
@@ -19,10 +19,18 @@ from src.users.models import CreditUsageHistorial
 
 
 class CompanyLookUpView(RedirectView):
+    def company_searched(self) -> str:
+        empresa_ticker = self.request.GET["stock"].split(" [")[1]
+        ticker = empresa_ticker[:-1]
+        try:
+            empresa_busqueda = Company.objects.get(ticker=ticker)
+            redirect_path = empresa_busqueda.get_absolute_url()
+        except Exception:
+            redirect_path = self.request.META.get("HTTP_REFERER")
+        return redirect_path
+
     def get(self, request, *args, **kwargs):
-        company = self.request.GET["stock"]
-        path = company_searched(company, self.request)
-        return HttpResponseRedirect(path)
+        return HttpResponseRedirect(self.company_searched())
 
 
 class ScreenerInicioView(SEOListView):
@@ -60,9 +68,9 @@ class CompanyScreenerInicioView(SEOListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         name = self.kwargs["slug"]
-        context["meta_title"] = (
-            f"Más de 30 años de información financiera de cualquier empresa de {name}"
-        )
+        context[
+            "meta_title"
+        ] = f"Más de 30 años de información financiera de cualquier empresa de {name}"
         context["meta_url"] = f"/empresas-de/{name}/"
         return context
 
@@ -192,10 +200,8 @@ class CompanyDetailsView(SEODetailView):
         if not self.object:
             messages.error(
                 self.request,
-                (
-                    "Lo sentimos, esta empresa todavía no tiene información ahora mismo vamos"
-                    " a recabar información y estará lista en poco tiempo"
-                ),
+                "Lo sentimos, esta empresa todavía no tiene información ahora mismo vamos"
+                " a recabar información y estará lista en poco tiempo",
             )
             return redirect(reverse("screener:screener_inicio"))
         context = self.get_context_data(object=self.object)
@@ -216,10 +222,8 @@ class BuyCompanyInfo(RedirectView):
         CompanyInformationBought.objects.create(user=user, company=company)
         messages.success(
             request,
-            (
-                f"Ahora que conoces toda la historia financiera de {company.name}, no olvides"
-                " hacer un análisis FODA"
-            ),
+            f"Ahora que conoces toda la historia financiera de {company.name}, no olvides"
+            " hacer un análisis FODA",
         )
         return redirect(reverse("screener:company", kwargs={"ticker": company.ticker}))
 

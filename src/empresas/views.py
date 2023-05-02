@@ -1,5 +1,7 @@
 import json
 
+from typing import List
+
 from django.db.models import Q
 from django.http.response import HttpResponse
 
@@ -12,19 +14,26 @@ from .api.views import BaseAPIView
 from .models import BalanceSheet, CashflowStatement, Company, IncomeStatement
 
 
-def companies_searcher(request):
-    query = request.GET.get("term", "")
-    companies_availables = Company.objects.filter(
-        Q(name__icontains=query) | Q(ticker__icontains=query),
-        no_incs=False,
-        no_bs=False,
-        no_cfs=False,
-    )[:10]
+class Suggestor:
+    @classmethod
+    def suggest_companies(cls, query: str) -> List[str]:
+        companies_availables = Company.objects.filter(
+            Q(name__icontains=query) | Q(ticker__icontains=query),
+            no_incs=False,
+            no_bs=False,
+            no_cfs=False,
+        )[:10]
+        return [f"{company.name} [{company.ticker}]" for company in companies_availables]
 
-    results = [f"{company.name} [{company.ticker}]" for company in companies_availables]
+    @classmethod
+    def companies_searcher(cls, request) -> HttpResponse:
+        query = request.GET.get("term", "")
+        results = Suggestor.suggest_companies(query)
+        return HttpResponse(json.dumps(results), "application/json")
 
-    data = json.dumps(results)
-    return HttpResponse(data, "application/json")
+
+def companies_searcher(request) -> HttpResponse:
+    return Suggestor.companies_searcher(request)
 
 
 class BaseExcelAPIView(BaseAPIView):
