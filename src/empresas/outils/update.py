@@ -1,3 +1,4 @@
+from collections import defaultdict
 from datetime import datetime
 
 from django.db.models import Q
@@ -100,43 +101,39 @@ class UpdateCompany(CalculateFinancialRatios):
 
     @log_company()
     def create_or_update_ttm(self) -> None:
-        # TODO: refactor, test and do it right
+        to_exclude = {"id",
+                                "period_id",
+                                "year",
+                    "company_id",
+              'from_average',
+                    "is_ttm",
+                    "reported_currency_id",}
         for statement_manager in [
             self.company.inc_statements,
             self.company.balance_sheets,
             self.company.cf_statements,
         ]:
             last_statements = statement_manager.filter(
-                ~Q(period__period=PERIOD_FOR_YEAR), is_ttm=False
-            )[:4]
-            ttm_dict = {}
+                ~Q(period__period=PERIOD_FOR_YEAR), is_ttm=False,
+            ).values()[:4]
+            result = defaultdict(int)
             for statement in last_statements:
-                st_dict = statement.__dict__
-                for field in [
-                    "_state",
-                    "id",
-                    "period_id",
-                    "year",
-                    "company_id",
-                    "is_ttm",
-                    "reported_currency_id",
-                ]:
-                    st_dict.pop(field)
-                date = st_dict.pop("date")
-                if "date" not in ttm_dict:
-                    ttm_dict["date"] = date
-                for key, value in st_dict.items():
-                    if key in ttm_dict:
-                        ttm_dict[key] += value
-                    else:
-                        ttm_dict[key] = value
-            ttm_dict.update(
+                for key, value in statement.items():
+                    if key == "reported_currency_id":
+                        result.setdefault(key, []) #type: ignore
+                        result[key].append(value) #type: ignore
+                    elif key == "date":
+                        result[key] = max(result[key], value)
+                    elif key not in to_exclude:
+                        result[key] += value
+            result.update(
                 {
                     "is_ttm": True,
                     "from_average": True,
+                    **AverageStatements.find_correct_currency(result)
                 }
             )
-            statement_manager.create(**ttm_dict)
+            statement_manager.create(**result)
         return None
 
     @log_company()

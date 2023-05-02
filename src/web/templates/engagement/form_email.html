@@ -5,7 +5,8 @@
 <script type="text/javascript" src="{% static 'general/assets/vendor/moment.min.js' %}"></script>
 <script type="text/javascript" src="{% static 'general/assets/vendor/bootstrap-datetimepicker.js' %}"></script>
 
-
+<link href="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/css/tom-select.css" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/tom-select@2.2.2/dist/js/tom-select.complete.min.js"></script>
 {% endblock extra %}
 {% block header %}{% include "headers/inicio.html" %}{% endblock header%}
 {% block FormContent %}
@@ -50,7 +51,7 @@
                 <div class="col-lg-6 col-sm-12">
                     {{form.campaign|as_crispy_field}}
                 </div>
-                <div class="col-lg-12 col-sm-12">
+                <div class="col-lg-12 col-sm-12 mb-4">
                     {{form.users_selected|as_crispy_field}}
                 </div>
 
@@ -79,6 +80,20 @@
 </div>
 
 <script type="text/javascript">
+    // $('#id_users_selected').select2();
+
+
+
+    new TomSelect("#id_users_selected", {
+        create: true,
+        sortField: {
+            field: "text",
+            direction: "asc"
+        }
+    });
+
+
+
     $(function () {
         $("#id_date_to_send").datetimepicker({
             icons: {

@@ -1,8 +1,6 @@
-from unittest import skip
-
 from django.test import TestCase
 
-from bfet import DataCreator, DjangoTestingModel
+from bfet import DjangoTestingModel, create_random_float
 
 from src.currencies.models import Currency
 from src.empresas.models import (
@@ -39,11 +37,11 @@ class TestUpdateCompany(TestCase):
             period=constants.PERIOD_FOR_YEAR,
         )
         cls.currency = DjangoTestingModel.create(Currency)
-        cls.revenue = DataCreator.create_random_float()
-        cls.cost_of_revenue = DataCreator.create_random_float()
-        cls.gross_profit = DataCreator.create_random_float()
-        cls.research_and_development_expenses = DataCreator.create_random_float()
-        cls.selling_general_and_administrative_expenses = DataCreator.create_random_float()
+        cls.revenue = create_random_float()
+        cls.cost_of_revenue = create_random_float()
+        cls.gross_profit = create_random_float()
+        cls.research_and_development_expenses = create_random_float()
+        cls.selling_general_and_administrative_expenses = create_random_float()
         cls.inc_st_finprep = DjangoTestingModel.create(
             IncomeStatementFinprep,
             reported_currency=cls.currency,
@@ -81,7 +79,7 @@ class TestUpdateCompany(TestCase):
             BalanceSheetFinprep, company=cls.company, period=cls.period,
         )
         cls.bs_yahooquery = DjangoTestingModel.create(
-            BalanceSheetYahooQuery, company=cls.company, period=cls.period
+            BalanceSheetYahooQuery, company=cls.company, period=cls.period,
         ),
         cls.bs_yfinance = DjangoTestingModel.create(
             BalanceSheetYFinance, company=cls.company, period=cls.period,
@@ -105,11 +103,13 @@ class TestUpdateCompany(TestCase):
         self.assertEqual(BalanceSheet.objects.all().count(), 1)
         self.assertEqual(CashflowStatement.objects.all().count(), 1)
 
-    @skip("It will be improved in a future commit")
-    def test_create_ttm(self):
-        assert 0 == IncomeStatement.objects.filter(is_ttm=True).count()
-        assert 0 == BalanceSheet.objects.filter(is_ttm=True).count()
-        assert 0 == CashflowStatement.objects.filter(is_ttm=True).count()
+    def test_create_or_update_ttm(self):
+        self.assertEqual(
+        IncomeStatement.objects.filter(is_ttm=True).count(), 0)
+        self.assertEqual(
+            BalanceSheet.objects.filter(is_ttm=True).count(), 0)
+        self.assertEqual(
+            CashflowStatement.objects.filter(is_ttm=True).count(), 0)
         periods = [
             DjangoTestingModel.create(Period, year=2021, period=constants.PERIOD_2_QUARTER),
             DjangoTestingModel.create(Period, year=2021, period=constants.PERIOD_3_QUARTER),
@@ -119,6 +119,7 @@ class TestUpdateCompany(TestCase):
         for period in periods:
             DjangoTestingModel.create(
                 IncomeStatement,
+                reported_currency=self.currency,
                 company=self.company,
                 period=period,
                 date=period.year,
@@ -126,6 +127,7 @@ class TestUpdateCompany(TestCase):
             )
             DjangoTestingModel.create(
                 BalanceSheet,
+                reported_currency=self.currency,
                 company=self.company,
                 period=period,
                 date=period.year,
@@ -133,20 +135,16 @@ class TestUpdateCompany(TestCase):
             )
             DjangoTestingModel.create(
                 CashflowStatement,
+                reported_currency=self.currency,
                 company=self.company,
                 period=period,
                 date=period.year,
                 is_ttm=False,
             )
-
         UpdateCompany(self.company).create_or_update_ttm()
-        assert 1 == IncomeStatement.objects.filter(is_ttm=True).count()
-        assert 1 == BalanceSheet.objects.filter(is_ttm=True).count()
-        assert 1 == CashflowStatement.objects.filter(is_ttm=True).count()
-
-        income_statement = IncomeStatement.objects.filter(is_ttm=True).first()
-        balance_sheet = BalanceSheet.objects.filter(is_ttm=True).first()
-        cashflow_statement = CashflowStatement.objects.filter(is_ttm=True).first()
-        assert 2022 == income_statement.year
-        assert 2022 == balance_sheet.year
-        assert 2022 == cashflow_statement.year
+        self.assertEqual(
+            IncomeStatement.objects.filter(is_ttm=True).count(), 1)
+        self.assertEqual(
+            BalanceSheet.objects.filter(is_ttm=True).count(), 1)
+        self.assertEqual(
+            CashflowStatement.objects.filter(is_ttm=True).count(), 1 )

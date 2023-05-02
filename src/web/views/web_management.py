@@ -1,8 +1,16 @@
+from typing import Type
 from django.contrib import messages
 from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
-from django.views.generic import CreateView, DetailView, FormView, ListView, TemplateView, UpdateView
+from django.views.generic import (
+    CreateView,
+    DetailView,
+    FormView,
+    ListView,
+    TemplateView,
+    UpdateView,
+)
 
 from src.escritos.forms import TermAndTermContentForm, term_content_formset
 from src.escritos.models import Term
@@ -62,7 +70,7 @@ class AutomaticEmailNewsletterView(PrivateWebFormView):
             messages.success(self.request, self.success_message)
         return HttpResponse(status=204, headers={"HX-Trigger": "refreshNewsletterList"})
 
-    def form_valid(self, form):
+    def form_valid(self, form: AutomaticNewsletterForm):
         form.create_newsletter()
         return self.successful_return()
 
@@ -80,7 +88,7 @@ class ManageEmailEngagementUpdateView(PrivateWebUpdateView):
     def get_success_url(self) -> str:
         return reverse("web:manage_web")
 
-    def form_valid(self, form) -> HttpResponse:
+    def form_valid(self, form: WebEmailForm) -> HttpResponse:
         form.save()
         if self.request.META.get("HTTP_HX_REQUEST"):
             return self.successful_return()
@@ -114,12 +122,12 @@ class ManagePreviewEmailEngagementDetailsView(PrivateWebDetailView):
 
 
 class ManageTermListView(PrivateWebListView):
-    model = Term
+    model: Type[Term] = Term
     template_name = "management/list_terms.html"
     context_object_name = "terms"
 
     def get_queryset(self):
-        return self.model._default_manager.cleaning_requested()
+        return self.model.objects.cleaning_requested()
 
 
 class ManageTermUpdateView(PrivateWebDetailView):
@@ -137,7 +145,7 @@ class ManageTermUpdateView(PrivateWebDetailView):
         context["form"] = TermAndTermContentForm(instance=self.object)
         return context
 
-    def save_all(self, form, formset, request):
+    def save_all(self, form: TermAndTermContentForm, formset, request):
         modify_checking = "save_definetly" in request.POST
         form.save(modify_checking=modify_checking)
         formset.save()

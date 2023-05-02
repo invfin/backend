@@ -1,6 +1,15 @@
 from django.contrib.admin import site
 from django.contrib.admin.widgets import RelatedFieldWidgetWrapper
-from django.forms import CharField, ChoiceField, DateTimeField, DateTimeInput, EmailField, Form, ModelForm, Textarea
+from django.forms import (
+    CharField,
+    ChoiceField,
+    DateTimeField,
+    DateTimeInput,
+    EmailField,
+    Form,
+    ModelForm,
+    Textarea,
+)
 
 from src.content_creation import constants as content_creation_constants
 from src.emailing.outils.emailing import EmailingSystem

@@ -96,8 +96,8 @@ class AverageStatements:
 
     @staticmethod
     def find_correct_currency(
-        reunited_data: Dict[str, List[Union[int, float]]]
-    ) -> Dict[str, Optional[Union[int, float]]]:
+        reunited_data: Union[Dict[str, List[int]]] | defaultdict
+    ) -> Dict[str, Optional[int]]:
         if currency := reunited_data.pop("reported_currency_id", None):
             currency, repetitions = Counter(currency).most_common(1)[0]  # type: ignore
         return {"reported_currency_id": currency}  # type: ignore
