@@ -1,10 +1,11 @@
 from unittest.mock import MagicMock
 
 from django.test import TestCase
+
 from bfet import DjangoTestingModel
 
-from src.screener.views import CompanyLookUpView
 from src.empresas.models import Company
+from src.screener.views import CompanyLookUpView
 
 
 class TestCompanyLookUpView(TestCase):
@@ -26,4 +27,4 @@ class TestCompanyLookUpView(TestCase):
                 META="path/to/META",
             )
         )
-        self.assertEqual(view.company_searched(), "AAPL/")
+        self.assertEqual(view.company_searched(), "/screener/analisis-de/AAPL/")

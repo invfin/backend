@@ -1,4 +1,3 @@
-import datetime
 from typing import Any, Dict
 from unittest import skip
 import urllib
@@ -6,6 +5,7 @@ import urllib
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.shortcuts import resolve_url
+from django.utils import timezone
 
 from bfet import DjangoTestingModel
 from rest_framework import status
@@ -46,18 +46,23 @@ class BaseAPIViewTestMixin:
     url_path: str = ""
     api_key_param: str = "api_key"
     wrong_key_error_message: str = (
-        "Tu clave es incorrecta, asegúrate que está bien escrita depués de api_key=<clave> o pide tu clave desde tu"
-        " perfil"
+        "Tu clave es incorrecta, asegúrate que está bien escrita depués de api_key=<clave> o"
+        " pide tu clave desde tu perfil"
     )
-    no_api_key_error_message: str = "Introduce tu clave en api_key, si no tienes alguna entra en tu perfil para crearla"
+    no_api_key_error_message: str = (
+        "Introduce tu clave en api_key, si no tienes alguna entra en tu perfil para crearla"
+    )
     api_key_removed: str = "Tu clave ya no es válida, crea una nueva desde tu perfil"
     params: Dict[str, Any] = {}
     wrong_param_error_message: str = (
-        "Ha habido un problema con tu búsqueda, asegúrate de haber introducido los parámetros correctamente"
+        "Ha habido un problema con tu búsqueda, asegúrate de haber introducido los parámetros"
+        " correctamente"
     )
     no_param_error_messages: str = "No has introducido ninguna búsqueda"
     not_found_error_messages: str = "Tu búsqueda no ha devuelto ningún resultado"
-    server_problem_error_message: str = "Lo siento hemos tenido un problema, reinténtalo en un momento"
+    server_problem_error_message: str = (
+        "Lo siento hemos tenido un problema, reinténtalo en un momento"
+    )
     actual_api: bool = True  # To remove once API for excel is actual url
 
     @classmethod
@@ -80,7 +85,12 @@ class BaseAPIViewTestMixin:
             email="c@gmail.com",
             date_joined=DjangoTestingModel.create_random_datetime(5, 10, 2022),
         )
-        product = DjangoTestingModel.create(Product, title="Excel", slug="excel", is_active=True)
+        product = DjangoTestingModel.create(
+            Product,
+            title="Excel",
+            slug="excel",
+            is_active=True,
+        )
         product_complementary = DjangoTestingModel.create(
             ProductComplementary,
             title="Subscripción excel",
@@ -96,10 +106,17 @@ class BaseAPIViewTestMixin:
             is_active=True,
         )
         cls.subscription_key = DjangoTestingModel.create(
-            Key, user=user_key_sub, in_use=True, removed=None, subscription=product_subscriber
+            Key,
+            user=user_key_sub,
+            in_use=True,
+            removed=None,
+            subscription=product_subscriber,
         )
         cls.removed_key = DjangoTestingModel.create(
-            Key, user=user_key_removed, in_use=False, removed=datetime.datetime.utcnow()
+            Key,
+            user=user_key_removed,
+            in_use=False,
+            removed=timezone.now(),
         )
         cls.key = DjangoTestingModel.create(Key, user=user_key, in_use=True, removed=None)
         cls.endpoint = resolve_url(cls.path_name)
@@ -115,18 +132,28 @@ class BaseAPIViewTestMixin:
     def test_verbs(self):
         for verb in self.allowed_verbs:
             with self.subTest(f"testing {verb}"):
-                assert self.client.generic(verb, self.full_endpoint).status_code != status.HTTP_405_METHOD_NOT_ALLOWED
-                assert self.client.generic(verb, self.full_endpoint).status_code == status.HTTP_200_OK
+                assert (
+                    self.client.generic(verb, self.full_endpoint).status_code
+                    != status.HTTP_405_METHOD_NOT_ALLOWED
+                )
+                assert (
+                    self.client.generic(verb, self.full_endpoint).status_code
+                    == status.HTTP_200_OK
+                )
 
         for verb in HTTP_VERBS - self.allowed_verbs:
             with self.subTest(f"testing {verb}"):
                 assert (
-                    self.client.generic(verb, self.full_endpoint).status_code == status.HTTP_403_FORBIDDEN
+                    self.client.generic(verb, self.full_endpoint).status_code
+                    == status.HTTP_403_FORBIDDEN
                 )  # status.HTTP_405_METHOD_NOT_ALLOWED
 
     def test_url(self):
         if self.actual_api:
-            assert resolve_url(self.path_name) == f"/{self.api_prefix}/{self.api_version}{self.url_path}"
+            assert (
+                resolve_url(self.path_name)
+                == f"/{self.api_prefix}/{self.api_version}{self.url_path}"
+            )
         else:
             assert resolve_url(self.path_name) == f"{self.url_path}"
 
@@ -160,7 +187,9 @@ class BaseAPIViewTestMixin:
                     endpoint = f"{endpoint}&{params}"
                 response = self.client.get(endpoint)
                 assert response.status_code == status_code
-                assert response.data == {"detail": ErrorDetail(string=error_message, code=error_code)}
+                assert response.data == {
+                    "detail": ErrorDetail(string=error_message, code=error_code)
+                }
 
     @skip("Skipping")
     def test_server_problem(self):
@@ -172,14 +201,18 @@ class BaseAPIViewTestMixin:
             response = self.client.get(self.full_endpoint)
             assert response.status_code == status.HTTP_500_INTERNAL_SERVER_ERROR
             assert response.data == {
-                "detail": ErrorDetail(string=self.server_problem_error_message, code="permission_denied")
+                "detail": ErrorDetail(
+                    string=self.server_problem_error_message, code="permission_denied"
+                )
             }
 
     def test_no_params(self):
         if self.params:
             response = self.client.get(self.endpoint_key)
             assert response.status_code == status.HTTP_400_BAD_REQUEST
-            assert response.data == {"detail": ErrorDetail(string=self.no_param_error_messages, code="parse_error")}
+            assert response.data == {
+                "detail": ErrorDetail(string=self.no_param_error_messages, code="parse_error")
+            }
 
     def test_wrong_params(self):
         if self.params:
@@ -192,7 +225,9 @@ class BaseAPIViewTestMixin:
                     response = self.client.get(f"{self.endpoint_key}&{params}")
                     assert response.status_code == status.HTTP_400_BAD_REQUEST
                     assert response.data == {
-                        "detail": ErrorDetail(string=self.wrong_param_error_message, code="parse_error")
+                        "detail": ErrorDetail(
+                            string=self.wrong_param_error_message, code="parse_error"
+                        )
                     }
 
     def test_not_found(self):
@@ -210,7 +245,9 @@ class BaseAPIViewTestMixin:
                     response = self.client.get(f"{self.endpoint_key}&{params}")
                     assert response.status_code == status.HTTP_404_NOT_FOUND
                     assert response.data == {
-                        "detail": ErrorDetail(string=self.not_found_error_messages, code="not_found")
+                        "detail": ErrorDetail(
+                            string=self.not_found_error_messages, code="not_found"
+                        )
                     }
 
     def test_success(self):

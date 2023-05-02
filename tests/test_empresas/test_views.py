@@ -2,24 +2,53 @@ import json
 from unittest.mock import MagicMock
 
 from django.test import TestCase
+
 from bfet import DjangoTestingModel
 from rest_framework.test import APITestCase
 
-from src.empresas.views import Suggestor
 from src.empresas.models import BalanceSheet, CashflowStatement, Company, IncomeStatement
+from src.empresas.views import Suggestor
 from src.periods import constants
 from src.periods.models import Period
 from tests.utils import BaseAPIViewTestMixin
 
 
 class TestSuggestor(TestCase):
+    @classmethod
+    def setUpTestData(cls) -> None:
+        DjangoTestingModel.create(
+            Company,
+            ticker="AAPL",
+            name="Apple",
+            no_incs=False,
+            no_bs=False,
+            no_cfs=False,
+        )
+        DjangoTestingModel.create(
+            Company,
+            ticker="INTC",
+            name="Intel",
+            no_incs=False,
+            no_bs=False,
+            no_cfs=False,
+        )
+        DjangoTestingModel.create(
+            Company,
+            ticker="BABA",
+            name="Alibaba",
+            no_incs=False,
+            no_bs=False,
+            no_cfs=False,
+        )
+
     def test_suggest_companies(self):
-        DjangoTestingModel.create(Company, ticker="AAPL", name="Apple")
         self.assertEqual(Suggestor.suggest_companies("AAPL"), ["Apple [AAPL]"])
 
     def test_companies_searcher(self):
         result = Suggestor.companies_searcher(MagicMock(GET={"term": "AAPL"}))
-        self.assertEqual(result, {})
+        self.assertEqual(result.status_code, 200)
+        self.assertEqual(json.loads(result.content), ["Apple [AAPL]"])
+        self.assertEqual(result.headers, {"Content-Type": "application/json"})
 
 
 class TestExcelAPIIncome(BaseAPIViewTestMixin, APITestCase):
@@ -84,7 +113,9 @@ class TestExcelAPIIncome(BaseAPIViewTestMixin, APITestCase):
             "income_tax_expenses": yis.income_tax_expenses,
             "net_income": yis.net_income,
             "weighted_average_shares_outstanding": yis.weighted_average_shares_outstanding,
-            "weighted_average_diluated_shares_outstanding": yis.weighted_average_diluated_shares_outstanding,
+            "weighted_average_diluated_shares_outstanding": (
+                yis.weighted_average_diluated_shares_outstanding
+            ),
         }
         assert json.loads(json.dumps(response.data))[0] == expected_data
 
@@ -159,7 +190,9 @@ class TestExcelAPIBalance(BaseAPIViewTestMixin, APITestCase):
             "total_liabilities": ybs.total_liabilities,
             "common_stocks": ybs.common_stocks,
             "retained_earnings": ybs.retained_earnings,
-            "accumulated_other_comprehensive_income_loss": ybs.accumulated_other_comprehensive_income_loss,
+            "accumulated_other_comprehensive_income_loss": (
+                ybs.accumulated_other_comprehensive_income_loss
+            ),
             "othertotal_stockholders_equity": ybs.othertotal_stockholders_equity,
             "total_stockholders_equity": ybs.total_stockholders_equity,
             "total_liabilities_and_total_equity": ybs.total_liabilities_and_total_equity,
