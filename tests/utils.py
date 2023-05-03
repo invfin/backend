@@ -7,7 +7,7 @@ from django.contrib.auth import get_user_model
 from django.shortcuts import resolve_url
 from django.utils import timezone
 
-from bfet import DjangoTestingModel
+from bfet import DjangoTestingModel, create_random_datetime
 from rest_framework import status
 from rest_framework.exceptions import ErrorDetail, server_error
 
@@ -71,19 +71,19 @@ class BaseAPIViewTestMixin:
             User,
             username="a@gmail.com",
             email="a@gmail.com",
-            date_joined=DjangoTestingModel.create_random_datetime(5, 10, 2022),
+            date_joined=create_random_datetime(5, 10, 2022),
         )
         user_key_removed = DjangoTestingModel.create(
             User,
             username="b@gmail.com",
             email="b@gmail.com",
-            date_joined=DjangoTestingModel.create_random_datetime(5, 10, 2022),
+            date_joined=create_random_datetime(5, 10, 2022),
         )
         user_key = DjangoTestingModel.create(
             User,
             username="c@gmail.com",
             email="c@gmail.com",
-            date_joined=DjangoTestingModel.create_random_datetime(5, 10, 2022),
+            date_joined=create_random_datetime(5, 10, 2022),
         )
         product = DjangoTestingModel.create(
             Product,
