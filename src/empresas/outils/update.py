@@ -54,7 +54,9 @@ class UpdateCompany(CalculateFinancialRatios):
     @log_company()
     def add_description(self) -> None:
         self.company.description = google_translator().translate(
-            self.company.description, lang_src="en", lang_tgt="es",
+            self.company.description,
+            lang_src="en",
+            lang_tgt="es",
         )
         self.company.description_translated = True
         self.company.save(update_fields=["description_translated", "description"])
@@ -68,13 +70,13 @@ class UpdateCompany(CalculateFinancialRatios):
         return None
 
     @log_company()
-    def check_last_filing(self) -> str:
-        least_recent_date = ParseYahooQuery(self.company.ticker).balance_sheet()
+    def needs_update(self) -> bool:
+        least_recent_date = ParseYahooQuery(
+            self.company.ticker
+        ).request_balance_sheets_yahooquery()
         least_recent_date = least_recent_date["asOfDate"].max().value // 10**9
         least_recent_year = datetime.fromtimestamp(least_recent_date).year
-        if least_recent_year != self.company.most_recent_year:
-            return "need update"
-        return "updated"
+        return least_recent_year != self.company.most_recent_year
 
     @log_company()
     def update_average_financials_statements(self, period: Period) -> None:
@@ -94,34 +96,36 @@ class UpdateCompany(CalculateFinancialRatios):
             ),
         ]:
             if averaged_stement := funct_calculate_statement(period):
-                # Raise expect non arguments that why the type ignore
-                averaged_stement.update({"company": self.company, "from_average": True})  # type: ignore
+                averaged_stement.update(**{"company": self.company, "from_average": True})
                 funct_create_or_update_statement(averaged_stement, period)
         return None
 
     @log_company()
     def create_or_update_ttm(self) -> None:
-        to_exclude = {"id",
-                                "period_id",
-                                "year",
-                    "company_id",
-              'from_average',
-                    "is_ttm",
-                    "reported_currency_id",}
+        to_exclude = {
+            "id",
+            "period_id",
+            "year",
+            "company_id",
+            "from_average",
+            "is_ttm",
+            "reported_currency_id",
+        }
         for statement_manager in [
             self.company.inc_statements,
             self.company.balance_sheets,
             self.company.cf_statements,
         ]:
             last_statements = statement_manager.filter(
-                ~Q(period__period=PERIOD_FOR_YEAR), is_ttm=False,
+                ~Q(period__period=PERIOD_FOR_YEAR),
+                is_ttm=False,
             ).values()[:4]
             result = defaultdict(int)
             for statement in last_statements:
                 for key, value in statement.items():
                     if key == "reported_currency_id":
-                        result.setdefault(key, []) #type: ignore
-                        result[key].append(value) #type: ignore
+                        result.setdefault(key, [])  # type: ignore
+                        result[key].append(value)  # type: ignore
                     elif key == "date":
                         result[key] = max(result[key], value)
                     elif key not in to_exclude:
@@ -130,8 +134,8 @@ class UpdateCompany(CalculateFinancialRatios):
                 {
                     "is_ttm": True,
                     "from_average": True,
-                    **AverageStatements.find_correct_currency(result)
-                }
+                    **AverageStatements.find_correct_currency(result),
+                }  # type: ignore
             )
             statement_manager.create(**result)
         return None

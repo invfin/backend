@@ -2,6 +2,8 @@ from collections import Counter, defaultdict
 from statistics import fmean
 from typing import Any, Dict, List, Optional, Type, Union
 
+from src.periods.models import Period
+
 
 class AverageStatements:
     """
@@ -45,7 +47,10 @@ class AverageStatements:
     def __init__(self, company) -> None:
         self.company = company
 
-    def calculate_average_income_statement(self, period) -> Optional[Dict[str, Any]]:
+    def calculate_average_income_statement(
+        self,
+        period: Period,
+    ) -> Optional[Dict[str, Union[int, float]]]:
         return self.return_averaged_data(
             period,
             [
@@ -55,7 +60,10 @@ class AverageStatements:
             ],
         )
 
-    def calculate_average_balance_sheet(self, period) -> Optional[Dict[str, Any]]:
+    def calculate_average_balance_sheet(
+        self,
+        period: Period,
+    ) -> Optional[Dict[str, Union[int, float]]]:
         return self.return_averaged_data(
             period,
             [
@@ -65,7 +73,10 @@ class AverageStatements:
             ],
         )
 
-    def calculate_average_cashflow_statement(self, period) -> Optional[Dict[str, Any]]:
+    def calculate_average_cashflow_statement(
+        self,
+        period: Period,
+    ) -> Optional[Dict[str, Union[int, float]]]:
         return self.return_averaged_data(
             period,
             [
@@ -76,11 +87,16 @@ class AverageStatements:
         )
 
     @classmethod
-    def return_averaged_data(cls, period, statements: List[Type]) -> Optional[Dict[str, Any]]:
+    def return_averaged_data(
+        cls,
+        period: Period,
+        statements: List[Type],
+    ) -> Optional[Dict[str, Union[int, float]]]:
         if reunited_data := cls.prepare_data(statements):
             currency = cls.find_correct_currency(reunited_data)
             final_data = cls.calculate_averages(reunited_data)
-            final_data.update({"date": period.year, "period_id": period.id, **currency})
+            # TODO: check it it works
+            final_data.update(**{"date": period.year, "period_id": period.id, **currency})
             return final_data
         return None
 
@@ -96,7 +112,7 @@ class AverageStatements:
 
     @staticmethod
     def find_correct_currency(
-        reunited_data: Union[Dict[str, List[int]]] | defaultdict
+        reunited_data: Union[Dict[str, List[Union[int, float]]], defaultdict]
     ) -> Dict[str, Optional[int]]:
         if currency := reunited_data.pop("reported_currency_id", None):
             currency, repetitions = Counter(currency).most_common(1)[0]  # type: ignore

@@ -27,13 +27,10 @@ class TestScrapCompanyInfo(TestCase):
 
     @company_vcr.use_cassette
     def test_need_update(self):
-        need_update = self.company_update.check_last_filing()
-        assert need_update == "need update"
-
+        self.assertFalse(self.company_update.needs_update())
         company2_update = UpdateCompany(self.company)
         self.company.inc_statements.create(date=2021)
-        need_update2 = company2_update.check_last_filing()
-        assert need_update2 == "updated"
+        self.assertTrue(company2_update.needs_update())
 
     def test_all_data(self):
         current_data = self.company_update.generate_current_data(
@@ -87,16 +84,24 @@ class TestScrapCompanyInfo(TestCase):
         assert self.company.efficiency_ratios.count() == 0
         assert self.company.growth_rates.count() == 0
 
-        created_current_stock_price = self.company_update.create_current_stock_price(price=current_data["currentPrice"])
-        created_rentability_ratios = self.company_update.create_rentability_ratios(rentability_ratios)
+        created_current_stock_price = self.company_update.create_current_stock_price(
+            price=current_data["currentPrice"]
+        )
+        created_rentability_ratios = self.company_update.create_rentability_ratios(
+            rentability_ratios
+        )
         created_liquidity_ratio = self.company_update.create_liquidity_ratio(liquidity_ratio)
         created_margin_ratio = self.company_update.create_margin_ratio(margin_ratio)
         created_fcf_ratio = self.company_update.create_fcf_ratio(fcf_ratio)
         created_ps_value = self.company_update.create_ps_value(ps_value)
         created_non_gaap = self.company_update.create_non_gaap(non_gaap)
-        created_operation_risk_ratio = self.company_update.create_operation_risk_ratio(operation_risk_ratio)
+        created_operation_risk_ratio = self.company_update.create_operation_risk_ratio(
+            operation_risk_ratio
+        )
         created_price_to_ratio = self.company_update.create_price_to_ratio(price_to_ratio)
-        created_enterprise_value_ratio = self.company_update.create_enterprise_value_ratio(enterprise_value_ratio)
+        created_enterprise_value_ratio = self.company_update.create_enterprise_value_ratio(
+            enterprise_value_ratio
+        )
         created_eficiency_ratio = self.company_update.create_eficiency_ratio(eficiency_ratio)
         created_company_growth = self.company_update.create_company_growth(company_growth)
 

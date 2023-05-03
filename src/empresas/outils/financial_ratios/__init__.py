@@ -37,7 +37,9 @@ class CalculateFinancialRatios(
         self.company = company
 
     @classmethod
-    def filter_previous_year_data(cls, data: Dict[str, Union[int, float]]) -> Dict[str, Union[int, float]]:
+    def filter_previous_year_data(
+        cls, data: Dict[str, Union[int, float]]
+    ) -> Dict[str, Union[int, float]]:
         last_year_inventory = data.get("inventory", 0)
         last_year_accounts_payable = data.get("accounts_payable", 0)
         last_year_revenue = data.get("revenue", 0)
@@ -134,7 +136,9 @@ class CalculateFinancialRatios(
         }
 
     @classmethod
-    def calculate_other_ratios(cls, data: Dict[str, Union[int, float]]) -> Dict[str, Union[int, float]]:
+    def calculate_other_ratios(
+        cls, data: Dict[str, Union[int, float]]
+    ) -> Dict[str, Union[int, float]]:
         average_fixed_assets = cls.calculate_average_fixed_assets(
             data.get("last_year_fixed_assets", 0),
             data.get("property_plant_equipment_net", 0),
@@ -211,45 +215,35 @@ class CalculateFinancialRatios(
         }
 
     @classmethod
-    def calculate_rentability_ratios(cls, data: Dict[str, Union[int, float]]) -> Dict[str, Union[int, float]]:
-        roa = cls.calculate_roa(
-            data.get("net_income", 0),
-            data.get("total_assets", 0),
-        )
+    def calculate_rentability_ratios(
+        cls, data: Dict[str, Union[int, float]]
+    ) -> Dict[str, Union[int, float]]:
+        roa = cls.calculate_roa(data.get("net_income", 0), data.get("total_assets", 0))
         roe = cls.calculate_roe(
             data.get("net_income", 0),
             data.get("total_stockholders_equity", 0),
         )
-        roc = cls.calculate_roc(
-            data.get("operating_income", 0),
-            data.get("total_assets", 0),
-        )
-        roce = cls.calculate_roce(
-            data.get("operating_income", 0),
-            data.get("capital_employed", 0),
-        )
-        rota = cls.calculate_rota(
-            data.get("net_income", 0),
-            data.get("tangible_assets", 0),
-        )
+        roc = cls.calculate_roc(data.get("operating_income", 0), data.get("total_assets", 0))
+        rota = cls.calculate_rota(data.get("net_income", 0), data.get("tangible_assets", 0))
         roic = cls.calculate_roic(
             data.get("net_income", 0),
             data.get("dividends_paid", 0),
             data.get("invested_capital", 0),
         )
         nopat_roic = cls.calculate_nopat_roic(
-            data.get("nopat", 0),
-            data.get("invested_capital", 0),
+            data.get("nopat", 0), data.get("invested_capital", 0)
         )
         rogic = cls.calculate_rogic(
-            data.get("nopat", 0),
-            data.get("gross_invested_capital", 0),
+            data.get("nopat", 0), data.get("gross_invested_capital", 0)
         )
         return {
             "roa": roa,
             "roe": roe,
             "roc": roc,
-            "roce": roce,
+            "roce": cls.calculate_roce(
+                data.get("operating_income", 0),
+                data.get("capital_employed", 0),
+            ),
             "rota": rota,
             "roic": roic,
             "nopat_roic": nopat_roic,
@@ -257,7 +251,9 @@ class CalculateFinancialRatios(
         }
 
     @classmethod
-    def calculate_liquidity_ratios(cls, data: Dict[str, Union[int, float]]) -> Dict[str, Union[int, float]]:
+    def calculate_liquidity_ratios(
+        cls, data: Dict[str, Union[int, float]]
+    ) -> Dict[str, Union[int, float]]:
         cash_ratio = cls.calculate_cash_ratio(
             data.get("cash_and_cash_equivalents", 0),
             data.get("total_current_liabilities", 0),
@@ -289,7 +285,9 @@ class CalculateFinancialRatios(
         }
 
     @classmethod
-    def calculate_margin_ratios(cls, data: Dict[str, Union[int, float]]) -> Dict[str, Union[int, float]]:
+    def calculate_margin_ratios(
+        cls, data: Dict[str, Union[int, float]]
+    ) -> Dict[str, Union[int, float]]:
         gross_margin = cls.calculate_gross_margin(
             data.get("gross_profit", 0),
             data.get("revenue", 0),
@@ -335,7 +333,9 @@ class CalculateFinancialRatios(
         }
 
     @classmethod
-    def calculate_free_cashflow_ratios(cls, data: Dict[str, Union[int, float]]) -> Dict[str, Union[int, float]]:
+    def calculate_free_cashflow_ratios(
+        cls, data: Dict[str, Union[int, float]]
+    ) -> Dict[str, Union[int, float]]:
         fcf_equity = cls.calculate_fcf_equity(
             data.get("net_cash_provided_by_operating_activities", 0),
             data.get("capital_expenditure", 0),
@@ -368,7 +368,9 @@ class CalculateFinancialRatios(
         }
 
     @classmethod
-    def calculate_per_share_value(cls, data: Dict[str, Union[int, float]]) -> Dict[str, Union[int, float]]:
+    def calculate_per_share_value(
+        cls, data: Dict[str, Union[int, float]]
+    ) -> Dict[str, Union[int, float]]:
         sales_ps = cls.calculate_sales_ps(
             data.get("revenue", 0),
             data.get("weighted_average_shares_outstanding", 0),
@@ -419,7 +421,9 @@ class CalculateFinancialRatios(
         }
 
     @classmethod
-    def calculate_non_gaap(cls, data: Dict[str, Union[int, float]]) -> Dict[str, Union[int, float]]:
+    def calculate_non_gaap(
+        cls, data: Dict[str, Union[int, float]]
+    ) -> Dict[str, Union[int, float]]:
         normalized_income = cls.calculate_normalized_income(
             data.get("net_income", 0),
             data.get("total_other_income_expenses_net", 0),
@@ -507,7 +511,9 @@ class CalculateFinancialRatios(
         }
 
     @classmethod
-    def calculate_operation_risk_ratios(cls, data: Dict[str, Union[int, float]]) -> Dict[str, Union[int, float]]:
+    def calculate_operation_risk_ratios(
+        cls, data: Dict[str, Union[int, float]]
+    ) -> Dict[str, Union[int, float]]:
         asset_coverage_ratio = cls.calculate_asset_coverage_ratio(
             data.get("total_assets", 0),
             data.get("goodwill_and_intangible_assets", 0),
@@ -561,7 +567,9 @@ class CalculateFinancialRatios(
         }
 
     @classmethod
-    def calculate_enterprise_value_ratios(cls, data: Dict[str, Union[int, float]]) -> Dict[str, Union[int, float]]:
+    def calculate_enterprise_value_ratios(
+        cls, data: Dict[str, Union[int, float]]
+    ) -> Dict[str, Union[int, float]]:
         market_cap = cls.calculate_market_cap(
             data.get("current_price", 0),
             data.get("weighted_average_shares_outstanding", 0),
@@ -603,7 +611,9 @@ class CalculateFinancialRatios(
         }
 
     @classmethod
-    def calculate_company_growth(cls, data: Dict[str, Union[int, float]]) -> Dict[str, Union[int, float]]:
+    def calculate_company_growth(
+        cls, data: Dict[str, Union[int, float]]
+    ) -> Dict[str, Union[int, float]]:
         revenue_growth = cls.calculate_revenue_growth(
             data.get("revenue", 0),
             data.get("last_year_revenue", 0),
@@ -659,7 +669,9 @@ class CalculateFinancialRatios(
         }
 
     @classmethod
-    def calculate_efficiency_ratios(cls, data: Dict[str, Union[int, float]]) -> Dict[str, Union[int, float]]:
+    def calculate_efficiency_ratios(
+        cls, data: Dict[str, Union[int, float]]
+    ) -> Dict[str, Union[int, float]]:
         days_inventory_outstanding = cls.calculate_days_inventory_outstanding(
             data.get("average_inventory", 0),
             data.get("cost_of_revenue", 0),
@@ -672,7 +684,9 @@ class CalculateFinancialRatios(
             data.get("accounts_receivable", 0),
             data.get("accounts_payable", 0),
         )
-        operating_cycle = cls.calculate_operating_cycle(days_inventory_outstanding, days_sales_outstanding)
+        operating_cycle = cls.calculate_operating_cycle(
+            days_inventory_outstanding, days_sales_outstanding
+        )
         cash_conversion_cycle = cls.calculate_cash_conversion_cycle(
             days_inventory_outstanding,
             days_sales_outstanding,
@@ -694,9 +708,11 @@ class CalculateFinancialRatios(
             data.get("accounts_payable", 0),
             data.get("average_accounts_payable", 0),
         )
-        free_cashflow_to_operating_cashflow = cls.calculate_free_cashflow_to_operating_cashflow(
-            data.get("free_cash_flow", 0),
-            data.get("net_cash_provided_by_operating_activities", 0),
+        free_cashflow_to_operating_cashflow = (
+            cls.calculate_free_cashflow_to_operating_cashflow(
+                data.get("free_cash_flow", 0),
+                data.get("net_cash_provided_by_operating_activities", 0),
+            )
         )
         return {
             "days_inventory_outstanding": days_inventory_outstanding,
@@ -712,7 +728,9 @@ class CalculateFinancialRatios(
         }
 
     @classmethod
-    def calculate_price_to_ratios(cls, data: Dict[str, Union[int, float]]) -> Dict[str, Union[int, float]]:
+    def calculate_price_to_ratios(
+        cls, data: Dict[str, Union[int, float]]
+    ) -> Dict[str, Union[int, float]]:
         price_to_book = cls.calculate_price_to_book(
             data.get("current_price", 0),
             data.get("book_ps", 0),
