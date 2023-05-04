@@ -181,12 +181,12 @@ class TestTask(TestCase):
 
     @patch("src.empresas.tasks.create_averages_task.delay")
     def test_create_averages_task(self, mock_create_averages_task):
-        pass
+        mock_create_averages_task.assrt_called_once_with()
 
     @patch("src.empresas.tasks.create_ttm_task.delay")
     def test_create_ttm_task(self, mock_create_ttm_task):
-        pass
+        mock_create_ttm_task.assrt_called_once_with()
 
     @patch("src.empresas.tasks.arrange_quarters_task.delay")
     def test_arrange_quarters_task(self, mock_arrange_quarters_task):
-        pass
+        mock_arrange_quarters_task.assrt_called_once_with()

@@ -1,6 +1,6 @@
 from datetime import datetime
 import json
-from typing import Tuple
+from typing import Tuple, Union
 
 from django.utils import timezone
 
@@ -9,6 +9,9 @@ import numpy as np
 
 from src.empresas.constants import MAX_REQUESTS_FINPREP
 from src.empresas.models import Company, CompanyUpdateLog
+from src.empresas.models.y_finance import IncomeStatementYFinance
+from src.empresas.models.yahoo_query import IncomeStatementYahooQuery
+from src.empresas.querysets.statements import StatementQuerySet
 from src.periods import constants
 from src.periods.models import Period
 
@@ -101,26 +104,32 @@ def log_company(checking: str = ""):
     return decorator
 
 
-def arrange_quarters(company):
+def arrange_quarters(company: Company):
     """
-    TODO: TEst
-    Fix the try except for when a quarter isn't correctly set becasuse the month is different
+    TODO: Fix and test
+    Fix the try except for when a quarter isn't correctly set becasuse the month is different.
+    How to:
+        - We could check the amounts. If the quarter's values are a sum of the previous ones plus the current
+        we could look for this.
+        - Otherwise by dates. Get a frame where a quarter could be and if the month is in this range set to the
+        according quarter.
     """
     statements_models = [
         company.incomestatementyahooquery_set,
-        company.balancesheetyahooquery_set,
-        company.cashflowstatementyahooquery_set,
-        company.incomestatementyfinance_set,
-        company.balancesheetyfinance_set,
-        company.cashflowstatementyfinance_set,
+        # company.balancesheetyahooquery_set,
+        # company.cashflowstatementyahooquery_set,
+        # company.incomestatementyfinance_set,
+        # company.balancesheetyfinance_set,
+        # company.cashflowstatementyfinance_set,
     ]
     for statement_obj in statements_models:
-        company_statements = statement_obj.all().order_by("year")
+        company_statements: StatementQuerySet = statement_obj.all().order_by("year")
         if (
             company_statements
             and company_statements.filter(period_period=constants.PERIOD_FOR_YEAR).exists()
         ):
             for statement in company_statements:
+                statement: Union[IncomeStatementYahooQuery, IncomeStatementYFinance]
                 try:
                     if statement.period.period == constants.PERIOD_FOR_YEAR:
                         date_quarter_4 = statement.year
