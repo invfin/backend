@@ -5,7 +5,7 @@ from unittest.mock import patch
 from django.test import TestCase
 from django.utils import timezone
 
-from bfet import DjangoTestingModel
+from bfet import DjangoTestingModel, create_random_datetime
 
 from src.emailing.constants import EMAIL_FOR_WEB
 from src.engagement_machine.tasks import (
@@ -62,7 +62,7 @@ class TestEmailEngamentTask(TestCase):
             id=86,
             whom_to_send=web_constants.EMAIL_ALL,
             sent=False,
-            date_to_send=DjangoTestingModel.create_random_datetime(5, 10, 2022),
+            date_to_send=create_random_datetime(5, 10, 2022),
         )
         users_category = DjangoTestingModel.create(UsersCategory)
         users_category.users.add(cls.user_for_category)

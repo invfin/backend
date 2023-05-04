@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from bfet import DataCreator, DjangoTestingModel
+from bfet import DjangoTestingModel, create_random_string
 
 from src.content_creation import constants
 from src.content_creation.models import DefaultContent, DefaultTilte, Emoji, Hashtag
@@ -17,7 +17,7 @@ class TestContentCreation(TestCase):
         hashtags = [
             DjangoTestingModel.create(
                 Hashtag,
-                title=DataCreator.create_random_string(20),
+                title=create_random_string(20),
                 platform=social_constants.FACEBOOK,
             )
             for index in range(2)
