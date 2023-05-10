@@ -33,8 +33,7 @@ class FiscalYearDates:
         self.regular_date = self._any_date_to_date_object(regular_date)
 
     @staticmethod
-    def _any_date_to_date_object(
-            regular_date: Union[str, date, datetime]) -> date:
+    def _any_date_to_date_object(regular_date: Union[str, date, datetime]) -> date:
         if type(regular_date) == str:
             regular_date = parse(
                 regular_date,
@@ -43,14 +42,14 @@ class FiscalYearDates:
             ).date()
         elif type(regular_date) == datetime:
             regular_date = regular_date.date()
-        return regular_date
+        return regular_date  # type: ignore
 
     def get_quarter(self) -> int:  # type: ignore
         for period in [
-                self.fiscal_first_quarter,
-                self.fiscal_second_quarter,
-                self.fiscal_third_quarter,
-                self.fiscal_fourth_quarter,
+            self.fiscal_first_quarter,
+            self.fiscal_second_quarter,
+            self.fiscal_third_quarter,
+            self.fiscal_fourth_quarter,
         ]:
             period_range, period_num = period
             if self.regular_date.month in period_range:

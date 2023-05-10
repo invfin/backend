@@ -1,6 +1,10 @@
+from datetime import timezone, datetime
+
 INCOME_STATEMENT = [
     {
-        "acceptedDate": "2021-10-28 18:04:28",
+        "acceptedDate": datetime(
+            year=2021, month=10, day=28, hour=18, minute=4, second=28, tzinfo=timezone.utc
+        ),
         "calendarYear": "2021",
         "cik": "0000320193",
         "costAndExpenses": 256868000000,
@@ -40,7 +44,9 @@ INCOME_STATEMENT = [
         "weightedAverageShsOutDil": 16864919000,
     },
     {
-        "acceptedDate": "2020-10-29 18:06:25",
+        "acceptedDate": datetime(
+            year=2020, month=10, day=29, hour=18, minute=4, second=28, tzinfo=timezone.utc
+        ),
         "calendarYear": "2020",
         "cik": "0000320193",
         "costAndExpenses": 208227000000,
@@ -80,7 +86,9 @@ INCOME_STATEMENT = [
         "weightedAverageShsOutDil": 17528214000,
     },
     {
-        "acceptedDate": "2019-10-30 18:12:36",
+        "acceptedDate": datetime(
+            year=2019, month=10, day=30, hour=18, minute=2, second=36, tzinfo=timezone.utc
+        ),
         "calendarYear": "2019",
         "cik": "0000320193",
         "costAndExpenses": 196244000000,
@@ -120,7 +128,9 @@ INCOME_STATEMENT = [
         "weightedAverageShsOutDil": 18595652000,
     },
     {
-        "acceptedDate": "2018-11-05 08:01:40",
+        "acceptedDate": datetime(
+            year=2018, month=11, day=5, hour=8, minute=1, second=40, tzinfo=timezone.utc
+        ),
         "calendarYear": "2018",
         "cik": "0000320193",
         "costAndExpenses": 194697000000,
@@ -160,7 +170,9 @@ INCOME_STATEMENT = [
         "weightedAverageShsOutDil": 20000436000,
     },
     {
-        "acceptedDate": "2017-11-03 08:01:37",
+        "acceptedDate": datetime(
+            year=2017, month=11, day=3, hour=8, minute=1, second=37, tzinfo=timezone.utc
+        ),
         "calendarYear": "2017",
         "cik": "0000320193",
         "costAndExpenses": 167890000000,
@@ -203,7 +215,9 @@ INCOME_STATEMENT = [
 
 BALANCE_SHEET = [
     {
-        "acceptedDate": "2021-10-28 18:04:28",
+        "acceptedDate": datetime(
+            year=2021, month=10, day=28, hour=18, minute=4, second=28, tzinfo=timezone.utc
+        ),
         "accountPayables": 54763000000,
         "accumulatedOtherComprehensiveIncomeLoss": 163000000,
         "calendarYear": "2021",
@@ -259,7 +273,9 @@ BALANCE_SHEET = [
         "totalStockholdersEquity": 63090000000,
     },
     {
-        "acceptedDate": "2020-10-29 18:06:25",
+        "acceptedDate": datetime(
+            year=2020, month=10, day=29, hour=18, minute=6, second=25, tzinfo=timezone.utc
+        ),
         "accountPayables": 42296000000,
         "accumulatedOtherComprehensiveIncomeLoss": -406000000,
         "calendarYear": "2020",
@@ -315,7 +331,9 @@ BALANCE_SHEET = [
         "totalStockholdersEquity": 65339000000,
     },
     {
-        "acceptedDate": "2019-10-30 18:12:36",
+        "acceptedDate": datetime(
+            year=2019, month=10, day=30, hour=18, minute=2, second=36, tzinfo=timezone.utc
+        ),
         "accountPayables": 46236000000,
         "accumulatedOtherComprehensiveIncomeLoss": -584000000,
         "calendarYear": "2019",
@@ -371,7 +389,9 @@ BALANCE_SHEET = [
         "totalStockholdersEquity": 90488000000,
     },
     {
-        "acceptedDate": "2018-11-05 08:01:40",
+        "acceptedDate": datetime(
+            year=2018, month=11, day=5, hour=8, minute=1, second=40, tzinfo=timezone.utc
+        ),
         "accountPayables": 55888000000,
         "accumulatedOtherComprehensiveIncomeLoss": -3454000000,
         "calendarYear": "2018",
@@ -427,7 +447,9 @@ BALANCE_SHEET = [
         "totalStockholdersEquity": 107147000000,
     },
     {
-        "acceptedDate": "2017-11-03 08:01:37",
+        "acceptedDate": datetime(
+            year=2017, month=11, day=3, hour=8, minute=1, second=37, tzinfo=timezone.utc
+        ),
         "accountPayables": 49049000000,
         "accumulatedOtherComprehensiveIncomeLoss": -150000000,
         "calendarYear": "2017",
@@ -486,7 +508,9 @@ BALANCE_SHEET = [
 
 CASHFLOW_STATEMENT = [
     {
-        "acceptedDate": "2021-10-28 18:04:28",
+        "acceptedDate": datetime(
+            year=2021, month=10, day=28, hour=18, minute=4, second=28, tzinfo=timezone.utc
+        ),
         "accountsPayables": 12326000000,
         "accountsReceivables": -10125000000,
         "acquisitionsNet": -33000000,
@@ -528,7 +552,9 @@ CASHFLOW_STATEMENT = [
         "symbol": "AAPL",
     },
     {
-        "acceptedDate": "2020-10-29 18:06:25",
+        "acceptedDate": datetime(
+            year=2020, month=10, day=29, hour=18, minute=6, second=25, tzinfo=timezone.utc
+        ),
         "accountsPayables": -4062000000,
         "accountsReceivables": 6917000000,
         "acquisitionsNet": -1524000000,
@@ -570,7 +596,9 @@ CASHFLOW_STATEMENT = [
         "symbol": "AAPL",
     },
     {
-        "acceptedDate": "2019-10-30 18:12:36",
+        "acceptedDate": datetime(
+            year=2019, month=10, day=30, hour=18, minute=2, second=36, tzinfo=timezone.utc
+        ),
         "accountsPayables": -1923000000,
         "accountsReceivables": 245000000,
         "acquisitionsNet": -624000000,
@@ -612,7 +640,9 @@ CASHFLOW_STATEMENT = [
         "symbol": "AAPL",
     },
     {
-        "acceptedDate": "2018-11-05 08:01:40",
+        "acceptedDate": datetime(
+            year=2018, month=11, day=5, hour=8, minute=1, second=40, tzinfo=timezone.utc
+        ),
         "accountsPayables": 9175000000,
         "accountsReceivables": -5322000000,
         "acquisitionsNet": -721000000,
@@ -654,7 +684,9 @@ CASHFLOW_STATEMENT = [
         "symbol": "AAPL",
     },
     {
-        "acceptedDate": "2017-11-03 08:01:37",
+        "acceptedDate": datetime(
+            year=2017, month=11, day=3, hour=8, minute=1, second=37, tzinfo=timezone.utc
+        ),
         "accountsPayables": 9618000000,
         "accountsReceivables": -2093000000,
         "acquisitionsNet": -329000000,

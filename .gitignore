@@ -277,15 +277,10 @@ src/media/
 .pytest_cache/
 .ipython/
 .envs/*
-
 geoip
-
-
-temp_venv
 .env
 backups
-Notes
-checkout-single-subscription
+
 
 .idea
 *.sqlite3
@@ -293,4 +288,3 @@ checkout-single-subscription
 assets_*
 src/empresas/parse/finprep_requests_done.json
 certs/*
-notes.txt

@@ -26,9 +26,8 @@ class FinprepRequestCheck:
     ) -> Tuple:
         now = timezone.now()
         my_tmz = timezone.get_default_timezone()
-        if (
-            now - datetime.fromtimestamp(last_request_time_timestamp, tz=my_tmz)
-        ).total_seconds() > 86400:
+        if (now - datetime.fromtimestamp(last_request_time_timestamp,
+                                         tz=my_tmz)).total_seconds() > 86400:
             requests_done = number_requests_to_do
             is_auth = True
         else:
@@ -50,7 +49,10 @@ class FinprepRequestCheck:
             checks_json["requests_done"] = requests_done
             checks_json["last_request"] = last_request
         with open(finprep_requests_done_file, "w") as writte_checks_json:
-            json.dump(checks_json, writte_checks_json, indent=2, separators=(",", ": "))
+            json.dump(checks_json,
+                      writte_checks_json,
+                      indent=2,
+                      separators=(",", ": "))
         return is_auth
 
 
@@ -78,6 +80,7 @@ def log_company(checking: str = ""):
     """
 
     def decorator(func):
+
         def wrapper(*args, **kwargs):
             company = args[0].company
             try:
@@ -123,36 +126,41 @@ def arrange_quarters(company: Company):
         # company.cashflowstatementyfinance_set,
     ]
     for statement_obj in statements_models:
-        company_statements: StatementQuerySet = statement_obj.all().order_by("year")
-        if (
-            company_statements
-            and company_statements.filter(period_period=constants.PERIOD_FOR_YEAR).exists()
-        ):
+        company_statements: StatementQuerySet = statement_obj.all().order_by(
+            "year")
+        if (company_statements and company_statements.filter(
+                period__period=constants.PERIOD_FOR_YEAR).exists()):
             for statement in company_statements:
-                statement: Union[IncomeStatementYahooQuery, IncomeStatementYFinance]
+                statement: Union[IncomeStatementYahooQuery,
+                                 IncomeStatementYFinance]
                 try:
                     if statement.period.period == constants.PERIOD_FOR_YEAR:
                         date_quarter_4 = statement.year
-                        date_quarter_1 = (
-                            date_quarter_4 + relativedelta(months=+3) + relativedelta(years=+1)
-                        )
-                        date_quarter_2 = (
-                            date_quarter_1 + relativedelta(months=+3) + relativedelta(years=-1)
-                        )
-                        date_quarter_3 = date_quarter_2 + relativedelta(months=+3)
+                        date_quarter_1 = (date_quarter_4 +
+                                          relativedelta(months=+3) +
+                                          relativedelta(years=+1))
+                        date_quarter_2 = (date_quarter_1 +
+                                          relativedelta(months=+3) +
+                                          relativedelta(years=-1))
+                        date_quarter_3 = date_quarter_2 + relativedelta(
+                            months=+3)
                         period_dict = {
-                            date_quarter_4.month: Period.objects.get_or_create(
-                                year=date_quarter_4.year, period=constants.PERIOD_4_QUARTER
-                            )[0],
-                            date_quarter_1.month: Period.objects.get_or_create(
-                                year=date_quarter_1.year, period=constants.PERIOD_1_QUARTER
-                            )[0],
-                            date_quarter_2.month: Period.objects.get_or_create(
-                                year=date_quarter_2.year, period=constants.PERIOD_2_QUARTER
-                            )[0],
-                            date_quarter_3.month: Period.objects.get_or_create(
-                                year=date_quarter_3.year, period=constants.PERIOD_3_QUARTER
-                            )[0],
+                            date_quarter_4.month:
+                            Period.objects.get_or_create(
+                                year=date_quarter_4.year,
+                                period=constants.PERIOD_4_QUARTER)[0],
+                            date_quarter_1.month:
+                            Period.objects.get_or_create(
+                                year=date_quarter_1.year,
+                                period=constants.PERIOD_1_QUARTER)[0],
+                            date_quarter_2.month:
+                            Period.objects.get_or_create(
+                                year=date_quarter_2.year,
+                                period=constants.PERIOD_2_QUARTER)[0],
+                            date_quarter_3.month:
+                            Period.objects.get_or_create(
+                                year=date_quarter_3.year,
+                                period=constants.PERIOD_3_QUARTER)[0],
                         }
                     else:
                         statement.period = period_dict[statement.year.month]
