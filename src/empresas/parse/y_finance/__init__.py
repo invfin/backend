@@ -2,7 +2,11 @@ from typing import Callable, Type
 
 import pandas as pd
 
-from src.empresas.models import BalanceSheetYFinance, CashflowStatementYFinance, IncomeStatementYFinance
+from src.empresas.models import (
+    BalanceSheetYFinance,
+    CashflowStatementYFinance,
+    IncomeStatementYFinance,
+)
 from src.empresas.parse.y_finance.normalize_data import NormalizeYFinance
 from src.empresas.parse.y_finance.parse_data import ParseYFinance
 from src.general.outils.save_from_df import DFInfoCreator
@@ -19,10 +23,17 @@ class YFinanceInfo(DFInfoCreator, NormalizeYFinance, ParseYFinance):
         self.normalize_balance_sheet = self.normalize_balance_sheets_yfinance
         self.normalize_cashflow_statement = self.normalize_cashflow_statements_yfinance
 
-    def create_statements_from_df(self, df: Type[pd.DataFrame], period: Callable, function: Callable, model: Type):
+    def create_statements_from_df(
+        self,
+        df: Type[pd.DataFrame],
+        period: Callable,
+        function: Callable,
+        model: Type,
+    ):
         for column in df:
             model.objects.get_or_create(
-                financials=df[column].to_dict(), defaults={**function(df[column], column, period)}
+                financials=df[column].to_dict(),
+                defaults={**function(df[column], column, period)},
             )
 
     def create_quarterly_financials_yfinance(self):

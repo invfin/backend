@@ -22,13 +22,9 @@ class Period(AbstractTimeStampedModel):
 
     def __str__(self):
         if self.is_full_year:
-            return f"FY {str(self.period_year)}"
-        return f"Q{self.period} {str(self.period_year)}"
+            return f"FY {str(self.year)}"
+        return f"Q{self.period} {str(self.year)}"
 
     @property
     def is_full_year(self):
         return self.period == PERIOD_FOR_YEAR
-
-    @property
-    def period_year(self):
-        return self.year
