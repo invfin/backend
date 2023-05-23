@@ -44,9 +44,9 @@ class Facebook:
         base_url = constants.FACEBOOK_GRAPH_URL
         if is_video:
             base_url = constants.FACEBOOK_GRAPH_VIDEO_URL
-        base_url = f"{base_url}{version}"
+        base_url = f"{base_url}{version}/"
         if not self.is_old_page and not is_for_auth:
-            base_url = f"{base_url}/{self.page_id}/"
+            base_url = f"{base_url}{self.page_id}/"
         return base_url
 
     def build_action_url(
@@ -54,11 +54,8 @@ class Facebook:
         action: str,
         version: str = constants.FACEBOOK_GRAPH_API_VERSION,
     ) -> str:
-        is_video, is_for_auth = False, False
-        if action == constants.FACEBOOK_POST_VIDEO_PAGE:
-            is_video = True
-        if action == constants.FACEBOOK_OAUTH_ACCESS_TOKEN:
-            is_for_auth = True
+        is_video = action == constants.FACEBOOK_POST_VIDEO_PAGE
+        is_for_auth = action == constants.FACEBOOK_OAUTH_ACCESS_TOKEN
         base_url = self.build_base_url(version, is_video, is_for_auth)
         return f"{base_url}{action}"
 
@@ -100,13 +97,11 @@ class Facebook:
     @classmethod
     def return_user_access_token(cls, code: str):
         json_response = cls.change_auth_code_per_access_token(code)
-        token = cls.get_access_token_information(json_response)
-        return token
+        return cls.get_access_token_information(json_response)
 
     def handle_responses(self, response: requests.Response, field_to_retrieve: str) -> Dict:
         response_result = {}
         response_dict = response.json()
-        print(response.json())
         if response.status_code == 200:
             response_result["result"] = "success"
             response_result["extra"] = str(response_dict[field_to_retrieve])
@@ -137,43 +132,13 @@ class Facebook:
 
     def get_long_live_page_token(self, long_lived_user_token: str):
         parameters = {"fields": "access_token", "access_token": long_lived_user_token}
-        url = self.build_base_url()
-
-        response = requests.get(url, params=parameters)
+        response = requests.get(self.build_base_url(), params=parameters)
         return self.handle_responses(response, "access_token")
 
     def post(self, **kwargs):
-        kwargs.get("media", "")
-        kwargs.get("scheduled_publish_time", "")
-        post_type = kwargs["post_type"]
-        kwargs.get("post_now", True)
-        link = kwargs["link"]
         title = kwargs["title"]
-
         content = self.create_fb_description(title, kwargs["content"], kwargs["hashtags"])
-        data = {"link": link, "message": content}
 
-        if (
-            post_type == content_creation_constants.POST_TYPE_TEXT
-            or post_type == content_creation_constants.POST_TYPE_REPOST
-        ):
-            constants.FACEBOOK_POST_TEXT_PAGE
-        elif (
-            post_type == content_creation_constants.POST_TYPE_IMAGE
-            or post_type == content_creation_constants.POST_TYPE_TEXT_IMAGE
-        ):
-            constants.FACEBOOK_POST_IMAGE_PAGE
-        else:
-            constants.FACEBOOK_POST_VIDEO_PAGE
-
-        # post_content, file = self.generate_post_content(
-        #     content_type,
-        #     data,
-        #     media_url=media_url,
-        #     post_now=post_now,
-        #     scheduled_publish_time=scheduled_publish_time,
-        #     link=link,
-        # )
         api = GraphAPI(
             app_id=settings.FACEBOOK_APP_ID,
             app_secret=settings.FACEBOOK_APP_SECRET,
@@ -184,7 +149,7 @@ class Facebook:
         data = api.post_object(
             self.page_id,
             connection="feed",
-            data=data,
+            data={"link": kwargs["link"], "message": content},
         )
 
         return {
@@ -193,7 +158,7 @@ class Facebook:
                     "social_id": data.get("id"),
                     "title": title,
                     "content": content,
-                    "post_type": post_type,
+                    "post_type": kwargs["post_type"],
                     "use_hashtags": True,
                     "use_emojis": True,
                     "use_link": True,
@@ -226,17 +191,6 @@ class Facebook:
         response = requests.post(url, params=params, data=content, files=files)
 
         return self.handle_responses(response, "id")
-
-    # def share_facebook_post(self, post_id, yb_title):
-    #     default_title = DefaultTilte.objects.random_title()
-    #     url_to_share = f"https://www.facebook.com/{self.facebook_page_name}/posts/{post_id}&show_text=true"
-    #     return self.post_on_facebook(
-    #         post_type=4,
-    #         default_title=default_title,
-    #         has_default_title=True,
-    #         description=f"{default_title.title} {yb_title}",
-    #         link=url_to_share,
-    #     )
 
     def create_fb_description(self, title: str, content: str, hashtags: str) -> str:
         return (

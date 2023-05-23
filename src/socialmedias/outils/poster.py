@@ -98,15 +98,30 @@ class SocialPosting:
         if hashtags_list:
             shared_model_historial_obj.hashtags.add(*hashtags_list)
 
-    @staticmethod
-    def get_socialmedia_content(socialmedia_content_creator: type, platform: str) -> Dict[str, Union[str, List, Any]]:
-        # TODO add tests
-        return socialmedia_content_creator(platform).create_social_media_content_from_object()
+    @classmethod
+    def share_content(cls, content_object: str, socialmedia_list: List[Dict]):
+        """The main method that get the content creator according to the model, then it gets
+        the social media and post on it. Once the post has been successfull it saves the results.
+        For the moment it'll probably be most used from tasks.
 
-    @staticmethod
-    def post_type_is_text(media: str, post_type: int) -> bool:
-        # TODO add tests
-        return not media and post_type != content_creation_constants.POST_TYPE_TEXT
+        Parameters
+        ----------
+            content_object : str
+                A string from constants that will indicate which model to use to get an obj for the content
+                Example: constants.COMPANY_FOR_CONTENT
+
+            socialmedia_list : List[Dict]
+                A list of dicts with the social media platform to post and the post type.
+                Example: {"platform_shared": constants.FACEBOOK, "post_type": constants.POST_TYPE_TEXT_IMAGE}
+        """
+        socialmedia_content_creator = cls.get_creator(content_object)
+        for platform_post_type_dict in socialmedia_list:
+            platform_shared = platform_post_type_dict["platform_shared"]
+            socialmedia_content = socialmedia_content_creator(platform_shared,).create_social_media_content_from_object()
+            post_type = cls.return_correct_post_type(socialmedia_content.get("media", ""), platform_post_type_dict["post_type"],)
+            socialmedia_obj_response = cls.post_on_socialmedia(platform_shared, post_type, socialmedia_content,)
+            # Here we get the response and save it
+            cls.save_responses(socialmedia_obj_response["post_response"], socialmedia_content)
 
     @classmethod
     def return_correct_post_type(cls, media: str, post_type: int) -> int:
@@ -114,6 +129,11 @@ class SocialPosting:
         if cls.post_type_is_text(media, post_type):
             return content_creation_constants.POST_TYPE_TEXT
         return post_type
+
+    @staticmethod
+    def post_type_is_text(media: str, post_type: int) -> bool:
+        # TODO add tests
+        return not media and post_type != content_creation_constants.POST_TYPE_TEXT
 
     @classmethod
     def post_on_socialmedia(
@@ -123,11 +143,12 @@ class SocialPosting:
         socialmedia_content: Dict,
     ) -> Dict[str, List[Dict[str, Any]]]:
         # TODO add tests
-        socialmedia_obj = cls.get_socialmedia(platform_shared)
-        return socialmedia_obj.post(
+        return cls.get_socialmedia(platform_shared).post(
             **socialmedia_content,
             post_type=post_type,
         )
+
+
 
     @classmethod
     def save_responses(cls, socialmedia_obj_responses: List, socialmedia_content: Dict) -> None:
@@ -142,31 +163,3 @@ class SocialPosting:
                 shared_model_historial=socialmedia_content["shared_model_historial"],
                 **response_dict,
             )
-
-    @classmethod
-    def share_content(cls, content_object: str, socialmedia_list: List[Dict]):
-        """The main method that get the content crator according to the model, then it gets
-        the socialmedia and post on it. Once the post has been successfull it saves the results.
-        For the moment it'll probably be most used from tasks.
-
-        Parameters
-        ----------
-            content_object : str
-                A string from constants that will indicate which model to use to get an obj for the content
-                Example: constants.COMPANY_FOR_CONTENT
-
-            socialmedia_list : List[Dict]
-                A list of dicts with the socialmedia platform to post and the post type.
-                Example: {"platform_shared": constants.FACEBOOK, "post_type": constants.POST_TYPE_TEXT_IMAGE}
-        """
-        socialmedia_content_creator = cls.get_creator(content_object)
-        for platform_post_type_dict in socialmedia_list:
-            platform_shared = platform_post_type_dict["platform_shared"]
-            socialmedia_content = cls.get_socialmedia_content(socialmedia_content_creator, platform_shared)
-            print("post content")
-            media = socialmedia_content.get("media", "")
-            post_type = platform_post_type_dict["post_type"]
-            post_type = cls.return_correct_post_type(media, post_type)
-            socialmedia_obj_response = cls.post_on_socialmedia(platform_shared, post_type, socialmedia_content)
-            # Here we get the response and save it
-            cls.save_responses(socialmedia_obj_response["post_response"], socialmedia_content)

@@ -30,7 +30,9 @@ User = get_user_model()
 
 
 class SocialmediaAuth(AbstractTimeStampedModel):
-    title = CharField(max_length=120, null=True)
+    title = CharField(max_length=120, null=True, blank=True)
+    page_name = CharField(max_length=350, null=True, blank=True)
+    page_id = CharField(max_length=350, null=True, blank=True)
     user = ForeignKey(User, on_delete=SET_NULL, null=True, blank=True)
     socialmedia = CharField(max_length=12, choices=SOCIAL_MEDIAS)
     metadata = JSONField(default=dict)

@@ -1,7 +1,7 @@
 from django.conf import settings
 from django.core.management import BaseCommand
 
-from src.socialmedias.outils.socialposter.tweetpy import Twitter
+from src.socialmedias.outils.socialposter.facepy import Facebook
 
 
 class Command(BaseCommand):
@@ -14,10 +14,11 @@ class Command(BaseCommand):
             post_type=2,
             link="https://inversionesyfinanzas.xyz",
         )
-        fb_response = Twitter(
-            settings.TWITTER_CONSUMER_KEY,
-            settings.TWITTER_CONSUMER_SECRET,
-            settings.TWITTER_ACCESS_TOKEN,
-            settings.TWITTER_ACCESS_TOKEN_SECRET,
-        ).post(**post_content)
-        print(fb_response)
+        fb_response = Facebook(
+"",
+            "",
+            "Inversiones & Finanzas",
+        )
+        print(fb_response.post(
+            ""
+        ))
