@@ -1,7 +1,8 @@
 import random
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 from django.db.models import Manager, QuerySet
+from django.db.models.query import QuerySet
 
 
 class BaseQuerySet(QuerySet):
@@ -28,16 +29,19 @@ class BaseQuerySet(QuerySet):
 
 
 class BaseManager(Manager):
-    def filter_checkings(self, checkings: List[Dict[str, bool]]):
+    def get_queryset(self) -> "BaseQuerySet":
+        return super().get_queryset()
+
+    def filter_checkings(self, checkings: List[Dict[str, bool]]) -> "BaseQuerySet":
         return self.get_queryset().filter_checkings(checkings)
 
-    def filter_checking(self, checking: str, has_it: bool):
+    def filter_checking(self, checking: str, has_it: bool) -> "BaseQuerySet":
         return self.get_queryset().filter_checking(checking, has_it)
 
-    def filter_checking_not_seen(self, checking: str):
+    def filter_checking_not_seen(self, checking: str) -> "BaseQuerySet":
         return self.get_queryset().filter_checking_not_seen(checking)
 
-    def get_random(self, query: QuerySet = None):
+    def get_random(self, query: Optional[QuerySet] = None) -> Optional[type]:
         query = query or self.all()
         models_list = list(query)
         return random.choice(models_list) if models_list else None

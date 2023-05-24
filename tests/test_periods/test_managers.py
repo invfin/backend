@@ -9,9 +9,8 @@ from src.periods.models import Period
 class TestPeriodManager(TestCase):
     @classmethod
     def setUpTestData(cls) -> None:
-        for index in range(5):
-            for period in constants.PERIODS:
-                DjangoTestingModel.create(Period, year=(2020 + index), period=period[0])
+        for period, _ in constants.PERIODS:
+            DjangoTestingModel.create(Period, year=2021, period=period)
 
     def test_for_year_period(self):
         period = Period.objects.for_year_period(2021)

@@ -54,7 +54,6 @@ class ExcelAPIIncome(BaseExcelAPIView):
     Used to serves the Inteligent Excel with the company's income statements
     """
 
-    # queryset = (IncomeStatement.objects.yearly, True)
     queryset = (IncomeStatement.objects.yearly, True)
     serializer_class = ExcelIncomeStatementSerializer
 
@@ -64,7 +63,6 @@ class ExcelAPIBalance(BaseExcelAPIView):
     Used to serves the Inteligent Excel with the company's balance sheets
     """
 
-    # queryset = (BalanceSheet.objects.yearly, True)
     queryset = (BalanceSheet.objects.yearly, True)
     serializer_class = ExcelBalanceSheetSerializer
 
@@ -74,6 +72,5 @@ class ExcelAPICashflow(BaseExcelAPIView):
     Used to serves the Inteligent Excel with the company's cashflow statements
     """
 
-    # queryset = (CashflowStatement.objects.yearly, True)
     queryset = (CashflowStatement.objects.yearly, True)
     serializer_class = ExcelCashflowStatementSerializer

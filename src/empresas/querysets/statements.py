@@ -1,3 +1,4 @@
+from typing import Dict, Union
 from django.db.models import Avg
 
 from src.general.managers import BaseQuerySet
@@ -5,15 +6,15 @@ from src.periods import constants
 
 
 class BaseStatementQuerySet(BaseQuerySet):
-    def quarterly(self):
+    def quarterly(self) -> "BaseStatementQuerySet":
         return self.exclude(period__period=constants.PERIOD_FOR_YEAR)
 
-    def yearly(self):
+    def yearly(self) -> "BaseStatementQuerySet":
         return self.filter(period__period=constants.PERIOD_FOR_YEAR)
 
 
 class StatementQuerySet(BaseStatementQuerySet):
-    def average_margins(self):
+    def average_margins(self) -> Dict[str, Union[int, float]]:
         return self.aggregate(
             average_gross_margin=Avg("gross_margin"),
             average_ebitda_margin=Avg("ebitda_margin"),
@@ -25,7 +26,7 @@ class StatementQuerySet(BaseStatementQuerySet):
             average_owners_earnings_to_net_income=Avg("owners_earnings_to_net_income"),
         )
 
-    def average_efficiency_ratios(self):
+    def average_efficiency_ratios(self) -> Dict[str, Union[int, float]]:
         return self.aggregate(
             average_asset_turnover=Avg("asset_turnover"),
             average_inventory_turnover=Avg("inventory_turnover"),
@@ -35,11 +36,13 @@ class StatementQuerySet(BaseStatementQuerySet):
             average_days_inventory_outstanding=Avg("days_inventory_outstanding"),
             average_days_payables_outstanding=Avg("days_payables_outstanding"),
             average_days_sales_outstanding=Avg("days_sales_outstanding"),
-            average_free_cashflow_to_operating_cashflow=Avg("free_cashflow_to_operating_cashflow"),
+            average_free_cashflow_to_operating_cashflow=Avg(
+                "free_cashflow_to_operating_cashflow"
+            ),
             average_operating_cycle=Avg("operating_cycle"),
         )
 
-    def average_growth_rates(self):
+    def average_growth_rates(self) -> Dict[str, Union[int, float]]:
         return self.aggregate(
             average_revenue_growth=Avg("revenue_growth"),
             average_cost_revenue_growth=Avg("cost_revenue_growth"),
@@ -53,7 +56,7 @@ class StatementQuerySet(BaseStatementQuerySet):
             average_rd_expenses_growth=Avg("rd_expenses_growth"),
         )
 
-    def average_per_share_values(self):
+    def average_per_share_values(self) -> Dict[str, Union[int, float]]:
         return self.aggregate(
             average_sales_ps=Avg("sales_ps"),
             average_book_ps=Avg("book_ps"),
@@ -66,7 +69,7 @@ class StatementQuerySet(BaseStatementQuerySet):
             average_total_assets_ps=Avg("total_assets_ps"),
         )
 
-    def average_price_to_ratios(self):
+    def average_price_to_ratios(self) -> Dict[str, Union[int, float]]:
         return self.aggregate(
             average_price_book=Avg("price_book"),
             average_price_cf=Avg("price_cf"),
@@ -79,7 +82,7 @@ class StatementQuerySet(BaseStatementQuerySet):
             average_price_tangible_assets=Avg("price_tangible_assets"),
         )
 
-    def average_liquidity_ratios(self):
+    def average_liquidity_ratios(self) -> Dict[str, Union[int, float]]:
         return self.aggregate(
             average_cash_ratio=Avg("cash_ratio"),
             average_current_ratio=Avg("current_ratio"),
@@ -88,7 +91,7 @@ class StatementQuerySet(BaseStatementQuerySet):
             average_debt_to_equity=Avg("debt_to_equity"),
         )
 
-    def average_rentability_ratios(self):
+    def average_rentability_ratios(self) -> Dict[str, Union[int, float]]:
         return self.aggregate(
             average_roa=Avg("roa"),
             average_roe=Avg("roe"),
@@ -100,7 +103,7 @@ class StatementQuerySet(BaseStatementQuerySet):
             average_rogic=Avg("rogic"),
         )
 
-    def average_operation_risks_ratios(self):
+    def average_operation_risks_ratios(self) -> Dict[str, Union[int, float]]:
         return self.aggregate(
             average_asset_coverage_ratio=Avg("asset_coverage_ratio"),
             average_cash_flow_coverage_ratios=Avg("cash_flow_coverage_ratios"),
@@ -113,7 +116,7 @@ class StatementQuerySet(BaseStatementQuerySet):
             average_total_debt_to_capitalization=Avg("total_debt_to_capitalization"),
         )
 
-    def average_ev_ratios(self):
+    def average_ev_ratios(self) -> Dict[str, Union[int, float]]:
         return self.aggregate(
             average_ev_fcf=Avg("ev_fcf"),
             average_ev_operating_cf=Avg("ev_operating_cf"),

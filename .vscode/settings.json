@@ -2,12 +2,11 @@
     "makefile.extensionOutputFolder": "./.vscode",
     "autoDocstring.customTemplatePath": "./.vscode/docstring.mustache",
     "editor.formatOnSave": true,
-    "python.formatting.provider": "black",
     "explorer.autoReveal": false,
     "workbench.editor.enablePreview": false,
     "python.testing.pytestEnabled": true,
     "python.testing.pytestArgs": [
-         "-n 8",
+        "-n 8",
         "--tb=long",
         "-rAf",
         "-v"
@@ -36,7 +35,8 @@
         "editor.wordBasedSuggestions": false,
         "editor.bracketPairColorization.enabled": true,
         "editor.autoIndent": "advanced",
-        "editor.wordWrapColumn": 110
+        "editor.wordWrapColumn": 95,
+        "editor.defaultFormatter": "ms-python.black-formatter"
     },
     "python.linting.mypyEnabled": true,
     "python.linting.flake8Enabled": true,
@@ -44,6 +44,7 @@
     "python.linting.pycodestyleEnabled": true,
     "python.linting.pylintEnabled": true,
     "python.linting.pylintArgs": [
-      "--enable=W0614"
-    ]
+        "--enable=W0614"
+    ],
+    "python.formatting.provider": "none"
 }

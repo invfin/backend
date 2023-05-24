@@ -23,9 +23,13 @@ class YahooQueryInfo(DFInfoCreator):
     def __init__(self, company) -> None:
         self.company = company
         self.yahooquery = ParseYahooQuery(company.ticker)
-        self.normalize_income_statement = NormalizeYahooQuery.normalize_income_statements_yahooquery
+        self.normalize_income_statement = (
+            NormalizeYahooQuery.normalize_income_statements_yahooquery
+        )
         self.normalize_balance_sheet = NormalizeYahooQuery.normalize_balance_sheets_yahooquery
-        self.normalize_cashflow_statement = NormalizeYahooQuery.normalize_cashflow_statements_yahooquery
+        self.normalize_cashflow_statement = (
+            NormalizeYahooQuery.normalize_cashflow_statements_yahooquery
+        )
 
     def create_statements_from_df(
         self,
@@ -41,8 +45,12 @@ class YahooQueryInfo(DFInfoCreator):
         """
         for index, data in df.iterrows():
             financials_data = data.to_dict()
-            financials_data["asOfDate"] = financials_data["asOfDate"].to_pydatetime().date().strftime("%m/%d/%Y")
-            model.objects.get_or_create(financials=financials_data, defaults=normalizer(data, period, self.company))
+            financials_data["asOfDate"] = (
+                financials_data["asOfDate"].to_pydatetime().date().strftime("%m/%d/%Y")
+            )
+            model.objects.get_or_create(
+                financials=financials_data, defaults=normalizer(data, period, self.company)
+            )
 
     def create_quarterly_financials_yahooquery(self):
         self.create_financials(
@@ -64,7 +72,9 @@ class YahooQueryInfo(DFInfoCreator):
         df_institution_ownership = self.yahooquery.yqcompany.institution_ownership
         df = NormalizeYahooQuery.normalize_institutional_yahooquery(df_institution_ownership)
         for index, data in df.iterrows():
-            institution, created = InstitutionalOrganization.objects.get_or_create(name=data["organization"])
+            institution, created = InstitutionalOrganization.objects.get_or_create(
+                name=data["organization"]
+            )
             if TopInstitutionalOwnership.objects.filter(
                 year=data["reportDate"],
                 company=self.company,

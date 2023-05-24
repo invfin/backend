@@ -21,7 +21,10 @@ class BaseStatement(Model, BaseToAllMixin):
     company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True)
     period = ForeignKey(Period, on_delete=SET_NULL, null=True, blank=True)
     reported_currency = ForeignKey(
-        "currencies.Currency", on_delete=SET_NULL, null=True, blank=True
+        "currencies.Currency",
+        on_delete=SET_NULL,
+        null=True,
+        blank=True,
     )
     objects = BaseStatementManager.from_queryset(BaseStatementQuerySet)()  # type: ignore
 
@@ -60,7 +63,7 @@ class BaseFinalStatement(BaseStatement):
         return f"{self.company} - TTM" if self.is_ttm else f"{self.company} - {period}"
 
     @property
-    def date_year(self):
+    def date_year(self) -> str:
         return "TTM" if self.is_ttm else f"{self.date}"
 
 

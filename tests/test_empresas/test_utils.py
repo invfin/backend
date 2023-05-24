@@ -59,7 +59,6 @@ class TestUtils(TestCase):
             company=cls.company,
         )
 
-    @skip("Not ready, will be improved")
     def test_arrange_quarters(self):
         arrange_quarters(self.company)
 
@@ -67,24 +66,34 @@ class TestUtils(TestCase):
 class TestFinprepRequestCheck(TestCase):
     def test_check_remaining_requests(self):
         yesterday = 1669368787
-        is_auth, last_request, requests_done = FinprepRequestCheck().check_remaining_requests(120, yesterday, 30)
+        is_auth, last_request, requests_done = FinprepRequestCheck().check_remaining_requests(
+            120, yesterday, 30
+        )
         assert is_auth is True
         assert 120 == requests_done
 
-        is_auth, last_request, requests_done = FinprepRequestCheck().check_remaining_requests(120, yesterday, 120)
+        is_auth, last_request, requests_done = FinprepRequestCheck().check_remaining_requests(
+            120, yesterday, 120
+        )
         assert is_auth is True
         assert 120 == requests_done
 
         now = datetime.timestamp(timezone.now())
-        is_auth, last_request, requests_done = FinprepRequestCheck().check_remaining_requests(120, now, 0)
+        is_auth, last_request, requests_done = FinprepRequestCheck().check_remaining_requests(
+            120, now, 0
+        )
         assert is_auth is True
         assert 120 == requests_done
 
-        is_auth, last_request, requests_done = FinprepRequestCheck().check_remaining_requests(3, now, 248)
+        is_auth, last_request, requests_done = FinprepRequestCheck().check_remaining_requests(
+            3, now, 248
+        )
         assert is_auth is False
         assert 251 == requests_done
 
-        is_auth, last_request, requests_done = FinprepRequestCheck().check_remaining_requests(20, now, 40)
+        is_auth, last_request, requests_done = FinprepRequestCheck().check_remaining_requests(
+            20, now, 40
+        )
         assert is_auth is True
         assert 60 == requests_done
 
