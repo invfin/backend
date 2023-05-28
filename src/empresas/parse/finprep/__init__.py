@@ -77,13 +77,12 @@ class FinprepInfo(NormalizeFinprep, ParseFinprep):
         )
 
     def create_financials_finprep(self) -> Dict[str, Any]:
-        dict_financials_finprep = self.request_financials_finprep(self.company.ticker)
-        dict_statements_actions = {
-            "income_statements": self.create_income_statements_finprep,
-            "balance_sheets": self.create_balance_sheets_finprep,
-            "cashflow_statements": self.create_cashflow_statements_finprep,
+        financials_finprep = self.request_financials_finprep(self.company.ticker)
+        return {
+            key: value(financials_finprep[key])
+            for key, value in {
+                "income_statements": self.create_income_statements_finprep,
+                "balance_sheets": self.create_balance_sheets_finprep,
+                "cashflow_statements": self.create_cashflow_statements_finprep,
+            }.items()
         }
-        for statement in dict_statements_actions.keys():
-            result = dict_statements_actions[statement](dict_financials_finprep[statement])
-            dict_statements_actions[statement] = result
-        return dict_statements_actions

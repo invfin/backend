@@ -45,7 +45,7 @@ INCOME_STATEMENT = [
     },
     {
         "acceptedDate": datetime(
-            year=2020, month=10, day=29, hour=18, minute=4, second=28, tzinfo=timezone.utc
+            year=2020, month=10, day=29, hour=18, minute=6, second=25, tzinfo=timezone.utc
         ),
         "calendarYear": "2020",
         "cik": "0000320193",
@@ -87,7 +87,7 @@ INCOME_STATEMENT = [
     },
     {
         "acceptedDate": datetime(
-            year=2019, month=10, day=30, hour=18, minute=2, second=36, tzinfo=timezone.utc
+            year=2019, month=10, day=30, hour=18, minute=12, second=36, tzinfo=timezone.utc
         ),
         "calendarYear": "2019",
         "cik": "0000320193",
