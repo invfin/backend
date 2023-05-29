@@ -67,9 +67,7 @@ def detect_outlier(list_data):
 
 def log_company(checking: str = ""):
     """
-    Decorator used to log the changes done to a company.
-    For example, when requesting for data if there isn't any problem we log that
-    it works great, otherwise we log the error that ocurred.
+    Decorator used to log posisble errors when updating a company.
     """
 
     def decorator(func):
@@ -91,8 +89,7 @@ def log_company(checking: str = ""):
                 error_message=error_message,
             )
             if checking:
-                has_it = not had_error
-                company.modify_checking(checking, has_it)
+                company.modify_checking(checking, not had_error)
 
         return wrapper
 
@@ -100,9 +97,6 @@ def log_company(checking: str = ""):
 
 
 def arrange_quarters(company: Company) -> None:
-    """
-    TODO: test
-    """
     for statement_obj in [
         company.incomestatementyahooquery_set,
         company.balancesheetyahooquery_set,

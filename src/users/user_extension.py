@@ -87,9 +87,7 @@ class UserExtended:
 
     @property
     def blogs_written(self):
-        if self.is_writer:
-            return self.publicblog_set.filter(status=1)  # TODO use a constants
-        return []
+        return self.publicblog_set.filter(status=1) if self.is_writer else []
 
     @property
     def fav_stocks(self):
@@ -122,7 +120,9 @@ class UserExtended:
         from src.public_blog.models import FollowingHistorial
 
         if self.is_writer:
-            following_historial = FollowingHistorial.objects.create(user_followed=self, user_following=user)
+            following_historial = FollowingHistorial.objects.create(
+                user_followed=self, user_following=user
+            )
             writer_followers = self.main_writer_followed
             if action == "stop":
                 following_historial.stop_following = True

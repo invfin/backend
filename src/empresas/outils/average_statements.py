@@ -1,6 +1,6 @@
 from collections import Counter, defaultdict
 from statistics import fmean
-from typing import Any, Dict, List, Optional, Type, Union
+from typing import Dict, List, Optional, Type, Union
 
 from src.periods.models import Period
 
@@ -95,8 +95,8 @@ class AverageStatements:
         if reunited_data := cls.prepare_data(statements):
             currency = cls.find_correct_currency(reunited_data)
             final_data = cls.calculate_averages(reunited_data)
-            # TODO: check it it works
-            final_data.update(**{"date": period.year, "period_id": period.id, **currency})
+            # TODO: check if it works
+            final_data.update({"date": period.year, "period_id": period.id, **currency})
             return final_data
         return None
 
@@ -115,8 +115,8 @@ class AverageStatements:
         reunited_data: Union[Dict[str, List[Union[int, float]]], defaultdict]
     ) -> Dict[str, Optional[int]]:
         if currency := reunited_data.pop("reported_currency_id", None):
-            currency, repetitions = Counter(currency).most_common(1)[0]  # type: ignore
-        return {"reported_currency_id": currency}  # type: ignore
+            currency, repetitions = Counter(currency).most_common(1)[0]
+        return {"reported_currency_id": currency}
 
     @staticmethod
     def calculate_averages(

@@ -1,15 +1,14 @@
 from collections import defaultdict
 from datetime import datetime
+from typing import DefaultDict
 
 from django.db.models import Q
 
 from src.empresas.parse.yahoo_query import ParseYahooQuery
 from src.empresas.parse.y_finance import YFinanceInfo
-from src.empresas.models import BalanceSheet, CashflowStatement, IncomeStatement
 from src.empresas.outils.average_statements import AverageStatements
 from src.empresas.outils.financial_ratios import CalculateFinancialRatios
-from src.empresas.outils.retrieve_data import RetrieveCompanyData
-from src.empresas.utils import FinprepRequestCheck, log_company
+from src.empresas.utils import log_company
 from src.periods.constants import PERIOD_FOR_YEAR
 from src.periods.models import Period
 from src.translate.google_trans_new import google_translator
@@ -18,31 +17,6 @@ from src.translate.google_trans_new import google_translator
 class UpdateCompany(CalculateFinancialRatios):
     def __init__(self, company) -> None:
         self.company = company
-
-    @log_company("fixed_last_finprep")
-    def create_financials_finprep(self) -> None:
-        if FinprepRequestCheck().manage_track_requests(3):
-            finprep_data = RetrieveCompanyData(self.company).create_financials_finprep()
-            income_statements = finprep_data["income_statements"]
-            balance_sheets = finprep_data["balance_sheets"]
-            cashflow_statements = finprep_data["cashflow_statements"]
-            for income_statement in income_statements:
-                IncomeStatement.objects.filter(
-                    company=income_statement.company,
-                    period=income_statement.period,
-                ).update(**income_statement.return_standard())
-            for balance_sheet in balance_sheets:
-                BalanceSheet.objects.filter(
-                    company=balance_sheet.company,
-                    period=balance_sheet.period,
-                ).update(**balance_sheet.return_standard())
-            for cashflow_statement in cashflow_statements:
-                CashflowStatement.objects.filter(
-                    company=cashflow_statement.company,
-                    period=cashflow_statement.period,
-                ).update(**cashflow_statement.return_standard())
-            # TODO add calculate ratios method
-        return None
 
     @log_company()
     def add_logo(self) -> None:
@@ -65,7 +39,7 @@ class UpdateCompany(CalculateFinancialRatios):
     def general_update(self) -> None:
         if not self.company.image:
             self.add_logo()
-        if self.company.description_translated is False:
+        if not self.company.description_translated:
             self.add_description()
         return None
 
@@ -80,7 +54,7 @@ class UpdateCompany(CalculateFinancialRatios):
 
     @log_company()
     def update_average_financials_statements(self, period: Period) -> None:
-        averager = AverageStatements(self.company)  # Inherit or like this?
+        averager = AverageStatements(self.company)
         for funct_calculate_statement, funct_create_or_update_statement in [
             (
                 averager.calculate_average_income_statement,
@@ -116,28 +90,25 @@ class UpdateCompany(CalculateFinancialRatios):
             self.company.balance_sheets,
             self.company.cf_statements,
         ]:
-            last_statements = statement_manager.filter(
+            result: DefaultDict = defaultdict(dict)
+            for statement in statement_manager.filter(
                 ~Q(period__period=PERIOD_FOR_YEAR),
                 is_ttm=False,
-            ).values()[:4]
-            result = defaultdict(int)
-            for statement in last_statements:
+            ).values()[:4]:
                 for key, value in statement.items():
                     if key == "reported_currency_id":
-                        result.setdefault(key, [])  # type: ignore
-                        result[key].append(value)  # type: ignore
+                        result.setdefault(key, [])
+                        result[key].append(value)
                     elif key == "date":
                         result[key] = max(result[key], value)
                     elif key not in to_exclude:
                         result[key] += value
-            result.update(
-                {
-                    "is_ttm": True,
-                    "from_average": True,
-                    **AverageStatements.find_correct_currency(result),
-                }  # type: ignore
+            statement_manager.create(
+                is_ttm=True,
+                from_average=True,
+                **AverageStatements.find_correct_currency(result),
+                **result,
             )
-            statement_manager.create(**result)
         return None
 
     @log_company()

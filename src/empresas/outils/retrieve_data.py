@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import List, Type
+from typing import Any, Dict, List, Type
 
 from src.empresas.parse import FinnhubInfo, FinprepInfo, YahooQueryInfo, YFinanceInfo
 from src.empresas.utils import log_company
@@ -16,7 +16,7 @@ class RetrieveCompanyData:
         return FinnhubInfo(self.company).company_news(self.company.ticker, from_date, to_date)
 
     @log_company("latest_financials_finprep_info")
-    def create_financials_finprep(self):
+    def create_financials_finprep(self) -> Dict[str, Any]:
         return FinprepInfo(self.company).create_financials_finprep()
 
     @log_company("first_financials_finnhub_info")
@@ -31,7 +31,6 @@ class RetrieveCompanyData:
 
     @log_company("first_financials_yahooquery_info")
     def create_financials_yahooquery(self, period: str = "a"):
-        # TODO: remove the if and simply send the period
         if period == "q":
             return YahooQueryInfo(self.company).create_quarterly_financials_yahooquery()
         return YahooQueryInfo(self.company).create_yearly_financials_yahooquery()

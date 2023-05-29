@@ -26,7 +26,7 @@ class BaseStatement(Model, BaseToAllMixin):
         null=True,
         blank=True,
     )
-    objects = BaseStatementManager.from_queryset(BaseStatementQuerySet)()  # type: ignore
+    objects = BaseStatementManager.from_queryset(BaseStatementQuerySet)()
 
     class Meta:
         abstract = True
@@ -168,9 +168,7 @@ class CashflowStatement(BaseFinalStatement):
     net_income = FloatField(default=0, blank=True, null=True)
     depreciation_amortization = FloatField(default=0, blank=True, null=True)
     deferred_income_tax = FloatField(default=0, blank=True, null=True)
-    stock_based_compensation = FloatField(
-        default=0, blank=True, null=True
-    )  # stock_based_compensation
+    stock_based_compensation = FloatField(default=0, blank=True, null=True)
     change_in_working_capital = FloatField(default=0, blank=True, null=True)
     accounts_receivable = FloatField(default=0, blank=True, null=True)
     inventory = FloatField(default=0, blank=True, null=True)
@@ -205,7 +203,10 @@ class CashflowStatement(BaseFinalStatement):
 
     @property
     def cash_conversion_ratio_to_save(self):
-        return self.fcf / self.net_income if self.net_income != 0 else 0
+        try:
+            return self.fcf / self.net_income
+        except Exception:
+            return 0
 
 
 class RentabilityRatio(BaseFinalStatement):
