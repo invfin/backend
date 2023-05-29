@@ -16,9 +16,45 @@ from src.empresas.outils.valuations import discounted_cashflow, graham_value, ma
 from src.general.utils import ChartSerializer
 
 
+class CompanyCurrentRatios:
+    inc_statements: QuerySet
+    balance_sheets: QuerySet
+    cf_statements: QuerySet
+    rentability_ratios: QuerySet
+    liquidity_ratios: QuerySet
+    margins: QuerySet
+    fcf_ratios: QuerySet
+    per_share_values: QuerySet
+    non_gaap_figures: QuerySet
+    operation_risks_ratios: QuerySet
+    ev_ratios: QuerySet
+    growth_rates: QuerySet
+    efficiency_ratios: QuerySet
+    price_to_ratios: QuerySet
+
+    def set_statements(self, company: Company) -> None:
+        for statement in [
+            "inc_statements",
+            "balance_sheets",
+            "cf_statements",
+            "rentability_ratios",
+            "liquidity_ratios",
+            "margins",
+            "fcf_ratios",
+            "per_share_values",
+            "non_gaap_figures",
+            "operation_risks_ratios",
+            "ev_ratios",
+            "growth_rates",
+            "efficiency_ratios",
+            "price_to_ratios",
+        ]:
+            setattr(self, statement, getattr(company, statement).yearly_exclude_ttm())
+
+
 class CompanyData(CompanyValueToJsonConverter):
     """
-    Used to generate JSON formated data from the company to create charts
+    Used to calcuate the current ratios and retreive the information in other places
     """
 
     company: Company
@@ -75,7 +111,7 @@ class CompanyData(CompanyValueToJsonConverter):
 
     @staticmethod
     def get_averages(
-        statements: Dict[str, QuerySet],
+        statements: Dict[str, Union[QuerySet, Dict[str, Union[int, float]]]],
     ) -> Dict[str, Union[QuerySet, Dict[str, Union[int, float]]]]:
         # statements["inc_statements_averages"] = statements[
         # "inc_statements"].average_inc_statements()
@@ -93,15 +129,14 @@ class CompanyData(CompanyValueToJsonConverter):
             **statements["growth_rates"].average_growth_rates(),  # type: ignore
             **statements["price_to_ratios"].average_price_to_ratios(),  # type: ignore
             **statements["efficiency_ratios"].average_efficiency_ratios(),  # type: ignore
-        }  # type: ignore
+        }
         # statements["fcf_ratios_averages"] = statements["fcf_ratios"].average_fcf_ratios()
-        # statements["non_gaap_figures_averages"] = statements[
-        # "non_gaap_figures"].average_non_gaap_figures()
+        # statements["non_gaap_figures_averages"] = statements["non_gaap_figures"].average_non_gaap_figures()
         return statements  # type: ignore
 
     def get_current_ratios(
         self,
-        statements: Dict[str, Union[QuerySet, Dict]],
+        statements: Dict[str, QuerySet],
     ) -> dict:
         # TODO test
         averages = statements.pop("averages")
@@ -154,7 +189,71 @@ class CompanyData(CompanyValueToJsonConverter):
             average_shares_out=average_shares_out,
         )
         safety_margin_opt = margin_of_safety(fair_value, current_price)
+        most_used_ratios = self.compare_most_used_ratios(
+            per,
+            pb,
+            ps,
+            pfcf,
+            peg,
+            pas,
+            pcps,
+            pta,
+            pocf,
+            evebitda,
+            evsales,
+            averages,
+        )
+        averages.update(
+            {
+                "most_used_ratios": most_used_ratios,
+                "pfcf": pfcf,
+                "pas": pas,
+                "pta": pta,
+                "pcps": pcps,
+                "pocf": pocf,
+                "per": per,
+                "pb": pb,
+                "peg": peg,
+                "ps": ps,
+                "fair_value": fair_value,
+                "ev": ev,
+                "marketcap": marketcap,
+                "cagr": cagr,
+                "evebitda": evebitda,
+                "evsales": evsales,
+                "gramvalu": gramvalu,
+                "sharesbuyback": sharesbuyback,
+                "safety_margin_pes": safety_margin_pes,
+                "safety_margin_opt": safety_margin_opt,
+                "current_price": current_price,
+                "last_revenue": last_revenue,
+                "average_shares_out": average_shares_out,
+                "last_balance_sheet": last_balance_sheet,
+                "last_per_share": last_per_share,
+                "last_margins": last_margins,
+                "last_income_statement": last_income_statement,
+            }
+        )
+        return averages
 
+    def calculate_most_used_ratios(self):
+        pass
+
+    def compare_most_used_ratios(
+        self,
+        per: Union[int, float],
+        pb: Union[int, float],
+        ps: Union[int, float],
+        pfcf: Union[int, float],
+        peg: Union[int, float],
+        pas: Union[int, float],
+        pcps: Union[int, float],
+        pta: Union[int, float],
+        pocf: Union[int, float],
+        evebitda: Union[int, float],
+        evsales: Union[int, float],
+        averages: QuerySet,
+    ):
         most_used_ratios = [
             {
                 "name": "PER",
@@ -256,40 +355,7 @@ class CompanyData(CompanyValueToJsonConverter):
                 "min_high_operator": operator.le,
             },
         ]
-
-        most_used_ratios = [self.to_size_ratios(**valuation) for valuation in most_used_ratios]
-        averages.update(
-            {
-                "most_used_ratios": most_used_ratios,
-                "pfcf": pfcf,
-                "pas": pas,
-                "pta": pta,
-                "pcps": pcps,
-                "pocf": pocf,
-                "per": per,
-                "pb": pb,
-                "peg": peg,
-                "ps": ps,
-                "fair_value": fair_value,
-                "ev": ev,
-                "marketcap": marketcap,
-                "cagr": cagr,
-                "evebitda": evebitda,
-                "evsales": evsales,
-                "gramvalu": gramvalu,
-                "sharesbuyback": sharesbuyback,
-                "safety_margin_pes": safety_margin_pes,
-                "safety_margin_opt": safety_margin_opt,
-                "current_price": current_price,
-                "last_revenue": last_revenue,
-                "average_shares_out": average_shares_out,
-                "last_balance_sheet": last_balance_sheet,
-                "last_per_share": last_per_share,
-                "last_margins": last_margins,
-                "last_income_statement": last_income_statement,
-            }
-        )
-        return averages
+        return [self.to_size_ratios(**valuation) for valuation in most_used_ratios]
 
     def get_important_ratios(self, statements: Dict) -> List:
         comparing_rentability_ratios_json = self.build_table_and_chart(
@@ -407,7 +473,7 @@ class CompanyData(CompanyValueToJsonConverter):
         max_low: int,
         max_high: int,
         min_high_operator: Callable = operator.le,
-    ) -> dict:
+    ) -> Dict[str, Any]:
         valuation_result = {
             "name": name,
             "current_value": current,
@@ -449,13 +515,12 @@ class CompanyData(CompanyValueToJsonConverter):
         return currency.currency if currency else "$"
 
     @classmethod
-    def get_most_recent_price(cls, ticker):
+    def get_most_recent_price(cls, ticker) -> Dict[str, Union[int, str]]:
         price, currency = cls.get_yfinance_price(ticker)
         if not price:
             price, currency = cls.get_yahooquery_price(ticker)
-        if not price:
-            price = 0
-            currency = ""
+        price = price or 0
+        currency = currency or ""
         return {"current_price": price, "current_currency": currency}
 
     @staticmethod

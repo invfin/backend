@@ -13,20 +13,20 @@ FULL_DOMAIN = settings.FULL_DOMAIN
 
 
 class ContentCreation:
-    model_class: Optional[Type] = None
+    model_class: Optional[Any] = None
     shared_model_historial: Optional[Type] = None
     for_content: List[int] = []
 
     def __init__(self, platform: str = "") -> None:
         # TODO change the platform's contants to a own
-        self.object: Type = self.get_object()
+        self.object = self.get_object()
         self.platform: str = platform
         self.for_content.append(constants.ALL)
         if platform == constants.PLATFORM_WEB:
             self.for_content.append(constants.WEB)
         self.for_content = list(set(self.for_content))
 
-    def get_object(self) -> Type:
+    def get_object(self):
         """Overrite this method to return the obj of the model wanted according to the random method defined
 
         Returns
@@ -39,7 +39,9 @@ class ContentCreation:
     def get_shared_model_historial(self):
         if not self.shared_model_historial:
             object_name = f"{self.model_class.__name__}SharedHistorial"
-            self.shared_model_historial = apps.get_model("socialmedias", object_name, require_ready=True)
+            self.shared_model_historial = apps.get_model(
+                "socialmedias", object_name, require_ready=True
+            )
         return self.shared_model_historial
 
     def get_object_title(self) -> str:
@@ -52,7 +54,9 @@ class ContentCreation:
         return self.object.image
 
     @classmethod
-    def create_hashtags(cls, platform: str, need_slice: bool = False, max_slice: int = 3) -> Tuple[List[Hashtag], str]:
+    def create_hashtags(
+        cls, platform: str, need_slice: bool = False, max_slice: int = 3
+    ) -> Tuple[List[Hashtag], str]:
         """Get according to the platform (socialmedia) wanted the hashtags that might be used for the content.
 
         Parameters
@@ -143,11 +147,15 @@ class ContentCreation:
             else:
                 pre_final_title = base_title.replace("_actual_title_", title)
                 if custom_title_info["default_title_position"] == "Beginning":
-                    pre_final_title = pre_final_title.replace("_beginning_default_title_", default_title.title)
+                    pre_final_title = pre_final_title.replace(
+                        "_beginning_default_title_", default_title.title
+                    )
                     emoji_place_rm = "_middle_e_emoji_"
                     emoji_place_change = "_middle_b_emoji_"
                 else:
-                    pre_final_title = pre_final_title.replace("_ending_default_title_", default_title.title)
+                    pre_final_title = pre_final_title.replace(
+                        "_ending_default_title_", default_title.title
+                    )
                     emoji_place_rm = "_middle_b_emoji_"
                     emoji_place_change = "_middle_e_emoji_"
                 pre_final_title = pre_final_title.replace(emoji_place_change, "_middle_emoji_")
@@ -211,7 +219,9 @@ class ContentCreation:
         default_content_filter = self.create_default_content_filter()
         return {
             **self.create_random_title(title=title, default_title_filter=default_title_filter),
-            **self.create_content(content=content, default_content_filter=default_content_filter),
+            **self.create_content(
+                content=content, default_content_filter=default_content_filter
+            ),
             "link": self.create_url(),
             "content_shared": self.object,
         }
@@ -241,7 +251,9 @@ class ContentCreation:
             emojis_info = {"emoji_1_position": random.choice(["Beginning", "End"])}
         else:
             for index in range(1, number_emojis):
-                emojis_info[f"emoji_{index}_position"] = ["Beginning", "End", "Middle"][index - 1]
+                emojis_info[f"emoji_{index}_position"] = ["Beginning", "End", "Middle"][
+                    index - 1
+                ]
 
         custom_title_info = {
             "default_title_position": random.choice(["Beginning", "End"]),

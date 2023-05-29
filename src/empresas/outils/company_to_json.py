@@ -4,6 +4,10 @@ from django.db.models import QuerySet
 
 
 class CompanyValueToJsonConverter:
+    """
+    Used to generate JSON formated data from the company to create charts
+    """
+
     @abstractmethod
     def get_currency(self, statement):
         raise NotImplementedError("Need to implement")
@@ -151,7 +155,9 @@ class CompanyValueToJsonConverter:
                     "url": "#!",
                     "percent": "false",
                     "short": "false",
-                    "values": [data.weighted_average_diluated_shares_outstanding for data in statement],
+                    "values": [
+                        data.weighted_average_diluated_shares_outstanding for data in statement
+                    ],
                 },
             ],
         }
@@ -341,7 +347,9 @@ class CompanyValueToJsonConverter:
                     "url": "#!",
                     "percent": "false",
                     "short": "false",
-                    "values": [data.deferred_tax_liabilities_non_current for data in statement],
+                    "values": [
+                        data.deferred_tax_liabilities_non_current for data in statement
+                    ],
                 },
                 {
                     "title": "Otros pasivos no corrientes",
@@ -390,7 +398,9 @@ class CompanyValueToJsonConverter:
                     "url": "#!",
                     "percent": "false",
                     "short": "false",
-                    "values": [data.accumulated_other_comprehensive_income_loss for data in statement],
+                    "values": [
+                        data.accumulated_other_comprehensive_income_loss for data in statement
+                    ],
                 },
                 {
                     "title": "Otra equidad total",
@@ -524,7 +534,9 @@ class CompanyValueToJsonConverter:
                     "url": "#!",
                     "percent": "false",
                     "short": "false",
-                    "values": [data.investments_property_plant_equipment for data in statement],
+                    "values": [
+                        data.investments_property_plant_equipment for data in statement
+                    ],
                 },
                 {
                     "title": "Adquisiciones",

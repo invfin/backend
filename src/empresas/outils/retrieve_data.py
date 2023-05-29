@@ -9,7 +9,7 @@ class RetrieveCompanyData:
     def __init__(self, company: Type) -> None:
         self.company: Type = company
 
-    def get_company_news(self) -> List:
+    def get_company_news(self) -> List[Dict[str, str]]:
         day = str(int(datetime.now().strftime("%Y-%m-%d")[-2:]) - 2)
         from_date = datetime.now().strftime(f"%Y-%m-{day}")
         to_date = datetime.now().strftime("%Y-%m-%d")

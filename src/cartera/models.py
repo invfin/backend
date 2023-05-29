@@ -1,5 +1,6 @@
 from decimal import Decimal
 import random
+from typing import Dict, List, Union
 
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.fields import GenericForeignKey
@@ -23,6 +24,7 @@ from django.db.models import (
 
 from src.currencies.models import Currency
 from src.general.utils import ChartSerializer
+from src.empresas.outils.company import CompanyData
 
 User = get_user_model()
 
@@ -42,10 +44,11 @@ class Asset(Model):
         db_table = "cartera_assets"
 
     def __str__(self):
-        return str(self.object.name)
+        return self.object.name if self.object else ""
 
     @property
     def amount_invested(self):
+        # TODO: change it into a queryset
         return sum(move.movement_cost for move in self.movements.filter(asset_related=self))
 
 
@@ -79,6 +82,7 @@ class PositionMovement(Model):
 
     @property
     def movement_cost(self):
+        # TODO: change it into a queryset
         total = (self.price * self.quantity) + self.fee
         if self.move_type == 2:
             total = total * (-1)
@@ -159,10 +163,22 @@ class FinancialObjectif(Model):
 
 
 class Patrimonio(Model, ChartSerializer):
-    user = OneToOneField(User, on_delete=SET_NULL, null=True, blank=True, related_name="user_patrimoine")
+    user = OneToOneField(
+        User,
+        on_delete=SET_NULL,
+        null=True,
+        blank=True,
+        related_name="user_patrimoine",
+    )
     assets = ManyToManyField(Asset, blank=True)
     objectives = ManyToManyField(FinancialObjectif, blank=True)
-    default_currency = ForeignKey(Currency, on_delete=SET_NULL, null=True, blank=True, default="1")
+    default_currency = ForeignKey(
+        Currency,
+        on_delete=SET_NULL,
+        null=True,
+        blank=True,
+        default="1",
+    )
 
     class Meta:
         verbose_name = "Patrimonio"
@@ -170,9 +186,10 @@ class Patrimonio(Model, ChartSerializer):
         db_table = "cartera_patrimoine"
 
     def __str__(self):
-        return self.user.username
+        return self.user.username if self.user else ""
 
     def gastos_totales(self, ingresos_totales):
+        # TODO: change it into a queryset
         spends = Spend.objects.filter(user=self.user)
         gastos_totales = sum(Decimal(item.amount) for item in spends)
         if gastos_totales is None:
@@ -180,11 +197,14 @@ class Patrimonio(Model, ChartSerializer):
         return {
             "total": gastos_totales,
             "spends": spends,
-            "percentage": ((gastos_totales / ingresos_totales) * 100) if ingresos_totales != 0 else 0,
+            "percentage": (
+                ((gastos_totales / ingresos_totales) * 100) if ingresos_totales != 0 else 0
+            ),
         }
 
     @property
     def ingresos_totales(self):
+        # TODO: change it into a queryset
         incomes = Income.objects.filter(user=self.user)
         total = sum(Decimal(item.amount) for item in incomes)
         if total is None:
@@ -192,19 +212,26 @@ class Patrimonio(Model, ChartSerializer):
         return {"total": total, "incomes": incomes}
 
     def cantidad_total_invertida(self, ingresos_totales):
+        # TODO: change it into a queryset
         cantidad_total_invertida = sum(item.amount_invested for item in self.assets.all())
         if cantidad_total_invertida is None:
             cantidad_total_invertida = 0
         return {
             "total": cantidad_total_invertida,
-            "percentage": ((cantidad_total_invertida / ingresos_totales) * 100) if ingresos_totales != 0 else 0,
+            "percentage": (
+                ((cantidad_total_invertida / ingresos_totales) * 100)
+                if ingresos_totales != 0
+                else 0
+            ),
         }
 
     def ahorros_totales(self, ingresos_totales, gastos_totales, cantidad_total_invertida):
         ahorros_totales = ingresos_totales - gastos_totales - cantidad_total_invertida
         return {
             "total": ahorros_totales,
-            "percentage": (((ahorros_totales) / ingresos_totales) * 100) if ingresos_totales != 0 else 0,
+            "percentage": (
+                (((ahorros_totales) / ingresos_totales) * 100) if ingresos_totales != 0 else 0
+            ),
         }
 
     @property
@@ -221,7 +248,9 @@ class Patrimonio(Model, ChartSerializer):
         percentage_invested = income_invested["percentage"]
         percentage_earned = 100 - percentage_spend - percentage_saved - percentage_invested
 
-        incomes_and_spends = list(total_income_earned["incomes"]) + list(total_income_spend["spends"])
+        incomes_and_spends = list(total_income_earned["incomes"]) + list(
+            total_income_spend["spends"]
+        )
         income_earned = total_income_earned["total"]
         income_spend = total_income_spend["total"]
         income_saved = income_saved["total"]
@@ -246,11 +275,13 @@ class Patrimonio(Model, ChartSerializer):
         for key, value in main_dict.items():
             data["labels"].append(key)
             dataset["data"].append(value)
-            dataset["backgroundColor"].append("#" + "".join([random.choice("ABCDEF0123456789") for i in range(6)]))
+            dataset["backgroundColor"].append(
+                "#" + "".join([random.choice("ABCDEF0123456789") for _ in range(6)])
+            )
 
         data["datasets"].append(dataset)
 
-        chart_data = {
+        return {
             "type": "doughnut",
             "data": data,
             "options": {
@@ -265,13 +296,11 @@ class Patrimonio(Model, ChartSerializer):
             },
         }
 
-        return chart_data
-
     @property
     def overall_portfolio_information(self):
         income_invested = self.cantidad_total_invertida(self.ingresos_totales["total"])
         total_invertido = float(income_invested["total"])
-        overall_portfolio_information = {
+        overall_portfolio_information: Dict[str, Union[float, int, List]] = {
             "positions": [],
             # 'average_cash_conversion_ratio': 0,
             "average_roce": 0,
@@ -287,11 +316,15 @@ class Patrimonio(Model, ChartSerializer):
         for asset in self.assets.filter(is_stock=True):
             amount_invested = float(asset.amount_invested)
             empresa = asset.object
-            ratios = empresa.calculate_current_ratios()
-            percentage_invested = ((amount_invested / total_invertido) * 100) if total_invertido != 0 else 0
+            ratios = CompanyData(empresa).get_ratios_information()
+            percentage_invested = (
+                ((amount_invested / total_invertido) * 100) if total_invertido != 0 else 0
+            )
 
             # overall_portfolio_information['average_cash_conversion_ratio'] += ratios.average * percentage_invested
-            overall_portfolio_information["average_roce"] += (ratios["average_roce"] * percentage_invested) / 100
+            overall_portfolio_information["average_roce"] += (
+                ratios["average_roce"] * percentage_invested
+            ) / 100
             overall_portfolio_information["average_gross_margin"] += (
                 ratios["average_gross_margin"] * percentage_invested
             ) / 100
@@ -301,7 +334,9 @@ class Patrimonio(Model, ChartSerializer):
             overall_portfolio_information["average_interest_coverage"] += (
                 ratios["average_interest_coverage"] * percentage_invested
             ) / 100
-            overall_portfolio_information["average_roic"] += (ratios["average_roic"] * percentage_invested) / 100
+            overall_portfolio_information["average_roic"] += (
+                ratios["average_roic"] * percentage_invested
+            ) / 100
             overall_portfolio_information["average_price_earnings"] += (
                 ratios["average_price_earnings"] * percentage_invested
             ) / 100
@@ -363,7 +398,9 @@ class Patrimonio(Model, ChartSerializer):
                 "name": empresa.name,
                 "ticker": empresa.ticker,
                 "amount_invested": amount_invested,
-                "percentage_invested": ((amount_invested / total_invertido) * 100) if total_invertido != 0 else 0,
+                "percentage_invested": (
+                    ((amount_invested / total_invertido) * 100) if total_invertido != 0 else 0
+                ),
             }
             positions_information["empresas"].append(empresa_info)
 

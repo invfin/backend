@@ -21,7 +21,7 @@ from django.urls import reverse
 from src.classifications.models import Category, Tag
 from src.currencies.models import Currency
 from src.empresas.models import Company
-
+from src.content_creation.outils.content_creator import CompanyContentCreation
 from .constants import (
     HORIZON,
     INVESTOR_TYPE,
@@ -122,7 +122,9 @@ class RoboAdvisorServiceStep(Model):
     order = PositiveIntegerField(null=True, blank=True)
     url = CharField(max_length=500, null=True, blank=True, choices=ROBO_STEPS)
     template = CharField(max_length=500, null=True, blank=True)
-    service_related = ForeignKey(RoboAdvisorService, on_delete=SET_NULL, null=True, blank=True, related_name="steps")
+    service_related = ForeignKey(
+        RoboAdvisorService, on_delete=SET_NULL, null=True, blank=True, related_name="steps"
+    )
 
     class Meta:
         ordering = ["order"]
@@ -168,7 +170,9 @@ class RoboAdvisorUserServiceActivity(Model):
     def company_related(self):
         if (
             self.service.slug == "company-match"
-            and RoboAdvisorQuestionCompanyAnalysis.objects.filter(service_activity=self).exists()
+            and RoboAdvisorQuestionCompanyAnalysis.objects.filter(
+                service_activity=self
+            ).exists()
         ):
             return True
         return False
@@ -189,7 +193,7 @@ class RoboAdvisorUserServiceActivity(Model):
             asset = service_question.asset
             title = f"{asset.name} ({asset.ticker}) parece estar en un momento para"
             result = service_question.result
-            explanation = asset.short_introduction
+            explanation = CompanyContentCreation.short_introduction(asset)
             extra = asset
         if self.temp_profile_related:
             service_question = self.temporaryinvestorprofile
@@ -211,8 +215,12 @@ class RoboAdvisorUserServiceActivity(Model):
 
 
 class TemporaryInvestorProfile(BaseInvestorProfile):
-    profile_related = ForeignKey(InvestorProfile, on_delete=SET_NULL, null=True, related_name="temporary_investor")
-    service_activity = OneToOneField(RoboAdvisorUserServiceActivity, on_delete=SET_NULL, null=True)
+    profile_related = ForeignKey(
+        InvestorProfile, on_delete=SET_NULL, null=True, related_name="temporary_investor"
+    )
+    service_activity = OneToOneField(
+        RoboAdvisorUserServiceActivity, on_delete=SET_NULL, null=True
+    )
 
     class Meta:
         verbose_name = "Temporary investor profile"
@@ -241,8 +249,12 @@ class RoboAdvisorUserServiceStepActivity(Model):
 
 class BaseRoboAdvisorQuestion(Model):
     user = ForeignKey(User, on_delete=SET_NULL, null=True)
-    service_activity = OneToOneField(RoboAdvisorUserServiceActivity, on_delete=SET_NULL, null=True)
-    service_step = OneToOneField(RoboAdvisorUserServiceStepActivity, on_delete=SET_NULL, null=True)
+    service_activity = OneToOneField(
+        RoboAdvisorUserServiceActivity, on_delete=SET_NULL, null=True
+    )
+    service_step = OneToOneField(
+        RoboAdvisorUserServiceStepActivity, on_delete=SET_NULL, null=True
+    )
 
     class Meta:
         abstract = True
@@ -254,20 +266,48 @@ class BaseRoboAdvisorQuestion(Model):
 
 class RoboAdvisorQuestionFinancialSituation(BaseRoboAdvisorQuestion):
     average_income = DecimalField(
-        default=0, blank=True, max_digits=10, decimal_places=2, validators=[MinValueValidator(0)]
+        default=0,
+        blank=True,
+        max_digits=10,
+        decimal_places=2,
+        validators=[MinValueValidator(0)],
     )
     average_expense = DecimalField(
-        default=0, blank=True, max_digits=10, decimal_places=2, validators=[MinValueValidator(0)]
+        default=0,
+        blank=True,
+        max_digits=10,
+        decimal_places=2,
+        validators=[MinValueValidator(0)],
     )
-    debt = DecimalField(default=0, blank=True, max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
+    debt = DecimalField(
+        default=0,
+        blank=True,
+        max_digits=10,
+        decimal_places=2,
+        validators=[MinValueValidator(0)],
+    )
     recurrent_savings = BooleanField(default=False)
     recurrent_debts = BooleanField(default=False)
-    savings = DecimalField(default=0, blank=True, max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
+    savings = DecimalField(
+        default=0,
+        blank=True,
+        max_digits=10,
+        decimal_places=2,
+        validators=[MinValueValidator(0)],
+    )
     debt_percentage = DecimalField(
-        default=0, blank=True, max_digits=10, decimal_places=2, validators=[MinValueValidator(0)]
+        default=0,
+        blank=True,
+        max_digits=10,
+        decimal_places=2,
+        validators=[MinValueValidator(0)],
     )
     saving_percentage = DecimalField(
-        default=0, blank=True, max_digits=10, decimal_places=2, validators=[MinValueValidator(0)]
+        default=0,
+        blank=True,
+        max_digits=10,
+        decimal_places=2,
+        validators=[MinValueValidator(0)],
     )
     number_sources_income = IntegerField(default=1, blank=True)
     currency = ForeignKey(Currency, null=True, blank=True, on_delete=SET_NULL)
@@ -290,15 +330,29 @@ class BaseRoboAdvisorHorizon(BaseRoboAdvisorQuestion):
 class BaseRoboAdvisorQuestionAsset(BaseRoboAdvisorHorizon):
     asset = None
     result = None
-    sector_knowledge = CharField(max_length=500, null=True, blank=True, choices=KNOWLEDGE, default=KNOWLEDGE[4])
-    asset_knowledge = CharField(max_length=500, null=True, blank=True, choices=KNOWLEDGE, default=KNOWLEDGE[4])
+    sector_knowledge = CharField(
+        max_length=500, null=True, blank=True, choices=KNOWLEDGE, default=KNOWLEDGE[4]
+    )
+    asset_knowledge = CharField(
+        max_length=500, null=True, blank=True, choices=KNOWLEDGE, default=KNOWLEDGE[4]
+    )
     amount_time_studied = PositiveIntegerField(default=0)
     period_time_studied = CharField(max_length=500, default=PERIODS[4], choices=PERIODS)
     number_shares = DecimalField(
-        null=True, default=0, blank=True, max_digits=10, decimal_places=2, validators=[MinValueValidator(0)]
+        null=True,
+        default=0,
+        blank=True,
+        max_digits=10,
+        decimal_places=2,
+        validators=[MinValueValidator(0)],
     )
     capital_invested = DecimalField(
-        null=True, default=0, blank=True, max_digits=10, decimal_places=2, validators=[MinValueValidator(0)]
+        null=True,
+        default=0,
+        blank=True,
+        max_digits=10,
+        decimal_places=2,
+        validators=[MinValueValidator(0)],
     )
     sector_relationship = TextField(default="")
 
@@ -319,7 +373,9 @@ class RoboAdvisorQuestionInvestorExperience(BaseRoboAdvisorQuestion):
         decimal_places=2,
         validators=[MinValueValidator(0), MaxValueValidator(100)],
     )
-    percentage_anualized_revenue = DecimalField(null=True, blank=True, default=0, max_digits=10, decimal_places=2)
+    percentage_anualized_revenue = DecimalField(
+        null=True, blank=True, default=0, max_digits=10, decimal_places=2
+    )
     time_investing_exp = PositiveIntegerField(default=0)
     period_investing_exp = CharField(max_length=500, default=PERIODS[4], choices=PERIODS)
 
