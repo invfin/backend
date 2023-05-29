@@ -2,7 +2,6 @@ from django.db.models import (
     SET_NULL,
     BooleanField,
     DateField,
-    FloatField,
     ForeignKey,
     IntegerField,
     Model,
@@ -13,6 +12,7 @@ from src.empresas.models import Company
 from src.empresas.querysets.statements import BaseStatementQuerySet, StatementQuerySet
 from src.general.mixins import BaseToAllMixin
 from src.periods.models import Period
+from src.empresas.fields import EntryStatementField
 
 
 class BaseStatement(Model, BaseToAllMixin):
@@ -75,26 +75,26 @@ class IncomeStatement(BaseFinalStatement):
         blank=True,
         related_name="inc_statements",
     )
-    revenue = FloatField(default=0, blank=True, null=True)
-    cost_of_revenue = FloatField(default=0, blank=True, null=True)
-    gross_profit = FloatField(default=0, blank=True, null=True)
-    rd_expenses = FloatField(default=0, blank=True, null=True)
-    general_administrative_expenses = FloatField(default=0, blank=True, null=True)
-    selling_marketing_expenses = FloatField(default=0, blank=True, null=True)
-    sga_expenses = FloatField(default=0, blank=True, null=True)
-    other_expenses = FloatField(default=0, blank=True, null=True)
-    operating_expenses = FloatField(default=0, blank=True, null=True)
-    cost_and_expenses = FloatField(default=0, blank=True, null=True)
-    interest_expense = FloatField(default=0, blank=True, null=True)
-    depreciation_amortization = FloatField(default=0, blank=True, null=True)
-    ebitda = FloatField(default=0, blank=True, null=True)
-    operating_income = FloatField(default=0, blank=True, null=True)
-    net_total_other_income_expenses = FloatField(default=0, blank=True, null=True)
-    income_before_tax = FloatField(default=0, blank=True, null=True)
-    income_tax_expenses = FloatField(default=0, blank=True, null=True)
-    net_income = FloatField(default=0, blank=True, null=True)
-    weighted_average_shares_outstanding = FloatField(default=0, blank=True, null=True)
-    weighted_average_diluated_shares_outstanding = FloatField(default=0, blank=True, null=True)
+    revenue = EntryStatementField()
+    cost_of_revenue = EntryStatementField()
+    gross_profit = EntryStatementField()
+    rd_expenses = EntryStatementField()
+    general_administrative_expenses = EntryStatementField()
+    selling_marketing_expenses = EntryStatementField()
+    sga_expenses = EntryStatementField()
+    other_expenses = EntryStatementField()
+    operating_expenses = EntryStatementField()
+    cost_and_expenses = EntryStatementField()
+    interest_expense = EntryStatementField()
+    depreciation_amortization = EntryStatementField()
+    ebitda = EntryStatementField()
+    operating_income = EntryStatementField()
+    net_total_other_income_expenses = EntryStatementField()
+    income_before_tax = EntryStatementField()
+    income_tax_expenses = EntryStatementField()
+    net_income = EntryStatementField()
+    weighted_average_shares_outstanding = EntryStatementField()
+    weighted_average_diluated_shares_outstanding = EntryStatementField()
 
     class Meta(BaseStatement.Meta):
         verbose_name = "Income Statement"
@@ -110,46 +110,46 @@ class BalanceSheet(BaseFinalStatement):
         blank=True,
         related_name="balance_sheets",
     )
-    cash_and_cash_equivalents = FloatField(default=0, blank=True, null=True)
-    short_term_investments = FloatField(default=0, blank=True, null=True)
-    cash_and_short_term_investments = FloatField(default=0, blank=True, null=True)
-    net_receivables = FloatField(default=0, blank=True, null=True)
-    inventory = FloatField(default=0, blank=True, null=True)
-    other_current_assets = FloatField(default=0, blank=True, null=True)
-    total_current_assets = FloatField(default=0, blank=True, null=True)
-    property_plant_equipment = FloatField(default=0, blank=True, null=True)
-    goodwill = FloatField(default=0, blank=True, null=True)
-    intangible_assets = FloatField(default=0, blank=True, null=True)
-    goodwill_and_intangible_assets = FloatField(default=0, blank=True, null=True)
-    long_term_investments = FloatField(default=0, blank=True, null=True)
-    tax_assets = FloatField(default=0, blank=True, null=True)
-    other_non_current_assets = FloatField(default=0, blank=True, null=True)
-    total_non_current_assets = FloatField(default=0, blank=True, null=True)
-    other_assets = FloatField(default=0, blank=True, null=True)
-    total_assets = FloatField(default=0, blank=True, null=True)
-    accounts_payable = FloatField(default=0, blank=True, null=True)
-    short_term_debt = FloatField(default=0, blank=True, null=True)
-    tax_payables = FloatField(default=0, blank=True, null=True)
-    deferred_revenue = FloatField(default=0, blank=True, null=True)
-    other_current_liabilities = FloatField(default=0, blank=True, null=True)
-    total_current_liabilities = FloatField(default=0, blank=True, null=True)
-    long_term_debt = FloatField(default=0, blank=True, null=True)
-    deferred_revenue_non_current = FloatField(default=0, blank=True, null=True)
-    deferred_tax_liabilities_non_current = FloatField(default=0, blank=True, null=True)
-    other_non_current_liabilities = FloatField(default=0, blank=True, null=True)
-    total_non_current_liabilities = FloatField(default=0, blank=True, null=True)
-    other_liabilities = FloatField(default=0, blank=True, null=True)
-    total_liabilities = FloatField(default=0, blank=True, null=True)
-    common_stocks = FloatField(default=0, blank=True, null=True)
-    preferred_stocks = FloatField(default=0, blank=True, null=True)
-    retained_earnings = FloatField(default=0, blank=True, null=True)
-    accumulated_other_comprehensive_income_loss = FloatField(default=0, blank=True, null=True)
-    othertotal_stockholders_equity = FloatField(default=0, blank=True, null=True)
-    total_stockholders_equity = FloatField(default=0, blank=True, null=True)
-    total_liabilities_and_total_equity = FloatField(default=0, blank=True, null=True)
-    total_investments = FloatField(default=0, blank=True, null=True)
-    total_debt = FloatField(default=0, blank=True, null=True)
-    net_debt = FloatField(default=0, blank=True, null=True)
+    cash_and_cash_equivalents = EntryStatementField()
+    short_term_investments = EntryStatementField()
+    cash_and_short_term_investments = EntryStatementField()
+    net_receivables = EntryStatementField()
+    inventory = EntryStatementField()
+    other_current_assets = EntryStatementField()
+    total_current_assets = EntryStatementField()
+    property_plant_equipment = EntryStatementField()
+    goodwill = EntryStatementField()
+    intangible_assets = EntryStatementField()
+    goodwill_and_intangible_assets = EntryStatementField()
+    long_term_investments = EntryStatementField()
+    tax_assets = EntryStatementField()
+    other_non_current_assets = EntryStatementField()
+    total_non_current_assets = EntryStatementField()
+    other_assets = EntryStatementField()
+    total_assets = EntryStatementField()
+    accounts_payable = EntryStatementField()
+    short_term_debt = EntryStatementField()
+    tax_payables = EntryStatementField()
+    deferred_revenue = EntryStatementField()
+    other_current_liabilities = EntryStatementField()
+    total_current_liabilities = EntryStatementField()
+    long_term_debt = EntryStatementField()
+    deferred_revenue_non_current = EntryStatementField()
+    deferred_tax_liabilities_non_current = EntryStatementField()
+    other_non_current_liabilities = EntryStatementField()
+    total_non_current_liabilities = EntryStatementField()
+    other_liabilities = EntryStatementField()
+    total_liabilities = EntryStatementField()
+    common_stocks = EntryStatementField()
+    preferred_stocks = EntryStatementField()
+    retained_earnings = EntryStatementField()
+    accumulated_other_comprehensive_income_loss = EntryStatementField()
+    othertotal_stockholders_equity = EntryStatementField()
+    total_stockholders_equity = EntryStatementField()
+    total_liabilities_and_total_equity = EntryStatementField()
+    total_investments = EntryStatementField()
+    total_debt = EntryStatementField()
+    net_debt = EntryStatementField()
 
     class Meta(BaseStatement.Meta):
         verbose_name = "Balance Sheet"
@@ -165,36 +165,36 @@ class CashflowStatement(BaseFinalStatement):
         blank=True,
         related_name="cf_statements",
     )
-    net_income = FloatField(default=0, blank=True, null=True)
-    depreciation_amortization = FloatField(default=0, blank=True, null=True)
-    deferred_income_tax = FloatField(default=0, blank=True, null=True)
-    stock_based_compensation = FloatField(default=0, blank=True, null=True)
-    change_in_working_capital = FloatField(default=0, blank=True, null=True)
-    accounts_receivable = FloatField(default=0, blank=True, null=True)
-    inventory = FloatField(default=0, blank=True, null=True)
-    accounts_payable = FloatField(default=0, blank=True, null=True)
-    other_working_capital = FloatField(default=0, blank=True, null=True)
-    other_non_cash_items = FloatField(default=0, blank=True, null=True)
-    operating_activities_cf = FloatField(default=0, blank=True, null=True)
-    investments_property_plant_equipment = FloatField(default=0, blank=True, null=True)
-    acquisitions_net = FloatField(default=0, blank=True, null=True)
-    purchases_investments = FloatField(default=0, blank=True, null=True)
-    sales_maturities_investments = FloatField(default=0, blank=True, null=True)
-    other_investing_activites = FloatField(default=0, blank=True, null=True)
-    investing_activities_cf = FloatField(default=0, blank=True, null=True)
-    debt_repayment = FloatField(default=0, blank=True, null=True)
-    common_stock_issued = FloatField(default=0, blank=True, null=True)
-    common_stock_repurchased = FloatField(default=0, blank=True, null=True)
-    dividends_paid = FloatField(default=0, blank=True, null=True)
-    other_financing_activities = FloatField(default=0, blank=True, null=True)
-    financing_activities_cf = FloatField(default=0, blank=True, null=True)
-    effect_forex_exchange = FloatField(default=0, blank=True, null=True)
-    net_change_cash = FloatField(default=0, blank=True, null=True)
-    cash_end_period = FloatField(default=0, blank=True, null=True)
-    cash_beginning_period = FloatField(default=0, blank=True, null=True)
-    operating_cf = FloatField(default=0, blank=True, null=True)
-    capex = FloatField(default=0, blank=True, null=True)
-    fcf = FloatField(default=0, blank=True, null=True)
+    net_income = EntryStatementField()
+    depreciation_amortization = EntryStatementField()
+    deferred_income_tax = EntryStatementField()
+    stock_based_compensation = EntryStatementField()
+    change_in_working_capital = EntryStatementField()
+    accounts_receivable = EntryStatementField()
+    inventory = EntryStatementField()
+    accounts_payable = EntryStatementField()
+    other_working_capital = EntryStatementField()
+    other_non_cash_items = EntryStatementField()
+    operating_activities_cf = EntryStatementField()
+    investments_property_plant_equipment = EntryStatementField()
+    acquisitions_net = EntryStatementField()
+    purchases_investments = EntryStatementField()
+    sales_maturities_investments = EntryStatementField()
+    other_investing_activites = EntryStatementField()
+    investing_activities_cf = EntryStatementField()
+    debt_repayment = EntryStatementField()
+    common_stock_issued = EntryStatementField()
+    common_stock_repurchased = EntryStatementField()
+    dividends_paid = EntryStatementField()
+    other_financing_activities = EntryStatementField()
+    financing_activities_cf = EntryStatementField()
+    effect_forex_exchange = EntryStatementField()
+    net_change_cash = EntryStatementField()
+    cash_end_period = EntryStatementField()
+    cash_beginning_period = EntryStatementField()
+    operating_cf = EntryStatementField()
+    capex = EntryStatementField()
+    fcf = EntryStatementField()
 
     class Meta(BaseStatement.Meta):
         verbose_name = "Cash flow Statement"
@@ -217,14 +217,14 @@ class RentabilityRatio(BaseFinalStatement):
         blank=True,
         related_name="rentability_ratios",
     )
-    roa = FloatField(default=0, blank=True, null=True)
-    roe = FloatField(default=0, blank=True, null=True)
-    roc = FloatField(default=0, blank=True, null=True)
-    roce = FloatField(default=0, blank=True, null=True)
-    rota = FloatField(default=0, blank=True, null=True)
-    roic = FloatField(default=0, blank=True, null=True)
-    nopat_roic = FloatField(default=0, blank=True, null=True)
-    rogic = FloatField(default=0, blank=True, null=True)
+    roa = EntryStatementField()
+    roe = EntryStatementField()
+    roc = EntryStatementField()
+    roce = EntryStatementField()
+    rota = EntryStatementField()
+    roic = EntryStatementField()
+    nopat_roic = EntryStatementField()
+    rogic = EntryStatementField()
 
     class Meta(BaseStatement.Meta):
         verbose_name = "Rentability Ratio"
@@ -240,11 +240,11 @@ class LiquidityRatio(BaseFinalStatement):
         blank=True,
         related_name="liquidity_ratios",
     )
-    cash_ratio = FloatField(default=0, blank=True, null=True)
-    current_ratio = FloatField(default=0, blank=True, null=True)
-    quick_ratio = FloatField(default=0, blank=True, null=True)
-    operating_cashflow_ratio = FloatField(default=0, blank=True, null=True)
-    debt_to_equity = FloatField(default=0, blank=True, null=True)
+    cash_ratio = EntryStatementField()
+    current_ratio = EntryStatementField()
+    quick_ratio = EntryStatementField()
+    operating_cashflow_ratio = EntryStatementField()
+    debt_to_equity = EntryStatementField()
 
     class Meta(BaseStatement.Meta):
         verbose_name = "Liquidity Ratio"
@@ -260,14 +260,14 @@ class MarginRatio(BaseFinalStatement):
         blank=True,
         related_name="margins",
     )
-    gross_margin = FloatField(default=0, blank=True, null=True)
-    ebitda_margin = FloatField(default=0, blank=True, null=True)
-    net_income_margin = FloatField(default=0, blank=True, null=True)
-    fcf_margin = FloatField(default=0, blank=True, null=True)
-    fcf_equity_to_net_income = FloatField(default=0, blank=True, null=True)
-    unlevered_fcf_to_net_income = FloatField(default=0, blank=True, null=True)
-    unlevered_fcf_ebit_to_net_income = FloatField(default=0, blank=True, null=True)
-    owners_earnings_to_net_income = FloatField(default=0, blank=True, null=True)
+    gross_margin = EntryStatementField()
+    ebitda_margin = EntryStatementField()
+    net_income_margin = EntryStatementField()
+    fcf_margin = EntryStatementField()
+    fcf_equity_to_net_income = EntryStatementField()
+    unlevered_fcf_to_net_income = EntryStatementField()
+    unlevered_fcf_ebit_to_net_income = EntryStatementField()
+    owners_earnings_to_net_income = EntryStatementField()
 
     class Meta(BaseStatement.Meta):
         verbose_name = "Margin Ratio"
@@ -283,10 +283,10 @@ class FreeCashFlowRatio(BaseFinalStatement):
         blank=True,
         related_name="fcf_ratios",
     )
-    fcf_equity = FloatField(default=0, blank=True, null=True)
-    unlevered_fcf = FloatField(default=0, blank=True, null=True)
-    unlevered_fcf_ebit = FloatField(default=0, blank=True, null=True)
-    owners_earnings = FloatField(default=0, blank=True, null=True)
+    fcf_equity = EntryStatementField()
+    unlevered_fcf = EntryStatementField()
+    unlevered_fcf_ebit = EntryStatementField()
+    owners_earnings = EntryStatementField()
 
     class Meta(BaseStatement.Meta):
         verbose_name = "Free cash flow Ratio"
@@ -302,15 +302,15 @@ class PerShareValue(BaseFinalStatement):
         blank=True,
         related_name="per_share_values",
     )
-    sales_ps = FloatField(default=0, blank=True, null=True)
-    book_ps = FloatField(default=0, blank=True, null=True)
-    tangible_ps = FloatField(default=0, blank=True, null=True)
-    fcf_ps = FloatField(default=0, blank=True, null=True)
-    eps = FloatField(default=0, blank=True, null=True)
-    cash_ps = FloatField(default=0, blank=True, null=True)
-    operating_cf_ps = FloatField(default=0, blank=True, null=True)
-    capex_ps = FloatField(default=0, blank=True, null=True)
-    total_assets_ps = FloatField(default=0, blank=True, null=True)
+    sales_ps = EntryStatementField()
+    book_ps = EntryStatementField()
+    tangible_ps = EntryStatementField()
+    fcf_ps = EntryStatementField()
+    eps = EntryStatementField()
+    cash_ps = EntryStatementField()
+    operating_cf_ps = EntryStatementField()
+    capex_ps = EntryStatementField()
+    total_assets_ps = EntryStatementField()
 
     class Meta(BaseStatement.Meta):
         verbose_name = "Per share"
@@ -326,22 +326,22 @@ class NonGaap(BaseFinalStatement):
         blank=True,
         related_name="non_gaap_figures",
     )
-    normalized_income = FloatField(default=0, blank=True, null=True)
-    effective_tax_rate = FloatField(default=0, blank=True, null=True)
-    nopat = FloatField(default=0, blank=True, null=True)
-    net_working_cap = FloatField(default=0, blank=True, null=True)
-    average_inventory = FloatField(default=0, blank=True, null=True)
-    average_accounts_payable = FloatField(default=0, blank=True, null=True)
-    dividend_yield = FloatField(default=0, blank=True, null=True)
-    earnings_yield = FloatField(default=0, blank=True, null=True)
-    fcf_yield = FloatField(default=0, blank=True, null=True)
-    income_quality = FloatField(default=0, blank=True, null=True)
-    invested_capital = FloatField(default=0, blank=True, null=True)
-    market_cap = FloatField(default=0, blank=True, null=True)
-    net_current_asset_value = FloatField(default=0, blank=True, null=True)
-    payout_ratio = FloatField(default=0, blank=True, null=True)
-    tangible_assets = FloatField(default=0, blank=True, null=True)
-    retention_ratio = FloatField(default=0, blank=True, null=True)
+    normalized_income = EntryStatementField()
+    effective_tax_rate = EntryStatementField()
+    nopat = EntryStatementField()
+    net_working_cap = EntryStatementField()
+    average_inventory = EntryStatementField()
+    average_accounts_payable = EntryStatementField()
+    dividend_yield = EntryStatementField()
+    earnings_yield = EntryStatementField()
+    fcf_yield = EntryStatementField()
+    income_quality = EntryStatementField()
+    invested_capital = EntryStatementField()
+    market_cap = EntryStatementField()
+    net_current_asset_value = EntryStatementField()
+    payout_ratio = EntryStatementField()
+    tangible_assets = EntryStatementField()
+    retention_ratio = EntryStatementField()
 
     class Meta(BaseStatement.Meta):
         verbose_name = "Non GAAP figure"
@@ -357,15 +357,15 @@ class OperationRiskRatio(BaseFinalStatement):
         blank=True,
         related_name="operation_risks_ratios",
     )
-    asset_coverage_ratio = FloatField(default=0, blank=True, null=True)
-    cash_flow_coverage_ratios = FloatField(default=0, blank=True, null=True)
-    cash_coverage = FloatField(default=0, blank=True, null=True)
-    debt_service_coverage = FloatField(default=0, blank=True, null=True)
-    interest_coverage = FloatField(default=0, blank=True, null=True)
-    operating_cashflow_ratio = FloatField(default=0, blank=True, null=True)
-    debt_ratio = FloatField(default=0, blank=True, null=True)
-    long_term_debt_to_capitalization = FloatField(default=0, blank=True, null=True)
-    total_debt_to_capitalization = FloatField(default=0, blank=True, null=True)
+    asset_coverage_ratio = EntryStatementField()
+    cash_flow_coverage_ratios = EntryStatementField()
+    cash_coverage = EntryStatementField()
+    debt_service_coverage = EntryStatementField()
+    interest_coverage = EntryStatementField()
+    operating_cashflow_ratio = EntryStatementField()
+    debt_ratio = EntryStatementField()
+    long_term_debt_to_capitalization = EntryStatementField()
+    total_debt_to_capitalization = EntryStatementField()
 
     class Meta(BaseStatement.Meta):
         verbose_name = "Operation Risk Ratio"
@@ -377,13 +377,13 @@ class EnterpriseValueRatio(BaseFinalStatement):
     company = ForeignKey(
         Company, on_delete=SET_NULL, null=True, blank=True, related_name="ev_ratios"
     )
-    market_cap = FloatField(default=0, blank=True, null=True)
-    enterprise_value = FloatField(default=0, blank=True, null=True)
-    ev_fcf = FloatField(default=0, blank=True, null=True)
-    ev_operating_cf = FloatField(default=0, blank=True, null=True)
-    ev_sales = FloatField(default=0, blank=True, null=True)
-    company_equity_multiplier = FloatField(default=0, blank=True, null=True)
-    ev_multiple = FloatField(default=0, blank=True, null=True)
+    market_cap = EntryStatementField()
+    enterprise_value = EntryStatementField()
+    ev_fcf = EntryStatementField()
+    ev_operating_cf = EntryStatementField()
+    ev_sales = EntryStatementField()
+    company_equity_multiplier = EntryStatementField()
+    ev_multiple = EntryStatementField()
 
     class Meta(BaseStatement.Meta):
         verbose_name = "Enterprise Value"
@@ -395,16 +395,16 @@ class CompanyGrowth(BaseFinalStatement):
     company = ForeignKey(
         Company, on_delete=SET_NULL, null=True, blank=True, related_name="growth_rates"
     )
-    revenue_growth = FloatField(default=0, blank=True, null=True)
-    cost_revenue_growth = FloatField(default=0, blank=True, null=True)
-    operating_expenses_growth = FloatField(default=0, blank=True, null=True)
-    net_income_growth = FloatField(default=0, blank=True, null=True)
-    shares_buyback = FloatField(default=0, blank=True, null=True)
-    eps_growth = FloatField(default=0, blank=True, null=True)
-    fcf_growth = FloatField(default=0, blank=True, null=True)
-    owners_earnings_growth = FloatField(default=0, blank=True, null=True)
-    capex_growth = FloatField(default=0, blank=True, null=True)
-    rd_expenses_growth = FloatField(default=0, blank=True, null=True)
+    revenue_growth = EntryStatementField()
+    cost_revenue_growth = EntryStatementField()
+    operating_expenses_growth = EntryStatementField()
+    net_income_growth = EntryStatementField()
+    shares_buyback = EntryStatementField()
+    eps_growth = EntryStatementField()
+    fcf_growth = EntryStatementField()
+    owners_earnings_growth = EntryStatementField()
+    capex_growth = EntryStatementField()
+    rd_expenses_growth = EntryStatementField()
 
     class Meta(BaseStatement.Meta):
         verbose_name = "Company growth"
@@ -416,17 +416,17 @@ class EficiencyRatio(BaseFinalStatement):
     company = ForeignKey(
         Company, on_delete=SET_NULL, null=True, blank=True, related_name="efficiency_ratios"
     )
-    asset_turnover = FloatField(default=0, blank=True, null=True)
-    inventory_turnover = FloatField(default=0, blank=True, null=True)
-    fixed_asset_turnover = FloatField(default=0, blank=True, null=True)
-    accounts_payable_turnover = FloatField(default=0, blank=True, null=True)
-    cash_conversion_cycle = FloatField(default=0, blank=True, null=True)
-    days_inventory_outstanding = FloatField(default=0, blank=True, null=True)
-    days_payables_outstanding = FloatField(default=0, blank=True, null=True)
-    days_sales_outstanding = FloatField(default=0, blank=True, null=True)
-    free_cashflow_to_operating_cashflow = FloatField(default=0, blank=True, null=True)
-    operating_cycle = FloatField(default=0, blank=True, null=True)
-    cash_conversion_ratio = FloatField(default=0, blank=True, null=True)
+    asset_turnover = EntryStatementField()
+    inventory_turnover = EntryStatementField()
+    fixed_asset_turnover = EntryStatementField()
+    accounts_payable_turnover = EntryStatementField()
+    cash_conversion_cycle = EntryStatementField()
+    days_inventory_outstanding = EntryStatementField()
+    days_payables_outstanding = EntryStatementField()
+    days_sales_outstanding = EntryStatementField()
+    free_cashflow_to_operating_cashflow = EntryStatementField()
+    operating_cycle = EntryStatementField()
+    cash_conversion_ratio = EntryStatementField()
 
     class Meta(BaseStatement.Meta):
         verbose_name = "Efficiency Ratio"
@@ -438,15 +438,15 @@ class PriceToRatio(BaseFinalStatement):
     company = ForeignKey(
         Company, on_delete=SET_NULL, null=True, blank=True, related_name="price_to_ratios"
     )
-    price_book = FloatField(default=0, blank=True, null=True)
-    price_cf = FloatField(default=0, blank=True, null=True)
-    price_earnings = FloatField(default=0, blank=True, null=True)
-    price_earnings_growth = FloatField(default=0, blank=True, null=True)
-    price_sales = FloatField(default=0, blank=True, null=True)
-    price_total_assets = FloatField(default=0, blank=True, null=True)
-    price_fcf = FloatField(default=0, blank=True, null=True)
-    price_operating_cf = FloatField(default=0, blank=True, null=True)
-    price_tangible_assets = FloatField(default=0, blank=True, null=True)
+    price_book = EntryStatementField()
+    price_cf = EntryStatementField()
+    price_earnings = EntryStatementField()
+    price_earnings_growth = EntryStatementField()
+    price_sales = EntryStatementField()
+    price_total_assets = EntryStatementField()
+    price_fcf = EntryStatementField()
+    price_operating_cf = EntryStatementField()
+    price_tangible_assets = EntryStatementField()
 
     class Meta(BaseStatement.Meta):
         verbose_name = "Price to Ratio"
