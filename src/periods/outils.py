@@ -1,14 +1,10 @@
-from typing import Union, Dict, Optional, List
+from typing import Any, Union, List
 from datetime import datetime, date
 from dateutil.parser import parse
 
-from .constants import (
-    PERIOD_1_QUARTER,
-    PERIOD_2_QUARTER,
-    PERIOD_3_QUARTER,
-    PERIOD_4_QUARTER,
-    QUARTER_PER_MONTH,
-)
+from django.db.models import QuerySet
+
+from .constants import QUARTER_PER_MONTH
 from .models import Period
 
 
@@ -40,21 +36,3 @@ class FiscalDate:
     @staticmethod
     def _get_quarter(month: int) -> int:
         return QUARTER_PER_MONTH[month]
-
-
-class FiscalYearDates:
-    quarters: Dict[int, Optional[date]] = {
-        PERIOD_1_QUARTER: None,
-        PERIOD_2_QUARTER: None,
-        PERIOD_3_QUARTER: None,
-        PERIOD_4_QUARTER: None,
-    }
-
-    def __init__(self, yearly: FiscalDate, quarters: List[FiscalDate]) -> None:
-        self.quarters = self.match_quarters(yearly, quarters)
-
-    @staticmethod
-    def match_quarters(
-        yearly: FiscalDate, quarters: List[FiscalDate]
-    ) -> Dict[int, Optional[date]]:
-        pass

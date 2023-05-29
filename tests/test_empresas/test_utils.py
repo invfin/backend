@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, date
 from unittest import skip
 
 from django.test import TestCase
@@ -6,23 +6,15 @@ from django.utils import timezone
 
 from bfet import DjangoTestingModel
 
-from src.empresas.models import (
-    BalanceSheetYahooQuery,
-    BalanceSheetYFinance,
-    CashflowStatementYahooQuery,
-    CashflowStatementYFinance,
-    Company,
-    IncomeStatementYahooQuery,
-    IncomeStatementYFinance,
-)
+from src.empresas.models import Company, IncomeStatementFinprep
 from src.empresas.utils import FinprepRequestCheck, arrange_quarters
+from src.periods.constants import PERIODS_QUARTERS
 from src.periods.models import Period
 
 
 class TestUtils(TestCase):
-    @classmethod
-    def setUpTestData(cls) -> None:
-        cls.company = DjangoTestingModel.create(
+    def test_arrange_quarters(self):
+        company = DjangoTestingModel.create(
             Company,
             name="Intel",
             ticker="INTC",
@@ -33,34 +25,50 @@ class TestUtils(TestCase):
             has_logo=True,
             has_error=False,
         )
-        cls.period = DjangoTestingModel.create(Period)
-        cls.balancesheetyfinance = DjangoTestingModel.create(
-            BalanceSheetYFinance,
-            company=cls.company,
+        periods = {
+            period: DjangoTestingModel.create(Period, year=2021, period=period)
+            for period, _ in PERIODS_QUARTERS
+        }
+        stt_q1 = DjangoTestingModel.create(
+            IncomeStatementFinprep,
+            fill_all_fields=False,
+            company=company,
+            period=None,
+            date=None,
+            year=date(2021, 2, 23),
         )
-        cls.cashflowstatementyfinance = DjangoTestingModel.create(
-            CashflowStatementYFinance,
-            company=cls.company,
+        stt_q2 = DjangoTestingModel.create(
+            IncomeStatementFinprep,
+            fill_all_fields=False,
+            company=company,
+            period=None,
+            date=2021,
+            year=date(2021, 4, 23),
         )
-        cls.incomestatementyfinance = DjangoTestingModel.create(
-            IncomeStatementYFinance,
-            company=cls.company,
+        stt_q3 = DjangoTestingModel.create(
+            IncomeStatementFinprep,
+            company=company,
+            period=None,
+            date=None,
+            year=date(2021, 9, 23),
         )
-        cls.balancesheetyahooquery = DjangoTestingModel.create(
-            BalanceSheetYahooQuery,
-            company=cls.company,
+        stt_q4 = DjangoTestingModel.create(
+            IncomeStatementFinprep,
+            fill_all_fields=False,
+            company=company,
+            period=None,
+            date=None,
+            year=date(2022, 12, 30),
         )
-        cls.cashflowstatementyahooquery = DjangoTestingModel.create(
-            CashflowStatementYahooQuery,
-            company=cls.company,
-        )
-        cls.incomestatementyahooquery = DjangoTestingModel.create(
-            IncomeStatementYahooQuery,
-            company=cls.company,
-        )
-
-    def test_arrange_quarters(self):
-        arrange_quarters(self.company)
+        arrange_quarters(company)
+        self.assertEqual(stt_q1.period, periods[1])
+        self.assertEqual(stt_q1.date, 2021)
+        self.assertEqual(stt_q2.period, periods[2])
+        self.assertEqual(stt_q2.date, 2021)
+        self.assertEqual(stt_q3.period, periods[3])
+        self.assertEqual(stt_q3.date, 2021)
+        self.assertEqual(stt_q4.period, periods[4])
+        self.assertEqual(stt_q4.date, 2022)
 
 
 class TestFinprepRequestCheck(TestCase):

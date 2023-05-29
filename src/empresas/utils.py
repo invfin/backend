@@ -1,19 +1,16 @@
 from datetime import datetime
 import json
-from typing import Tuple, Union
+from typing import Tuple
 
 from django.utils import timezone
+from django.db.models import Q
 
-from dateutil.relativedelta import relativedelta
 import numpy as np
 
 from src.empresas.constants import MAX_REQUESTS_FINPREP
 from src.empresas.models import Company, CompanyUpdateLog
-from src.empresas.models.y_finance import IncomeStatementYFinance
-from src.empresas.models.yahoo_query import IncomeStatementYahooQuery
-from src.empresas.querysets.statements import StatementQuerySet
 from src.periods import constants
-from src.periods.models import Period
+from src.periods.outils import FiscalDate
 
 
 class FinprepRequestCheck:
@@ -65,9 +62,7 @@ def detect_outlier(list_data):
         if np.abs(z_score) > threshold:
             outliers.append(y)
 
-    if not outliers:
-        return "No outliers"
-    return outliers
+    return "No outliers" if not outliers else outliers
 
 
 def log_company(checking: str = ""):
@@ -104,59 +99,22 @@ def log_company(checking: str = ""):
     return decorator
 
 
-def arrange_quarters(company: Company):
+def arrange_quarters(company: Company) -> None:
     """
-    TODO: Fix and test
-    Fix the try except for when a quarter isn't correctly set becasuse the month is different.
-    How to:
-        - We could check the amounts. If the quarter's values are a sum of the previous ones plus the current
-        we could look for this.
-        - Otherwise by dates. Get a frame where a quarter could be and if the month is in this range set to the
-        according quarter.
+    TODO: test
     """
-    statements_models = [
+    for statement_obj in [
         company.incomestatementyahooquery_set,
-        # company.balancesheetyahooquery_set,
-        # company.cashflowstatementyahooquery_set,
-        # company.incomestatementyfinance_set,
-        # company.balancesheetyfinance_set,
-        # company.cashflowstatementyfinance_set,
-    ]
-    for statement_obj in statements_models:
-        company_statements: StatementQuerySet = statement_obj.all().order_by("year")
-        if (
-            company_statements
-            and company_statements.filter(period__period=constants.PERIOD_FOR_YEAR).exists()
+        company.balancesheetyahooquery_set,
+        company.cashflowstatementyahooquery_set,
+        company.incomestatementyfinance_set,
+        company.balancesheetyfinance_set,
+        company.cashflowstatementyfinance_set,
+    ]:
+        for statement in statement_obj.exclude(
+            Q(period__period=constants.PERIOD_FOR_YEAR) | ~Q(date=None)
         ):
-            for statement in company_statements:
-                statement: Union[IncomeStatementYahooQuery, IncomeStatementYFinance]
-                try:
-                    if statement.period.period == constants.PERIOD_FOR_YEAR:
-                        date_quarter_4 = statement.year
-                        date_quarter_1 = (
-                            date_quarter_4 + relativedelta(months=+3) + relativedelta(years=+1)
-                        )
-                        date_quarter_2 = (
-                            date_quarter_1 + relativedelta(months=+3) + relativedelta(years=-1)
-                        )
-                        date_quarter_3 = date_quarter_2 + relativedelta(months=+3)
-                        period_dict = {
-                            date_quarter_4.month: Period.objects.get_or_create(
-                                year=date_quarter_4.year, period=constants.PERIOD_4_QUARTER
-                            )[0],
-                            date_quarter_1.month: Period.objects.get_or_create(
-                                year=date_quarter_1.year, period=constants.PERIOD_1_QUARTER
-                            )[0],
-                            date_quarter_2.month: Period.objects.get_or_create(
-                                year=date_quarter_2.year, period=constants.PERIOD_2_QUARTER
-                            )[0],
-                            date_quarter_3.month: Period.objects.get_or_create(
-                                year=date_quarter_3.year, period=constants.PERIOD_3_QUARTER
-                            )[0],
-                        }
-                    else:
-                        statement.period = period_dict[statement.year.month]
-                        statement.save(update_fields=["period"])
-                except KeyError:
-                    statement.period = None
-                    statement.save(update_fields=["period"])
+            fiscal = FiscalDate(statement.year)
+            statement.date = fiscal.regular_date.year
+            statement.period = fiscal.period
+            statement.save(update_fields=["period", "date"])
