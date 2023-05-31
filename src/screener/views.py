@@ -8,7 +8,7 @@ from django.urls import reverse
 from django.views.generic import DetailView, ListView, RedirectView
 
 from src.empresas.models import Company, ExchangeOrganisation
-from src.empresas.outils.data_management.show.company import CompanyData
+from src.empresas.outils.data_management.show.company_data import CompanyData
 from src.empresas.outils.data_management.update.update import UpdateCompany
 from src.empresas.utils import FinprepRequestCheck
 from src.etfs.models import Etf
@@ -68,9 +68,9 @@ class CompanyScreenerInicioView(SEOListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         name = self.kwargs["slug"]
-        context[
-            "meta_title"
-        ] = f"Más de 30 años de información financiera de cualquier empresa de {name}"
+        context["meta_title"] = (
+            f"Más de 30 años de información financiera de cualquier empresa de {name}"
+        )
         context["meta_url"] = f"/empresas-de/{name}/"
         return context
 
@@ -200,8 +200,10 @@ class CompanyDetailsView(SEODetailView):
         if not self.object:
             messages.error(
                 self.request,
-                "Lo sentimos, esta empresa todavía no tiene información ahora mismo vamos"
-                " a recabar información y estará lista en poco tiempo",
+                (
+                    "Lo sentimos, esta empresa todavía no tiene información ahora mismo vamos"
+                    " a recabar información y estará lista en poco tiempo"
+                ),
             )
             return redirect(reverse("screener:screener_inicio"))
         context = self.get_context_data(object=self.object)
@@ -222,8 +224,10 @@ class BuyCompanyInfo(RedirectView):
         CompanyInformationBought.objects.create(user=user, company=company)
         messages.success(
             request,
-            f"Ahora que conoces toda la historia financiera de {company.name}, no olvides"
-            " hacer un análisis FODA",
+            (
+                f"Ahora que conoces toda la historia financiera de {company.name}, no olvides"
+                " hacer un análisis FODA"
+            ),
         )
         return redirect(reverse("screener:company", kwargs={"ticker": company.ticker}))
 

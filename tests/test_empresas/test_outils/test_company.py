@@ -5,7 +5,7 @@ from django.test import TestCase
 from bfet import DjangoTestingModel
 
 from src.empresas.models import BalanceSheet, CashflowStatement, Company, IncomeStatement
-from src.empresas.outils.data_management.show.company import CompanyData
+from src.empresas.outils.data_management.show.company_data import CompanyData
 from src.empresas.outils.financial_ratios import CalculateFinancialRatios
 from src.empresas.outils.data_management.update.update import UpdateCompany
 from src.periods.constants import PERIOD_FOR_YEAR

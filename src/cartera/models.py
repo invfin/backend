@@ -24,7 +24,7 @@ from django.db.models import (
 
 from src.currencies.models import Currency
 from src.general.utils import ChartSerializer
-from src.empresas.outils.data_management.show.company import CompanyData
+from src.empresas.outils.data_management.show.company_data import CompanyData
 
 User = get_user_model()
 

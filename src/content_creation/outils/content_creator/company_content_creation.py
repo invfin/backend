@@ -4,7 +4,7 @@ from src.content_creation import constants
 from src.content_creation.outils.content_creator import ContentCreation
 from src.empresas.models import Company
 from src.empresas.outils.retrieve_data import RetrieveCompanyData
-from src.empresas.outils.data_management.show.company import CompanyData
+from src.empresas.outils.data_management.show.company_data import CompanyData
 from src.socialmedias import constants as socialmedias_constants
 from src.socialmedias.models import NewsSharedHistorial
 from src.translate.google_trans_new import google_translator

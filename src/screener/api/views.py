@@ -9,7 +9,7 @@ from django.views.generic import FormView, ListView
 import yahooquery as yq
 
 from src.empresas.models import Company
-from src.empresas.outils.data_management.show.company import CompanyData
+from src.empresas.outils.data_management.show.company_data import CompanyData
 from src.empresas.outils.valuations import discounted_cashflow
 
 from ..forms import UserCompanyObservationForm

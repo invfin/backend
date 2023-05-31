@@ -4,7 +4,7 @@ from typing import DefaultDict, Dict, Any
 
 from django.db.models import Q
 
-from src.empresas.information_sources import (
+from ..information_sources import (
     FinnhubInfo,
     FinprepInfo,
     YahooQueryInfo,

@@ -1,4 +1,5 @@
 from abc import abstractmethod
+from typing import Dict, List, Union
 
 from django.db.models import QuerySet
 
