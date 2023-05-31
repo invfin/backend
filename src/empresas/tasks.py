@@ -8,7 +8,7 @@ from celery import shared_task
 
 from src.empresas.models import Company
 from src.empresas.outils.retrieve_data import RetrieveCompanyData
-from src.empresas.outils.update import UpdateCompany
+from src.empresas.outils.data_management.update.update import UpdateCompany
 from src.empresas.utils import arrange_quarters
 from src.periods.constants import PERIOD_FOR_YEAR
 from src.periods.models import Period
@@ -39,10 +39,10 @@ class CompanyTask:
             "key_stats": retrieve_data.create_key_stats_yahooquery,
             "institutionals": retrieve_data.create_institutionals_yahooquery,
         }
-        if (
-            self.tasks_map_selector == "financials_yfinance_info"
-            or self.tasks_map_selector == "financials_yahooquery_info"
-        ):
+        if self.tasks_map_selector in {
+            "financials_yfinance_info",
+            "financials_yahooquery_info",
+        }:
             return tasks_map[self.tasks_map_selector](retrieve_data)
         return tasks_map[self.tasks_map_selector]()
 
@@ -63,17 +63,18 @@ class CompanyTask:
         retrieve_data.create_financials_yfinance("q")
 
     def launch_task(self):
-        company = self.retrieve_company()
-        if not company:
+        if company := self.retrieve_company():
+            self.select_task(company)
+        else:
             return self.send_ending_message()
-        self.select_task(company)
         # arrange_quarters_task.delay(company.id)
 
 
 @shared_task()
 def create_averages_task(company_id):
     """
-    Creates the average statement for a given company according to their last quarterly financials statements
+    Creates the average statement for a given company
+    according to their last quarterly financials statements
     """
     company = Company.objects.get(id=company_id)
     for period in Period.objects.quarterly_periods():
@@ -83,20 +84,19 @@ def create_averages_task(company_id):
 
 @shared_task()
 def create_ttm_task(company_id):
-    company = Company.objects.get(id=company_id)
-    UpdateCompany(company).create_or_update_ttm()
+    UpdateCompany(Company.objects.get(id=company_id)).create_or_update_ttm()
 
 
 @shared_task()
 def arrange_quarters_task(company_id):
-    company = Company.objects.get(id=company_id)
-    arrange_quarters(company)
+    arrange_quarters(Company.objects.get(id=company_id))
 
 
 @shared_task()
 def update_periods_final_statements(company_id):
     """
-    Loops over the company statements and update their period to match the FY acording to the statement year
+    Loops over the company statements and update their
+    period to match the FY acording to the statement year
     """
     company = Company.objects.get(id=company_id)
     for statement in company.inc_statements.filter(period__isnull=True, is_ttm=False):

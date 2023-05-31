@@ -5,7 +5,7 @@ from django.test import TestCase
 from bfet import DjangoTestingModel
 
 from src.empresas.models import BalanceSheetYahooQuery, Company
-from src.empresas.parse.yahoo_query import NormalizeYahooQuery, YahooQueryInfo
+from src.empresas.information_sources.yahoo_query import NormalizeYahooQuery, YahooQueryInfo
 from src.periods.constants import PERIOD_1_QUARTER
 from src.periods.models import Period
 from tests.data.empresas.yahooquery import balance_dataframe

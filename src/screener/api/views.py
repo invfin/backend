@@ -9,11 +9,16 @@ from django.views.generic import FormView, ListView
 import yahooquery as yq
 
 from src.empresas.models import Company
-from src.empresas.outils.company import CompanyData
+from src.empresas.outils.data_management.show.company import CompanyData
 from src.empresas.outils.valuations import discounted_cashflow
 
 from ..forms import UserCompanyObservationForm
-from ..models import UserCompanyObservation, UserScreenerMediumPrediction, UserScreenerSimplePrediction, YahooScreener
+from ..models import (
+    UserCompanyObservation,
+    UserScreenerMediumPrediction,
+    UserScreenerSimplePrediction,
+    YahooScreener,
+)
 
 User = get_user_model()
 
@@ -289,5 +294,9 @@ def simple_valuation_view(request):
         )
 
         return JsonResponse(
-            {"opt_valuation": opt_valuation, "neu_valuation": neu_valuation, "pes_valuation": pes_valuation}
+            {
+                "opt_valuation": opt_valuation,
+                "neu_valuation": neu_valuation,
+                "pes_valuation": pes_valuation,
+            }
         )

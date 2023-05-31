@@ -7,49 +7,13 @@ import yahooquery as yq
 import yfinance as yf
 
 from src.empresas.models import Company
-from src.empresas.outils.company_to_json import CompanyValueToJsonConverter
+from src.empresas.outils.data_management.show.company_to_json import CompanyValueToJsonConverter
 from src.empresas.outils.financial_ratios.utils import (
     calculate_compound_growth,
     divide_or_zero,
 )
 from src.empresas.outils.valuations import discounted_cashflow, graham_value, margin_of_safety
 from src.general.utils import ChartSerializer
-
-
-class CompanyCurrentRatios:
-    inc_statements: QuerySet
-    balance_sheets: QuerySet
-    cf_statements: QuerySet
-    rentability_ratios: QuerySet
-    liquidity_ratios: QuerySet
-    margins: QuerySet
-    fcf_ratios: QuerySet
-    per_share_values: QuerySet
-    non_gaap_figures: QuerySet
-    operation_risks_ratios: QuerySet
-    ev_ratios: QuerySet
-    growth_rates: QuerySet
-    efficiency_ratios: QuerySet
-    price_to_ratios: QuerySet
-
-    def set_statements(self, company: Company) -> None:
-        for statement in [
-            "inc_statements",
-            "balance_sheets",
-            "cf_statements",
-            "rentability_ratios",
-            "liquidity_ratios",
-            "margins",
-            "fcf_ratios",
-            "per_share_values",
-            "non_gaap_figures",
-            "operation_risks_ratios",
-            "ev_ratios",
-            "growth_rates",
-            "efficiency_ratios",
-            "price_to_ratios",
-        ]:
-            setattr(self, statement, getattr(company, statement).yearly_exclude_ttm())
 
 
 class CompanyData(CompanyValueToJsonConverter):
@@ -538,3 +502,9 @@ class CompanyData(CompanyValueToJsonConverter):
         current_price = yahooquery_info.get("regularMarketPrice")
         current_currency = yahooquery_info.get("currency")
         return current_price, current_currency
+    
+    def get_company_news(self) -> List[Dict[str, str]]:
+        day = str(int(datetime.now().strftime("%Y-%m-%d")[-2:]) - 2)
+        from_date = datetime.now().strftime(f"%Y-%m-{day}")
+        to_date = datetime.now().strftime("%Y-%m-%d")
+        return FinnhubInfo(self.company).company_news(self.company.ticker, from_date, to_date)

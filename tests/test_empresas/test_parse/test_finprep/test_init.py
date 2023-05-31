@@ -10,7 +10,7 @@ from src.empresas.models import (
     Company,
     IncomeStatementFinprep,
 )
-from src.empresas.parse.finprep import FinprepInfo
+from src.empresas.information_sources.finprep import FinprepInfo
 
 
 class TestFinprepInfo(TestCase):

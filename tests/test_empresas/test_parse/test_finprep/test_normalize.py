@@ -1,6 +1,6 @@
 from django.test import TestCase
 
-from src.empresas.parse.finprep.normalize_data import NormalizeFinprep
+from src.empresas.information_sources.finprep.normalize_data import NormalizeFinprep
 from tests.data.empresas.finprep import finprep_data
 
 

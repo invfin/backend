@@ -2,7 +2,7 @@ from unittest.mock import patch
 
 from django.test import TestCase
 
-from src.empresas.parse.finprep.parse_data import ParseFinprep
+from src.empresas.information_sources.finprep.parse_data import ParseFinprep
 
 
 PARSE_FINPREP = "src.empresas.parse.finprep.parse_data.ParseFinprep"

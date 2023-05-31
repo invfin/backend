@@ -1,12 +1,16 @@
 from collections import defaultdict
 from datetime import datetime
-from typing import DefaultDict
+from typing import DefaultDict, Dict, Any
 
 from django.db.models import Q
 
-from src.empresas.parse.yahoo_query import ParseYahooQuery
-from src.empresas.parse.y_finance import YFinanceInfo
-from src.empresas.outils.average_statements import AverageStatements
+from src.empresas.information_sources import (
+    FinnhubInfo,
+    FinprepInfo,
+    YahooQueryInfo,
+    YFinanceInfo,
+)
+from src.empresas.outils.data_management.update.average_statements import AverageStatements
 from src.empresas.outils.financial_ratios import CalculateFinancialRatios
 from src.empresas.utils import log_company
 from src.periods.constants import PERIOD_FOR_YEAR
@@ -45,9 +49,9 @@ class UpdateCompany(CalculateFinancialRatios):
 
     @log_company()
     def needs_update(self) -> bool:
-        least_recent_date = ParseYahooQuery(
+        least_recent_date = YahooQueryInfo(
             self.company.ticker
-        ).request_balance_sheets_yahooquery()
+        ).yahooquery.request_balance_sheets_yahooquery()
         least_recent_date = least_recent_date["asOfDate"].max().value // 10**9
         least_recent_year = datetime.fromtimestamp(least_recent_date).year
         return least_recent_year != self.company.most_recent_year
@@ -203,3 +207,31 @@ class UpdateCompany(CalculateFinancialRatios):
     @log_company()
     def create_or_update_price_to_ratio(self, data: dict, period: Period) -> type:
         return self.create_or_update_statement(data, self.company.price_to_ratios, period)
+
+    @log_company("latest_financials_finprep_info")
+    def create_financials_finprep(self) -> Dict[str, Any]:
+        return FinprepInfo(self.company).create_financials_finprep()
+
+    @log_company("first_financials_finnhub_info")
+    def create_financials_finnhub(self):
+        return FinnhubInfo(self.company).create_financials_finnhub()
+
+    @log_company("first_financials_yfinance_info")
+    def create_financials_yfinance(self, period: str = "a"):
+        if period == "q":
+            return YFinanceInfo(self.company).create_quarterly_financials_yfinance()
+        return YFinanceInfo(self.company).create_yearly_financials_yfinance()
+
+    @log_company("first_financials_yahooquery_info")
+    def create_financials_yahooquery(self, period: str = "a"):
+        if period == "q":
+            return YahooQueryInfo(self.company).create_quarterly_financials_yahooquery()
+        return YahooQueryInfo(self.company).create_yearly_financials_yahooquery()
+
+    @log_company("institutionals")
+    def create_institutionals_yahooquery(self):
+        return YahooQueryInfo(self.company).create_institutionals_yahooquery()
+
+    @log_company("key_stats")
+    def create_key_stats_yahooquery(self):
+        return YahooQueryInfo(self.company).create_key_stats_yahooquery()

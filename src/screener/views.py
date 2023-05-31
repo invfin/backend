@@ -8,8 +8,8 @@ from django.urls import reverse
 from django.views.generic import DetailView, ListView, RedirectView
 
 from src.empresas.models import Company, ExchangeOrganisation
-from src.empresas.outils.company import CompanyData
-from src.empresas.outils.update import UpdateCompany
+from src.empresas.outils.data_management.show.company import CompanyData
+from src.empresas.outils.data_management.update.update import UpdateCompany
 from src.empresas.utils import FinprepRequestCheck
 from src.etfs.models import Etf
 from src.screener.models import CompanyInformationBought, YahooScreener

@@ -10,7 +10,7 @@ from src.empresas.models import (
     IncomeStatementFinprep,
     IncomeStatementYahooQuery,
 )
-from src.empresas.outils.average_statements import AverageStatements
+from src.empresas.outils.data_management.update.average_statements import AverageStatements
 from src.periods.constants import PERIOD_FOR_YEAR
 from src.periods.models import Period
 

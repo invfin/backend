@@ -6,7 +6,7 @@ from django_json_widget.widgets import JSONEditorWidget
 from src.empresas.admin.base import BaseJSONWidgetInline, update_financials
 from src.empresas.admin.filters.company import CompanyLogsFilter
 from src.empresas.models import Company, CompanyUpdateLog, TopInstitutionalOwnership
-from src.empresas.outils.update import UpdateCompany
+from src.empresas.outils.data_management.update.update import UpdateCompany
 from src.empresas.tasks import update_periods_final_statements
 from src.empresas.utils import arrange_quarters
 from src.periods.models import Period

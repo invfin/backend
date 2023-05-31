@@ -4,7 +4,7 @@ from bfet import DjangoTestingModel
 
 from src.empresas.models import BalanceSheet, CashflowStatement, Company, IncomeStatement
 from src.empresas.outils.financial_ratios import CalculateFinancialRatios
-from src.empresas.outils.update import UpdateCompany
+from src.empresas.outils.data_management.update.update import UpdateCompany
 from src.periods.constants import PERIOD_1_QUARTER, PERIOD_FOR_YEAR
 from src.periods.models import Period
 from tests.data.empresas import (

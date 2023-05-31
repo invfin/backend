@@ -20,7 +20,7 @@ from src.empresas.models import (
     IncomeStatementYahooQuery,
     IncomeStatementYFinance,
 )
-from src.empresas.outils.update import UpdateCompany
+from src.empresas.outils.data_management.update.update import UpdateCompany
 from src.periods import constants
 from src.periods.models import Period
 

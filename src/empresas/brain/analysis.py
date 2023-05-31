@@ -1,6 +1,6 @@
 import yahooquery as yq
 
-from src.empresas.parse.y_finance import YFinanceInfo
+from src.empresas.information_sources.y_finance import YFinanceInfo
 
 
 def simple_stock_analysis(empresa):

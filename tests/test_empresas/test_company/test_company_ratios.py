@@ -7,7 +7,7 @@ from bfet import DjangoTestingModel
 import vcr
 
 from src.empresas.models import Company
-from src.empresas.outils.update import UpdateCompany
+from src.empresas.outils.data_management.update.update import UpdateCompany
 from tests.data.empresas.finprep import finprep_data as data
 
 company_vcr = vcr.VCR(

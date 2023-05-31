@@ -1,7 +1,7 @@
 [![CircleCI](https://dl.circleci.com/status-badge/img/gh/lluc2397/InvFin/tree/master.svg?style=svg)](https://dl.circleci.com/status-badge/redirect/gh/lluc2397/InvFin/tree/master)
 
 # InvFin
-The main purpose of the webapp is to centralise information about investing, in spanish.
+The main purpose of the webapp is to centralise information about investing.
 
 
 # Sections:
@@ -17,8 +17,8 @@ The main purpose of the webapp is to centralise information about investing, in 
 <!-- - [API](#API)
 - [Internal](#Internal)
     - [Recsys](#Recsys)
-    - [Emailing](#Emailing)
-- [Side Notes](#SideNotes) -->
+    - [Emailing](#Emailing) -->
+- [Side Notes](#Side%20Notes)
 <!-- tocstop -->
 
 
@@ -51,7 +51,9 @@ Users can keep track of their finance and investments and share it with the worl
 ### UTM
 A tag to create utm parameters for the urls. source and campaign are at the end as usually medium, content and term are usually changed accross the web.
 
-#### {% utm content='', term='', medium='webapp', source='invfin', campaign='website-links' %}
+``
+{% utm content='', term='', medium='webapp', source='invfin', campaign='website-links' %}
+``
 
 - content: Identifies what specifically was clicked to bring the user to the site, such as a banner ad or a text link
 - term: Identifies search terms
@@ -63,10 +65,24 @@ A tag to create utm parameters for the urls. source and campaign are at the end 
 ### Facebook
 When posting with images or video on facebook, around 6 (or maybe more) lines of text shows up.
 
-## Parse Edgar
+## Companies Information
+### Parse Edgar
 From this url f"https://data.sec.gov/submissions/CIK{cik_number}.json"
 we can get all the fillings of a company. The idea would be to parse it, build the full urls to access the files
 and then store the complete url with date and other info according.
+
+### CompaniesDataManagement
+``
+company = Company.objects.get()
+
+UpdateCompany(company)
+``
+* *UpdateCompany*: 
+    - Interface to call RetreiveCompanyData when updates are needed
+    - Will be used by the tasks to update information async
+
+* *RetreiveCompanyData*: 
+    - Interface to call the different parsers
 
 # TODO
 1. [ ] Improve recommendations
@@ -77,6 +93,8 @@ and then store the complete url with date and other info according.
 6. [ ] Add random prize
 7. [ ] Improve tests
 8. [ ] Switch to SPA for some parts (MPA)
+9. [ ] Refactor CompaniesDataManagement to separate componenets correctly
+10. [ ] Create interface for a company model to set his statements
 
 ## Possibles TODO
 1. [ ] Stop using yfinance
