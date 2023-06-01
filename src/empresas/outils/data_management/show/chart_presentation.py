@@ -46,8 +46,8 @@ class CompanyChartPresentation(CompanyValueToJsonConverter):
         pocf: Union[int, float],
         evebitda: Union[int, float],
         evsales: Union[int, float],
-        averages: QuerySet,
-    ) -> List[Dict[str,]]:
+        averages: Dict[str, Union[int, float]],
+    ) -> List[Dict[str, Any]]:
         most_used_ratios = [
             {
                 "name": "PER",

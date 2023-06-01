@@ -1,3 +1,4 @@
+from typing import Any, Dict
 import yahooquery as yq
 
 
@@ -12,7 +13,7 @@ class ParseYahooQuery:
         return yq.Ticker(self.ticker)
 
     @property
-    def request_price_info_yahooquery(self):
+    def request_price_info_yahooquery(self) -> Dict[str, Any]:
         return self.yqcompany.price
 
     @property

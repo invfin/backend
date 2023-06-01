@@ -1,5 +1,5 @@
 from src.empresas.models import StatementsFinnhub
-from src.empresas.information_sources.finnhub.parse_data import ParseFinnhub
+from .parse_data import ParseFinnhub
 
 
 class FinnhubInfo(ParseFinnhub):
