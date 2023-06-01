@@ -7,8 +7,8 @@ from src.empresas.models import (
     CashflowStatementYFinance,
     IncomeStatementYFinance,
 )
-from src.empresas.information_sources.y_finance.normalize_data import NormalizeYFinance
-from src.empresas.information_sources.y_finance.parse_data import ParseYFinance
+from .normalize_data import NormalizeYFinance
+from .parse_data import ParseYFinance
 from src.general.outils.save_from_df import DFInfoCreator
 
 

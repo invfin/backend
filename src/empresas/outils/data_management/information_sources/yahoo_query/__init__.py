@@ -10,8 +10,8 @@ from src.empresas.models import (
     KeyStatsYahooQuery,
     TopInstitutionalOwnership,
 )
-from src.empresas.information_sources.yahoo_query.normalize_data import NormalizeYahooQuery
-from src.empresas.information_sources.yahoo_query.parse_data import ParseYahooQuery
+from .normalize_data import NormalizeYahooQuery
+from .parse_data import ParseYahooQuery
 from src.general.outils.save_from_df import DFInfoCreator
 
 

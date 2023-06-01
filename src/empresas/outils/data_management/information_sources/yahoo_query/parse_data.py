@@ -1,7 +1,5 @@
 import yahooquery as yq
 
-from .exceptions import TickerNotFound
-
 
 class ParseYahooQuery:
     ticker: str
@@ -15,8 +13,6 @@ class ParseYahooQuery:
 
     @property
     def request_price_info_yahooquery(self):
-        if self.yqcompany.price == {self.ticker: f"Quote not found for ticker symbol: {self.ticker}"}:
-            raise TickerNotFound(self.ticker)
         return self.yqcompany.price
 
     @property

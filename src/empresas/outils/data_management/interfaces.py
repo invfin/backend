@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Any, Dict
 from src.empresas.models import Company
 from src.empresas.querysets.statements import StatementQuerySet
 
@@ -14,7 +14,7 @@ class AveragesInterface:
     price_to_ratios: Dict[str, int | float]
     efficiency_ratios: Dict[str, int | float]
 
-    def set_averages(self, statements: "StatementsInterface"):
+    def __init__(self, statements: "StatementsInterface") -> None:
         for info in [
             "rentability_ratios",
             "liquidity_ratios",
@@ -46,7 +46,7 @@ class StatementsInterface:
     efficiency_ratios: StatementQuerySet
     price_to_ratios: StatementQuerySet
 
-    def set_statements(self, company) -> None:
+    def __init__(self, company: Company) -> None:
         for statement in [
             "inc_statements",
             "balance_sheets",
@@ -74,3 +74,18 @@ class CompanyInterface:
 
     def __init__(self, company: Company) -> None:
         self.company = company
+
+    def __call__(self) -> "CompanyInterface":
+        return self
+
+    def load_statements(self) -> StatementsInterface:
+        if not self.statements:
+            self.statements = StatementsInterface(self.company)
+        return self.statements
+
+    def load_averages(self) -> AveragesInterface:
+        if not self.averages:
+            if not self.statements:
+                self.load_statements()
+            self.averages = AveragesInterface(self.statements)
+        return self.averages
