@@ -1,5 +1,6 @@
 from unittest.mock import patch
 
+from freezegun import freeze_time
 from django.test import TestCase
 
 from bfet import DjangoTestingModel
@@ -15,6 +16,15 @@ from tests.data.empresas import (
     cashflow_final_statment,
     income_final_statment,
 )
+from src.empresas.outils.data_management.interfaces import (
+    StatementsInterface,
+    AveragesInterface,
+)
+
+EMPRESA_DATA_MNGMT = "src.empresas.outils.data_management"
+
+INFO_SOURCES = f"{EMPRESA_DATA_MNGMT}.information_sources"
+COMPANY_DATA = f"{EMPRESA_DATA_MNGMT}.show.company_data.CompanyData"
 
 
 class TestCompanyData(TestCase):
@@ -30,7 +40,7 @@ class TestCompanyData(TestCase):
             year=2020,
             period=PERIOD_FOR_YEAR,
         )
-        cls.company = DjangoTestingModel.create(Company)
+        cls.company = DjangoTestingModel.create(Company, ticker="AAPL")
         cls.current_income = DjangoTestingModel.create(
             IncomeStatement,
             period=cls.current_period,
@@ -77,200 +87,67 @@ class TestCompanyData(TestCase):
             {"current_price": 34.65},
         )
         UpdateCompany(cls.company).create_or_update_all_ratios(all_ratios, cls.current_period)
-
-    def test_min(self):
-        DjangoTestingModel.create_many(IncomeStatement, quantity=10, force_create=True)
-        all_inc = IncomeStatement.objects.all()
-        num_ics = 10 if len(all_inc) >= 10 else len(all_inc)
-        assert num_ics == 10
-        num_ics = min(len(all_inc), 10)
-        assert num_ics == 10
-        all_inc = IncomeStatement.objects.filter(company=self.company)
-        num_ics = 10 if len(all_inc) >= 10 else len(all_inc)
-        assert num_ics == 2
-        num_ics = min(len(all_inc), 10)
-        assert num_ics == 2
+        cls.company_data = CompanyData(cls.company)
 
     def test_get_statements(self):
-        statements = CompanyData(self.company).get_statements()
-        assert "inc_statements" in statements
-        assert "balance_sheets" in statements
-        assert "cf_statements" in statements
-        assert "rentability_ratios" in statements
-        assert "liquidity_ratios" in statements
-        assert "margins" in statements
-        assert "fcf_ratios" in statements
-        assert "per_share_values" in statements
-        assert "non_gaap_figures" in statements
-        assert "operation_risks_ratios" in statements
-        assert "ev_ratios" in statements
-        assert "growth_rates" in statements
-        assert "efficiency_ratios" in statements
-        assert "price_to_ratios" in statements
+        self.assertTrue(isinstance(self.company_data.get_statements(), StatementsInterface))
 
-    def test_generate_limit(self):
-        assert 2 == len(CompanyData(None).generate_limit(self.company.inc_statements.all()))
-        assert 1 == len(CompanyData(None, 1).generate_limit(self.company.inc_statements.all()))
+    def test_get_averages(self):
+        self.assertTrue(isinstance(self.company_data.get_averages(), AveragesInterface))
 
-    @patch("src.empresas.outils.company.CompanyData.income_json")
-    @patch("src.general.utils.ChartSerializer.generate_json")
-    def test_build_table_and_chart(self, mock_generate_json, mock_income_json):
-        mock_generate_json.return_value = "value"
-        mock_income_json.return_value = "value"
-        statement = self.company.inc_statements.all()
-        result = CompanyData(None).build_table_and_chart(
-            statement,
-            CompanyData.income_json,
-        )
-        mock_income_json.assert_called_once_with(statement)
-        mock_generate_json.assert_called_once_with("value", None, "line")
-        self.assertDictEqual(result, {"table": "value", "chart": "value"})
+    @patch(f"{COMPANY_DATA}.mock_get_yahooquery_price")
+    @patch(f"{COMPANY_DATA}.get_yfinance_price")
+    def test_get_most_recent_price_yf_none(
+        self,
+        mock_get_yfinance_price,
+        mock_get_yahooquery_price,
+    ):
+        mock_get_yfinance_price.return_value = None
+        mock_get_yahooquery_price.return_value = 5
+        self.assertEqual(self.company_data.get_most_recent_price(), 5)
+        mock_get_yfinance_price.assert_called_once()
+        mock_get_yahooquery_price.assert_called_once()
 
-    def test_income_json(self):
-        company_data = CompanyData(self.company).income_json(self.company.inc_statements.all())
-        assert company_data == {
-            "currency": "$",
-            "labels": ["2021", "2020"],
-            "fields": [
-                {
-                    "title": "Ingresos",
-                    "url": "#!",
-                    "percent": "false",
-                    "short": "false",
-                    "values": [365817000000.0, 274515000000.0],
-                },
-                {
-                    "title": "Costos de venta",
-                    "url": "#!",
-                    "percent": "false",
-                    "short": "false",
-                    "values": [212981000000.0, 169559000000.0],
-                },
-                {
-                    "title": "Utilidad bruta",
-                    "url": "#!",
-                    "percent": "false",
-                    "short": "false",
-                    "values": [152836000000.0, 104956000000.0],
-                },
-                {
-                    "title": "I&D",
-                    "url": "#!",
-                    "percent": "false",
-                    "short": "false",
-                    "values": [0.0, 0.0],
-                },
-                {
-                    "title": "Gastos administrativos",
-                    "url": "#!",
-                    "percent": "false",
-                    "short": "false",
-                    "values": [0.0, 0.0],
-                },
-                {
-                    "title": "Gastos marketing",
-                    "url": "#!",
-                    "percent": "false",
-                    "short": "false",
-                    "values": [21973000000.0, 19916000000.0],
-                },
-                {
-                    "title": "Gastos marketing, generales y administrativos",
-                    "url": "#!",
-                    "percent": "false",
-                    "short": "false",
-                    "values": [-258000000.0, -803000000.0],
-                },
-                {
-                    "title": "Gastos otros",
-                    "url": "#!",
-                    "percent": "false",
-                    "short": "false",
-                    "values": [21914000000.0, 18752000000.0],
-                },
-                {
-                    "title": "Gastos operativos",
-                    "url": "#!",
-                    "percent": "false",
-                    "short": "false",
-                    "values": [108949000000.0, 66288000000.0],
-                },
-                {
-                    "title": "Gastos y costos",
-                    "url": "#!",
-                    "percent": "false",
-                    "short": "false",
-                    "values": [256868000000.0, 208227000000.0],
-                },
-                {
-                    "title": "Intereses",
-                    "url": "#!",
-                    "percent": "false",
-                    "short": "false",
-                    "values": [2645000000.0, 2873000000.0],
-                },
-                {
-                    "title": "Depreciación & Amortización",
-                    "url": "#!",
-                    "percent": "false",
-                    "short": "false",
-                    "values": [11284000000.0, 11056000000.0],
-                },
-                {
-                    "title": "EBITDA",
-                    "url": "#!",
-                    "percent": "false",
-                    "short": "false",
-                    "values": [123136000000.0, 81020000000.0],
-                },
-                {
-                    "title": "Ingresos de explotación",
-                    "url": "#!",
-                    "percent": "false",
-                    "short": "false",
-                    "values": [0.0, 0.0],
-                },
-                {
-                    "title": "Otros Gastos",
-                    "url": "#!",
-                    "percent": "false",
-                    "short": "false",
-                    "values": [43887000000.0, 38668000000.0],
-                },
-                {
-                    "title": "EBT",
-                    "url": "#!",
-                    "percent": "false",
-                    "short": "false",
-                    "values": [109207000000.0, 67091000000.0],
-                },
-                {
-                    "title": "Impuestos",
-                    "url": "#!",
-                    "percent": "false",
-                    "short": "false",
-                    "values": [14527000000.0, 9680000000.0],
-                },
-                {
-                    "title": "Ingresos netos",
-                    "url": "#!",
-                    "percent": "false",
-                    "short": "false",
-                    "values": [94680000000.0, 57411000000.0],
-                },
-                {
-                    "title": "Acciones en circulación",
-                    "url": "#!",
-                    "percent": "false",
-                    "short": "false",
-                    "values": [16864919000.0, 17528214000.0],
-                },
-                {
-                    "title": "Acciones diluidas",
-                    "url": "#!",
-                    "percent": "false",
-                    "short": "false",
-                    "values": [16701272000.0, 17352119000.0],
-                },
-            ],
-        }
+    @patch(f"{COMPANY_DATA}.mock_get_yahooquery_price")
+    @patch(f"{COMPANY_DATA}.get_yfinance_price")
+    def test_get_most_recent_price_yq_none(
+        self,
+        mock_get_yfinance_price,
+        mock_get_yahooquery_price,
+    ):
+        mock_get_yfinance_price.return_value = 5
+        mock_get_yahooquery_price.return_value = None
+        self.assertEqual(self.company_data.get_most_recent_price(), 5)
+        mock_get_yfinance_price.assert_called_once()
+        mock_get_yahooquery_price.assert_called_once()
+
+    @patch(f"{COMPANY_DATA}.mock_get_yahooquery_price")
+    @patch(f"{COMPANY_DATA}.get_yfinance_price")
+    def test_get_most_recent_price(
+        self,
+        mock_get_yfinance_price,
+        mock_get_yahooquery_price,
+    ):
+        mock_get_yfinance_price.return_value = mock_get_yahooquery_price.return_value = None
+        self.assertEqual(self.company_data.get_most_recent_price(), 0)
+        mock_get_yfinance_price.assert_called_once()
+        mock_get_yahooquery_price.assert_called_once()
+
+    @patch(f"{INFO_SOURCES}.YFinanceInfo.request_info_yfinance")
+    def test_get_yfinance_price(self, mock_request_info_yfinance):
+        mock_request_info_yfinance.return_value = {"currentPrice": 5}
+        self.assertEqual(self.company_data.get_yfinance_price(), 5)
+        mock_request_info_yfinance.assert_called_once()
+
+    @patch(f"{INFO_SOURCES}.YahooQueryInfo.yahooquery.request_price_info_yahooquery")
+    def test_get_yahooquery_price(self, mock_request_price_info_yahooquery):
+        mock_request_price_info_yahooquery.return_value = {"regularMarketPrice": 5}
+        self.assertEqual(self.company_data.get_yfinance_price(), 5)
+        mock_request_price_info_yahooquery.assert_called_once()
+
+    @freeze_time("12-12-2022")
+    @patch(f"{INFO_SOURCES}.FinnhubInfo.company_news")
+    def test_get_company_news(self, mock_company_news):
+        mock_company_news.return_value = ["news"]
+        self.assertEqual(self.company_data.get_company_news(), ["news"])
+        mock_company_news.assert_called_once_with("AAPL", "2022-12-10", "2022-12-12")

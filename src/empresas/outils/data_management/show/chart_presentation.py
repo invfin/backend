@@ -7,22 +7,24 @@ from src.general.utils import ChartSerializer
 
 
 from .company_to_json import CompanyValueToJsonConverter
+from ..interfaces import StatementsInterface
 
 
 class CompanyChartPresentation(CompanyValueToJsonConverter):
     def get_complete_information(
-        self, initial_statements
+        self,
+        initial_statements: StatementsInterface,
     ) -> Dict[str, Union[Dict[str, Union[int, float]], List]]:
         comparing_income_json = self.build_table_and_chart(
-            initial_statements["inc_statements"],
+            initial_statements.inc_statements,
             self.income_json,
         )
         comparing_balance_json = self.build_table_and_chart(
-            initial_statements["balance_sheets"],
+            initial_statements.balance_sheets,
             self.balance_json,
         )
         comparing_cashflows = self.build_table_and_chart(
-            initial_statements["cf_statements"],
+            initial_statements.cf_statements,
             self.cashflow_json,
         )
         return {
@@ -188,17 +190,17 @@ class CompanyChartPresentation(CompanyValueToJsonConverter):
             valuation_result["average_color"] = "warning"
         return valuation_result
 
-    def get_important_ratios(self, statements: Dict) -> List:
+    def get_important_ratios(self, statements: StatementsInterface) -> List:
         comparing_rentability_ratios_json = self.build_table_and_chart(
-            statements["rentability_ratios"],
+            statements.rentability_ratios,
             self.rentability_ratios_json,
         )
         comparing_liquidity_ratios_json = self.build_table_and_chart(
-            statements["liquidity_ratios"],
+            statements.liquidity_ratios,
             self.liquidity_ratios_json,
         )
         comparing_margins_json = self.build_table_and_chart(
-            statements["margins"],
+            statements.margins,
             self.margins_json,
         )
 
@@ -223,25 +225,25 @@ class CompanyChartPresentation(CompanyValueToJsonConverter):
             },
         ]
 
-    def get_secondary_ratios(self, statements: Dict) -> List:
+    def get_secondary_ratios(self, statements: StatementsInterface) -> List:
         comparing_efficiency_ratios_json = self.build_table_and_chart(
-            statements["efficiency_ratios"],
+            statements.efficiency_ratios,
             self.efficiency_ratios_json,
         )
         comparing_operation_risks_ratios_json = self.build_table_and_chart(
-            statements["operation_risks_ratios"],
+            statements.operation_risks_ratios,
             self.operation_risks_ratios_json,
         )
         comparing_non_gaap_json = self.build_table_and_chart(
-            statements["non_gaap_figures"],
+            statements.non_gaap_figures,
             self.non_gaap_json,
         )
         comparing_per_share_values_json = self.build_table_and_chart(
-            statements["per_share_values"],
+            statements.per_share_values,
             self.per_share_values_json,
         )
         comparing_fcf_ratios_json = self.build_table_and_chart(
-            statements["fcf_ratios"],
+            statements.fcf_ratios,
             self.fcf_ratios_json,
         )
 
@@ -285,9 +287,10 @@ class CompanyChartPresentation(CompanyValueToJsonConverter):
         self,
         statement: QuerySet,
         statement_to_json: Callable,
-        items: Optional[list] = None,
+        items: Optional[List] = None,
         chart_type: str = "line",
     ) -> Dict[str, Any]:
+        items = items or []
         statement_data = self.generate_limit(statement)
         comparing_json = statement_to_json(statement_data)
         return {

@@ -5,19 +5,29 @@ from django.test import TestCase
 from bfet import DjangoTestingModel
 
 from src.empresas.models import BalanceSheet, CashflowStatement, Company, IncomeStatement
-from src.empresas.outils.data_management.show.company_to_json import CompanyValueToJsonConverter
+from src.empresas.outils.data_management.show.company_to_json import (
+    CompanyValueToJsonConverter,
+)
 from src.empresas.outils.financial_ratios import CalculateFinancialRatios
 from src.empresas.outils.data_management.update.update import UpdateCompany
 from src.periods.constants import PERIOD_FOR_YEAR
 from src.periods.models import Period
-from tests.data.empresas import balance_sheets_final_statment, cashflow_final_statment, income_final_statment
+from tests.data.empresas import (
+    balance_sheets_final_statment,
+    cashflow_final_statment,
+    income_final_statment,
+)
 
 
 class TestCompanyValueToJsonConverter(TestCase):
     @classmethod
     def setUpTestData(cls) -> None:
-        cls.current_period = DjangoTestingModel.create(Period, year=2021, period=PERIOD_FOR_YEAR)
-        cls.previous_period = DjangoTestingModel.create(Period, year=2020, period=PERIOD_FOR_YEAR)
+        cls.current_period = DjangoTestingModel.create(
+            Period, year=2021, period=PERIOD_FOR_YEAR
+        )
+        cls.previous_period = DjangoTestingModel.create(
+            Period, year=2020, period=PERIOD_FOR_YEAR
+        )
         cls.company = DjangoTestingModel.create(Company)
         cls.current_income = DjangoTestingModel.create(
             IncomeStatement,
@@ -95,7 +105,13 @@ class TestCompanyValueToJsonConverter(TestCase):
                     "short": "false",
                     "values": [152836000000.0, 104956000000.0],
                 },
-                {"title": "I&D", "url": "#!", "percent": "false", "short": "false", "values": [0.0, 0.0]},
+                {
+                    "title": "I&D",
+                    "url": "#!",
+                    "percent": "false",
+                    "short": "false",
+                    "values": [0.0, 0.0],
+                },
                 {
                     "title": "Gastos administrativos",
                     "url": "#!",
@@ -275,7 +291,13 @@ class TestCompanyValueToJsonConverter(TestCase):
                     "short": "false",
                     "values": [39440000000.0, 36766000000.0],
                 },
-                {"title": "Goodwill", "url": "#!", "percent": "false", "short": "false", "values": [0.0, 0.0]},
+                {
+                    "title": "Goodwill",
+                    "url": "#!",
+                    "percent": "false",
+                    "short": "false",
+                    "values": [0.0, 0.0],
+                },
                 {
                     "title": "Activos intangibles",
                     "url": "#!",
@@ -318,7 +340,13 @@ class TestCompanyValueToJsonConverter(TestCase):
                     "short": "false",
                     "values": [216166000000.0, 180175000000.0],
                 },
-                {"title": "Otros activos", "url": "#!", "percent": "false", "short": "false", "values": [0.0, 0.0]},
+                {
+                    "title": "Otros activos",
+                    "url": "#!",
+                    "percent": "false",
+                    "short": "false",
+                    "values": [0.0, 0.0],
+                },
                 {
                     "title": "Activos totales",
                     "url": "#!",
@@ -403,7 +431,13 @@ class TestCompanyValueToJsonConverter(TestCase):
                     "short": "false",
                     "values": [162431000000.0, 153157000000.0],
                 },
-                {"title": "Otros pasivos", "url": "#!", "percent": "false", "short": "false", "values": [0.0, 0.0]},
+                {
+                    "title": "Otros pasivos",
+                    "url": "#!",
+                    "percent": "false",
+                    "short": "false",
+                    "values": [0.0, 0.0],
+                },
                 {
                     "title": "Pasivos totales",
                     "url": "#!",
@@ -699,11 +733,19 @@ class TestCompanyValueToJsonConverter(TestCase):
         }
 
     def test_efficiency_ratios_json(self):
-        result = CompanyValueToJsonConverter.efficiency_ratios_json(self.company.efficiency_ratios.all())
+        result = CompanyValueToJsonConverter.efficiency_ratios_json(
+            self.company.efficiency_ratios.all()
+        )
         assert result == {
             "labels": ["2021"],
             "fields": [
-                {"title": "Rotación de activos", "url": "#!", "percent": "false", "short": "true", "values": [1.084]},
+                {
+                    "title": "Rotación de activos",
+                    "url": "#!",
+                    "percent": "false",
+                    "short": "true",
+                    "values": [1.084],
+                },
                 {
                     "title": "Rotación del inventario",
                     "url": "#!",
@@ -760,7 +802,13 @@ class TestCompanyValueToJsonConverter(TestCase):
                     "short": "true",
                     "values": [0.0],
                 },
-                {"title": "Ciclo operativo", "url": "#!", "percent": "false", "short": "true", "values": [-299.66]},
+                {
+                    "title": "Ciclo operativo",
+                    "url": "#!",
+                    "percent": "false",
+                    "short": "true",
+                    "values": [-299.66],
+                },
             ],
         }
 
@@ -783,7 +831,13 @@ class TestCompanyValueToJsonConverter(TestCase):
                     "short": "false",
                     "values": [62080000000.0],
                 },
-                {"title": "EV to free cash flow", "url": "#!", "percent": "false", "short": "true", "values": [0.0]},
+                {
+                    "title": "EV to free cash flow",
+                    "url": "#!",
+                    "percent": "false",
+                    "short": "true",
+                    "values": [0.0],
+                },
                 {
                     "title": "EV to operating cashflow",
                     "url": "#!",
@@ -791,18 +845,44 @@ class TestCompanyValueToJsonConverter(TestCase):
                     "short": "true",
                     "values": [0.0],
                 },
-                {"title": "EV to sales", "url": "#!", "percent": "false", "short": "true", "values": [0.17]},
-                {"title": "Equity multiplier", "url": "#!", "percent": "false", "short": "true", "values": [5.56]},
-                {"title": "EV multiple", "url": "#!", "percent": "false", "short": "true", "values": [0.5]},
+                {
+                    "title": "EV to sales",
+                    "url": "#!",
+                    "percent": "false",
+                    "short": "true",
+                    "values": [0.17],
+                },
+                {
+                    "title": "Equity multiplier",
+                    "url": "#!",
+                    "percent": "false",
+                    "short": "true",
+                    "values": [5.56],
+                },
+                {
+                    "title": "EV multiple",
+                    "url": "#!",
+                    "percent": "false",
+                    "short": "true",
+                    "values": [0.5],
+                },
             ],
         }
 
     def test_operation_risks_ratios_json(self):
-        result = CompanyValueToJsonConverter.operation_risks_ratios_json(self.company.operation_risks_ratios.all())
+        result = CompanyValueToJsonConverter.operation_risks_ratios_json(
+            self.company.operation_risks_ratios.all()
+        )
         assert result == {
             "labels": ["2021"],
             "fields": [
-                {"title": "Cobertura de activos", "url": "#!", "percent": "false", "short": "true", "values": [79.36]},
+                {
+                    "title": "Cobertura de activos",
+                    "url": "#!",
+                    "percent": "false",
+                    "short": "true",
+                    "values": [79.36],
+                },
                 {
                     "title": "Cobertuda de flujo de caja",
                     "url": "#!",
@@ -810,7 +890,13 @@ class TestCompanyValueToJsonConverter(TestCase):
                     "short": "true",
                     "values": [0.0],
                 },
-                {"title": "Cobertuda de efectivo", "url": "#!", "percent": "false", "short": "true", "values": [23.68]},
+                {
+                    "title": "Cobertuda de efectivo",
+                    "url": "#!",
+                    "percent": "false",
+                    "short": "true",
+                    "values": [23.68],
+                },
                 {
                     "title": "Tasa de cobertura del servicio de la deuda",
                     "url": "#!",
@@ -818,7 +904,13 @@ class TestCompanyValueToJsonConverter(TestCase):
                     "short": "true",
                     "values": [0.0],
                 },
-                {"title": "Cobertura de intereses", "url": "#!", "percent": "true", "short": "true", "values": [0.0]},
+                {
+                    "title": "Cobertura de intereses",
+                    "url": "#!",
+                    "percent": "true",
+                    "short": "true",
+                    "values": [0.0],
+                },
                 {
                     "title": "Ratio cashflow operativo",
                     "url": "#!",
@@ -826,7 +918,13 @@ class TestCompanyValueToJsonConverter(TestCase):
                     "short": "true",
                     "values": [0.0],
                 },
-                {"title": "Ratio de deuda", "url": "#!", "percent": "false", "short": "true", "values": [0.36]},
+                {
+                    "title": "Ratio de deuda",
+                    "url": "#!",
+                    "percent": "false",
+                    "short": "true",
+                    "values": [0.36],
+                },
                 {
                     "title": "Deuda largo plazo a capitalización",
                     "url": "#!",
@@ -849,18 +947,90 @@ class TestCompanyValueToJsonConverter(TestCase):
         assert result == {
             "labels": [],
             "fields": [
-                {"title": "Ingresos normalizados", "url": "#!", "percent": "false", "short": "false", "values": []},
-                {"title": "Tasa de impuestos", "url": "#!", "percent": "true", "short": "false", "values": []},
-                {"title": "NOPAT", "url": "#!", "percent": "false", "short": "false", "values": []},
-                {"title": "Net Working capital", "url": "#!", "percent": "false", "short": "false", "values": []},
-                {"title": "Inventario promedio", "url": "#!", "percent": "true", "short": "true", "values": []},
-                {"title": "Promedio cuentas por pagar", "url": "#!", "percent": "true", "short": "true", "values": []},
-                {"title": "Dividend yield", "url": "#!", "percent": "true", "short": "true", "values": []},
-                {"title": "Earnings yield", "url": "#!", "percent": "true", "short": "true", "values": []},
-                {"title": "FCF yield", "url": "#!", "percent": "true", "short": "true", "values": []},
-                {"title": "Calidad de los ingresos", "url": "#!", "percent": "false", "short": "false", "values": []},
-                {"title": "Capital invertido", "url": "#!", "percent": "false", "short": "false", "values": []},
-                {"title": "Capitalización bursátil", "url": "#!", "percent": "false", "short": "false", "values": []},
+                {
+                    "title": "Ingresos normalizados",
+                    "url": "#!",
+                    "percent": "false",
+                    "short": "false",
+                    "values": [],
+                },
+                {
+                    "title": "Tasa de impuestos",
+                    "url": "#!",
+                    "percent": "true",
+                    "short": "false",
+                    "values": [],
+                },
+                {
+                    "title": "NOPAT",
+                    "url": "#!",
+                    "percent": "false",
+                    "short": "false",
+                    "values": [],
+                },
+                {
+                    "title": "Net Working capital",
+                    "url": "#!",
+                    "percent": "false",
+                    "short": "false",
+                    "values": [],
+                },
+                {
+                    "title": "Inventario promedio",
+                    "url": "#!",
+                    "percent": "true",
+                    "short": "true",
+                    "values": [],
+                },
+                {
+                    "title": "Promedio cuentas por pagar",
+                    "url": "#!",
+                    "percent": "true",
+                    "short": "true",
+                    "values": [],
+                },
+                {
+                    "title": "Dividend yield",
+                    "url": "#!",
+                    "percent": "true",
+                    "short": "true",
+                    "values": [],
+                },
+                {
+                    "title": "Earnings yield",
+                    "url": "#!",
+                    "percent": "true",
+                    "short": "true",
+                    "values": [],
+                },
+                {
+                    "title": "FCF yield",
+                    "url": "#!",
+                    "percent": "true",
+                    "short": "true",
+                    "values": [],
+                },
+                {
+                    "title": "Calidad de los ingresos",
+                    "url": "#!",
+                    "percent": "false",
+                    "short": "false",
+                    "values": [],
+                },
+                {
+                    "title": "Capital invertido",
+                    "url": "#!",
+                    "percent": "false",
+                    "short": "false",
+                    "values": [],
+                },
+                {
+                    "title": "Capitalización bursátil",
+                    "url": "#!",
+                    "percent": "false",
+                    "short": "false",
+                    "values": [],
+                },
                 {
                     "title": "Valor de los activos corrientes netos",
                     "url": "#!",
@@ -868,18 +1038,44 @@ class TestCompanyValueToJsonConverter(TestCase):
                     "short": "false",
                     "values": [],
                 },
-                {"title": "Payout ratio", "url": "#!", "percent": "true", "short": "true", "values": []},
-                {"title": "Valor activos tangibles", "url": "#!", "percent": "false", "short": "false", "values": []},
-                {"title": "Retention ratio", "url": "#!", "percent": "true", "short": "true", "values": []},
+                {
+                    "title": "Payout ratio",
+                    "url": "#!",
+                    "percent": "true",
+                    "short": "true",
+                    "values": [],
+                },
+                {
+                    "title": "Valor activos tangibles",
+                    "url": "#!",
+                    "percent": "false",
+                    "short": "false",
+                    "values": [],
+                },
+                {
+                    "title": "Retention ratio",
+                    "url": "#!",
+                    "percent": "true",
+                    "short": "true",
+                    "values": [],
+                },
             ],
         }
 
     def test_per_share_values_json(self):
-        result = CompanyValueToJsonConverter.per_share_values_json(self.company.per_share_values.all())
+        result = CompanyValueToJsonConverter.per_share_values_json(
+            self.company.per_share_values.all()
+        )
         assert result == {
             "labels": ["2021"],
             "fields": [
-                {"title": "Ventas por acción", "url": "#!", "percent": "false", "short": "true", "values": [21.691]},
+                {
+                    "title": "Ventas por acción",
+                    "url": "#!",
+                    "percent": "false",
+                    "short": "true",
+                    "values": [21.691],
+                },
                 {
                     "title": "Activos totales por acción",
                     "url": "#!",
@@ -894,7 +1090,13 @@ class TestCompanyValueToJsonConverter(TestCase):
                     "short": "true",
                     "values": [-9.0766],
                 },
-                {"title": "FCF por acción", "url": "#!", "percent": "false", "short": "true", "values": [0.0]},
+                {
+                    "title": "FCF por acción",
+                    "url": "#!",
+                    "percent": "false",
+                    "short": "true",
+                    "values": [0.0],
+                },
                 {
                     "title": "Beneficio por acción",
                     "url": "#!",
@@ -902,7 +1104,13 @@ class TestCompanyValueToJsonConverter(TestCase):
                     "short": "true",
                     "values": [-5.5353],
                 },
-                {"title": "Efectivo por acción", "url": "#!", "percent": "false", "short": "true", "values": [3.7142]},
+                {
+                    "title": "Efectivo por acción",
+                    "url": "#!",
+                    "percent": "false",
+                    "short": "true",
+                    "values": [3.7142],
+                },
                 {
                     "title": "Flujo efectivo operativo por acción",
                     "url": "#!",
@@ -910,7 +1118,13 @@ class TestCompanyValueToJsonConverter(TestCase):
                     "short": "true",
                     "values": [0.0],
                 },
-                {"title": "CAPEX por acción", "url": "#!", "percent": "false", "short": "true", "values": [0.0]},
+                {
+                    "title": "CAPEX por acción",
+                    "url": "#!",
+                    "percent": "false",
+                    "short": "true",
+                    "values": [0.0],
+                },
                 {
                     "title": "Activos totales por acción",
                     "url": "#!",
@@ -962,11 +1176,41 @@ class TestCompanyValueToJsonConverter(TestCase):
         assert result == {
             "labels": ["2021"],
             "fields": [
-                {"title": "Margen bruto", "url": "#!", "percent": "true", "short": "true", "values": [42.0]},
-                {"title": "Margen EBITDA", "url": "#!", "percent": "true", "short": "true", "values": [34.0]},
-                {"title": "Margen Beneficio neto", "url": "#!", "percent": "true", "short": "true", "values": [-26.0]},
-                {"title": "FCF equidad", "url": "#!", "percent": "true", "short": "true", "values": [9.0]},
-                {"title": "Unlevered FCF", "url": "#!", "percent": "true", "short": "true", "values": [257.0]},
+                {
+                    "title": "Margen bruto",
+                    "url": "#!",
+                    "percent": "true",
+                    "short": "true",
+                    "values": [42.0],
+                },
+                {
+                    "title": "Margen EBITDA",
+                    "url": "#!",
+                    "percent": "true",
+                    "short": "true",
+                    "values": [34.0],
+                },
+                {
+                    "title": "Margen Beneficio neto",
+                    "url": "#!",
+                    "percent": "true",
+                    "short": "true",
+                    "values": [-26.0],
+                },
+                {
+                    "title": "FCF equidad",
+                    "url": "#!",
+                    "percent": "true",
+                    "short": "true",
+                    "values": [9.0],
+                },
+                {
+                    "title": "Unlevered FCF",
+                    "url": "#!",
+                    "percent": "true",
+                    "short": "true",
+                    "values": [257.0],
+                },
                 {
                     "title": "Unlevered FCF EBIT to Net Income",
                     "url": "#!",
@@ -981,18 +1225,44 @@ class TestCompanyValueToJsonConverter(TestCase):
                     "short": "true",
                     "values": [357.0],
                 },
-                {"title": "Margen flujo de efectivo", "url": "#!", "percent": "true", "short": "true", "values": [0.0]},
+                {
+                    "title": "Margen flujo de efectivo",
+                    "url": "#!",
+                    "percent": "true",
+                    "short": "true",
+                    "values": [0.0],
+                },
             ],
         }
 
     def test_liquidity_ratios_json(self):
-        result = CompanyValueToJsonConverter.liquidity_ratios_json(self.company.liquidity_ratios.all())
+        result = CompanyValueToJsonConverter.liquidity_ratios_json(
+            self.company.liquidity_ratios.all()
+        )
         assert result == {
             "labels": ["2021"],
             "fields": [
-                {"title": "Cash Ratio", "url": "#!", "percent": "false", "short": "true", "values": [0.28]},
-                {"title": "Current Ratio", "url": "#!", "percent": "false", "short": "true", "values": [1.07]},
-                {"title": "Quick Ratio", "url": "#!", "percent": "false", "short": "true", "values": [0.91]},
+                {
+                    "title": "Cash Ratio",
+                    "url": "#!",
+                    "percent": "false",
+                    "short": "true",
+                    "values": [0.28],
+                },
+                {
+                    "title": "Current Ratio",
+                    "url": "#!",
+                    "percent": "false",
+                    "short": "true",
+                    "values": [1.07],
+                },
+                {
+                    "title": "Quick Ratio",
+                    "url": "#!",
+                    "percent": "false",
+                    "short": "true",
+                    "values": [0.91],
+                },
                 {
                     "title": "Operating cashflow Ratio",
                     "url": "#!",
@@ -1000,23 +1270,79 @@ class TestCompanyValueToJsonConverter(TestCase):
                     "short": "true",
                     "values": [0.0],
                 },
-                {"title": "Deuda frente equidad", "url": "#!", "percent": "false", "short": "true", "values": [4.56]},
+                {
+                    "title": "Deuda frente equidad",
+                    "url": "#!",
+                    "percent": "false",
+                    "short": "true",
+                    "values": [4.56],
+                },
             ],
         }
 
     def test_rentability_ratios_json(self):
-        result = CompanyValueToJsonConverter.rentability_ratios_json(self.company.rentability_ratios.all())
+        result = CompanyValueToJsonConverter.rentability_ratios_json(
+            self.company.rentability_ratios.all()
+        )
         assert result == {
             "labels": ["2021"],
             "fields": [
-                {"title": "ROA", "url": "#!", "percent": "true", "short": "true", "values": [-27.0]},
-                {"title": "ROE", "url": "#!", "percent": "true", "short": "true", "values": [-148.0]},
-                {"title": "ROC", "url": "#!", "percent": "true", "short": "true", "values": [0.0]},
-                {"title": "ROCE", "url": "#!", "percent": "true", "short": "true", "values": [0.0]},
-                {"title": "ROTA", "url": "#!", "percent": "true", "short": "true", "values": [-69.0]},
-                {"title": "ROIC", "url": "#!", "percent": "true", "short": "true", "values": [-178.0]},
-                {"title": "NOPAT ROIC", "url": "#!", "percent": "true", "short": "true", "values": [0.0]},
-                {"title": "ROGIC", "url": "#!", "percent": "true", "short": "true", "values": [0.0]},
+                {
+                    "title": "ROA",
+                    "url": "#!",
+                    "percent": "true",
+                    "short": "true",
+                    "values": [-27.0],
+                },
+                {
+                    "title": "ROE",
+                    "url": "#!",
+                    "percent": "true",
+                    "short": "true",
+                    "values": [-148.0],
+                },
+                {
+                    "title": "ROC",
+                    "url": "#!",
+                    "percent": "true",
+                    "short": "true",
+                    "values": [0.0],
+                },
+                {
+                    "title": "ROCE",
+                    "url": "#!",
+                    "percent": "true",
+                    "short": "true",
+                    "values": [0.0],
+                },
+                {
+                    "title": "ROTA",
+                    "url": "#!",
+                    "percent": "true",
+                    "short": "true",
+                    "values": [-69.0],
+                },
+                {
+                    "title": "ROIC",
+                    "url": "#!",
+                    "percent": "true",
+                    "short": "true",
+                    "values": [-178.0],
+                },
+                {
+                    "title": "NOPAT ROIC",
+                    "url": "#!",
+                    "percent": "true",
+                    "short": "true",
+                    "values": [0.0],
+                },
+                {
+                    "title": "ROGIC",
+                    "url": "#!",
+                    "percent": "true",
+                    "short": "true",
+                    "values": [0.0],
+                },
             ],
         }
 
@@ -1053,8 +1379,20 @@ class TestCompanyValueToJsonConverter(TestCase):
                     "short": "true",
                     "values": [795.0],
                 },
-                {"title": "Recompara de acciones", "url": "#!", "percent": "true", "short": "true", "values": [-4.0]},
-                {"title": "Crecimiento del BPA", "url": "#!", "percent": "true", "short": "true", "values": [830.0]},
+                {
+                    "title": "Recompara de acciones",
+                    "url": "#!",
+                    "percent": "true",
+                    "short": "true",
+                    "values": [-4.0],
+                },
+                {
+                    "title": "Crecimiento del BPA",
+                    "url": "#!",
+                    "percent": "true",
+                    "short": "true",
+                    "values": [830.0],
+                },
                 {
                     "title": "Crecimiento de los ingresos",
                     "url": "#!",
@@ -1069,23 +1407,79 @@ class TestCompanyValueToJsonConverter(TestCase):
                     "short": "true",
                     "values": [6920.0],
                 },
-                {"title": "Crecimiento del CAPEX", "url": "#!", "percent": "true", "short": "true", "values": [0.0]},
-                {"title": "Crecimiento del I+D", "url": "#!", "percent": "true", "short": "true", "values": [0.0]},
+                {
+                    "title": "Crecimiento del CAPEX",
+                    "url": "#!",
+                    "percent": "true",
+                    "short": "true",
+                    "values": [0.0],
+                },
+                {
+                    "title": "Crecimiento del I+D",
+                    "url": "#!",
+                    "percent": "true",
+                    "short": "true",
+                    "values": [0.0],
+                },
             ],
         }
 
     def test_price_to_ratios_json(self):
-        result = CompanyValueToJsonConverter.price_to_ratios_json(self.company.price_to_ratios.all())
+        result = CompanyValueToJsonConverter.price_to_ratios_json(
+            self.company.price_to_ratios.all()
+        )
         assert result == {
             "labels": ["2021"],
             "fields": [
-                {"title": "Precio valor en libros", "url": "#!", "percent": "false", "short": "true", "values": [9.26]},
-                {"title": "Precio cashflow", "url": "#!", "percent": "false", "short": "true", "values": [9.33]},
-                {"title": "Precio beneficio", "url": "#!", "percent": "false", "short": "true", "values": [-6.26]},
-                {"title": "PEG", "url": "#!", "percent": "false", "short": "true", "values": [-0.01]},
-                {"title": "Precio por ventas", "url": "#!", "percent": "false", "short": "true", "values": [1.6]},
-                {"title": "Precio activos totales", "url": "#!", "percent": "false", "short": "true", "values": [1.66]},
-                {"title": "Precio FCF", "url": "#!", "percent": "false", "short": "true", "values": [0.0]},
+                {
+                    "title": "Precio valor en libros",
+                    "url": "#!",
+                    "percent": "false",
+                    "short": "true",
+                    "values": [9.26],
+                },
+                {
+                    "title": "Precio cashflow",
+                    "url": "#!",
+                    "percent": "false",
+                    "short": "true",
+                    "values": [9.33],
+                },
+                {
+                    "title": "Precio beneficio",
+                    "url": "#!",
+                    "percent": "false",
+                    "short": "true",
+                    "values": [-6.26],
+                },
+                {
+                    "title": "PEG",
+                    "url": "#!",
+                    "percent": "false",
+                    "short": "true",
+                    "values": [-0.01],
+                },
+                {
+                    "title": "Precio por ventas",
+                    "url": "#!",
+                    "percent": "false",
+                    "short": "true",
+                    "values": [1.6],
+                },
+                {
+                    "title": "Precio activos totales",
+                    "url": "#!",
+                    "percent": "false",
+                    "short": "true",
+                    "values": [1.66],
+                },
+                {
+                    "title": "Precio FCF",
+                    "url": "#!",
+                    "percent": "false",
+                    "short": "true",
+                    "values": [0.0],
+                },
                 {
                     "title": "Precio cashflow operativo",
                     "url": "#!",

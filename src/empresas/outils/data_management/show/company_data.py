@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Union
 
 from django.db.models import QuerySet
 
@@ -25,6 +25,9 @@ class CompanyData:
     def __init__(self, company: Company, limit: int = 0):
         self.company = CompanyInterface(company)()
         self.limit = limit
+
+    def show_all_information(self) -> Dict[str, Union[Dict[str, Union[int, float]], List]]:
+        return CompanyChartPresentation().get_complete_information(self.get_statements())
 
     def get_statements(self) -> StatementsInterface:
         return self.company.load_statements()
