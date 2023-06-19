@@ -65,6 +65,9 @@ A tag to create utm parameters for the urls. source and campaign are at the end 
 ### Facebook
 When posting with images or video on facebook, around 6 (or maybe more) lines of text shows up.
 
+### Twitter
+1500 tweets per month max
+
 ## Companies Information
 ### Parse Edgar
 From this url f"https://data.sec.gov/submissions/CIK{cik_number}.json"
