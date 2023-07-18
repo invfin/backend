@@ -33,7 +33,7 @@ class CompanyFODAListView(ListView):
 
 
 def get_company_price(request, ticker):
-    prices = CompanyData.get_most_recent_price(ticker)
+    prices = CompanyData(Company.objects.get(ticker=ticker)).get_most_recent_price()
     return render(
         request,
         "headers/company_price.html",

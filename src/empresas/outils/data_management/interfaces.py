@@ -1,6 +1,27 @@
-from typing import Union, Dict
+from typing import Optional, Union, Dict
 from src.empresas.models import Company
 from src.empresas.querysets.statements import StatementQuerySet
+
+
+RATIOS_VALUES = [
+            "rentability_ratios",
+            "liquidity_ratios",
+            "margins",
+            "per_share_values",
+            "operation_risks_ratios",
+            "ev_ratios",
+            "growth_rates",
+            "price_to_ratios",
+            "efficiency_ratios",
+        ]
+
+STATEMENTS = [
+            "inc_statements",
+            "balance_sheets",
+            "cf_statements",
+            "non_gaap_figures",
+            "fcf_ratios",
+        ] + RATIOS_VALUES
 
 
 class AveragesInterface:
@@ -15,33 +36,14 @@ class AveragesInterface:
     efficiency_ratios: Dict[str, Union[int, float]]
 
     def __init__(self, statements: "StatementsInterface") -> None:
-        for info in [
-            "rentability_ratios",
-            "liquidity_ratios",
-            "margins",
-            "per_share_values",
-            "operation_risks_ratios",
-            "ev_ratios",
-            "growth_rates",
-            "price_to_ratios",
-            "efficiency_ratios",
-        ]:
-            setattr(self, info, getattr(statements, f"average_{info}")())
+        for info in RATIOS_VALUES:
+            statement = getattr(statements, info)
+            setattr(self, info, getattr(statement, f"average_{info}")())
         return None
 
-    def joint_averages(self) -> Dict[str, Union[int, float]]:
-        final = {}
-        for info in [
-            "rentability_ratios",
-            "liquidity_ratios",
-            "margins",
-            "per_share_values",
-            "operation_risks_ratios",
-            "ev_ratios",
-            "growth_rates",
-            "price_to_ratios",
-            "efficiency_ratios",
-        ]:
+    def join_averages(self) -> Dict[str, Union[int, float]]:
+        final: Dict[str, Union[int, float]] = {}
+        for info in RATIOS_VALUES:
             final |= getattr(self, info)
         return final
 
@@ -63,30 +65,15 @@ class StatementsInterface:
     price_to_ratios: StatementQuerySet
 
     def __init__(self, company: Company) -> None:
-        for statement in [
-            "inc_statements",
-            "balance_sheets",
-            "cf_statements",
-            "rentability_ratios",
-            "liquidity_ratios",
-            "margins",
-            "fcf_ratios",
-            "per_share_values",
-            "non_gaap_figures",
-            "operation_risks_ratios",
-            "ev_ratios",
-            "growth_rates",
-            "efficiency_ratios",
-            "price_to_ratios",
-        ]:
+        for statement in STATEMENTS:
             setattr(self, statement, getattr(company, statement).yearly_exclude_ttm())
         return None
 
 
 class CompanyInterface:
     company: Company
-    statements: StatementsInterface
-    averages: AveragesInterface
+    statements: Optional[StatementsInterface] = None
+    averages: Optional[AveragesInterface] = None
 
     def __init__(self, company: Company) -> None:
         self.company = company
@@ -101,7 +88,5 @@ class CompanyInterface:
 
     def load_averages(self) -> AveragesInterface:
         if not self.averages:
-            if not self.statements:
-                self.load_statements()
-            self.averages = AveragesInterface(self.statements)
+            self.averages = AveragesInterface(self.load_statements())
         return self.averages

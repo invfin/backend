@@ -174,8 +174,7 @@ class CompanyDetailsView(SEODetailView):
         has_bought = False
         user = self.request.user
         if user.is_authenticated:
-            if object.ticker in user.fav_stocks.only("ticker"):
-                company_is_fav = True
+            company_is_fav = object.ticker in user.fav_stocks.only("ticker")
             if CompanyInformationBought.objects.filter(user=user, company=object).exists():
                 limit_years = 0
                 has_bought = True

@@ -27,7 +27,7 @@ class CompanyData:
         self.limit = limit
 
     def show_all_information(self) -> Dict[str, Union[Dict[str, Union[int, float]], List]]:
-        return CompanyChartPresentation().get_complete_information(self.get_statements())
+        return CompanyChartPresentation(self.limit).get_complete_information(self.get_statements())
 
     def get_statements(self) -> StatementsInterface:
         return self.company.load_statements()
@@ -36,7 +36,7 @@ class CompanyData:
         return self.company.load_averages()
 
     def get_ratios_information(self) -> dict:
-        averages = self.get_averages().joint_averages()
+        averages = self.get_averages().join_averages()
         current_price = self.get_most_recent_price()
         last_balance_sheet = self.company.statements.balance_sheets.first()
         last_per_share = self.company.statements.per_share_values.first()
@@ -90,7 +90,7 @@ class CompanyData:
             average_shares_out=average_shares_out,
         )
         safety_margin_opt = margin_of_safety(fair_value, current_price)
-        most_used_ratios = CompanyChartPresentation().compare_most_used_ratios(
+        most_used_ratios = CompanyChartPresentation(self.limit).compare_most_used_ratios(
             per,
             pb,
             ps,
@@ -146,7 +146,7 @@ class CompanyData:
                 self.company.company.save(update_fields=["currency"])
         else:
             currency = self.company.company.currency
-        return currency.currency if currency else "$"
+        return currency.symbol if currency else "$"
 
     def get_most_recent_price(self) -> int:
         return self.get_yahooquery_price() or self.get_yfinance_price() or 0

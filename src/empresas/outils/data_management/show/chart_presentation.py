@@ -5,12 +5,15 @@ from django.db.models import QuerySet
 
 from src.general.utils import ChartSerializer
 
-
 from .company_to_json import CompanyValueToJsonConverter
 from ..interfaces import StatementsInterface
 
 
 class CompanyChartPresentation(CompanyValueToJsonConverter):
+
+    def __init__(self, limit:int)->None:
+        self.limit = limit
+
     def get_complete_information(
         self,
         initial_statements: StatementsInterface,

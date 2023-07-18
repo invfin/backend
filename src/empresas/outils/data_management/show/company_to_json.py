@@ -1,6 +1,3 @@
-from abc import abstractmethod
-from typing import Dict, List, Union
-
 from django.db.models import QuerySet
 
 
@@ -9,9 +6,13 @@ class CompanyValueToJsonConverter:
     Used to generate JSON formated data from the company to create charts
     """
 
-    @abstractmethod
     def get_currency(self, statement):
-        raise NotImplementedError("Need to implement")
+        # TODO: replace for a better one
+        try:
+            currency = statement[0].reported_currency.symbol
+        except Exception:
+            currency = None
+        return currency or "$"
 
     def income_json(self, statement: QuerySet):
         return {
