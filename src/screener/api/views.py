@@ -33,7 +33,7 @@ class CompanyFODAListView(ListView):
 
 
 def get_company_price(request, ticker):
-    prices = CompanyData.get_most_recent_price(ticker)["current_price"]
+    prices = CompanyData.get_most_recent_price(ticker)
     return render(
         request,
         "headers/company_price.html",
@@ -44,9 +44,8 @@ def get_company_price(request, ticker):
 
 
 def get_company_news(request, ticker):
-    # company = Company.objects.get(ticker=ticker)
-    # news = RetrieveCompanyData(company).get_news()
-    news = []
+    company = Company.objects.get(ticker=ticker)
+    news = CompanyData(company).get_company_news()
     return render(
         request,
         "empresas/company_parts/resume/news.html",
@@ -70,7 +69,7 @@ def get_company_valuation(request, ticker):
 
 def retreive_yahoo_screener_info(request, query):
     yahoo = yq.Screener().get_screeners(query)
-    context = {"yahoo": yahoo[query]["quotes"]}
+    context = {"yahoo": yahoo[query]["quotes"]} # type: ignore
     return render(request, "yahoo-screeners/screener-data.html", context)
 
 
@@ -84,7 +83,7 @@ def retreive_top_lists(request):
         "slug": YahooScreener.objects.get(yq_name="day_gainers").slug,
         "extra": extra,
         "url": url,
-        "data": yahoo["day_gainers"]["quotes"],
+        "data": yahoo["day_gainers"]["quotes"],  # type: ignore
     }
     day_losers = {
         "title": "Mayor disminución de precio",
@@ -92,7 +91,7 @@ def retreive_top_lists(request):
         "slug": YahooScreener.objects.get(yq_name="day_losers").slug,
         "extra": extra,
         "url": url,
-        "data": yahoo["day_losers"]["quotes"],
+        "data": yahoo["day_losers"]["quotes"],  # type: ignore
     }
     most_actives = {
         "title": "Más activos",
@@ -100,7 +99,7 @@ def retreive_top_lists(request):
         "slug": YahooScreener.objects.get(yq_name="most_actives").slug,
         "extra": extra,
         "url": url,
-        "data": yahoo["most_actives"]["quotes"],
+        "data": yahoo["most_actives"]["quotes"],  # type: ignore
     }
 
     gainers_actives_losers = [day_gainers, most_actives, day_losers]
@@ -135,7 +134,7 @@ class CompanyObservationFormView(FormView):
 
     def form_valid(self, form):
         company_ticker = self.request.POST["company_ticker"]
-        user = User.objects.get_or_create_quick_user(self.request)
+        user = User.objects.get_or_create_quick_user(self.request) # type: ignore
         model = form.save()
         model.user = user
         company = Company.objects.get(ticker=company_ticker)
@@ -145,6 +144,7 @@ class CompanyObservationFormView(FormView):
 
 
 def suggest_list_search_companies(request):
+    results = []
     if request.is_ajax():
         query = request.GET.get("term", "")
         companies_availables = Company.objects.filter(
@@ -153,14 +153,12 @@ def suggest_list_search_companies(request):
             no_bs=False,
             no_cfs=False,
         ).only("name", "ticker")[:10]
-
-        results = []
+        
         for company in companies_availables:
             result = f"{company.name} ({company.ticker})"
             results.append(result)
 
-        data = json.dumps(results)
-    return HttpResponse(data, "application/json")
+    return HttpResponse(json.dumps(results), "application/json")
 
 
 def medium_valuation_view(request):

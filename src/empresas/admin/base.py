@@ -4,7 +4,7 @@ from django.db import models
 from django_json_widget.widgets import JSONEditorWidget
 
 from src.empresas.admin.filters.base import NewCompanyToParseFilter
-from src.empresas.outils.retrieve_data import RetrieveCompanyData
+from src.empresas.outils.data_management.update.update import UpdateCompany
 from src.empresas.utils import arrange_quarters
 
 
@@ -45,10 +45,10 @@ class BaseStatementAdmin(admin.ModelAdmin):
 @admin.action(description="Update financials")
 def update_financials(modeladmin, request, queryset):
     for query in queryset:
-        RetrieveCompanyData(query).create_financials_yahooquery("a")
-        RetrieveCompanyData(query).create_financials_yahooquery("q")
-        RetrieveCompanyData(query).create_financials_yfinance("a")
-        RetrieveCompanyData(query).create_financials_yfinance("q")
+        UpdateCompany(query).create_financials_yahooquery("a")
+        UpdateCompany(query).create_financials_yahooquery("q")
+        UpdateCompany(query).create_financials_yfinance("a")
+        UpdateCompany(query).create_financials_yfinance("q")
         arrange_quarters(query)
 
 

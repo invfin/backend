@@ -6,8 +6,11 @@ from django.test import TestCase
 from bfet import DjangoTestingModel
 
 from src.empresas.models import Company
-from src.empresas.outils.retrieve_data import RetrieveCompanyData
+from src.empresas.outils.data_management.update.update import UpdateCompany
 from src.empresas.tasks import CompanyTask
+
+
+UPDATE_OUTILS = "src.empresas.outils.data_management.update.update.UpdateCompany"
 
 
 class TestCompanyTask(TestCase):
@@ -67,12 +70,11 @@ class TestCompanyTask(TestCase):
         )
         assert CompanyTask("key_stats", "key_stats").retrieve_company() is None
 
-    @patch("src.empresas.outils.update.UpdateCompany.create_financials_finprep")
-    @patch("src.empresas.outils.retrieve_data.RetrieveCompanyData.create_financials_finnhub")
-    @patch("src.empresas.outils.retrieve_data.RetrieveCompanyData.create_key_stats_yahooquery")
-    @patch(
-        "src.empresas.outils.retrieve_data.RetrieveCompanyData.create_institutionals_yahooquery"
-    )
+
+    @patch(f"{UPDATE_OUTILS}.create_financials_finprep")
+    @patch(f"{UPDATE_OUTILS}.create_financials_finnhub")
+    @patch(f"{UPDATE_OUTILS}.create_key_stats_yahooquery")
+    @patch(f"{UPDATE_OUTILS}.create_institutionals_yahooquery")
     @patch("src.empresas.tasks.CompanyTask.yfinance_tasks")
     @patch("src.empresas.tasks.CompanyTask.yahoo_query_tasks")
     def test_select_task(
@@ -94,7 +96,7 @@ class TestCompanyTask(TestCase):
         }
         for key, value in tasks_map.items():
             with self.subTest(key):
-                retrieve_data = RetrieveCompanyData(self.intc)
+                retrieve_data = UpdateCompany(self.intc)
                 CompanyTask("key_stats", key).select_task(self.intc)
                 if "financials_yfinance_info" == key or "financials_yahooquery_info" == key:
                     assert value.called_with(retrieve_data)
@@ -111,25 +113,25 @@ class TestCompanyTask(TestCase):
         assert mail.outbox[0].to == ["InvFin - Automatic <EMAIL_DEFAULT@example.com>"]
 
     @patch(
-        "src.empresas.outils.retrieve_data.RetrieveCompanyData.create_financials_yahooquery"
+        f"{UPDATE_OUTILS}.create_financials_yahooquery"
     )
     @patch(
-        "src.empresas.outils.retrieve_data.RetrieveCompanyData.create_financials_yahooquery"
+        f"{UPDATE_OUTILS}.create_financials_yahooquery"
     )
     def test_yahoo_query_tasks(
         self, mock_create_financials_yahooquery, mock_create_financials_yahooquery_2
     ):
-        retrieve_data = RetrieveCompanyData(self.intc)
+        retrieve_data = UpdateCompany(self.intc)
         CompanyTask("key_stats", "key_stats").yahoo_query_tasks(retrieve_data)
         mock_create_financials_yahooquery.called_with("a")
         mock_create_financials_yahooquery_2.called_with("q")
 
-    @patch("src.empresas.outils.retrieve_data.RetrieveCompanyData.create_financials_yfinance")
-    @patch("src.empresas.outils.retrieve_data.RetrieveCompanyData.create_financials_yfinance")
+    @patch(f"{UPDATE_OUTILS}.create_financials_yfinance")
+    @patch(f"{UPDATE_OUTILS}.create_financials_yfinance")
     def test_yfinance_tasks(
         self, mock_create_financials_yfinance, mock_create_financials_yfinance_2
     ):
-        retrieve_data = RetrieveCompanyData(self.intc)
+        retrieve_data = UpdateCompany(self.intc)
         CompanyTask("key_stats", "key_stats").yfinance_tasks(retrieve_data)
         mock_create_financials_yfinance.called_with("a")
         mock_create_financials_yfinance_2.called_with("q")

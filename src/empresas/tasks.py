@@ -7,7 +7,6 @@ from django.db.models import OuterRef, Subquery
 from celery import shared_task
 
 from src.empresas.models import Company
-from src.empresas.outils.retrieve_data import RetrieveCompanyData
 from src.empresas.outils.data_management.update.update import UpdateCompany
 from src.empresas.utils import arrange_quarters
 from src.periods.constants import PERIOD_FOR_YEAR
@@ -30,11 +29,11 @@ class CompanyTask:
         return Company.objects.filter_checking_not_seen(self.checking).first()
 
     def select_task(self, company: Company):
-        retrieve_data = RetrieveCompanyData(company)
+        retrieve_data = UpdateCompany(company)
         tasks_map = {
             "financials_yfinance_info": self.yfinance_tasks,
             "financials_yahooquery_info": self.yahoo_query_tasks,
-            "financials_finprep_info": UpdateCompany(company).create_financials_finprep,
+            "financials_finprep_info": retrieve_data.create_financials_finprep,
             "financials_finnhub_info": retrieve_data.create_financials_finnhub,
             "key_stats": retrieve_data.create_key_stats_yahooquery,
             "institutionals": retrieve_data.create_institutionals_yahooquery,

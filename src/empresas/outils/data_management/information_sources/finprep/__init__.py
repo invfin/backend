@@ -5,8 +5,8 @@ from src.empresas.models import (
     CashflowStatementFinprep,
     IncomeStatementFinprep,
 )
-from src.empresas.information_sources.finprep.normalize_data import NormalizeFinprep
-from src.empresas.information_sources.finprep.parse_data import ParseFinprep
+from .normalize_data import NormalizeFinprep
+from .parse_data import ParseFinprep
 
 
 class FinprepInfo(NormalizeFinprep, ParseFinprep):

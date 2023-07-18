@@ -3,7 +3,6 @@ from typing import Dict, List, Optional, Tuple, Type
 from src.content_creation import constants
 from src.content_creation.outils.content_creator import ContentCreation
 from src.empresas.models import Company
-from src.empresas.outils.retrieve_data import RetrieveCompanyData
 from src.empresas.outils.data_management.show.company_data import CompanyData
 from src.socialmedias import constants as socialmedias_constants
 from src.socialmedias.models import NewsSharedHistorial
@@ -24,7 +23,7 @@ class CompanyContentCreation(ContentCreation):
     def get_object(self, object_filter: Optional[Dict] = None) -> Company:
         if object_filter is None:
             object_filter = {}
-        return self.model_class._default_manager.get_random_most_visited_clean_company(
+        return self.model_class._default_manager.get_random_most_visited_clean_company( # type: ignore
             **object_filter
         )
 
@@ -42,7 +41,7 @@ class CompanyContentCreation(ContentCreation):
             cagr = 0
 
         return (
-            f"{self.object.ticker} ha tenido un crecimiento en sus ingresos del {cagr}%"
+            f"{company.ticker} ha tenido un crecimiento en sus ingresos del {cagr}%"
             " anualizado durante los últimos 10 años. Actualmente la empresa genera"
             f" {round(last_income_statement.revenue, 2)} {currency} con gastos elevándose a"
             f" {round(last_income_statement.cost_of_revenue, 2)} {currency}. La empresa cotiza"
@@ -74,7 +73,7 @@ class CompanyNewsContentCreation(CompanyContentCreation):
 
     def create_social_media_content_from_object(self, object_filter: Optional[Dict] = None):
         object_filter = object_filter or {}
-        news_list = RetrieveCompanyData(self.object).get_company_news()
+        news_list = CompanyData(self.object).get_company_news()
         if not news_list or "error" in news_list:
             return self.get_new_object(object_filter)
         title, content, media = self.get_news_content(news_list)
