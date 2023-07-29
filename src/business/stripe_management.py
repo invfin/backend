@@ -49,7 +49,7 @@ class StripeManagement:
         price: float,
         currency: str,
         is_recurring: bool = False,
-        subscription_period: str = None,
+        subscription_period: str = "",
         subscription_interval: int = None,
     ) -> dict:
         price_data = {
