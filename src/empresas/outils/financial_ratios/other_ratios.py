@@ -52,7 +52,9 @@ class OtherRatios:
         property_plant_equipment_net: Union[int, float],
         depreciation_and_amortization: Union[int, float],
     ) -> Union[int, float]:
-        return net_working_capital + property_plant_equipment_net + depreciation_and_amortization
+        return (
+            net_working_capital + property_plant_equipment_net + depreciation_and_amortization
+        )
 
     @classmethod
     def calculate_effective_tax_rate(

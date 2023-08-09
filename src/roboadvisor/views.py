@@ -27,7 +27,9 @@ class RoboAdvisorServicesListView(SEOListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["meta_desc"] = "IA para mejorar las inversiones"
-        context["meta_tags"] = "finanzas, blog financiero, blog el financiera, invertir, roboadvisor"
+        context["meta_tags"] = (
+            "finanzas, blog financiero, blog el financiera, invertir, roboadvisor"
+        )
         context["meta_title"] = "Tu consejero inteligente"
         context["meta_url"] = "/"
 
@@ -103,12 +105,17 @@ class RoboAdvisorUserResultsListView(LoginRequiredMixin, ListView):
         return (
             super()
             .get_queryset()
-            .filter(Q(status=constants.FINISED) | Q(status=constants.NOT_PAYED), user=self.request.user)
+            .filter(
+                Q(status=constants.FINISED) | Q(status=constants.NOT_PAYED),
+                user=self.request.user,
+            )
         )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["meta_desc"] = "IA para mejorar las inversiones"
-        context["meta_tags"] = "finanzas, blog financiero, blog el financiera, invertir, roboadvisor"
+        context["meta_tags"] = (
+            "finanzas, blog financiero, blog el financiera, invertir, roboadvisor"
+        )
         context["meta_title"] = "Tu consejero inteligente"
         return context

@@ -58,7 +58,9 @@ class Term(AbstractPublishableContent):
 
 
 class TermContent(Model, BaseToAllMixin):
-    term_related = ForeignKey("escritos.Term", on_delete=SET_NULL, null=True, related_name="term_content_parts")
+    term_related = ForeignKey(
+        "escritos.Term", on_delete=SET_NULL, null=True, related_name="term_content_parts"
+    )
     title = CharField(max_length=3000)
     order = PositiveIntegerField(default=0)
     content = RichTextField()
@@ -80,7 +82,9 @@ class TermContent(Model, BaseToAllMixin):
 
 
 class TermCorrection(Model, BaseToAllMixin):
-    term_content_related = ForeignKey("escritos.TermContent", null=True, blank=True, on_delete=SET_NULL)
+    term_content_related = ForeignKey(
+        "escritos.TermContent", null=True, blank=True, on_delete=SET_NULL
+    )
     title = CharField(max_length=3000, blank=True, default="")
     date_suggested = DateTimeField(default=timezone.now)
     is_approved = BooleanField(default=False)
@@ -88,8 +92,12 @@ class TermCorrection(Model, BaseToAllMixin):
     content = RichTextField(config_name="writer", default="")
     original_title = CharField(max_length=3000, default="", blank=True)
     original_content = RichTextField(config_name="writer", default="", blank=True)
-    corrected_by = ForeignKey(User, null=True, blank=True, related_name="corrector", on_delete=SET_NULL)
-    approved_by = ForeignKey(User, null=True, blank=True, related_name="revisor", on_delete=SET_NULL)
+    corrected_by = ForeignKey(
+        User, null=True, blank=True, related_name="corrector", on_delete=SET_NULL
+    )
+    approved_by = ForeignKey(
+        User, null=True, blank=True, related_name="revisor", on_delete=SET_NULL
+    )
     objects = TermCorrectionQuerySet.as_manager()
 
     class Meta:
@@ -119,7 +127,9 @@ class TermCorrection(Model, BaseToAllMixin):
 
 
 class TermsComment(AbstractComment):
-    content_related = ForeignKey("escritos.Term", on_delete=CASCADE, null=True, related_name="comments_related")
+    content_related = ForeignKey(
+        "escritos.Term", on_delete=CASCADE, null=True, related_name="comments_related"
+    )
 
     class Meta:
         verbose_name = "Term's comment"
@@ -127,9 +137,13 @@ class TermsComment(AbstractComment):
 
 
 class TermsRelatedToResume(Model):
-    term_to_keep = ForeignKey("escritos.Term", on_delete=CASCADE, null=True, related_name="term_to_keep")
+    term_to_keep = ForeignKey(
+        "escritos.Term", on_delete=CASCADE, null=True, related_name="term_to_keep"
+    )
 
-    term_to_delete = ForeignKey("escritos.Term", on_delete=CASCADE, null=True, related_name="term_to_delete")
+    term_to_delete = ForeignKey(
+        "escritos.Term", on_delete=CASCADE, null=True, related_name="term_to_delete"
+    )
 
     class Meta:
         verbose_name = "Terms to resume"
@@ -149,7 +163,9 @@ class FavoritesTermsHistorial(AbstractFavoritesHistorial):
 
 
 class FavoritesTermsList(Model):
-    user = OneToOneField(User, on_delete=SET_NULL, null=True, blank=True, related_name="favorites_terms")
+    user = OneToOneField(
+        User, on_delete=SET_NULL, null=True, blank=True, related_name="favorites_terms"
+    )
     term = ManyToManyField("escritos.Term", blank=True)
 
     class Meta:

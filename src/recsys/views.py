@@ -27,12 +27,20 @@ class RecommendationClickedRedirectView(RedirectView):
     def get_and_save_model(self):
         pk = self.kwargs["pk"]
         object_name = self.kwargs["object_name"]
-        obj = apps.get_model("recsys", object_name, require_ready=True)._default_manager.get(id=pk)
+        obj = apps.get_model("recsys", object_name, require_ready=True)._default_manager.get(
+            id=pk
+        )
         obj.clicked = True
         obj.save(update_fields=["clicked"])
         return obj
 
-    def generate_url(self, obj: Model, medium: str = "webapp", source: str = "invfin", campaign: str = "recsys"):
+    def generate_url(
+        self,
+        obj: Model,
+        medium: str = "webapp",
+        source: str = "invfin",
+        campaign: str = "recsys",
+    ):
         content = obj.location
         term = obj.model_recommended
         place = obj.place
@@ -122,7 +130,9 @@ class BaseRecommendationView(TemplateView):
         recommendations_explanations = self.generate_recommendations_explanations()
         if self.slice_recommedations:
             recommendations = recommendations[: self.slice_recommedations]
-        final_recommendations = self.create_recommendations(recommendations, recommendations_explanations)
+        final_recommendations = self.create_recommendations(
+            recommendations, recommendations_explanations
+        )
         return final_recommendations
 
     def get_context_data(self, **kwargs):

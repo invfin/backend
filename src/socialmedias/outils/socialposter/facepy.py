@@ -28,7 +28,11 @@ class Facebook:
 
     @staticmethod
     def authorisation_url():
-        api = GraphAPI(app_id=settings.FACEBOOK_APP_ID, app_secret=settings.FACEBOOK_APP_SECRET, oauth_flow=True)
+        api = GraphAPI(
+            app_id=settings.FACEBOOK_APP_ID,
+            app_secret=settings.FACEBOOK_APP_SECRET,
+            oauth_flow=True,
+        )
         authorization_url, state = api.get_authorization_url(
             redirect_uri="https://inversionesyfinanzas.xyz/",
             # state="InvFin",
@@ -84,7 +88,9 @@ class Facebook:
             "client_secret": settings.FACEBOOK_APP_SECRET,
             "code": code,
         }
-        response = requests.get("https://graph.facebook.com/v15.0/oauth/access_token?", params=params)
+        response = requests.get(
+            "https://graph.facebook.com/v15.0/oauth/access_token?", params=params
+        )
         response.raise_for_status()
         return response.json()
 
@@ -169,9 +175,16 @@ class Facebook:
             ]
         }
 
-    def generate_post_content(self, content_type: str, content: Dict, **kwargs) -> Tuple[Dict, Any]:
+    def generate_post_content(
+        self, content_type: str, content: Dict, **kwargs
+    ) -> Tuple[Dict, Any]:
         if not kwargs["post_now"] and kwargs.get("scheduled_publish_time"):
-            content.update({"published": False, "scheduled_publish_time": kwargs["scheduled_publish_time"]})
+            content.update(
+                {
+                    "published": False,
+                    "scheduled_publish_time": kwargs["scheduled_publish_time"],
+                }
+            )
         content.update({"access_token": self.page_access_token})
         files = None
         if content_type == constants.FACEBOOK_POST_VIDEO_PAGE:
@@ -195,7 +208,8 @@ class Facebook:
     def create_fb_description(self, title: str, content: str, hashtags: str) -> str:
         return (
             f"{title}\n\n{content}\n\n"
-            "Prueba las herramientas que todo inversor inteligente necesita: https://inversionesyfinanzas.xyz/\n"
+            "Prueba las herramientas que todo inversor inteligente necesita:"
+            " https://inversionesyfinanzas.xyz/\n"
             "Visita nuestras redes sociales:\n"
             "Youtube: https://www.youtube.com/c/InversionesyFinanzas/\n"
             "Facebook: https://www.facebook.com/InversionesyFinanzas/\n"

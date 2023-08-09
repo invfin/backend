@@ -1,4 +1,8 @@
-from rest_framework.serializers import ModelSerializer, SerializerMethodField, StringRelatedField
+from rest_framework.serializers import (
+    ModelSerializer,
+    SerializerMethodField,
+    StringRelatedField,
+)
 
 from ..models import Superinvestor, SuperinvestorActivity, SuperinvestorHistory
 

@@ -27,7 +27,9 @@ class CompanyData:
         self.limit = limit
 
     def show_all_information(self) -> Dict[str, Union[Dict[str, Union[int, float]], List]]:
-        return CompanyChartPresentation(self.limit).get_complete_information(self.get_statements())
+        return CompanyChartPresentation(self.limit).get_complete_information(
+            self.get_statements()
+        )
 
     def get_statements(self) -> StatementsInterface:
         return self.company.load_statements()

@@ -20,7 +20,9 @@ class Notification(AbstractGenericModels):
 
 
 class EmailNotification(AbstractTrackEmail):
-    email_related = ForeignKey(Notification, null=True, blank=True, on_delete=SET_NULL, related_name="email_related")
+    email_related = ForeignKey(
+        Notification, null=True, blank=True, on_delete=SET_NULL, related_name="email_related"
+    )
 
     class Meta:
         verbose_name = "Email from notifications"

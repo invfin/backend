@@ -81,7 +81,9 @@ class NotificationSystem:
         return notification_fnct(object_related, notif_type)
 
     @staticmethod
-    def prepare_notification_dict(email: Dict, receiver_id: int) -> Dict[str, Union[Dict, int, str]]:
+    def prepare_notification_dict(
+        email: Dict, receiver_id: int
+    ) -> Dict[str, Union[Dict, int, str]]:
         return {
             "email": email,
             "receiver_id": receiver_id,
@@ -97,13 +99,15 @@ class NotificationSystem:
                     obj.corrected_by,
                     notif_type,
                     {
-                        "subject": f"Gracias {obj.corrected_by} tu corrección ha sido aprovada.",
+                        "subject": (
+                            f"Gracias {obj.corrected_by} tu corrección ha sido aprovada."
+                        ),
                         "content": (
-                            f"Enhorabuena, tu correción para <a href='{obj.shareable_link}' "
-                            f"target='_blank'>{obj.title}</a> ha sido aprovada."
-                            "<br></br>"
-                            "Desde el equipo de InvFin te damos las gracias por ayudar a mejorar el contenido para "
-                            "poder seguir ayudando al resto de la comunidad."
+                            f"Enhorabuena, tu correción para <a href='{obj.shareable_link}'"
+                            f" target='_blank'>{obj.title}</a> ha sido aprovada.<br></br>Desde"
+                            " el equipo de InvFin te damos las gracias por ayudar a mejorar"
+                            " el contenido para poder seguir ayudando al resto de la"
+                            " comunidad."
                         ),
                     },
                 ),
@@ -123,8 +127,8 @@ class NotificationSystem:
                     {
                         "subject": constants.NEW_FOLLOWER,
                         "content": (
-                            "Tus blogs sigen pagando, tu comunidad de lectores sigue aumentando día a día,"
-                            " felicitaciones"
+                            "Tus blogs sigen pagando, tu comunidad de lectores sigue"
+                            " aumentando día a día, felicitaciones"
                         ),
                     },
                 ),
@@ -143,7 +147,9 @@ class NotificationSystem:
                     notif_type,
                     {
                         "subject": constants.NEW_COMMENT,
-                        "content": f"{obj.content_related.title} ha recibido un nuevo comentario",
+                        "content": (
+                            f"{obj.content_related.title} ha recibido un nuevo comentario"
+                        ),
                     },
                 ),
                 "receiver_id": obj.content_related.author.id,
@@ -181,7 +187,10 @@ class NotificationSystem:
                 notif_type,
                 {
                     "subject": subject,
-                    "content": f"Hay una nueva pregunta: \n{question.content}\n ¿Conoces la respuesta?",
+                    "content": (
+                        f"Hay una nueva pregunta: \n{question.content}\n ¿Conoces la"
+                        " respuesta?"
+                    ),
                     "call_to_action": "Se el primero en ayudar y gana créditos extras",
                 },
             )

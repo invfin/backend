@@ -49,7 +49,15 @@ class BaseStripeAdmin(admin.ModelAdmin):
     formfield_overrides = {
         models.JSONField: {"widget": JSONEditorWidget},
     }
-    list_display = ["id", "title", "stripe_id", "is_active", "for_testing", "created_at", "updated_at"]
+    list_display = [
+        "id",
+        "title",
+        "stripe_id",
+        "is_active",
+        "for_testing",
+        "created_at",
+        "updated_at",
+    ]
     list_editable = ["for_testing", "is_active"]
     list_filter = ["for_testing", "is_active"]
     search_fields = ["title"]

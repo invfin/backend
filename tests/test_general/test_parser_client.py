@@ -20,18 +20,21 @@ class TestParserClient(TestCase):
         }
 
     def test__build_full_path(self):
-        multiple_params_url = (
-            "https://www.google.com/search?q=galletas&oq=galletas&aqs=chrome..69i57.1073j0j1&sourceid=chrome&ie=UTF-8"
+        multiple_params_url = "https://www.google.com/search?q=galletas&oq=galletas&aqs=chrome..69i57.1073j0j1&sourceid=chrome&ie=UTF-8"
+        assert f"https://www.google.com/{self.path}" == self.parser_client._build_full_path(
+            self.path
         )
-        assert f"https://www.google.com/{self.path}" == self.parser_client._build_full_path(self.path)
         assert f"https://www.google.com/V6/{self.path}" == self.parser_client._build_full_path(
             self.path,
             "V6",
         )
-        assert f"https://www.google.com/V6/{self.path}/str-params" == self.parser_client._build_full_path(
-            self.path, "V6", "str-params"
+        assert (
+            f"https://www.google.com/V6/{self.path}/str-params"
+            == self.parser_client._build_full_path(self.path, "V6", "str-params")
         )
-        assert multiple_params_url == self.parser_client._build_full_path(self.path, None, None, **self.dict_params)
+        assert multiple_params_url == self.parser_client._build_full_path(
+            self.path, None, None, **self.dict_params
+        )
         multiple_params_url_with_auth = (
             "https://www.google.com/search?token=password&q=galletas&oq=galletas"
             "&aqs=chrome..69i57.1073j0j1&sourceid=chrome&ie=UTF-8"

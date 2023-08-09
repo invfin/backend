@@ -32,10 +32,14 @@ def notify_term_to_improve_task():
         content = f"You need to update {term_link_html} right now."
         subject = f"It's time to update {term}"
         if terms_without_info_but_already_requested:
-            subject = f"{subject} and also {terms_without_info_but_already_requested.count()} more"
+            subject = (
+                f"{subject} and also {terms_without_info_but_already_requested.count()} more"
+            )
             content = f"{content} Furtheremore you have to improve:"
             for term_left in terms_without_info_but_already_requested:
-                term_left_link_html = EmailingSystem.html_link(term_left.editable_link, term_left.title)
+                term_left_link_html = EmailingSystem.html_link(
+                    term_left.editable_link, term_left.title
+                )
                 content = f"{content}<br> {term_left_link_html}"
     else:
         content = "No terms left to update"
@@ -69,9 +73,13 @@ def prepare_term_newsletter_task():
                 content_object=content_creation_constants.TERM_FOR_CONTENT,
                 whom_to_send=web_constants.EMAIL_CAMPAIGN_RELATED,
             )
-            term_link_html = EmailingSystem.html_link(web_email.edit_url, term_for_newsletter.title)
+            term_link_html = EmailingSystem.html_link(
+                web_email.edit_url, term_for_newsletter.title
+            )
             subject = f"{term_for_newsletter} is ready to be sent as a newsletter"
-            message = f"You need to update {term_link_html} to be ready to be sent as a newsletter"
+            message = (
+                f"You need to update {term_link_html} to be ready to be sent as a newsletter"
+            )
             notify = False
     else:
         subject = "There are no terms ready for newsletters"

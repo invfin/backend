@@ -7,7 +7,13 @@ from src.empresas.models import Company
 from src.escritos.models import Term
 from src.preguntas_respuestas.models import Question
 from src.public_blog.models import PublicBlog, WriterProfile
-from src.seo.models import UserCompanyVisited, UserJourney, Visiteur, VisiteurJourney, VisiteurQuestionVisited
+from src.seo.models import (
+    UserCompanyVisited,
+    UserJourney,
+    Visiteur,
+    VisiteurJourney,
+    VisiteurQuestionVisited,
+)
 from src.seo.outils.save_journey import JourneyClassifier
 
 User = get_user_model()
@@ -39,7 +45,9 @@ class TestJourneyClassifier(TestCase):
         visiteur_request = MockRequest()
         visiteur_request.visiteur = self.visiteur
         visiteur_request.is_visiteur = True
-        user, user_str, default_journey_model = JourneyClassifier().get_user_or_visiteur(visiteur_request)
+        user, user_str, default_journey_model = JourneyClassifier().get_user_or_visiteur(
+            visiteur_request
+        )
         assert self.visiteur == user
         assert "Visiteur" == user_str
         assert VisiteurJourney == default_journey_model
@@ -47,7 +55,9 @@ class TestJourneyClassifier(TestCase):
         self.client.force_login(self.user)
         user_request = MockRequest()
         user_request.user = self.user
-        user, user_str, default_journey_model = JourneyClassifier().get_user_or_visiteur(user_request)
+        user, user_str, default_journey_model = JourneyClassifier().get_user_or_visiteur(
+            user_request
+        )
         assert self.user == user
         assert "User" == user_str
         assert UserJourney == default_journey_model
@@ -61,7 +71,9 @@ class TestJourneyClassifier(TestCase):
         ]:
             with self.subTest(model_visited_str):
                 model_path = f"http://example.com:8000{model.get_absolute_url()}"
-                model_visited, journey_model = JourneyClassifier().get_specific_journey(model_path)
+                model_visited, journey_model = JourneyClassifier().get_specific_journey(
+                    model_path
+                )
                 assert model_visited_str == journey_model
                 assert model == model_visited
 
@@ -71,7 +83,9 @@ class TestJourneyClassifier(TestCase):
             ("http://example.com:8000/general/assets/alguna/", "general assets path"),
         ]:
             with self.subTest(path_name):
-                model_visited, journey_model = JourneyClassifier().get_specific_journey(null_path)
+                model_visited, journey_model = JourneyClassifier().get_specific_journey(
+                    null_path
+                )
                 assert model_visited is None
                 assert journey_model is None
 
@@ -84,7 +98,9 @@ class TestJourneyClassifier(TestCase):
         self.client.force_login(self.user)
         user_request = MockRequest()
         user_request.user = self.user
-        JourneyClassifier().save_journey(user_request, f"http://example.com:8000{company_path}", comes_from)
+        JourneyClassifier().save_journey(
+            user_request, f"http://example.com:8000{company_path}", comes_from
+        )
         assert 1 == UserJourney.objects.all().count()
         assert 1 == UserCompanyVisited.objects.all().count()
 
@@ -100,7 +116,9 @@ class TestJourneyClassifier(TestCase):
         visiteur_request = MockRequest()
         visiteur_request.visiteur = self.visiteur
         visiteur_request.is_visiteur = True
-        JourneyClassifier().save_journey(visiteur_request, f"http://example.com:8000{question_path}", comes_from)
+        JourneyClassifier().save_journey(
+            visiteur_request, f"http://example.com:8000{question_path}", comes_from
+        )
         assert 1 == VisiteurJourney.objects.all().count()
         assert 1 == VisiteurQuestionVisited.objects.all().count()
         question_visited = VisiteurQuestionVisited.objects.all().first()

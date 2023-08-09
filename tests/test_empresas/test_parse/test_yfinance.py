@@ -5,7 +5,12 @@ from django.test import TestCase
 from bfet import DjangoTestingModel
 import vcr
 
-from src.empresas.models import BalanceSheetYFinance, CashflowStatementYFinance, Company, IncomeStatementYFinance
+from src.empresas.models import (
+    BalanceSheetYFinance,
+    CashflowStatementYFinance,
+    Company,
+    IncomeStatementYFinance,
+)
 from src.empresas.information_sources.y_finance import YFinanceInfo
 from src.periods.models import Period
 
@@ -36,15 +41,33 @@ class TestYFinanceInfo(TestCase):
         assert 2 == BalanceSheetYFinance.objects.filter(period=period_2021).count()
         assert 2 == CashflowStatementYFinance.objects.filter(period=period_2021).count()
         assert 2 == IncomeStatementYFinance.objects.filter(period=period_2021).count()
-        assert self.company == BalanceSheetYFinance.objects.filter(period=period_2021).first().company
-        assert self.company == CashflowStatementYFinance.objects.filter(period=period_2021).first().company
-        assert self.company == IncomeStatementYFinance.objects.filter(period=period_2021).first().company
+        assert (
+            self.company
+            == BalanceSheetYFinance.objects.filter(period=period_2021).first().company
+        )
+        assert (
+            self.company
+            == CashflowStatementYFinance.objects.filter(period=period_2021).first().company
+        )
+        assert (
+            self.company
+            == IncomeStatementYFinance.objects.filter(period=period_2021).first().company
+        )
         assert 2 == BalanceSheetYFinance.objects.filter(period=period_2022).count()
         assert 2 == CashflowStatementYFinance.objects.filter(period=period_2022).count()
         assert 2 == IncomeStatementYFinance.objects.filter(period=period_2022).count()
-        assert self.company == BalanceSheetYFinance.objects.filter(period=period_2022).first().company
-        assert self.company == CashflowStatementYFinance.objects.filter(period=period_2022).first().company
-        assert self.company == IncomeStatementYFinance.objects.filter(period=period_2022).first().company
+        assert (
+            self.company
+            == BalanceSheetYFinance.objects.filter(period=period_2022).first().company
+        )
+        assert (
+            self.company
+            == CashflowStatementYFinance.objects.filter(period=period_2022).first().company
+        )
+        assert (
+            self.company
+            == IncomeStatementYFinance.objects.filter(period=period_2022).first().company
+        )
 
     @parse_vcr.use_cassette
     def test_create_yearly_financials_yfinance(self):

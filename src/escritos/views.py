@@ -25,7 +25,9 @@ class GlosarioView(SEOListView):
     ordering = ["title"]
     context_object_name = "terms"
     paginate_by = 10
-    meta_description = "Todos los términos y definiciones que necesitas conocer para invertir correctamente"
+    meta_description = (
+        "Todos los términos y definiciones que necesitas conocer para invertir correctamente"
+    )
     meta_tags = "finanzas, blog financiero, blog el financiera, invertir"
     meta_title = "El diccionario que necesitas como inversor"
     path_name = "recommend_side_companies"
@@ -90,14 +92,19 @@ class TermCorrectionView(SEOCreateView):
         if self.request.user.is_anonymous:
             recaptcha_response = self.request.POST.get("g-recaptcha-response")
             url = "https://www.google.com/recaptcha/api/siteverify"
-            values = {"secret": settings.GOOGLE_RECAPTCHA_SECRET_KEY, "response": recaptcha_response}
+            values = {
+                "secret": settings.GOOGLE_RECAPTCHA_SECRET_KEY,
+                "response": recaptcha_response,
+            }
             data = urllib.parse.urlencode(values).encode()
             req = urllib.request.Request(url, data=data)
             response = urllib.request.urlopen(req)
             result = json.loads(response.read().decode())
 
             if result["success"]:
-                user = User.objects.get_or_create_quick_user(self.request, just_correction=True)
+                user = User.objects.get_or_create_quick_user(
+                    self.request, just_correction=True
+                )
             else:
                 messages.error(self.request, "Hay un error con el captcha")
                 return self.form_invalid(form)
@@ -121,7 +128,9 @@ class ManageUserTermCorrectionListView(PrivateWebListView):
     context_object_name = "corrections"
 
     def get_queryset(self):
-        return self.model._default_manager.filter(is_approved=False).select_related("term_content_related")
+        return self.model._default_manager.filter(is_approved=False).select_related(
+            "term_content_related"
+        )
 
 
 class ManageUserTermCorrectionDetailView(PrivateWebDetailView):
@@ -132,7 +141,11 @@ class ManageUserTermCorrectionDetailView(PrivateWebDetailView):
 
     @staticmethod
     def get_fields(request_data) -> List[str]:
-        return [field.replace("accept-", "") for field in request_data if field.startswith("accept")]
+        return [
+            field.replace("accept-", "")
+            for field in request_data
+            if field.startswith("accept")
+        ]
 
     def manage_correction(self):
         # TODO : test

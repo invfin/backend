@@ -56,7 +56,9 @@ class FavoritesStocksHistorial(AbstractFavoritesHistorial):
 
 
 class FavoritesStocksList(Model):
-    user = OneToOneField(User, on_delete=SET_NULL, null=True, blank=True, related_name="favorites_companies")
+    user = OneToOneField(
+        User, on_delete=SET_NULL, null=True, blank=True, related_name="favorites_companies"
+    )
     stock = ManyToManyField(Company, blank=True)
 
     class Meta:
@@ -138,7 +140,9 @@ class UserCompanyObservation(Model):
     STATUS = ((1, "Fuerza"), (2, "Oportunidad"), (3, "Debilidad"), (4, "Amenaza"))
 
     user = ForeignKey(User, on_delete=SET_NULL, null=True, blank=True)
-    company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="company_foda")
+    company = ForeignKey(
+        Company, on_delete=SET_NULL, null=True, blank=True, related_name="company_foda"
+    )
     date = DateTimeField(auto_now_add=True)
     observation = RichTextField(default="", config_name="simple")
     observation_type = IntegerField(default=0, choices=STATUS)

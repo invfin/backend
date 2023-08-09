@@ -13,7 +13,11 @@ class ParserClient:
     auth: Dict[str, str] = None
 
     def _build_full_path(
-        self, path: str, different_api_version: str = None, str_params: str = None, **dict_params: dict
+        self,
+        path: str,
+        different_api_version: str = None,
+        str_params: str = None,
+        **dict_params: dict,
     ) -> str:
         """
         It receives the path from path to make the get requests. It accepts url depending on
@@ -39,7 +43,9 @@ class ParserClient:
             full_path = f"{full_path}{dict_params_separator}{dict_params}"
         return full_path
 
-    def _request_content(self, full_url: str) -> Union[Dict[str, Any], str, str, requests.Response]:
+    def _request_content(
+        self, full_url: str
+    ) -> Union[Dict[str, Any], str, str, requests.Response]:
         """
         It performs a get request. full_url comes from _build_full_path.
         """
@@ -60,6 +66,14 @@ class ParserClient:
             time.sleep(attempt * REQUESTS_MAX_RETRIES)
         response.raise_for_status()
 
-    def request(self, path: str, different_api_version: str = "", str_params: str = "", **dict_params: Dict) -> Any:
-        full_path = self._build_full_path(path, different_api_version, str_params, **dict_params)
+    def request(
+        self,
+        path: str,
+        different_api_version: str = "",
+        str_params: str = "",
+        **dict_params: Dict,
+    ) -> Any:
+        full_path = self._build_full_path(
+            path, different_api_version, str_params, **dict_params
+        )
         return self._request_content(full_path)

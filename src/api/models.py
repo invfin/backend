@@ -46,7 +46,11 @@ class Key(Model, BaseToAllMixin):
     limit = PositiveIntegerField(default=0)
     objects = KeyManager()
     subscription = ForeignKey(
-        ProductSubscriber, on_delete=CASCADE, related_name="subscription_related", null=True, blank=True
+        ProductSubscriber,
+        on_delete=CASCADE,
+        related_name="subscription_related",
+        null=True,
+        blank=True,
     )
 
     class Meta:
@@ -102,7 +106,9 @@ class BaseRequestAPI(Model, BaseToAllMixin):
         tomorrow = today + timedelta(1)
         today_start = datetime.combine(today, time())
         today_end = datetime.combine(tomorrow, time())
-        return self.objects.filter((Q(date__lte=today_start) & Q(date__gte=today_end)), key=self.key).count()
+        return self.objects.filter(
+            (Q(date__lte=today_start) & Q(date__gte=today_end)), key=self.key
+        ).count()
 
 
 class CompanyRequestAPI(BaseRequestAPI):
@@ -149,7 +155,9 @@ class EndpointsCategory(Model):
 
 
 class Endpoint(Model):
-    title_related = ForeignKey(EndpointsCategory, on_delete=SET_NULL, null=True, blank=True, related_name="endpoints")
+    title_related = ForeignKey(
+        EndpointsCategory, on_delete=SET_NULL, null=True, blank=True, related_name="endpoints"
+    )
     title = CharField(max_length=250, blank=True)
     slug = CharField(max_length=250, blank=True)
     url = CharField(max_length=250, blank=True)
@@ -177,7 +185,9 @@ class Endpoint(Model):
 
     def save(self, *args, **kwargs):  # new
         if not self.slug:
-            slug = UniqueCreator.create_unique_field(self, slugify(self.title), "slug", self.title)
+            slug = UniqueCreator.create_unique_field(
+                self, slugify(self.title), "slug", self.title
+            )
             self.slug = slug
         return super().save(*args, **kwargs)
 
@@ -195,4 +205,6 @@ class Endpoint(Model):
 
     @property
     def example(self):
-        return json.dumps(self.response_example_json, indent=4, sort_keys=True, ensure_ascii=False)
+        return json.dumps(
+            self.response_example_json, indent=4, sort_keys=True, ensure_ascii=False
+        )

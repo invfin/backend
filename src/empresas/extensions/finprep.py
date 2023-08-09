@@ -1,4 +1,8 @@
-from .base_normalize import NormalizeBalanceSheet, NormalizeCashflowStatement, NormalizeIncomeStatement
+from .base_normalize import (
+    NormalizeBalanceSheet,
+    NormalizeCashflowStatement,
+    NormalizeIncomeStatement,
+)
 
 
 class IncomeStatementFinprepExtended(NormalizeIncomeStatement):

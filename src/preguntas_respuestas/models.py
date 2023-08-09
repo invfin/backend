@@ -1,6 +1,13 @@
 from django.contrib.auth import get_user_model
 from django.contrib.sites.models import Site
-from django.db.models import CASCADE, SET_NULL, BooleanField, ForeignKey, IntegerField, ManyToManyField
+from django.db.models import (
+    CASCADE,
+    SET_NULL,
+    BooleanField,
+    ForeignKey,
+    IntegerField,
+    ManyToManyField,
+)
 from django.urls import reverse
 
 from ckeditor.fields import RichTextField
@@ -49,7 +56,11 @@ class Question(AbstractWrittenContent):
         downvotes_users = self.downvotes.values_list("pk", flat=True)
         comments_users = self.related_comments.values_list("author", flat=True)
         all_users = (
-            list(answers_users) + list(upvotes_users) + list(downvotes_users) + list(comments_users) + [self.author.pk]
+            list(answers_users)
+            + list(upvotes_users)
+            + list(downvotes_users)
+            + list(comments_users)
+            + [self.author.pk]
         )
         all_users = User.objects.filter(id__in=all_users).exclude(is_bot=True)
         return list(all_users)
@@ -106,7 +117,9 @@ class Question(AbstractWrittenContent):
                 ques_schema["mainEntity"]["acceptedAnswer"]["url"] = answer.own_url
                 ques_schema["mainEntity"]["acceptedAnswer"]["author"] = {}
                 ques_schema["mainEntity"]["acceptedAnswer"]["author"]["@type"] = "Person"
-                ques_schema["mainEntity"]["acceptedAnswer"]["author"]["name"] = answer.author.full_name
+                ques_schema["mainEntity"]["acceptedAnswer"]["author"][
+                    "name"
+                ] = answer.author.full_name
 
             sug_answ = {}
             sug_answ["@type"] = "Answer"

@@ -43,7 +43,8 @@ class Instagram:
     def get_quota(self):
         extra = "fields=config,quota_usage"
         cuota = requests.get(
-            f"{self.instagram_url}content_publishing_limit?{extra}        &{self.ig_access_token_url}"
+            f"{self.instagram_url}content_publishing_limit?{extra}       "
+            f" &{self.ig_access_token_url}"
         ).json()
         return cuota["data"][0]
 
@@ -102,7 +103,9 @@ class Instagram:
 
             status = self.check_post_status(post_id)
 
-            post_url = f"{self.instagram_url}media_publish?{self.ig_access_token_url}&creation_id="
+            post_url = (
+                f"{self.instagram_url}media_publish?{self.ig_access_token_url}&creation_id="
+            )
 
             if status["status_code"] == "FINISHED":
                 requests.post(f"{post_url}{post_id}")
@@ -137,12 +140,23 @@ class Instagram:
 
         except Exception as e:
             # logger.exception('Error while publishing uploaded content to instagram')
-            response = {"result": "error", "where": "instagram post publishing", "message": f"{e}"}
+            response = {
+                "result": "error",
+                "where": "instagram post publishing",
+                "message": f"{e}",
+            }
 
         return response
 
     def post_on_instagram(
-        self, caption, local_content, post_type, send_from="cloudinary", is_original=False, destroy_asset=True, **kwargs
+        self,
+        caption,
+        local_content,
+        post_type,
+        send_from="cloudinary",
+        is_original=False,
+        destroy_asset=True,
+        **kwargs,
     ):
         """
         send_from indicates the location, default is cloudinary
@@ -161,7 +175,9 @@ class Instagram:
                 resource_type = "video"
 
         if caption == "":
-            caption = self.create_ig_caption(custom_title, " #".join([hashtag.name for hashtag in hashtags]))
+            caption = self.create_ig_caption(
+                custom_title, " #".join([hashtag.name for hashtag in hashtags])
+            )
 
         content_pre_published_data = self._send_content_to_instagram(
             caption, content_url, resource_type=resource_type, send_from=send_from
@@ -170,7 +186,9 @@ class Instagram:
         if content_pre_published_data["result"] == "error":
             sys.exit()
 
-        instagram_post_result = self._publish_uploaded_content(content_pre_published_data["extra"])
+        instagram_post_result = self._publish_uploaded_content(
+            content_pre_published_data["extra"]
+        )
 
         if instagram_post_result["result"] == "error":
             sys.exit()

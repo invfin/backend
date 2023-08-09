@@ -7,7 +7,10 @@ from bfet import DjangoTestingModel
 from rest_framework.test import APITestCase
 
 from src.super_investors.models import Superinvestor
-from tests.data.superinvestors.superinvestors_data import LIST_SUPERINVESTORS, SINGLE_SUPERINVESTOR
+from tests.data.superinvestors.superinvestors_data import (
+    LIST_SUPERINVESTORS,
+    SINGLE_SUPERINVESTOR,
+)
 from tests.utils import BaseAPIViewTestMixin
 
 User = get_user_model()

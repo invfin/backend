@@ -13,7 +13,9 @@ class PerShareValues:
         weighted_average_shares_outstanding: Union[int, float],
     ) -> Union[int, float]:
         print(revenue, weighted_average_shares_outstanding)
-        return divide_or_zero(revenue, weighted_average_shares_outstanding, cls.round_after_coma)
+        return divide_or_zero(
+            revenue, weighted_average_shares_outstanding, cls.round_after_coma
+        )
 
     @classmethod
     def calculate_book_ps(
@@ -21,7 +23,11 @@ class PerShareValues:
         total_stockholders_equity: Union[int, float],
         weighted_average_shares_outstanding: Union[int, float],
     ) -> Union[int, float]:
-        return divide_or_zero(total_stockholders_equity, weighted_average_shares_outstanding, cls.round_after_coma)
+        return divide_or_zero(
+            total_stockholders_equity,
+            weighted_average_shares_outstanding,
+            cls.round_after_coma,
+        )
 
     @classmethod
     def calculate_tangible_ps(
@@ -29,7 +35,9 @@ class PerShareValues:
         net_tangible_equity: Union[int, float],
         weighted_average_shares_outstanding: Union[int, float],
     ) -> Union[int, float]:
-        return divide_or_zero(net_tangible_equity, weighted_average_shares_outstanding, cls.round_after_coma)
+        return divide_or_zero(
+            net_tangible_equity, weighted_average_shares_outstanding, cls.round_after_coma
+        )
 
     @classmethod
     def calculate_fcf_ps(
@@ -37,7 +45,9 @@ class PerShareValues:
         free_cash_flow: Union[int, float],
         weighted_average_shares_outstanding: Union[int, float],
     ) -> Union[int, float]:
-        return divide_or_zero(free_cash_flow, weighted_average_shares_outstanding, cls.round_after_coma)
+        return divide_or_zero(
+            free_cash_flow, weighted_average_shares_outstanding, cls.round_after_coma
+        )
 
     @classmethod
     def calculate_eps(
@@ -45,7 +55,9 @@ class PerShareValues:
         net_income: Union[int, float],
         weighted_average_shares_outstanding: Union[int, float],
     ) -> Union[int, float]:
-        return divide_or_zero(net_income, weighted_average_shares_outstanding, cls.round_after_coma)
+        return divide_or_zero(
+            net_income, weighted_average_shares_outstanding, cls.round_after_coma
+        )
 
     @classmethod
     def calculate_cash_ps(
@@ -54,7 +66,9 @@ class PerShareValues:
         weighted_average_shares_outstanding: Union[int, float],
     ) -> Union[int, float]:
         return divide_or_zero(
-            cash_and_short_term_investments, weighted_average_shares_outstanding, cls.round_after_coma
+            cash_and_short_term_investments,
+            weighted_average_shares_outstanding,
+            cls.round_after_coma,
         )
 
     @classmethod
@@ -64,7 +78,9 @@ class PerShareValues:
         weighted_average_shares_outstanding: Union[int, float],
     ) -> Union[int, float]:
         return divide_or_zero(
-            net_cash_provided_by_operating_activities, weighted_average_shares_outstanding, cls.round_after_coma
+            net_cash_provided_by_operating_activities,
+            weighted_average_shares_outstanding,
+            cls.round_after_coma,
         )
 
     @classmethod
@@ -73,7 +89,9 @@ class PerShareValues:
         capital_expenditure: Union[int, float],
         weighted_average_shares_outstanding: Union[int, float],
     ) -> Union[int, float]:
-        return divide_or_zero(capital_expenditure, weighted_average_shares_outstanding, cls.round_after_coma)
+        return divide_or_zero(
+            capital_expenditure, weighted_average_shares_outstanding, cls.round_after_coma
+        )
 
     @classmethod
     def calculate_total_assets_ps(
@@ -81,4 +99,6 @@ class PerShareValues:
         total_assets: Union[int, float],
         weighted_average_shares_outstanding: Union[int, float],
     ) -> Union[int, float]:
-        return divide_or_zero(total_assets, weighted_average_shares_outstanding, cls.round_after_coma)
+        return divide_or_zero(
+            total_assets, weighted_average_shares_outstanding, cls.round_after_coma
+        )

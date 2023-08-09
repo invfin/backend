@@ -14,7 +14,9 @@ log.addHandler(logging.NullHandler())
 
 urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
-URLS_SUFFIX = [re.search("translate.google.(.*)", url.strip()).group(1) for url in DEFAULT_SERVICE_URLS]
+URLS_SUFFIX = [
+    re.search("translate.google.(.*)", url.strip()).group(1) for url in DEFAULT_SERVICE_URLS
+]
 URL_SUFFIX_DEFAULT = "cn"
 
 
@@ -52,7 +54,9 @@ class google_new_transError(Exception):
             if status == 403:
                 cause = "Bad token or upstream API changes"
             elif status == 200 and not tts.lang_check:
-                cause = "No audio stream in response. Unsupported language '%s'" % self.tts.lang
+                cause = (
+                    "No audio stream in response. Unsupported language '%s'" % self.tts.lang
+                )
             elif status >= 500:
                 cause = "Uptream API error. Try again later."
 

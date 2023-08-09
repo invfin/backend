@@ -39,7 +39,9 @@ class Twitter:
     def tweet_with_media(self, twitter_api, status, media_url):
         data = urllib.request.urlopen(media_url).read()
         file_like_object = io.BytesIO(data)
-        response = twitter_api.update_status_with_media(status, "fake_name.jpg", file=file_like_object)
+        response = twitter_api.update_status_with_media(
+            status, "fake_name.jpg", file=file_like_object
+        )
         json_response = response._json
         return json_response["id"]
 
@@ -58,7 +60,9 @@ class Twitter:
         initial_tweet = f"{title} [0/{total_number_parts}]"
 
         if post_type != constants.POST_TYPE_TEXT:
-            initial_tweet_response = self.tweet_with_media(twitter_api, initial_tweet, media_url)
+            initial_tweet_response = self.tweet_with_media(
+                twitter_api, initial_tweet, media_url
+            )
         else:
             initial_tweet_response = self.tweet_text(twitter_api, initial_tweet)
 
@@ -85,7 +89,10 @@ class Twitter:
             tweet = f"{part} [{index}/{total_number_parts}]"
             time.sleep(5)
             response = self.tweet_text(
-                twitter_api, status=tweet, in_reply_to_status_id=response, auto_populate_reply_metadata=True
+                twitter_api,
+                status=tweet,
+                in_reply_to_status_id=response,
+                auto_populate_reply_metadata=True,
             )
             list_tweets["post_response"].append(
                 {
@@ -101,7 +108,9 @@ class Twitter:
                 }
             )
 
-        last_tweet = f"Si este thread te ha gustado no te pierdas el resto en: {link} {hashtags}"
+        last_tweet = (
+            f"Si este thread te ha gustado no te pierdas el resto en: {link} {hashtags}"
+        )
         last_tweet_response = self.tweet_text(twitter_api, last_tweet)
         list_tweets["post_response"].append(
             {

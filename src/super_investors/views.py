@@ -2,7 +2,12 @@ from django.shortcuts import render
 
 from src.seo.views import SEODetailView, SEOListView
 
-from .models import FavoritesSuperinvestorsList, Superinvestor, SuperinvestorActivity, SuperinvestorHistory
+from .models import (
+    FavoritesSuperinvestorsList,
+    Superinvestor,
+    SuperinvestorActivity,
+    SuperinvestorHistory,
+)
 
 
 class AllSuperinvestorsView(SEOListView):
@@ -27,7 +32,9 @@ class SuperinvestorView(SEODetailView):
     template_name = "superinvestor_detail.html"
 
     def get_object(self):
-        return self.model.objects.prefetch_related("history", "history__period_related").get(slug=self.kwargs["slug"])
+        return self.model.objects.prefetch_related("history", "history__period_related").get(
+            slug=self.kwargs["slug"]
+        )
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -38,7 +45,9 @@ class SuperinvestorView(SEODetailView):
             try:
                 fav_investors_list = user.fav_superinvestors
             except Exception:
-                fav_investors_list, created = FavoritesSuperinvestorsList.objects.get_or_create(user=user)
+                fav_investors_list, created = (
+                    FavoritesSuperinvestorsList.objects.get_or_create(user=user)
+                )
                 fav_investors_list = fav_investors_list.superinvestor
             if investor.slug in fav_investors_list.all().only("slug"):
                 is_fav = True
@@ -47,7 +56,9 @@ class SuperinvestorView(SEODetailView):
 
 
 def return_superinvestor_movements(request, id):
-    all_activity = SuperinvestorActivity.objects.prefetch_related("period_related").filter(superinvestor_related_id=id)
+    all_activity = SuperinvestorActivity.objects.prefetch_related("period_related").filter(
+        superinvestor_related_id=id
+    )
     return render(request, "tables/activity.html", {"all_activity": all_activity})
 
 
@@ -55,5 +66,9 @@ def return_portfolios_with_company(request, company_id):
     return render(
         request,
         "empresas/company_parts/relationships/superinvestors_relateds.html",
-        {"portfolios_with_company": SuperinvestorHistory.objects.company_in_current_portfolios(company_id)},
+        {
+            "portfolios_with_company": (
+                SuperinvestorHistory.objects.company_in_current_portfolios(company_id)
+            )
+        },
     )

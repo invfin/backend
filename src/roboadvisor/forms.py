@@ -13,14 +13,21 @@ from .models import (
 
 class BaseRoboAdvisorForm(ModelForm):
     def range_values(self, name, min=0, max=100, step=10):
-        attrs = {"min": f"{min}", "max": f"{max}", "step": f"{step}", "onInput": f"$('#{name}').html($(this).val())"}
+        attrs = {
+            "min": f"{min}",
+            "max": f"{max}",
+            "step": f"{step}",
+            "onInput": f"$('#{name}').html($(this).val())",
+        }
         return attrs
 
 
 class RoboAdvisorQuestionInvestorExperienceForm(BaseRoboAdvisorForm):
     def __init__(self, *args, **kwargs):
         super(RoboAdvisorQuestionInvestorExperienceForm, self).__init__(*args, **kwargs)
-        self.fields["percentage_invested"].widget.attrs.update(self.range_values("rangeval6", step=1))
+        self.fields["percentage_invested"].widget.attrs.update(
+            self.range_values("rangeval6", step=1)
+        )
         self.fields["percentage_anualized_revenue"].widget.attrs.update(
             self.range_values("rangeval7", max=1000, step=0.1)
         )
@@ -65,11 +72,19 @@ class RoboAdvisorQuestionRiskAversionForm(BaseRoboAdvisorForm):
     def __init__(self, *args, **kwargs):
         super(RoboAdvisorQuestionRiskAversionForm, self).__init__(*args, **kwargs)
         # self.fields['volatilidad'].widget.attrs = {'my_attribute_key':'my_attribute_value'}
-        self.fields["percentage_for_onefive"].widget.attrs.update(self.range_values("rangeval"))
+        self.fields["percentage_for_onefive"].widget.attrs.update(
+            self.range_values("rangeval")
+        )
         self.fields["percentage_for_three"].widget.attrs.update(self.range_values("rangeval2"))
-        self.fields["percentage_for_fourfive"].widget.attrs.update(self.range_values("rangeval3"))
-        self.fields["percentage_for_zerofive"].widget.attrs.update(self.range_values("rangeval4"))
-        self.fields["percentage_in_one_stock"].widget.attrs.update(self.range_values("rangeval5"))
+        self.fields["percentage_for_fourfive"].widget.attrs.update(
+            self.range_values("rangeval3")
+        )
+        self.fields["percentage_for_zerofive"].widget.attrs.update(
+            self.range_values("rangeval4")
+        )
+        self.fields["percentage_in_one_stock"].widget.attrs.update(
+            self.range_values("rangeval5")
+        )
 
     #     self.fields['number_stocks'].widget.attrs
     #     self.fields['age'].label = 'Texto de aydua'

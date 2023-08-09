@@ -65,7 +65,7 @@ def update_stats(modeladmin, request, queryset):
 class CompanyYahooQueryProxyAdmin(BaseCompanyAdmin):
     actions = BaseCompanyAdmin.actions + [
         update_stats,
-    ] # type: ignore
+    ]  # type: ignore
     inlines = [
         IncomeStatementYahooQueryInline,
         BalanceSheetYahooQueryInline,
@@ -73,14 +73,14 @@ class CompanyYahooQueryProxyAdmin(BaseCompanyAdmin):
         KeyStatsYahooQueryInline,
     ]
 
-    list_filter = BaseCompanyAdmin.list_filter + [HasYahooQueryQuarterFilter] # type: ignore
+    list_filter = BaseCompanyAdmin.list_filter + [HasYahooQueryQuarterFilter]  # type: ignore
 
     list_display = BaseCompanyAdmin.list_display + [
         "has_inc_quarter",
         "has_bs_quarter",
         "has_cf_quarter",
         "has_key_stats",
-    ] # type: ignore
+    ]  # type: ignore
 
     jazzmin_form_tabs = BaseCompanyAdmin.jazzmin_form_tabs + [
         ("key-stats", "Key Stats"),

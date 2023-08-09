@@ -18,7 +18,14 @@ from django.forms import (
 
 from src.currencies.models import Currency
 
-from .models import Asset, CashflowMovementCategory, FinancialObjectif, Income, PositionMovement, Spend
+from .models import (
+    Asset,
+    CashflowMovementCategory,
+    FinancialObjectif,
+    Income,
+    PositionMovement,
+    Spend,
+)
 
 User = get_user_model()
 
@@ -89,7 +96,9 @@ class PositionMovementForm(ModelForm, BaseAssetMoveForm):
 
 class FinancialObjectifForm(ModelForm):
     date_to_achieve = DateField(
-        label="Fecha", initial=datetime.date.today, widget=DateInput(attrs={"class": "datetimepicker1"})
+        label="Fecha",
+        initial=datetime.date.today,
+        widget=DateInput(attrs={"class": "datetimepicker1"}),
     )
 
     class Meta:
@@ -136,7 +145,11 @@ class CashflowMoveForm(BaseForm):
     name = CharField(label="Nombre")
     amount = DecimalField(label="Cantidad")
     description = CharField(widget=Textarea, required=False, label="Descripción")
-    date = DateField(label="Fecha", initial=datetime.date.today, widget=DateInput(attrs={"class": "datetimepicker1"}))
+    date = DateField(
+        label="Fecha",
+        initial=datetime.date.today,
+        widget=DateInput(attrs={"class": "datetimepicker1"}),
+    )
     is_recurrent = BooleanField(label="¿Es recurrente?", required=False)
 
     def save(self, request):

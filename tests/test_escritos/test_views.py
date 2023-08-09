@@ -14,6 +14,8 @@ class TestManageUserTermCorrectionDetailView(TestCase):
 
     def test_get_fields(self):
         self.assertEqual(
-            ManageUserTermCorrectionDetailView.get_fields({"accept-title": "tilte", "not-here": "nop"}),
+            ManageUserTermCorrectionDetailView.get_fields(
+                {"accept-title": "tilte", "not-here": "nop"}
+            ),
             ["title"],
         )

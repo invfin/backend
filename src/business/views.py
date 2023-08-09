@@ -23,7 +23,9 @@ IS_TESTING = settings.DEBUG and settings.CURRENT_DOMAIN != settings.MAIN_DOMAIN
 class ProductsListView(SEOListView):
     model = Product
     template_name = "product_list.html"
-    meta_description = "Las mejores herramientas para ser un mejor inversor, todo, al mejor precio, gratis."
+    meta_description = (
+        "Las mejores herramientas para ser un mejor inversor, todo, al mejor precio, gratis."
+    )
     meta_title = "Las herramientas inteligentes para invertir como un experto"
     context_object_name = "products"
     ordering = ["-visits"]
@@ -56,7 +58,9 @@ class CreateCheckoutView(SEODetailView):
     """
 
     model = ProductComplementary
-    meta_description = "Las mejores herramientas para ser un mejor inversor, todo, al mejor precio, gratis."
+    meta_description = (
+        "Las mejores herramientas para ser un mejor inversor, todo, al mejor precio, gratis."
+    )
     meta_title = "Caja"
 
     def get(self, request, *args, **kwargs) -> HttpResponse:
@@ -140,7 +144,9 @@ class CheckoutRedirectView(RedirectView):
         customer: Customer,
         product_complementary: ProductComplementary,
     ) -> None:
-        currency, created = Currency.objects.get_or_create(currency=stripe_response["currency"].upper())
+        currency, created = Currency.objects.get_or_create(
+            currency=stripe_response["currency"].upper()
+        )
         TransactionHistorial.objects.create(
             product=product_complementary.product,
             product_complementary=product_complementary,

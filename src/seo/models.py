@@ -99,7 +99,9 @@ class Journey(Model):
 
 
 class VisiteurJourney(Journey):
-    user = ForeignKey(Visiteur, null=True, blank=True, on_delete=CASCADE, related_name="journeys")
+    user = ForeignKey(
+        Visiteur, null=True, blank=True, on_delete=CASCADE, related_name="journeys"
+    )
 
     class Meta:
         verbose_name = "Historial visitas anónimos"

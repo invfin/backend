@@ -37,12 +37,17 @@ class EngagementMachine:
             web_email_newsletter_obj.users_selected.add(*users_selected)
         return web_email_newsletter_obj
 
-    def create_newsletter(self, web_email_type: str, content_object: str, whom_to_send: str) -> WebsiteEmail:
+    def create_newsletter(
+        self, web_email_type: str, content_object: str, whom_to_send: str
+    ) -> WebsiteEmail:
         content_creator = self.get_creator(content_object)
         content_creator.for_content = [content_creation_constants.WEB]
-        newsletter_content_from_object = content_creator().create_newsletter_content_from_object()
+        newsletter_content_from_object = (
+            content_creator().create_newsletter_content_from_object()
+        )
         campaign, created = Campaign.objects.get_or_create(
-            slug=web_email_type, defaults={"title": constants.CONTENT_PURPOSES_MAP[web_email_type]}
+            slug=web_email_type,
+            defaults={"title": constants.CONTENT_PURPOSES_MAP[web_email_type]},
         )
         newsletter_content_from_object.pop("link")
         newsletter_content_from_object.update(

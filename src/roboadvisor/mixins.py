@@ -37,7 +37,9 @@ class ServicePaymentMixin:
         service = self.get_object()
         user_credits = user.user_profile.creditos
 
-        CreditUsageHistorial.objects.update_credits(user, service.price, ROBOADVISOR_USAGE, ADD, service)
+        CreditUsageHistorial.objects.update_credits(
+            user, service.price, ROBOADVISOR_USAGE, ADD, service
+        )
         if CreditUsageHistorial.objects.check_enought_credits(user, service.price):
             user.update_credits(-service.price)
             self.manage_service_activity(service_activity, "finished")

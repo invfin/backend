@@ -26,9 +26,13 @@ class Command(BaseCommand):
             inc_df["cost_of_revenue"] = df["costofrevenue"]
             inc_df["gross_profit"] = df["grossprofit"]
             inc_df["research_and_development_expenses"] = df["researchanddevelopmentexpenses"]
-            inc_df["general_and_administrative_expenses"] = df["generalandadministrativeexpenses"]
+            inc_df["general_and_administrative_expenses"] = df[
+                "generalandadministrativeexpenses"
+            ]
             inc_df["selling_and_marketing_expenses"] = df["sellingandmarketingexpenses"]
-            inc_df["selling_general_and_administrative_expenses"] = df["sellinggeneralandadministrativeexpenses"]
+            inc_df["selling_general_and_administrative_expenses"] = df[
+                "sellinggeneralandadministrativeexpenses"
+            ]
             inc_df["other_expenses"] = df["otherexpenses"]
             inc_df["operating_expenses"] = df["operatingexpenses"]
             inc_df["cost_and_expenses"] = df["costandexpenses"]
@@ -44,13 +48,17 @@ class Command(BaseCommand):
             inc_df["weighted_average_shs_out_dil"] = df["weightedaverageshsoutdil"]
 
             bs_df["account_payables"] = df["accountpayables"]
-            bs_df["accumulated_other_comprehensive_income_loss"] = df["accumulatedothercomprehensiveincomeloss"]
+            bs_df["accumulated_other_comprehensive_income_loss"] = df[
+                "accumulatedothercomprehensiveincomeloss"
+            ]
             bs_df["cash_and_cash_equivalents"] = df["cashandcashequivalents"]
             bs_df["cash_and_short_term_investments"] = df["cashandshortterminvestments"]
             bs_df["common_stock"] = df["commonstock"]
             bs_df["deferred_revenue"] = df["deferredrevenue"]
             bs_df["deferred_revenue_non_current"] = df["deferredrevenuenoncurrent"]
-            bs_df["deferred_tax_liabilities_non_current"] = df["deferredtaxliabilitiesnoncurrent"]
+            bs_df["deferred_tax_liabilities_non_current"] = df[
+                "deferredtaxliabilitiesnoncurrent"
+            ]
             bs_df["goodwill"] = df["goodwill"]
             bs_df["goodwill_and_intangible_assets"] = df["goodwillandintangibleassets"]
             bs_df["intangible_assets"] = df["intangibleassets"]
@@ -78,7 +86,9 @@ class Command(BaseCommand):
             bs_df["total_debt"] = df["totaldebt"]
             bs_df["total_investments"] = df["totalinvestments"]
             bs_df["total_liabilities"] = df["totalliabilities"]
-            bs_df["total_liabilities_and_stockholders_equity"] = df["totalliabilitiesandstockholdersequity"]
+            bs_df["total_liabilities_and_stockholders_equity"] = df[
+                "totalliabilitiesandstockholdersequity"
+            ]
             bs_df["total_non_current_assets"] = df["totalnoncurrentassets"]
             bs_df["total_non_current_liabilities"] = df["totalnoncurrentliabilities"]
             bs_df["total_stockholders_equity"] = df["totalstockholdersequity"]
@@ -99,10 +109,18 @@ class Command(BaseCommand):
             cf_df["effect_of_forex_changes_on_cash"] = df["effectofforexchangesoncash"]
             cf_df["free_cash_flow"] = df["freecashflow"]
             cf_df["inventory"] = df["inventory_y"]
-            cf_df["investments_in_property_plant_and_equipment"] = df["investmentsinpropertyplantandequipment"]
-            cf_df["net_cash_provided_by_operating_activities"] = df["netcashprovidedbyoperatingactivities"]
-            cf_df["net_cash_used_for_investing_activites"] = df["netcashusedforinvestingactivites"]
-            cf_df["net_cash_used_provided_by_financing_activities"] = df["netcashusedprovidedbyfinancingactivities"]
+            cf_df["investments_in_property_plant_and_equipment"] = df[
+                "investmentsinpropertyplantandequipment"
+            ]
+            cf_df["net_cash_provided_by_operating_activities"] = df[
+                "netcashprovidedbyoperatingactivities"
+            ]
+            cf_df["net_cash_used_for_investing_activites"] = df[
+                "netcashusedforinvestingactivites"
+            ]
+            cf_df["net_cash_used_provided_by_financing_activities"] = df[
+                "netcashusedprovidedbyfinancingactivities"
+            ]
             cf_df["net_change_in_cash"] = df["netchangeincash"]
             cf_df["net_income"] = df["netincome_y"]
             cf_df["operating_cash_flow"] = df["operatingcashflow"]

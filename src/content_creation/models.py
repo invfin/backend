@@ -42,7 +42,9 @@ class Emoji(Model, BaseToAllMixin):
 class DefaultTilte(Model, BaseToAllMixin):
     title = TextField(default="")
     for_content = PositiveIntegerField(choices=FOR_CONTENT, blank=True, default=ALL)
-    purpose = CharField(max_length=500, choices=web_constants.CONTENT_PURPOSES, null=True, blank=True)
+    purpose = CharField(
+        max_length=500, choices=web_constants.CONTENT_PURPOSES, null=True, blank=True
+    )
     objects = TitlesManager()
 
     class Meta:
@@ -56,7 +58,9 @@ class DefaultTilte(Model, BaseToAllMixin):
 class DefaultContent(Model, BaseToAllMixin):
     title = CharField(max_length=500)
     for_content = PositiveIntegerField(choices=FOR_CONTENT, blank=True, default=ALL)
-    purpose = CharField(max_length=500, choices=web_constants.CONTENT_PURPOSES, null=True, blank=True)
+    purpose = CharField(
+        max_length=500, choices=web_constants.CONTENT_PURPOSES, null=True, blank=True
+    )
     content = RichTextField()
     objects = DefaultContentManager()
 

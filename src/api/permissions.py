@@ -14,11 +14,16 @@ class ReadOnly(BasePermission):
 
 
 class CheckCuota(ReadOnly):
-    message = "Ya has usado toda tu cuota, si quieres aumentarla puedes pedirlo desde tu perfil"
+    message = (
+        "Ya has usado toda tu cuota, si quieres aumentarla puedes pedirlo desde tu perfil"
+    )
 
     def has_permission(self, request, view):
         super().has_permission(request, view)
         key = request.GET.get("api_key")
         if key:
             return Key.objects.has_cuota(key)
-        raise AuthenticationFailed("Introduce tu clave en api_key, si no tienes alguna entra en tu perfil para crearla")
+        raise AuthenticationFailed(
+            "Introduce tu clave en api_key, si no tienes alguna entra en tu perfil para"
+            " crearla"
+        )

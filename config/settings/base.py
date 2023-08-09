@@ -504,6 +504,10 @@ TWITTER_CONSUMER_SECRET = env.str("TWITTER_CONSUMER_SECRET", "not-set")
 TWITTER_ACCESS_TOKEN = env.str("TWITTER_ACCESS_TOKEN", "not-set")
 TWITTER_ACCESS_TOKEN_SECRET = env.str("TWITTER_ACCESS_TOKEN_SECRET", "not-set")
 
+# Recommendations
+# ------------------------------------------------------------------------------
+RECSYS_PUBLIC_KEY = env.str("RECSYS_PUBLIC_KEY", "not-set")
+RECSYS_PRIVATE_KEY = env.str("RECSYS_PRIVATE_KEY", "not-set")
 
 # List of compiled regular expression objects representing User-Agent strings
 # that are not allowed to visit any page, systemwide. Use this for bad

@@ -32,18 +32,19 @@ class TestFacePoster(TestCase):
         )
 
     def test_create_fb_description(self):
-        description = self.facebook.create_fb_description("title", "contenido", "#list #de #hashtags")
+        description = self.facebook.create_fb_description(
+            "title", "contenido", "#list #de #hashtags"
+        )
         assert (
-            "title\n\ncontenido\n\n"
-            "Prueba las herramientas que todo inversor inteligente necesita: https://inversionesyfinanzas.xyz/\n"
-            "Visita nuestras redes sociales:\n"
-            "Youtube: https://www.youtube.com/c/InversionesyFinanzas/\n"
-            "Facebook: https://www.facebook.com/InversionesyFinanzas/\n"
-            "Instagram: https://www.instagram.com/inversiones.finanzas/\n"
-            "TikTok: https://www.tiktok.com/@inversionesyfinanzas?\n"
-            "Twitter : https://twitter.com/InvFinz\n"
-            "LinkedIn : https://www.linkedin.com/company/inversiones-finanzas\n"
-            ".\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n#list #de #hashtags"
+            "title\n\ncontenido\n\nPrueba las herramientas que todo inversor inteligente"
+            " necesita: https://inversionesyfinanzas.xyz/\nVisita nuestras redes"
+            " sociales:\nYoutube: https://www.youtube.com/c/InversionesyFinanzas/\nFacebook:"
+            " https://www.facebook.com/InversionesyFinanzas/\nInstagram:"
+            " https://www.instagram.com/inversiones.finanzas/\nTikTok:"
+            " https://www.tiktok.com/@inversionesyfinanzas?\nTwitter :"
+            " https://twitter.com/InvFinz\nLinkedIn :"
+            " https://www.linkedin.com/company/inversiones-finanzas\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n#list"
+            " #de #hashtags"
             == description
         )
 

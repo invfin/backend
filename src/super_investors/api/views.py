@@ -4,7 +4,11 @@ from src.api.pagination import StandardResultPagination
 from src.api.views import BaseAPIView
 
 from ..models import Superinvestor, SuperinvestorActivity, SuperinvestorHistory
-from .serializers import SuperinvestorActivitySerializer, SuperinvestorHistorySerializer, SuperinvestorSerializer
+from .serializers import (
+    SuperinvestorActivitySerializer,
+    SuperinvestorHistorySerializer,
+    SuperinvestorSerializer,
+)
 
 User = get_user_model()
 

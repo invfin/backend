@@ -21,7 +21,9 @@ class BaseVoteAndCommentViewTestMixin:
         author = DjangoTestingModel.create(get_user_model())
         cls.term = DjangoTestingModel.create(Term, id=1, slug="slug", author=author)
         cls.question = DjangoTestingModel.create(Question, id=1, slug="slug", author=author)
-        cls.answer = DjangoTestingModel.create(Answer, id=1, question_related=cls.question, author=author)
+        cls.answer = DjangoTestingModel.create(
+            Answer, id=1, question_related=cls.question, author=author
+        )
 
     def test_build_object(self):
         for app_label, object_name, object_id, expected_result in [
@@ -30,7 +32,9 @@ class BaseVoteAndCommentViewTestMixin:
             ("preguntas_respuestas", "question", "1", self.question),
         ]:
             with self.subTest(app_label):
-                assert expected_result == self.view_class().build_object(app_label, object_name, object_id)
+                assert expected_result == self.view_class().build_object(
+                    app_label, object_name, object_id
+                )
 
     def test_success_url(self):
         for obj, expected_result in [
@@ -62,7 +66,9 @@ class BaseVoteAndCommentViewTestMixin:
                     pass
             with self.subTest("Test success"):
                 self.view_class().response()
-                mock_prepare_notification_task.assert_called_once_with(obj, self.notification_type)
+                mock_prepare_notification_task.assert_called_once_with(
+                    obj, self.notification_type
+                )
 
 
 class TestCreateCommentView(BaseVoteAndCommentViewTestMixin, APITestCase):
@@ -71,8 +77,14 @@ class TestCreateCommentView(BaseVoteAndCommentViewTestMixin, APITestCase):
     def test_parse_url(self):
         for obj, expected_result in [
             (self.term, {"id": "1", "app_label": "escritos", "object_name": "Term"}),
-            (self.question, {"id": "1", "app_label": "preguntas_respuestas", "object_name": "Question"}),
-            (self.answer, {"id": "1", "app_label": "preguntas_respuestas", "object_name": "Answer"}),
+            (
+                self.question,
+                {"id": "1", "app_label": "preguntas_respuestas", "object_name": "Question"},
+            ),
+            (
+                self.answer,
+                {"id": "1", "app_label": "preguntas_respuestas", "object_name": "Answer"},
+            ),
         ]:
             with self.subTest(obj):
                 assert expected_result == self.view_class().parse_url(obj.encoded_url)
@@ -155,7 +167,9 @@ class TestVoteView(BaseVoteAndCommentViewTestMixin, APITestCase):
             ),
         ]:
             with self.subTest(obj):
-                assert expected_result == self.view_class().parse_url(obj.base_encoded_url_down)
+                assert expected_result == self.view_class().parse_url(
+                    obj.base_encoded_url_down
+                )
 
     def test_get_object_upvote(self):
         for encoded_url, expected_result in [

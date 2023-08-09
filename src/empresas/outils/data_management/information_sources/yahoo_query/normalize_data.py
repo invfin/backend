@@ -59,7 +59,9 @@ class NormalizeYahooQuery:
             common_stock_equity=yahooquery_serie.get("CommonStockEquity"),
             current_assets=yahooquery_serie.get("CurrentAssets"),
             current_debt=yahooquery_serie.get("CurrentDebt"),
-            current_debt_and_capital_lease_obligation=yahooquery_serie.get("CurrentDebtAndCapitalLeaseObligation"),
+            current_debt_and_capital_lease_obligation=yahooquery_serie.get(
+                "CurrentDebtAndCapitalLeaseObligation"
+            ),
             current_deferred_liabilities=yahooquery_serie.get("CurrentDeferredLiabilities"),
             current_deferred_revenue=yahooquery_serie.get("CurrentDeferredRevenue"),
             current_liabilities=yahooquery_serie.get("CurrentLiabilities"),
@@ -75,14 +77,20 @@ class NormalizeYahooQuery:
             land_and_improvements=yahooquery_serie.get("LandAndImprovements"),
             leases=yahooquery_serie.get("Leases"),
             long_term_debt=yahooquery_serie.get("LongTermDebt"),
-            long_term_debt_and_capital_lease_obligation=yahooquery_serie.get("LongTermDebtAndCapitalLeaseObligation"),
+            long_term_debt_and_capital_lease_obligation=yahooquery_serie.get(
+                "LongTermDebtAndCapitalLeaseObligation"
+            ),
             machinery_furniture_equipment=yahooquery_serie.get("MachineryFurnitureEquipment"),
             net_debt=yahooquery_serie.get("NetDebt"),
             net_ppe=yahooquery_serie.get("NetPPE"),
             net_tangible_assets=yahooquery_serie.get("NetTangibleAssets"),
-            non_current_deferred_liabilities=yahooquery_serie.get("NonCurrentDeferredLiabilities"),
+            non_current_deferred_liabilities=yahooquery_serie.get(
+                "NonCurrentDeferredLiabilities"
+            ),
             non_current_deferred_revenue=yahooquery_serie.get("NonCurrentDeferredRevenue"),
-            non_current_deferred_taxes_liabilities=yahooquery_serie.get("NonCurrentDeferredTaxesLiabilities"),
+            non_current_deferred_taxes_liabilities=yahooquery_serie.get(
+                "NonCurrentDeferredTaxesLiabilities"
+            ),
             ordinary_shares_number=yahooquery_serie.get("OrdinarySharesNumber"),
             other_current_assets=yahooquery_serie.get("OtherCurrentAssets"),
             other_current_borrowings=yahooquery_serie.get("OtherCurrentBorrowings"),
@@ -102,13 +110,19 @@ class NormalizeYahooQuery:
             total_assets=yahooquery_serie.get("TotalAssets"),
             total_capitalization=yahooquery_serie.get("TotalCapitalization"),
             total_debt=yahooquery_serie.get("TotalDebt"),
-            total_equity_gross_minority_interest=yahooquery_serie.get("TotalEquityGrossMinorityInterest"),
-            total_liabilities_net_minority_interest=yahooquery_serie.get("TotalLiabilitiesNetMinorityInterest"),
+            total_equity_gross_minority_interest=yahooquery_serie.get(
+                "TotalEquityGrossMinorityInterest"
+            ),
+            total_liabilities_net_minority_interest=yahooquery_serie.get(
+                "TotalLiabilitiesNetMinorityInterest"
+            ),
             total_non_current_assets=yahooquery_serie.get("TotalNonCurrentAssets"),
             total_non_current_liabilities_net_minority_interest=yahooquery_serie.get(
                 "TotalNonCurrentLiabilitiesNetMinorityInterest"
             ),
-            tradeand_other_payables_non_current=yahooquery_serie.get("TradeandOtherPayablesNonCurrent"),
+            tradeand_other_payables_non_current=yahooquery_serie.get(
+                "TradeandOtherPayablesNonCurrent"
+            ),
             working_capital=yahooquery_serie.get("WorkingCapital"),
         )
 
@@ -140,13 +154,21 @@ class NormalizeYahooQuery:
                 "CashFlowFromContinuingOperatingActivities"
             ),
             change_in_account_payable=yahooquery_serie.get("ChangeInAccountPayable"),
-            change_in_cash_supplemental_as_reported=yahooquery_serie.get("ChangeInCashSupplementalAsReported"),
+            change_in_cash_supplemental_as_reported=yahooquery_serie.get(
+                "ChangeInCashSupplementalAsReported"
+            ),
             change_in_inventory=yahooquery_serie.get("ChangeInInventory"),
             change_in_other_current_assets=yahooquery_serie.get("ChangeInOtherCurrentAssets"),
-            change_in_other_current_liabilities=yahooquery_serie.get("ChangeInOtherCurrentLiabilities"),
-            change_in_other_working_capital=yahooquery_serie.get("ChangeInOtherWorkingCapital"),
+            change_in_other_current_liabilities=yahooquery_serie.get(
+                "ChangeInOtherCurrentLiabilities"
+            ),
+            change_in_other_working_capital=yahooquery_serie.get(
+                "ChangeInOtherWorkingCapital"
+            ),
             change_in_payable=yahooquery_serie.get("ChangeInPayable"),
-            change_in_payables_and_accrued_expense=yahooquery_serie.get("ChangeInPayablesAndAccruedExpense"),
+            change_in_payables_and_accrued_expense=yahooquery_serie.get(
+                "ChangeInPayablesAndAccruedExpense"
+            ),
             change_in_receivables=yahooquery_serie.get("ChangeInReceivables"),
             change_in_working_capital=yahooquery_serie.get("ChangeInWorkingCapital"),
             changes_in_account_receivables=yahooquery_serie.get("ChangesInAccountReceivables"),
@@ -156,13 +178,19 @@ class NormalizeYahooQuery:
             common_stock_payments=yahooquery_serie.get("CommonStockPayments"),
             deferred_income_tax=yahooquery_serie.get("DeferredIncomeTax"),
             deferred_tax=yahooquery_serie.get("DeferredTax"),
-            depreciation_amortization_depletion=yahooquery_serie.get("DepreciationAmortizationDepletion"),
+            depreciation_amortization_depletion=yahooquery_serie.get(
+                "DepreciationAmortizationDepletion"
+            ),
             depreciation_and_amortization=yahooquery_serie.get("DepreciationAndAmortization"),
             end_cash_position=yahooquery_serie.get("EndCashPosition"),
             financing_cash_flow=yahooquery_serie.get("FinancingCashFlow"),
             free_cash_flow=yahooquery_serie.get("FreeCashFlow"),
-            income_tax_paid_supplemental_data=yahooquery_serie.get("IncomeTaxPaidSupplementalData"),
-            interest_paid_supplemental_data=yahooquery_serie.get("InterestPaidSupplementalData"),
+            income_tax_paid_supplemental_data=yahooquery_serie.get(
+                "IncomeTaxPaidSupplementalData"
+            ),
+            interest_paid_supplemental_data=yahooquery_serie.get(
+                "InterestPaidSupplementalData"
+            ),
             investing_cash_flow=yahooquery_serie.get("InvestingCashFlow"),
             issuance_of_capital_stock=yahooquery_serie.get("IssuanceOfCapitalStock"),
             issuance_of_debt=yahooquery_serie.get("IssuanceOfDebt"),
@@ -171,8 +199,12 @@ class NormalizeYahooQuery:
             net_business_purchase_and_sale=yahooquery_serie.get("NetBusinessPurchaseAndSale"),
             net_common_stock_issuance=yahooquery_serie.get("NetCommonStockIssuance"),
             net_income=yahooquery_serie.get("NetIncome"),
-            net_income_from_continuing_operations=yahooquery_serie.get("NetIncomeFromContinuingOperations"),
-            net_investment_purchase_and_sale=yahooquery_serie.get("NetInvestmentPurchaseAndSale"),
+            net_income_from_continuing_operations=yahooquery_serie.get(
+                "NetIncomeFromContinuingOperations"
+            ),
+            net_investment_purchase_and_sale=yahooquery_serie.get(
+                "NetInvestmentPurchaseAndSale"
+            ),
             net_issuance_payments_of_debt=yahooquery_serie.get("NetIssuancePaymentsOfDebt"),
             net_long_term_debt_issuance=yahooquery_serie.get("NetLongTermDebtIssuance"),
             net_other_financing_charges=yahooquery_serie.get("NetOtherFinancingCharges"),
@@ -211,7 +243,9 @@ class NormalizeYahooQuery:
             cost_of_revenue=yahooquery_serie.get("CostOfRevenue"),
             diluted_average_shares=yahooquery_serie.get("DilutedAverageShares"),
             diluted_eps=yahooquery_serie.get("DilutedEPS"),
-            diluted_ni_availto_com_stockholders=yahooquery_serie.get("DilutedNIAvailtoComStockholders"),
+            diluted_ni_availto_com_stockholders=yahooquery_serie.get(
+                "DilutedNIAvailtoComStockholders"
+            ),
             ebit=yahooquery_serie.get("EBIT"),
             ebitda=yahooquery_serie.get("EBITDA"),
             gross_profit=yahooquery_serie.get("GrossProfit"),
@@ -221,7 +255,9 @@ class NormalizeYahooQuery:
             interest_income_non_operating=yahooquery_serie.get("InterestIncomeNonOperating"),
             net_income=yahooquery_serie.get("NetIncome"),
             net_income_common_stockholders=yahooquery_serie.get("NetIncomeCommonStockholders"),
-            net_income_continuous_operations=yahooquery_serie.get("NetIncomeContinuousOperations"),
+            net_income_continuous_operations=yahooquery_serie.get(
+                "NetIncomeContinuousOperations"
+            ),
             net_income_from_continuing_and_discontinued_operation=yahooquery_serie.get(
                 "NetIncomeFromContinuingAndDiscontinuedOperation"
             ),
@@ -232,24 +268,32 @@ class NormalizeYahooQuery:
                 "NetIncomeIncludingNoncontrollingInterests"
             ),
             net_interest_income=yahooquery_serie.get("NetInterestIncome"),
-            net_non_operating_interest_income_expense=yahooquery_serie.get("NetNonOperatingInterestIncomeExpense"),
+            net_non_operating_interest_income_expense=yahooquery_serie.get(
+                "NetNonOperatingInterestIncomeExpense"
+            ),
             normalized_ebitda=yahooquery_serie.get("NormalizedEBITDA"),
             normalized_income=yahooquery_serie.get("NormalizedIncome"),
             operating_expense=yahooquery_serie.get("OperatingExpense"),
             operating_income=yahooquery_serie.get("OperatingIncome"),
             operating_revenue=yahooquery_serie.get("OperatingRevenue"),
             other_income_expense=yahooquery_serie.get("OtherIncomeExpense"),
-            other_non_operating_income_expenses=yahooquery_serie.get("OtherNonOperatingIncomeExpenses"),
+            other_non_operating_income_expenses=yahooquery_serie.get(
+                "OtherNonOperatingIncomeExpenses"
+            ),
             pretax_income=yahooquery_serie.get("PretaxIncome"),
             reconciled_cost_of_revenue=yahooquery_serie.get("ReconciledCostOfRevenue"),
             reconciled_depreciation=yahooquery_serie.get("ReconciledDepreciation"),
             research_and_development=yahooquery_serie.get("ResearchAndDevelopment"),
-            selling_general_and_administration=yahooquery_serie.get("SellingGeneralAndAdministration"),
+            selling_general_and_administration=yahooquery_serie.get(
+                "SellingGeneralAndAdministration"
+            ),
             tax_effect_of_unusual_items=yahooquery_serie.get("TaxEffectOfUnusualItems"),
             tax_provision=yahooquery_serie.get("TaxProvision"),
             tax_rate_for_calcs=yahooquery_serie.get("TaxRateForCalcs"),
             total_expenses=yahooquery_serie.get("TotalExpenses"),
-            total_operating_income_as_reported=yahooquery_serie.get("TotalOperatingIncomeAsReported"),
+            total_operating_income_as_reported=yahooquery_serie.get(
+                "TotalOperatingIncomeAsReported"
+            ),
             total_revenue=yahooquery_serie.get("TotalRevenue"),
         )
 
@@ -267,19 +311,27 @@ class NormalizeYahooQuery:
         last_split_date = key_stats.get("lastSplitDate")
         if last_split_date:
             last_split_date = (
-                datetime.datetime.strptime(last_split_date, "%Y-%m-%d %H:%M:%S").date().strftime("%Y-%m-%d")
+                datetime.datetime.strptime(last_split_date, "%Y-%m-%d %H:%M:%S")
+                .date()
+                .strftime("%Y-%m-%d")
             )
         if last_fiscal_year_end:
             last_fiscal_year_end = (
-                datetime.datetime.strptime(last_fiscal_year_end, "%Y-%m-%d %H:%M:%S").date().strftime("%Y-%m-%d")
+                datetime.datetime.strptime(last_fiscal_year_end, "%Y-%m-%d %H:%M:%S")
+                .date()
+                .strftime("%Y-%m-%d")
             )
         if next_fiscal_year_end:
             next_fiscal_year_end = (
-                datetime.datetime.strptime(next_fiscal_year_end, "%Y-%m-%d %H:%M:%S").date().strftime("%Y-%m-%d")
+                datetime.datetime.strptime(next_fiscal_year_end, "%Y-%m-%d %H:%M:%S")
+                .date()
+                .strftime("%Y-%m-%d")
             )
         if most_recent_quarter:
             most_recent_quarter = (
-                datetime.datetime.strptime(most_recent_quarter, "%Y-%m-%d %H:%M:%S").date().strftime("%Y-%m-%d")
+                datetime.datetime.strptime(most_recent_quarter, "%Y-%m-%d %H:%M:%S")
+                .date()
+                .strftime("%Y-%m-%d")
             )
         return dict(
             financials=key_stats,

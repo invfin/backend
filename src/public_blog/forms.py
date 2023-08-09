@@ -18,7 +18,9 @@ class WriterProfileForm(ModelForm):
 
 
 class PublicBlogForm(ModelForm):
-    status = ChoiceField(choices=((1, "Publicar"), (2, "Guardar como borrador"), (3, "Programar")))
+    status = ChoiceField(
+        choices=((1, "Publicar"), (2, "Guardar como borrador"), (3, "Programar"))
+    )
 
     class Meta:
         model = PublicBlog

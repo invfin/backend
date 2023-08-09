@@ -50,54 +50,87 @@ class CompanyManager(BaseManager):
         return self.prefetch_related(
             Prefetch(
                 "inc_statements",
-                queryset=self.model.inc_statements.rel.related_model.objects.yearly(False, **lookup_filter),
+                queryset=self.model.inc_statements.rel.related_model.objects.yearly(
+                    False, **lookup_filter
+                ),
             ),
             Prefetch(
                 "balance_sheets",
-                queryset=self.model.balance_sheets.rel.related_model.objects.yearly(False, **lookup_filter),
+                queryset=self.model.balance_sheets.rel.related_model.objects.yearly(
+                    False, **lookup_filter
+                ),
             ),
             Prefetch(
                 "cf_statements",
-                queryset=self.model.cf_statements.rel.related_model.objects.yearly(False, **lookup_filter),
+                queryset=self.model.cf_statements.rel.related_model.objects.yearly(
+                    False, **lookup_filter
+                ),
             ),
             Prefetch(
                 "rentability_ratios",
-                queryset=self.model.rentability_ratios.rel.related_model.objects.yearly(False, **lookup_filter),
+                queryset=self.model.rentability_ratios.rel.related_model.objects.yearly(
+                    False, **lookup_filter
+                ),
             ),
             Prefetch(
                 "liquidity_ratios",
-                queryset=self.model.liquidity_ratios.rel.related_model.objects.yearly(False, **lookup_filter),
+                queryset=self.model.liquidity_ratios.rel.related_model.objects.yearly(
+                    False, **lookup_filter
+                ),
             ),
-            Prefetch("margins", queryset=self.model.margins.rel.related_model.objects.yearly(False, **lookup_filter)),
             Prefetch(
-                "fcf_ratios", queryset=self.model.fcf_ratios.rel.related_model.objects.yearly(False, **lookup_filter)
+                "margins",
+                queryset=self.model.margins.rel.related_model.objects.yearly(
+                    False, **lookup_filter
+                ),
+            ),
+            Prefetch(
+                "fcf_ratios",
+                queryset=self.model.fcf_ratios.rel.related_model.objects.yearly(
+                    False, **lookup_filter
+                ),
             ),
             Prefetch(
                 "per_share_values",
-                queryset=self.model.per_share_values.rel.related_model.objects.yearly(False, **lookup_filter),
+                queryset=self.model.per_share_values.rel.related_model.objects.yearly(
+                    False, **lookup_filter
+                ),
             ),
             Prefetch(
                 "non_gaap_figures",
-                queryset=self.model.non_gaap_figures.rel.related_model.objects.yearly(False, **lookup_filter),
+                queryset=self.model.non_gaap_figures.rel.related_model.objects.yearly(
+                    False, **lookup_filter
+                ),
             ),
             Prefetch(
                 "operation_risks_ratios",
-                queryset=self.model.operation_risks_ratios.rel.related_model.objects.yearly(False, **lookup_filter),
+                queryset=self.model.operation_risks_ratios.rel.related_model.objects.yearly(
+                    False, **lookup_filter
+                ),
             ),
             Prefetch(
-                "ev_ratios", queryset=self.model.ev_ratios.rel.related_model.objects.yearly(False, **lookup_filter)
+                "ev_ratios",
+                queryset=self.model.ev_ratios.rel.related_model.objects.yearly(
+                    False, **lookup_filter
+                ),
             ),
             Prefetch(
                 "growth_rates",
-                queryset=self.model.growth_rates.rel.related_model.objects.yearly(False, **lookup_filter),
+                queryset=self.model.growth_rates.rel.related_model.objects.yearly(
+                    False, **lookup_filter
+                ),
             ),
             Prefetch(
                 "efficiency_ratios",
-                queryset=self.model.efficiency_ratios.rel.related_model.objects.yearly(False, **lookup_filter),
+                queryset=self.model.efficiency_ratios.rel.related_model.objects.yearly(
+                    False, **lookup_filter
+                ),
             ),
             Prefetch(
                 "price_to_ratios",
-                queryset=self.model.price_to_ratios.rel.related_model.objects.yearly(False, **lookup_filter),
+                queryset=self.model.price_to_ratios.rel.related_model.objects.yearly(
+                    False, **lookup_filter
+                ),
             ),
         ).get(**kwargs)
 
@@ -145,19 +178,27 @@ class CompanyManager(BaseManager):
         )
 
     def companies_by_main_exchange(self, name=None):
-        return self.filter(exchange__main_org__name=name).exclude(name__contains="Need-parsing")
-
-    def clean_companies(self):
-        return self.filter(no_incs=False, no_bs=False, no_cfs=False).exclude(name__contains="Need-parsing")
-
-    def clean_companies_by_main_exchange(self, name=None):
-        return self.filter(no_incs=False, no_bs=False, no_cfs=False, exchange__main_org__name=name).exclude(
+        return self.filter(exchange__main_org__name=name).exclude(
             name__contains="Need-parsing"
         )
 
+    def clean_companies(self):
+        return self.filter(no_incs=False, no_bs=False, no_cfs=False).exclude(
+            name__contains="Need-parsing"
+        )
+
+    def clean_companies_by_main_exchange(self, name=None):
+        return self.filter(
+            no_incs=False, no_bs=False, no_cfs=False, exchange__main_org__name=name
+        ).exclude(name__contains="Need-parsing")
+
     def complete_companies_by_main_exchange(self, name=None):
         return self.filter(
-            no_incs=False, no_bs=False, no_cfs=False, description_translated=True, exchange__main_org__name=name
+            no_incs=False,
+            no_bs=False,
+            no_cfs=False,
+            description_translated=True,
+            exchange__main_org__name=name,
         ).exclude(name__contains="Need-parsing")
 
     def get_similar_companies(self, sector_id, industry_id):
@@ -181,7 +222,12 @@ class CompanyManager(BaseManager):
 
     def clean_companies_to_update(self, name=None):
         return self.filter(
-            no_incs=False, no_bs=False, no_cfs=False, exchange__main_org__name=name, updated=False, has_error=False
+            no_incs=False,
+            no_bs=False,
+            no_cfs=False,
+            exchange__main_org__name=name,
+            updated=False,
+            has_error=False,
         )
 
     def get_random_most_visited_clean_company(self, exclude: Dict[str, Any] = {}):

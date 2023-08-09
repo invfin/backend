@@ -20,7 +20,9 @@ class TestDFInfoCreator(TestCase):
 
     @patch("src.general.outils.save_from_df.DFInfoCreator.create_statement")
     def test_create_financials(self, mock_create_statement):
-        self.info.create_financials("incomes_df", "balance_sheets_df", "cashflows_df", "period")
+        self.info.create_financials(
+            "incomes_df", "balance_sheets_df", "cashflows_df", "period"
+        )
         calls = [
             call(
                 "incomes_df",

@@ -8,8 +8,12 @@ from ..models import (
 
 
 def get_investor_type(user, service_activity):
-    experience = RoboAdvisorQuestionInvestorExperience.objects.get(user=user, service_activity=service_activity)
-    risk_aversion = RoboAdvisorQuestionRiskAversion.objects.get(user=user, service_activity=service_activity)
+    experience = RoboAdvisorQuestionInvestorExperience.objects.get(
+        user=user, service_activity=service_activity
+    )
+    risk_aversion = RoboAdvisorQuestionRiskAversion.objects.get(
+        user=user, service_activity=service_activity
+    )
 
     view_on_volatility = risk_aversion.volatilidad
     objectif = experience.objectif
@@ -56,7 +60,11 @@ def get_investor_type(user, service_activity):
                 risk_profile = 5
                 profile_explanation = constants.PROFILE_REGULAR
 
-    type_profile_investor = {"horizon": horizon, "risk_profile": risk_profile, "investor_type": investor_type}
+    type_profile_investor = {
+        "horizon": horizon,
+        "risk_profile": risk_profile,
+        "investor_type": investor_type,
+    }
 
     if user.has_investor_profile:
         investor_profile = user.user_investor_profile

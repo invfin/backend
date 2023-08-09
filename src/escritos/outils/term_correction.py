@@ -23,11 +23,10 @@ class TermCorrectionManagement:
 
     def create_content(self):
         return (
-            f"Enhorabuena, tu correción para <a href='{self.term_correction.shareable_link}' "
-            f"target='_blank'>{self.term_correction.title}</a> ha sido aprovada."
-            "<br></br>"
-            "Desde el equipo de InvFin te damos las gracias por ayudar a mejorar el contenido para "
-            "poder seguir ayudando al resto de la comunidad."
+            f"Enhorabuena, tu correción para <a href='{self.term_correction.shareable_link}'"
+            f" target='_blank'>{self.term_correction.title}</a> ha sido"
+            " aprovada.<br></br>Desde el equipo de InvFin te damos las gracias por ayudar a"
+            " mejorar el contenido para poder seguir ayudando al resto de la comunidad."
         )
 
     def update_correction_data_when_approved(self, approved_by, fields: List[str]) -> None:
@@ -35,7 +34,9 @@ class TermCorrectionManagement:
         self.term_correction.date_approved = timezone.now()
         self.term_correction.approved_by = approved_by
         self.replace_content_with_correction(fields)
-        self.term_correction.save(update_fields=["is_approved", "date_approved", "approved_by"])
+        self.term_correction.save(
+            update_fields=["is_approved", "date_approved", "approved_by"]
+        )
         return None
 
     def replace_content_with_correction(self, fields: List[str]) -> None:

@@ -17,7 +17,11 @@ class JourneyClassifier:
     def get_user_or_visiteur(
         self,
         request,
-    ) -> Tuple[Optional[Union[Visiteur, User]], Optional[str], Optional[Union[VisiteurJourney, UserJourney]]]:
+    ) -> Tuple[
+        Optional[Union[Visiteur, User]],
+        Optional[str],
+        Optional[Union[VisiteurJourney, UserJourney]],
+    ]:
         default_journey_model = None
         user_str = ""
         user = None
@@ -51,7 +55,9 @@ class JourneyClassifier:
             )
             model_visited, journey_model = self.get_specific_journey(current_path)
             if model_visited and journey_model:
-                apps.get_model(app_label="seo", model_name=f"{user_str}{journey_model}").objects.create(
+                apps.get_model(
+                    app_label="seo", model_name=f"{user_str}{journey_model}"
+                ).objects.create(
                     user=user, visit=journey, model_visited=model_visited, date=timezone.now()
                 )
 
@@ -66,7 +72,10 @@ class JourneyClassifier:
     def get_specific_journey(
         self,
         current_path: str,
-    ) -> Tuple[Optional[Union[Type[Company], Type[Term], Type[Question], Type[PublicBlog]]], Optional[str]]:
+    ) -> Tuple[
+        Optional[Union[Type[Company], Type[Term], Type[Question], Type[PublicBlog]]],
+        Optional[str],
+    ]:
         splited_path = current_path.split("/")
 
         if all(

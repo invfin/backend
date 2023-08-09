@@ -138,12 +138,16 @@ class TestEmailEngamentTask(TestCase):
         assert email.sent is True
 
     def test_get_email_parameters_to_send(self):
-        email_serialized, web_objective = self.engagement_task_campaign.get_email_parameters_to_send()
+        email_serialized, web_objective = (
+            self.engagement_task_campaign.get_email_parameters_to_send()
+        )
         assert "campaign-slug" == web_objective
         assert email_serialized == {"sender": "InvFin", **self.email_campaign.email_serialized}
 
     def test_return_emailing_info(self):
-        users_to_email, email_serialized, web_objective = self.engagement_task_campaign.return_emailing_info()
+        users_to_email, email_serialized, web_objective = (
+            self.engagement_task_campaign.return_emailing_info()
+        )
         assert "campaign-slug" == web_objective
         assert email_serialized == {"sender": "InvFin", **self.email_campaign.email_serialized}
         self.assertNotIn(self.user_for_all, users_to_email)
@@ -185,12 +189,18 @@ class TestTask(TestCase):
 
     @patch("src.engagement_machine.tasks.send_email_engagement_task.delay")
     @patch("src.emailing.outils.emailing.EmailingSystem.simple_email")
-    def test_check_and_start_send_email_engagement_task(self, mock_send_email_engagement_task, mock_simple_email):
+    def test_check_and_start_send_email_engagement_task(
+        self, mock_send_email_engagement_task, mock_simple_email
+    ):
         check_and_start_send_email_engagement_task()
-        mock_simple_email.called_with("There are no website emails ready", "Create newsletters")
+        mock_simple_email.called_with(
+            "There are no website emails ready", "Create newsletters"
+        )
 
         yesterday = timezone.now() - timedelta(days=1)
-        web_newsletter_yesterday = DjangoTestingModel.create(WebsiteEmail, sent=False, date_to_send=yesterday)
+        web_newsletter_yesterday = DjangoTestingModel.create(
+            WebsiteEmail, sent=False, date_to_send=yesterday
+        )
         check_and_start_send_email_engagement_task()
         mock_send_email_engagement_task.called_with(web_newsletter_yesterday.id)
         web_newsletter_yesterday.sent = True

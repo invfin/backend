@@ -43,10 +43,15 @@ class TestSocialPosting(TestCase):
         DjangoTestingModel.create(IncomeStatement, company=cls.clean_company)
         user = DjangoTestingModel.create(get_user_model(), id=1, username="lucas")
         DjangoTestingModel.create(
-            WriterProfile, user=user, host_name="lucas", long_description="long ass description for writer"
+            WriterProfile,
+            user=user,
+            host_name="lucas",
+            long_description="long ass description for writer",
         )
         cls.term = DjangoTestingModel.create(Term, title="term title", resume="term resume")
-        cls.blog = DjangoTestingModel.create(PublicBlog, title="blog title", resume="blog resume", author=user)
+        cls.blog = DjangoTestingModel.create(
+            PublicBlog, title="blog title", resume="blog resume", author=user
+        )
         cls.question = DjangoTestingModel.create(Question, title="question title", author=user)
         cls.fb_emoji = DjangoTestingModel.create(Emoji)
         cls.default_title = DjangoTestingModel.create(
@@ -119,15 +124,28 @@ class TestSocialPosting(TestCase):
         SocialPosting().share_content(
             content_creation_constants.TERM_FOR_CONTENT,
             [
-                {"platform_shared": constants.FACEBOOK, "post_type": content_creation_constants.POST_TYPE_TEXT_IMAGE},
-                {"platform_shared": constants.TWITTER, "post_type": content_creation_constants.POST_TYPE_TEXT_IMAGE},
+                {
+                    "platform_shared": constants.FACEBOOK,
+                    "post_type": content_creation_constants.POST_TYPE_TEXT_IMAGE,
+                },
+                {
+                    "platform_shared": constants.TWITTER,
+                    "post_type": content_creation_constants.POST_TYPE_TEXT_IMAGE,
+                },
             ],
         )
         assert 3 == TermSharedHistorial.objects.all().count()
-        assert 1 == TermSharedHistorial.objects.filter(platform_shared=constants.FACEBOOK).count()
-        assert 2 == TermSharedHistorial.objects.filter(platform_shared=constants.TWITTER).count()
         assert (
-            2 == TermSharedHistorial.objects.filter(post_type=content_creation_constants.POST_TYPE_TEXT_IMAGE).count()
+            1 == TermSharedHistorial.objects.filter(platform_shared=constants.FACEBOOK).count()
+        )
+        assert (
+            2 == TermSharedHistorial.objects.filter(platform_shared=constants.TWITTER).count()
+        )
+        assert (
+            2
+            == TermSharedHistorial.objects.filter(
+                post_type=content_creation_constants.POST_TYPE_TEXT_IMAGE
+            ).count()
         )
         assert (
             1
@@ -162,8 +180,9 @@ class TestSocialPosting(TestCase):
             "default_title": self.default_title,
             "title": "term title Default title",
             "content": (
-                f"{self.term.resume} <br>Si quieres conocer más a fondo puedes leer la definición entera"
-                f" http://example.com:8000/{self.term.slug}. <br>Estos son los puntos claves que encontrarás:"
+                f"{self.term.resume} <br>Si quieres conocer más a fondo puedes leer la"
+                f" definición entera http://example.com:8000/{self.term.slug}. <br>Estos son"
+                " los puntos claves que encontrarás:"
             ),
             "link": "http://example.com:8000/{self.term.slug}",
             "content_shared": self.term,
@@ -210,4 +229,6 @@ class TestSocialPosting(TestCase):
         )
 
         assert 1 == TermSharedHistorial.objects.all().count()
-        assert 1 == TermSharedHistorial.objects.filter(platform_shared=constants.FACEBOOK).count()
+        assert (
+            1 == TermSharedHistorial.objects.filter(platform_shared=constants.FACEBOOK).count()
+        )

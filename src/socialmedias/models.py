@@ -63,7 +63,9 @@ class AbstractContentShared(Model, BaseToAllMixin):
 
 
 class TermSharedHistorial(AbstractContentShared):
-    content_shared = ForeignKey(Term, on_delete=CASCADE, null=True, blank=True, related_name="terms_shared")
+    content_shared = ForeignKey(
+        Term, on_delete=CASCADE, null=True, blank=True, related_name="terms_shared"
+    )
 
     class Meta:
         verbose_name = "Term shared"
@@ -71,7 +73,9 @@ class TermSharedHistorial(AbstractContentShared):
 
 
 class QuestionSharedHistorial(AbstractContentShared):
-    content_shared = ForeignKey(Question, on_delete=CASCADE, null=True, blank=True, related_name="questions_shared")
+    content_shared = ForeignKey(
+        Question, on_delete=CASCADE, null=True, blank=True, related_name="questions_shared"
+    )
 
     class Meta:
         verbose_name = "Question shared"
@@ -79,7 +83,9 @@ class QuestionSharedHistorial(AbstractContentShared):
 
 
 class BlogSharedHistorial(AbstractContentShared):
-    content_shared = ForeignKey(PublicBlog, on_delete=CASCADE, null=True, blank=True, related_name="blogs_shared")
+    content_shared = ForeignKey(
+        PublicBlog, on_delete=CASCADE, null=True, blank=True, related_name="blogs_shared"
+    )
 
     class Meta:
         verbose_name = "Blog shared"
@@ -87,7 +93,9 @@ class BlogSharedHistorial(AbstractContentShared):
 
 
 class ProfileSharedHistorial(AbstractContentShared):
-    content_shared = ForeignKey(WriterProfile, on_delete=CASCADE, null=True, blank=True, related_name="profiles_shared")
+    content_shared = ForeignKey(
+        WriterProfile, on_delete=CASCADE, null=True, blank=True, related_name="profiles_shared"
+    )
 
     class Meta:
         verbose_name = "Profile shared"
@@ -95,7 +103,9 @@ class ProfileSharedHistorial(AbstractContentShared):
 
 
 class CompanySharedHistorial(AbstractContentShared):
-    content_shared = ForeignKey(Company, on_delete=CASCADE, null=True, blank=True, related_name="company_shared")
+    content_shared = ForeignKey(
+        Company, on_delete=CASCADE, null=True, blank=True, related_name="company_shared"
+    )
 
     class Meta:
         verbose_name = "Company shared"
@@ -103,7 +113,9 @@ class CompanySharedHistorial(AbstractContentShared):
 
 
 class NewsSharedHistorial(AbstractContentShared):
-    company_related = ForeignKey(Company, on_delete=CASCADE, null=True, blank=True, related_name="news_shared")
+    company_related = ForeignKey(
+        Company, on_delete=CASCADE, null=True, blank=True, related_name="news_shared"
+    )
 
     class Meta:
         verbose_name = "Company news shared"

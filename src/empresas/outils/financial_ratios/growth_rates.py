@@ -36,7 +36,9 @@ class GrowthRates:
         current_operating_expenses: Union[float, int],
         previous_operating_expenses: Union[float, int],
     ) -> Union[float, int]:
-        return cls.calculate_growth_rate(current_operating_expenses, previous_operating_expenses)
+        return cls.calculate_growth_rate(
+            current_operating_expenses, previous_operating_expenses
+        )
 
     @classmethod
     def calculate_net_income_growth(

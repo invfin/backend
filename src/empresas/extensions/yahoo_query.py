@@ -1,4 +1,8 @@
-from .base_normalize import NormalizeBalanceSheet, NormalizeCashflowStatement, NormalizeIncomeStatement
+from .base_normalize import (
+    NormalizeBalanceSheet,
+    NormalizeCashflowStatement,
+    NormalizeIncomeStatement,
+)
 
 
 class IncomeStatementYahooQueryExtended(NormalizeIncomeStatement):
@@ -57,7 +61,9 @@ class BalanceSheetYahooQueryExtended(NormalizeBalanceSheet):
     total_liabilities_field = "total_liabilities_net_minority_interest"
     common_stocks_field = "common_stock"
     retained_earnings_field = "retained_earnings"
-    accumulated_other_comprehensive_income_loss_field = "gains_losses_not_affecting_retained_earnings"
+    accumulated_other_comprehensive_income_loss_field = (
+        "gains_losses_not_affecting_retained_earnings"
+    )
     othertotal_stockholders_equity_field = ""
     total_stockholders_equity_field = "total_equity_gross_minority_interest"
     total_liabilities_and_total_equity_field = "total_assets"

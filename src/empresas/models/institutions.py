@@ -1,4 +1,12 @@
-from django.db.models import SET_NULL, CharField, DateField, FloatField, ForeignKey, IntegerField, Model
+from django.db.models import (
+    SET_NULL,
+    CharField,
+    DateField,
+    FloatField,
+    ForeignKey,
+    IntegerField,
+    Model,
+)
 
 from src.empresas.models import Company
 
@@ -18,9 +26,19 @@ class InstitutionalOrganization(Model):
 class TopInstitutionalOwnership(Model):
     date = IntegerField(default=0)
     year = DateField(blank=True, null=True)
-    company = ForeignKey(Company, on_delete=SET_NULL, null=True, blank=True, related_name="top_institutional_ownership")
+    company = ForeignKey(
+        Company,
+        on_delete=SET_NULL,
+        null=True,
+        blank=True,
+        related_name="top_institutional_ownership",
+    )
     organization = ForeignKey(
-        InstitutionalOrganization, on_delete=SET_NULL, null=True, blank=True, related_name="institution"
+        InstitutionalOrganization,
+        on_delete=SET_NULL,
+        null=True,
+        blank=True,
+        related_name="institution",
     )
     percentage_held = FloatField(default=0, blank=True, null=True)
     position = FloatField(default=0, blank=True, null=True)

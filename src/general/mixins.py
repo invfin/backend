@@ -28,7 +28,9 @@ class ResizeImageMixin:
         source_image.save(output, format=format)  # Save resize image to bytes
         output.seek(0)
 
-        content_file = ContentFile(output.read())  # Read output and create ContentFile in memory
+        content_file = ContentFile(
+            output.read()
+        )  # Read output and create ContentFile in memory
         file = File(content_file)
 
         random_name = f"{uuid.uuid4()}.WebP"
@@ -59,7 +61,9 @@ class BaseToAllMixin:
 
     def build_admin_url(self, action: str, use_full_path: bool = True) -> str:
         kwargs = {"object_id": self.id} if action not in ["changelist", "add"] else {}
-        path = reverse(f"admin:{self.app_label}_{self.object_name.lower()}_{action}", kwargs=kwargs)
+        path = reverse(
+            f"admin:{self.app_label}_{self.object_name.lower()}_{action}", kwargs=kwargs
+        )
         if use_full_path:
             return f"{FULL_DOMAIN}{path}"
         return path
@@ -136,7 +140,9 @@ class CommentsMixin:
 
     @property
     def encoded_url_comment(self) -> str:
-        comment_url = reverse("general:create_comment_view", kwargs={"url_encoded": self.encoded_url})
+        comment_url = reverse(
+            "general:create_comment_view", kwargs={"url_encoded": self.encoded_url}
+        )
         return f"{FULL_DOMAIN}{comment_url}"
 
 
@@ -147,7 +153,9 @@ class VotesMixin:
 
     @property
     def encoded_url_up(self):
-        comment_url = reverse("general:create_vote_view", kwargs={"url_encoded": self.base_encoded_url_up})
+        comment_url = reverse(
+            "general:create_vote_view", kwargs={"url_encoded": self.base_encoded_url_up}
+        )
         return f"{FULL_DOMAIN}{comment_url}"
 
     @property
@@ -156,7 +164,9 @@ class VotesMixin:
 
     @property
     def encoded_url_down(self):
-        comment_url = reverse("general:create_vote_view", kwargs={"url_encoded": self.base_encoded_url_down})
+        comment_url = reverse(
+            "general:create_vote_view", kwargs={"url_encoded": self.base_encoded_url_down}
+        )
         return f"{FULL_DOMAIN}{comment_url}"
 
     @classmethod
@@ -189,7 +199,9 @@ class VotesMixin:
         is_upvote = self.action_is_upvote(action)
         is_downvote = self.action_is_downvote(action)
         vote_result = 0
-        if self.not_allowed_to_vote(is_upvote, is_downvote, user_already_upvoted, user_already_downvoted):
+        if self.not_allowed_to_vote(
+            is_upvote, is_downvote, user_already_upvoted, user_already_downvoted
+        ):
             return vote_result
         if is_upvote:
             if user_already_downvoted:

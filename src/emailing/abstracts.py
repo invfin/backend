@@ -1,5 +1,13 @@
 from django.contrib.auth import get_user_model
-from django.db.models import CASCADE, SET_NULL, BooleanField, CharField, DateTimeField, ForeignKey, ManyToManyField
+from django.db.models import (
+    CASCADE,
+    SET_NULL,
+    BooleanField,
+    CharField,
+    DateTimeField,
+    ForeignKey,
+    ManyToManyField,
+)
 from django.utils import timezone
 
 from ckeditor.fields import RichTextField

@@ -30,8 +30,9 @@ class TermContentCreation(ContentCreation):
         link = self.create_url()
         line_break = "\n"
         description = (
-            f"{self.object.resume} {line_break}Si quieres conocer más a fondo puedes leer la definición entera {link}."
-            f" {line_break}Estos son los puntos claves que encontrarás:"
+            f"{self.object.resume} {line_break}Si quieres conocer más a fondo puedes leer la"
+            f" definición entera {link}. {line_break}Estos son los puntos claves que"
+            " encontrarás:"
         )
         for index, term_content in enumerate(self.object.term_content_parts.all()):
             description = f"{description}{line_break}{index}.-{term_content.title}"

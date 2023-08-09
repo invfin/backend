@@ -15,10 +15,8 @@ class Command(BaseCommand):
             link="https://inversionesyfinanzas.xyz",
         )
         fb_response = Facebook(
-"",
+            "",
             "",
             "Inversiones & Finanzas",
         )
-        print(fb_response.post(
-            ""
-        ))
+        print(fb_response.post(""))

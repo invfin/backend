@@ -1,7 +1,12 @@
 from django.urls import path
 
 from .api.urls import urlpatterns
-from .views import InicioCarteraView, InicioCashflowView, InicioPortfolioView, return_balance_table
+from .views import (
+    InicioCarteraView,
+    InicioCashflowView,
+    InicioPortfolioView,
+    return_balance_table,
+)
 
 app_name = "cartera"
 urlpatterns = [

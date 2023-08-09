@@ -24,7 +24,9 @@ class Exchange(Model):
     exchange = CharField(max_length=250, null=True, blank=True)
     country = ForeignKey("countries.Country", on_delete=SET_NULL, null=True, blank=True)
     main_org = ForeignKey(ExchangeOrganisation, on_delete=SET_NULL, null=True, blank=True)
-    data_source = CharField(max_length=100, choices=constants.DATA_SOURCES, default=constants.DATA_SOURCE_FINPREP)
+    data_source = CharField(
+        max_length=100, choices=constants.DATA_SOURCES, default=constants.DATA_SOURCE_FINPREP
+    )
 
     class Meta:
         ordering = ["-exchange_ticker"]

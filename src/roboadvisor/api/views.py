@@ -50,7 +50,10 @@ class BaseRoboAdvisorAPIView(GenericAPIView, CreateModelMixin, UpdateModelMixin)
             date_started=client_side_data["date_started"],
             status="finished",
         )
-        user_activity = {"service_activity": client_side_data["service_activity"], "service_step": service_step.pk}
+        user_activity = {
+            "service_activity": client_side_data["service_activity"],
+            "service_step": service_step.pk,
+        }
         if ses == "company-analysis":
             asset = Company.objects.get(ticker=client_side_data["stock"].split(" [")[1][:-1])
             result = simple_stock_analysis(asset)

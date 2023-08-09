@@ -29,7 +29,10 @@ class CaptchaFormMixin(FormMixin):
     def validate_captcha(self) -> Dict:
         recaptcha_response = self.request.POST.get("g-recaptcha-response")
         url = "https://www.google.com/recaptcha/api/siteverify"
-        values = {"secret": settings.GOOGLE_RECAPTCHA_SECRET_KEY, "response": recaptcha_response}
+        values = {
+            "secret": settings.GOOGLE_RECAPTCHA_SECRET_KEY,
+            "response": recaptcha_response,
+        }
         data = urllib.parse.urlencode(values).encode()
         req = urllib.request.Request(url, data=data)
         response = urllib.request.urlopen(req)
@@ -39,7 +42,9 @@ class CaptchaFormMixin(FormMixin):
         form = self.get_form()
         captcha_response = self.validate_captcha()
         if form.is_valid() and captcha_response["success"]:
-            messages.success(request, "Gracias por tu mensaje, te responderemos lo antes posible.")
+            messages.success(
+                request, "Gracias por tu mensaje, te responderemos lo antes posible."
+            )
             form.send_email()
             return self.form_valid(form)
         else:
@@ -71,7 +76,9 @@ class HomePage(SEOTemplateView, CaptchaFormMixin):
 
     def return_business_page_data(self) -> Tuple[Dict, str]:
         context = dict(
-            meta_description="Ayudamos tu negocio a crecer gracias a nuestros expertos y herramientas",
+            meta_description=(
+                "Ayudamos tu negocio a crecer gracias a nuestros expertos y herramientas"
+            ),
             meta_tags="coach, ayuda, consultoría, software, IA, contabilidad",
             meta_title="Ayudamos tu negocio a crecer",
         )

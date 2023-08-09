@@ -140,7 +140,6 @@ class TestUpdateCompany(TestCase):
         mock_calculate_average_balance_sheet,
         mock_calculate_average_income_statement,
     ):
-
         mock_calculate_average_cashflow_statement.return_value = {
             "calculate_average_cashflow_statement": "calculate_average_cashflow_statement"
         }

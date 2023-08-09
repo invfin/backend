@@ -61,7 +61,9 @@ class TestVotesMixin(TestCase):
     def setUpTestData(cls) -> None:
         cls.user_1 = DjangoTestingModel.create(User, first_name="up", last_name="vote")
         cls.user_2 = DjangoTestingModel.create(User, first_name="down", last_name="vote")
-        cls.question = DjangoTestingModel.create(Question, author=DjangoTestingModel.create(User))
+        cls.question = DjangoTestingModel.create(
+            Question, author=DjangoTestingModel.create(User)
+        )
         cls.question.upvotes.add(cls.user_1)
         cls.question.downvotes.add(cls.user_2)
 

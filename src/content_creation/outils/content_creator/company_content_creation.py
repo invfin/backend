@@ -23,7 +23,7 @@ class CompanyContentCreation(ContentCreation):
     def get_object(self, object_filter: Optional[Dict] = None) -> Company:
         if object_filter is None:
             object_filter = {}
-        return self.model_class._default_manager.get_random_most_visited_clean_company( # type: ignore
+        return self.model_class._default_manager.get_random_most_visited_clean_company(  # type: ignore
             **object_filter
         )
 

@@ -56,7 +56,10 @@ class SubdomainURLRoutingMiddleware(SubdomainMiddleware):
         subdomain = getattr(request, "subdomain", UNSET)
         if subdomain is not UNSET and subdomain is not None:
             current_url_name = resolve(request.path_info).url_name
-            if current_url_name in [url_name.name for url_name in urlpatterns] or current_url_name == "inicio":
+            if (
+                current_url_name in [url_name.name for url_name in urlpatterns]
+                or current_url_name == "inicio"
+            ):
                 return
 
             inicial_path = settings.FULL_DOMAIN

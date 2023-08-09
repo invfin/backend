@@ -103,7 +103,9 @@ class UpdateProfileView(LoginRequiredMixin, SEOTemplateView):
         )
 
     def post(self, request, *args, **kwargs):
-        profile_form = UserProfileForm(data=request.POST, files=request.FILES, instance=request.user.user_profile)
+        profile_form = UserProfileForm(
+            data=request.POST, files=request.FILES, instance=request.user.user_profile
+        )
         form = UserForm(data=request.POST, instance=request.user)
         writer_form = self.get_writer_form(request.POST)
         if self.validate_forms(profile_form, form, writer_form):

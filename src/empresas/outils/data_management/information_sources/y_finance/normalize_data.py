@@ -13,7 +13,10 @@ class NormalizeYFinance:
         period: Callable,
     ) -> Dict[str, Union[int, datetime.datetime, Callable, Type]]:
         return dict(
-            date=column.year, year=column.to_pydatetime().date(), company=self.company, period=period(int(column.year))
+            date=column.year,
+            year=column.to_pydatetime().date(),
+            company=self.company,
+            period=period(int(column.year)),
         )
 
     def normalize_balance_sheets_yfinance(
@@ -37,7 +40,9 @@ class NormalizeYFinance:
             other_assets=yfinance_serie.get("Other Assets"),
             cash=yfinance_serie.get("Cash"),
             total_current_liabilities=yfinance_serie.get("Total Current Liabilities"),
-            deferred_long_term_asset_charges=yfinance_serie.get("Deferred Long Term Asset Charges"),
+            deferred_long_term_asset_charges=yfinance_serie.get(
+                "Deferred Long Term Asset Charges"
+            ),
             short_long_term_debt=yfinance_serie.get("Short Long Term Debt"),
             other_stockholder_equity=yfinance_serie.get("Other Stockholder Equity"),
             property_plant_equipment=yfinance_serie.get("Property Plant Equipment"),
@@ -58,22 +63,34 @@ class NormalizeYFinance:
             **self.initial_data(column, period),
             investments=yfinance_serie.get("Investments"),
             change_to_liabilities=yfinance_serie.get("Change To Liabilities"),
-            total_cashflows_from_investing_activities=yfinance_serie.get("Total Cashflows From Investing Activities"),
+            total_cashflows_from_investing_activities=yfinance_serie.get(
+                "Total Cashflows From Investing Activities"
+            ),
             net_borrowings=yfinance_serie.get("Net Borrowings"),
-            total_cash_from_financing_activities=yfinance_serie.get("Total Cash From Financing Activities"),
-            change_to_operating_activities=yfinance_serie.get("Change To Operating Activities"),
+            total_cash_from_financing_activities=yfinance_serie.get(
+                "Total Cash From Financing Activities"
+            ),
+            change_to_operating_activities=yfinance_serie.get(
+                "Change To Operating Activities"
+            ),
             issuance_of_stock=yfinance_serie.get("Issuance Of Stock"),
             net_income=yfinance_serie.get("Net Income"),
             change_in_cash=yfinance_serie.get("Change In Cash"),
             repurchase_of_stock=yfinance_serie.get("Repurchase Of Stock"),
             effect_of_exchange_rate=yfinance_serie.get("Effect Of Exchange Rate"),
-            total_cash_from_operating_activities=yfinance_serie.get("Total Cash From Operating Activities"),
+            total_cash_from_operating_activities=yfinance_serie.get(
+                "Total Cash From Operating Activities"
+            ),
             depreciation=yfinance_serie.get("Depreciation"),
-            other_cashflows_from_investing_activities=yfinance_serie.get("Other Cashflows From Investing Activities"),
+            other_cashflows_from_investing_activities=yfinance_serie.get(
+                "Other Cashflows From Investing Activities"
+            ),
             dividends_paid=yfinance_serie.get("Dividends Paid"),
             change_to_inventory=yfinance_serie.get("Change To Inventory"),
             change_to_account_receivables=yfinance_serie.get("Change To Account Receivables"),
-            other_cashflows_from_financing_activities=yfinance_serie.get("Other Cashflows From Financing Activities"),
+            other_cashflows_from_financing_activities=yfinance_serie.get(
+                "Other Cashflows From Financing Activities"
+            ),
             change_to_netincome=yfinance_serie.get("Change To Netincome"),
             capital_expenditures=yfinance_serie.get("Capital Expenditures"),
         )
@@ -88,7 +105,9 @@ class NormalizeYFinance:
             income_before_tax=yfinance_serie.get("Income Before Tax"),
             minority_interest=yfinance_serie.get("Minority Interest"),
             net_income=yfinance_serie.get("Net Income"),
-            selling_general_administrative=yfinance_serie.get("Selling General Administrative"),
+            selling_general_administrative=yfinance_serie.get(
+                "Selling General Administrative"
+            ),
             gross_profit=yfinance_serie.get("Gross Profit"),
             ebit=yfinance_serie.get("Ebit"),
             operating_income=yfinance_serie.get("Operating Income"),
@@ -101,8 +120,14 @@ class NormalizeYFinance:
             total_revenue=yfinance_serie.get("Total Revenue"),
             total_operating_expenses=yfinance_serie.get("Total Operating Expenses"),
             cost_of_revenue=yfinance_serie.get("Cost Of Revenue"),
-            total_other_income_expense_net=yfinance_serie.get("Total Other Income Expense Net"),
+            total_other_income_expense_net=yfinance_serie.get(
+                "Total Other Income Expense Net"
+            ),
             discontinued_operations=yfinance_serie.get("Discontinued Operations"),
-            net_income_from_continuing_ops=yfinance_serie.get("Net Income From Continuing Ops"),
-            net_income_applicable_to_common_shares=yfinance_serie.get("Net Income Applicable To Common Shares"),
+            net_income_from_continuing_ops=yfinance_serie.get(
+                "Net Income From Continuing Ops"
+            ),
+            net_income_applicable_to_common_shares=yfinance_serie.get(
+                "Net Income Applicable To Common Shares"
+            ),
         )

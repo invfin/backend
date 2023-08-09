@@ -27,7 +27,9 @@ class LiquidityRatios:
         cash_and_short_term_investments: Union[int, float],
         total_current_liabilities: Union[int, float],
     ) -> Union[int, float]:
-        return divide_or_zero((net_receivables + cash_and_short_term_investments), total_current_liabilities)
+        return divide_or_zero(
+            (net_receivables + cash_and_short_term_investments), total_current_liabilities
+        )
 
     @classmethod
     def calculate_operating_cashflow_ratio(
@@ -35,7 +37,9 @@ class LiquidityRatios:
         net_cash_provided_by_operating_activities: Union[int, float],
         total_current_liabilities: Union[int, float],
     ) -> Union[int, float]:
-        return divide_or_zero(net_cash_provided_by_operating_activities, total_current_liabilities)
+        return divide_or_zero(
+            net_cash_provided_by_operating_activities, total_current_liabilities
+        )
 
     @classmethod
     def calculate_debt_to_equity(

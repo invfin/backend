@@ -19,7 +19,12 @@ class FreeCashFlowRatios:
         change_in_working_capital: Union[int, float],
         capital_expenditure: Union[int, float],
     ) -> Union[int, float]:
-        return nopat + depreciation_and_amortization + change_in_working_capital + capital_expenditure
+        return (
+            nopat
+            + depreciation_and_amortization
+            + change_in_working_capital
+            + capital_expenditure
+        )
 
     @classmethod
     def calculate_unlevered_fcf_ebit(
@@ -46,4 +51,9 @@ class FreeCashFlowRatios:
         change_in_working_capital: Union[int, float],
         capital_expenditure: Union[int, float],
     ) -> Union[int, float]:
-        return net_income + depreciation_and_amortization + change_in_working_capital + capital_expenditure
+        return (
+            net_income
+            + depreciation_and_amortization
+            + change_in_working_capital
+            + capital_expenditure
+        )

@@ -58,7 +58,10 @@ class StripeManagement:
             "currency": currency,
         }
         if is_recurring:
-            price_data["recurring"] = {"interval": subscription_period, "interval_count": subscription_interval}
+            price_data["recurring"] = {
+                "interval": subscription_period,
+                "interval_count": subscription_interval,
+            }
 
         price = self.stripe_price.create(**price_data)
         return price
@@ -76,7 +79,9 @@ class StripeManagement:
     def create_customer(self, currency: str, email: str, name: str) -> dict:
         return self.stripe_customer.create(currency=currency, email=email, name=name)
 
-    def create_subscription(self, customer: Customer, stripe_price_obj: ProductComplementary) -> dict:
+    def create_subscription(
+        self, customer: Customer, stripe_price_obj: ProductComplementary
+    ) -> dict:
         subscription = stripe.Subscription.create(
             customer=customer.stripe_id,
             items=[

@@ -41,9 +41,15 @@ class TestYahooQueryInfo(TestCase):
         )
 
     @patch("src.empresas.parse.yahoo_query.YahooQueryInfo.create_financials")
-    @patch("src.empresas.parse.yahoo_query.parse_data.ParseYahooQuery.request_income_statements_yahooquery")
-    @patch("src.empresas.parse.yahoo_query.parse_data.ParseYahooQuery.request_balance_sheets_yahooquery")
-    @patch("src.empresas.parse.yahoo_query.parse_data.ParseYahooQuery.request_cashflow_statements_yahooquery")
+    @patch(
+        "src.empresas.parse.yahoo_query.parse_data.ParseYahooQuery.request_income_statements_yahooquery"
+    )
+    @patch(
+        "src.empresas.parse.yahoo_query.parse_data.ParseYahooQuery.request_balance_sheets_yahooquery"
+    )
+    @patch(
+        "src.empresas.parse.yahoo_query.parse_data.ParseYahooQuery.request_cashflow_statements_yahooquery"
+    )
     def test_create_quarterly_financials_yahooquery(
         self,
         mock_req_cashflow_statement,
@@ -66,9 +72,15 @@ class TestYahooQueryInfo(TestCase):
         )
 
     @patch("src.empresas.parse.yahoo_query.YahooQueryInfo.create_financials")
-    @patch("src.empresas.parse.yahoo_query.parse_data.ParseYahooQuery.request_income_statements_yahooquery")
-    @patch("src.empresas.parse.yahoo_query.parse_data.ParseYahooQuery.request_balance_sheets_yahooquery")
-    @patch("src.empresas.parse.yahoo_query.parse_data.ParseYahooQuery.request_cashflow_statements_yahooquery")
+    @patch(
+        "src.empresas.parse.yahoo_query.parse_data.ParseYahooQuery.request_income_statements_yahooquery"
+    )
+    @patch(
+        "src.empresas.parse.yahoo_query.parse_data.ParseYahooQuery.request_balance_sheets_yahooquery"
+    )
+    @patch(
+        "src.empresas.parse.yahoo_query.parse_data.ParseYahooQuery.request_cashflow_statements_yahooquery"
+    )
     def test_create_yearly_financials_yahooquery(
         self,
         mock_req_cashflow_statement,

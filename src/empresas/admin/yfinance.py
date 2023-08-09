@@ -50,5 +50,9 @@ class CashflowStatementYFinanceInline(BaseJSONWidgetInline):
 
 @admin.register(CompanyYFinanceProxy)
 class CompanyYFinanceProxyAdmin(BaseCompanyAdmin):
-    inlines = [IncomeStatementYFinanceInline, BalanceSheetYFinanceInline, CashflowStatementYFinanceInline]
+    inlines = [
+        IncomeStatementYFinanceInline,
+        BalanceSheetYFinanceInline,
+        CashflowStatementYFinanceInline,
+    ]
     list_filter = BaseCompanyAdmin.list_filter + [HasYFinanceQuarterFilter]

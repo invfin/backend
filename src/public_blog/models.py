@@ -66,8 +66,12 @@ class WriterProfile(Model):
 
 
 class FollowingHistorial(Model):
-    user_following = ForeignKey(User, on_delete=SET_NULL, null=True, related_name="user_following")
-    user_followed = ForeignKey(User, on_delete=SET_NULL, null=True, related_name="user_followed")
+    user_following = ForeignKey(
+        User, on_delete=SET_NULL, null=True, related_name="user_following"
+    )
+    user_followed = ForeignKey(
+        User, on_delete=SET_NULL, null=True, related_name="user_followed"
+    )
     started_following = BooleanField(default=False)
     stop_following = BooleanField(default=False)
     date = DateTimeField(auto_now_add=True)
@@ -133,11 +137,15 @@ class PublicBlog(AbstractPublishableContent):
 
 
 class PublicBlogAsNewsletter(AbstractEmail):
-    blog_related = OneToOneField(PublicBlog, on_delete=SET_NULL, null=True, related_name="public_blog_newsletter")
+    blog_related = OneToOneField(
+        PublicBlog, on_delete=SET_NULL, null=True, related_name="public_blog_newsletter"
+    )
 
 
 class PublicBlogComment(AbstractComment):
-    content_related = ForeignKey(PublicBlog, on_delete=CASCADE, null=True, related_name="comments_related")
+    content_related = ForeignKey(
+        PublicBlog, on_delete=CASCADE, null=True, related_name="comments_related"
+    )
 
     class Meta:
         verbose_name = "Blog's comment"

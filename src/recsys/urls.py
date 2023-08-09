@@ -10,5 +10,9 @@ urlpatterns = [
         RecommendationClickedRedirectView.as_view(),
         name="recommendation_clicked",
     ),
-    path("companies-side-user-might-like/", CompaniesRecommendedSide.as_view(), name="recommend_side_companies"),
+    path(
+        "companies-side-user-might-like/",
+        CompaniesRecommendedSide.as_view(),
+        name="recommend_side_companies",
+    ),
 ]

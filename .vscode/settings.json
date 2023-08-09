@@ -36,7 +36,7 @@
         "editor.bracketPairColorization.enabled": true,
         "editor.autoIndent": "advanced",
         "editor.wordWrapColumn": 95,
-        "editor.defaultFormatter": "ms-python.black-formatter"
+        "editor.defaultFormatter": "ms-python.vscode-pylance"
     },
     "python.linting.mypyEnabled": true,
     "python.linting.flake8Enabled": true,
@@ -46,5 +46,5 @@
     "python.linting.pylintArgs": [
         "--enable=W0614"
     ],
-    "python.formatting.provider": "none"
+    "python.formatting.provider": "black"
 }

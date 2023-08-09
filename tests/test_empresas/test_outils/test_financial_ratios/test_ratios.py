@@ -9,7 +9,11 @@ from src.empresas.models import BalanceSheet, CashflowStatement, Company, Income
 from src.empresas.outils.financial_ratios import CalculateFinancialRatios
 from src.periods.constants import PERIOD_FOR_YEAR
 from src.periods.models import Period
-from tests.data.empresas import balance_sheets_final_statment, cashflow_final_statment, income_final_statment
+from tests.data.empresas import (
+    balance_sheets_final_statment,
+    cashflow_final_statment,
+    income_final_statment,
+)
 
 
 class TestCalculateFinancialRatios(TestCase):
@@ -67,7 +71,9 @@ class TestCalculateFinancialRatios(TestCase):
         )
 
     def test_split_statements_by_year(self):
-        current, previous = CalculateFinancialRatios(self.company).split_statements_by_year(period=5)
+        current, previous = CalculateFinancialRatios(self.company).split_statements_by_year(
+            period=5
+        )
         assert [
             self.current_income,
             self.current_balance,
@@ -613,7 +619,9 @@ class TestCalculateFinancialRatios(TestCase):
             "long_term_debt_to_capitalization": 1.0,
             "total_debt_to_capitalization": 4.05,
         }
-        assert expected_result == CalculateFinancialRatios.calculate_operation_risk_ratios(data)
+        assert expected_result == CalculateFinancialRatios.calculate_operation_risk_ratios(
+            data
+        )
 
     def test_calculate_enterprise_value_ratios(self):
         data = {
@@ -637,7 +645,9 @@ class TestCalculateFinancialRatios(TestCase):
             "company_equity_multiplier": 0.95,
             "ev_multiple": 0,
         }
-        assert expected_result == CalculateFinancialRatios.calculate_enterprise_value_ratios(data)
+        assert expected_result == CalculateFinancialRatios.calculate_enterprise_value_ratios(
+            data
+        )
 
     def test_calculate_company_growth(self):
         data = {

@@ -31,7 +31,9 @@ def add_new_default_check(checking, json_file):
 
 class ChartSerializer:
     @staticmethod
-    def generate_json(comparing_json: dict, items: list = None, chart_type: str = "line") -> dict:
+    def generate_json(
+        comparing_json: dict, items: list = None, chart_type: str = "line"
+    ) -> dict:
         labels = comparing_json["labels"]
         chart_data = {"labels": labels, "fields": []}
         if not items:
@@ -59,7 +61,9 @@ class ChartSerializer:
                 {
                     "label": "",
                     "data": 0,
-                    "backgroundColor": "#" + "".join([random.choice("ABCDEF0123456789") for i in range(6)]),
+                    "backgroundColor": "#" + "".join(
+                        [random.choice("ABCDEF0123456789") for i in range(6)]
+                    ),
                 }
             ],
         }
@@ -154,7 +158,9 @@ class HostChecker:
 
         return urlunparse((scheme, domain, path or "", None, None, None))
 
-    def reverse(self, viewname, subdomain=None, scheme=None, args=None, kwargs=None, current_app=None):
+    def reverse(
+        self, viewname, subdomain=None, scheme=None, args=None, kwargs=None, current_app=None
+    ):
         """
         Reverses a URL from the given parameters, in a similar fashion to
         :meth:`django.core.urlresolvers.reverse`.
@@ -171,5 +177,7 @@ class HostChecker:
         if subdomain is not None:
             domain = "%s.%s" % (subdomain, domain)
 
-        path = simple_reverse(viewname, urlconf=urlconf, args=args, kwargs=kwargs, current_app=current_app)
+        path = simple_reverse(
+            viewname, urlconf=urlconf, args=args, kwargs=kwargs, current_app=current_app
+        )
         return self.urljoin(domain, path, scheme=scheme)

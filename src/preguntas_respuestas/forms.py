@@ -24,5 +24,7 @@ class CreateQuestionForm(ModelForm):
     def clean_content(self):
         content = self.cleaned_data["content"]
         if len(content) < 10:
-            raise ValidationError("Detalla precisamente tu pregunta para que la comunidad pueda ayudarte.")
+            raise ValidationError(
+                "Detalla precisamente tu pregunta para que la comunidad pueda ayudarte."
+            )
         return content

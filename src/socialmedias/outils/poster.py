@@ -117,9 +117,18 @@ class SocialPosting:
         socialmedia_content_creator = cls.get_creator(content_object)
         for platform_post_type_dict in socialmedia_list:
             platform_shared = platform_post_type_dict["platform_shared"]
-            socialmedia_content = socialmedia_content_creator(platform_shared,).create_social_media_content_from_object()
-            post_type = cls.return_correct_post_type(socialmedia_content.get("media", ""), platform_post_type_dict["post_type"],)
-            socialmedia_obj_response = cls.post_on_socialmedia(platform_shared, post_type, socialmedia_content,)
+            socialmedia_content = socialmedia_content_creator(
+                platform_shared,
+            ).create_social_media_content_from_object()
+            post_type = cls.return_correct_post_type(
+                socialmedia_content.get("media", ""),
+                platform_post_type_dict["post_type"],
+            )
+            socialmedia_obj_response = cls.post_on_socialmedia(
+                platform_shared,
+                post_type,
+                socialmedia_content,
+            )
             # Here we get the response and save it
             cls.save_responses(socialmedia_obj_response["post_response"], socialmedia_content)
 
@@ -148,10 +157,10 @@ class SocialPosting:
             post_type=post_type,
         )
 
-
-
     @classmethod
-    def save_responses(cls, socialmedia_obj_responses: List, socialmedia_content: Dict) -> None:
+    def save_responses(
+        cls, socialmedia_obj_responses: List, socialmedia_content: Dict
+    ) -> None:
         # TODO add tests
         for socialmedia_post_response in socialmedia_obj_responses:
             response_dict = cls.prepare_data_to_be_saved(

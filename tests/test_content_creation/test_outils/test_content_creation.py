@@ -22,11 +22,15 @@ class TestContentCreation(TestCase):
             )
             for index in range(2)
         ]
-        data_result_list, data_result_hashtags = self.content_creator.create_hashtags(social_constants.FACEBOOK)
+        data_result_list, data_result_hashtags = self.content_creator.create_hashtags(
+            social_constants.FACEBOOK
+        )
         assert data_result_hashtags == "#" + " #".join([hashtag.title for hashtag in hashtags])
         assert data_result_list == hashtags
 
-        data_no_result_list, data_no_result_hashtags = self.content_creator.create_hashtags(social_constants.TWITTER)
+        data_no_result_list, data_no_result_hashtags = self.content_creator.create_hashtags(
+            social_constants.TWITTER
+        )
         assert data_no_result_list == []
         assert data_no_result_hashtags == ""
 
@@ -186,7 +190,9 @@ class TestContentCreation(TestCase):
             assert (emoji_1.emoji in result_data["title"]) is True
             assert (emoji_2.emoji in result_data["title"]) is True
             assert (emoji_3.emoji in result_data["title"]) is True
-            assert (emoji_1.emoji and emoji_2.emoji and emoji_3.emoji in result_data["title"]) is True
+            assert (
+                emoji_1.emoji and emoji_2.emoji and emoji_3.emoji in result_data["title"]
+            ) is True
             assert (emoji_1 in result_data["title_emojis"]) is True
             assert (emoji_2 in result_data["title_emojis"]) is True
             assert (emoji_3 in result_data["title_emojis"]) is True
@@ -263,7 +269,9 @@ class TestContentCreation(TestCase):
             "default_content": default_content,
         }
 
-        assert self.content_creator.create_content(content="first content") == {"content": "first content"}
+        assert self.content_creator.create_content(content="first content") == {
+            "content": "first content"
+        }
 
         DjangoTestingModel.create(DefaultContent, for_content=constants.WEB)
 

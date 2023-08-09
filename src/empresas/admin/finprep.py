@@ -50,6 +50,10 @@ class CashflowStatementFinprepInline(BaseJSONWidgetInline):
 
 @admin.register(CompanyFinprepProxy)
 class CompanyFinprepProxyAdmin(BaseCompanyAdmin):
-    inlines = [IncomeStatementFinprepInline, BalanceSheetFinprepInline, CashflowStatementFinprepInline]
+    inlines = [
+        IncomeStatementFinprepInline,
+        BalanceSheetFinprepInline,
+        CashflowStatementFinprepInline,
+    ]
 
     list_filter = BaseCompanyAdmin.list_filter + [HasFinprepQuarterFilter]

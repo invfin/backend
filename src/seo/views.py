@@ -1,7 +1,15 @@
 from django.db.models import Q
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect
-from django.views.generic import CreateView, DetailView, FormView, ListView, RedirectView, TemplateView, View
+from django.views.generic import (
+    CreateView,
+    DetailView,
+    FormView,
+    ListView,
+    RedirectView,
+    TemplateView,
+    View,
+)
 
 from src.escritos.models import Term, TermsRelatedToResume
 from src.preguntas_respuestas.models import Question
@@ -38,7 +46,9 @@ def redirect_old_urls(request, ques_slug=False, term_slug=False, publs_slug=Fals
         if second_model.exists():
             redirect_to = second_model[0].get_absolute_url()
         else:
-            old_url = TermsRelatedToResume.objects.filter(Q(term_to_delete__slug__icontains=slug))
+            old_url = TermsRelatedToResume.objects.filter(
+                Q(term_to_delete__slug__icontains=slug)
+            )
             if old_url.exists():
                 redirect_to = old_url[0].get_absolute_url()
             else:

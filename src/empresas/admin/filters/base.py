@@ -28,9 +28,9 @@ class HasQuarterFilter(SimpleListFilter):
     def get_related_statements(self):
         companies_id = set()
         for statement in self.statements:
-            query_companies_id = statement.objects.filter(~Q(period__period=constants.PERIOD_FOR_YEAR)).values_list(
-                "company_id", flat=True
-            )
+            query_companies_id = statement.objects.filter(
+                ~Q(period__period=constants.PERIOD_FOR_YEAR)
+            ).values_list("company_id", flat=True)
             if query_companies_id:
                 companies_id.update(list(query_companies_id))
         return list(companies_id)

@@ -9,13 +9,33 @@ SECTORS = [
 ]
 
 INDUSTRIES = [
-    {"id": 1, "industry": "Consumer Electronics", "industry_spanish": "Electrónica de consumo"},
+    {
+        "id": 1,
+        "industry": "Consumer Electronics",
+        "industry_spanish": "Electrónica de consumo",
+    },
     {"id": 2, "industry": "ISP", "industry_spanish": "ISP"},
 ]
 
 CURRENCIES = [
-    {"id": 1, "currency": "USD", "symbol": "", "name": "", "iso": "", "decimals": 2, "country_id": 1},
-    {"id": 2, "currency": "EUR", "symbol": "", "name": "", "iso": "", "decimals": 2, "country_id": 2},
+    {
+        "id": 1,
+        "currency": "USD",
+        "symbol": "",
+        "name": "",
+        "iso": "",
+        "decimals": 2,
+        "country_id": 1,
+    },
+    {
+        "id": 2,
+        "currency": "EUR",
+        "symbol": "",
+        "name": "",
+        "iso": "",
+        "decimals": 2,
+        "country_id": 2,
+    },
 ]
 
 CATEGORIES = [

@@ -73,14 +73,16 @@ class TestAverageStatements(TestCase):
         ]
         self.assertEqual(
             AverageStatements.return_averaged_data(self.period, statements),
-            {'cost_of_revenue': 9046.54,
-             'date': 2021,
-             'gross_profit': 586.94,
-             'period_id': self.period.id,
-             'rd_expenses': 153.4,
-             'reported_currency_id': self.currency.id,
-             'revenue': 13929.27,
-             'sga_expenses': 1539.07},
+            {
+                "cost_of_revenue": 9046.54,
+                "date": 2021,
+                "gross_profit": 586.94,
+                "period_id": self.period.id,
+                "rd_expenses": 153.4,
+                "reported_currency_id": self.currency.id,
+                "revenue": 13929.27,
+                "sga_expenses": 1539.07,
+            },
         )
 
     @patch("src.empresas.outils.average_statements.AverageStatements.prepare_data")

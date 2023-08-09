@@ -16,9 +16,15 @@ class TestTask(TestCase):
 
     @patch("src.emailing.outils.emailing.EmailingSystem.simple_email")
     @patch("src.escritos.tasks.notify_term_to_improve_task.delay")
-    def test_prepare_term_newsletter(self, mock_simple_email, mock_notify_term_to_improve_task):
-        DjangoTestingModel.create(DefaultTilte, title="title", for_content=6, purpose="Engagement user no active")
-        DjangoTestingModel.create(DefaultTilte, title="title", for_content=0, purpose="Engagement user no active")
+    def test_prepare_term_newsletter(
+        self, mock_simple_email, mock_notify_term_to_improve_task
+    ):
+        DjangoTestingModel.create(
+            DefaultTilte, title="title", for_content=6, purpose="Engagement user no active"
+        )
+        DjangoTestingModel.create(
+            DefaultTilte, title="title", for_content=0, purpose="Engagement user no active"
+        )
         prepare_term_newsletter_task()
         subject = "There are no terms ready for newsletters"
         message = "Create newsletters"
@@ -28,5 +34,8 @@ class TestTask(TestCase):
 
         prepare_term_newsletter_task()
         subject = f"{term} is ready to be sent as a newsletter"
-        message = f"You need to update {term} to be ready to be sent as a newsletter {term.shareable_link}"
+        message = (
+            f"You need to update {term} to be ready to be sent as a newsletter"
+            f" {term.shareable_link}"
+        )
         mock_simple_email.called_with(subject=subject, message=message)

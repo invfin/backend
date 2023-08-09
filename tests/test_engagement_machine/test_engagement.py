@@ -30,17 +30,25 @@ class TestEngagementMachine(TestCase):
 
     def test_get_creator(self):
         assert (
-            EngagementMachine().get_creator(content_creation_constants.QUESTION_FOR_CONTENT) == QuestionContentCreation
+            EngagementMachine().get_creator(content_creation_constants.QUESTION_FOR_CONTENT)
+            == QuestionContentCreation
         )
         assert (
-            EngagementMachine().get_creator(content_creation_constants.NEWS_FOR_CONTENT) == CompanyNewsContentCreation
+            EngagementMachine().get_creator(content_creation_constants.NEWS_FOR_CONTENT)
+            == CompanyNewsContentCreation
         )
-        assert EngagementMachine().get_creator(content_creation_constants.TERM_FOR_CONTENT) == TermContentCreation
+        assert (
+            EngagementMachine().get_creator(content_creation_constants.TERM_FOR_CONTENT)
+            == TermContentCreation
+        )
         assert (
             EngagementMachine().get_creator(content_creation_constants.PUBLIC_BLOG_FOR_CONTENT)
             == PublicBlogContentCreation
         )
-        assert EngagementMachine().get_creator(content_creation_constants.COMPANY_FOR_CONTENT) == CompanyContentCreation
+        assert (
+            EngagementMachine().get_creator(content_creation_constants.COMPANY_FOR_CONTENT)
+            == CompanyContentCreation
+        )
 
     def test_send_website_email_engagement(self):
         title = "Default title"
@@ -68,5 +76,7 @@ class TestEngagementMachine(TestCase):
         self.term.checkings.update({"has_information_clean": {"state": "yes", "time": ""}})
         self.term.save(update_fields=["checkings"])
 
-        web_email = EngagementMachine().create_newsletter(web_email_type, content_object, whom_to_send)
+        web_email = EngagementMachine().create_newsletter(
+            web_email_type, content_object, whom_to_send
+        )
         assert isinstance(web_email, WebsiteEmail)

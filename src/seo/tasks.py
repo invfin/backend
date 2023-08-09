@@ -11,10 +11,14 @@ def post_promotion():
 
 @celery_app.task()
 def clean_journeys(id, user_journey_model):
-    journey = apps.get_model(app_label="seo", model_name=f"{user_journey_model}Journey").objects.get(id=id)
+    journey = apps.get_model(
+        app_label="seo", model_name=f"{user_journey_model}Journey"
+    ).objects.get(id=id)
     path = journey.current_path
     model_visited, journey_model = JourneyClassifier().get_specific_journey(path)
-    apps.get_model(app_label="seo", model_name=f"{user_journey_model}{journey_model}").objects.create(
+    apps.get_model(
+        app_label="seo", model_name=f"{user_journey_model}{journey_model}"
+    ).objects.create(
         user=journey.user, visit=journey, model_visited=model_visited, date=journey.date
     )
     journey.parsed = True

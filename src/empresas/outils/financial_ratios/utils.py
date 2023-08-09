@@ -9,7 +9,9 @@ def calculate_compound_growth(
     return ((divide_or_zero(numerator, denominator) ** (1 / years)) - 1) * 100
 
 
-def modify_for_percentage(value: Union[int, float], as_percentage: bool = True) -> Union[int, float]:
+def modify_for_percentage(
+    value: Union[int, float], as_percentage: bool = True
+) -> Union[int, float]:
     return round(value * 100, 2) if as_percentage else value
 
 

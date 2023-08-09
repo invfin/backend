@@ -51,9 +51,13 @@ def get_historial(superinvestor_activity):
     table = table.fillna(0)
     for index, content in table.iterrows():
         period = content["Period"]
-        period, created = Period.objects.get_or_create(year=datetime.strptime(period[:4], "%Y"), period=period[-1:])
+        period, created = Period.objects.get_or_create(
+            year=datetime.strptime(period[:4], "%Y"), period=period[-1:]
+        )
         super_activity = SuperinvestorHistory.objects.filter(
-            **actual_company, period_related=period, superinvestor_related=superinvestor_activity.superinvestor_related
+            **actual_company,
+            period_related=period,
+            superinvestor_related=superinvestor_activity.superinvestor_related,
         )
         if super_activity.exists():
             continue
@@ -106,7 +110,9 @@ def get_activity(superinvestor):
             if td.find("b") is not None:
                 quarter = td.text.split(" ")[0][1:]
                 year = td.text.split(" ")[1][-4:]
-                period, _ = Period.objects.get_or_create(year=datetime.strptime(year, "%Y"), period=quarter)
+                period, _ = Period.objects.get_or_create(
+                    year=datetime.strptime(year, "%Y"), period=quarter
+                )
                 continue  # Quarter and year
 
             if clase:
@@ -132,13 +138,15 @@ def get_activity(superinvestor):
                                 not_registered_company = True
                         else:
                             not_registered_company = True
-                    superinvestor_activity, created = SuperinvestorActivity.objects.get_or_create(
-                        superinvestor_related=superinvestor,
-                        period_related=period,
-                        company=company,
-                        company_name=info,
-                        not_registered_company=not_registered_company,
-                        need_verify_company=need_verify_company,
+                    superinvestor_activity, created = (
+                        SuperinvestorActivity.objects.get_or_create(
+                            superinvestor_related=superinvestor,
+                            period_related=period,
+                            company=company,
+                            company_name=info,
+                            not_registered_company=not_registered_company,
+                            need_verify_company=need_verify_company,
+                        )
                     )
                     continue
 
@@ -157,7 +165,9 @@ def get_activity(superinvestor):
                         percentage_share_change = info.split(" ")[1][:-1]
                         if percentage_share_change == "":
                             percentage_share_change = 0
-                        superinvestor_activity.percentage_share_change = percentage_share_change
+                        superinvestor_activity.percentage_share_change = (
+                            percentage_share_change
+                        )
                         superinvestor_activity.is_new = is_new
                         superinvestor_activity.movement = movement
                         superinvestor_activity.save(

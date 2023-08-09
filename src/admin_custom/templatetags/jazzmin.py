@@ -7,7 +7,9 @@ from django.template import Context
 from django.utils.text import capfirst
 
 from jazzmin.settings import get_settings
-from jazzmin.templatetags.jazzmin import register  # action_message_to_list as jazzmin_action_message_to_list,
+from jazzmin.templatetags.jazzmin import (
+    register,
+)  # action_message_to_list as jazzmin_action_message_to_list,
 
 # from django.utils.translation import gettext
 
@@ -36,7 +38,9 @@ def get_side_menu(context: Context, using: str = "available_apps") -> List[Dict]
             model_icon = model.get("icon", menu_icon)
             model_label = model.get("label")
 
-            model_name, model_url = get_model_data(object_app, settings_model_name, available_apps)
+            model_name, model_url = get_model_data(
+                object_app, settings_model_name, available_apps
+            )
 
             if model_name and model_url:
                 second_menu.append(
@@ -80,7 +84,9 @@ def get_model_data(object_app, object_name, available_apps):
         if app.get("app_label") == object_app:
             for model in app.get("models", []):
                 model_name = model.get("object_name")
-                if model_name and (model_name.lower() == object_name or model_name == object_name):
+                if model_name and (
+                    model_name.lower() == object_name or model_name == object_name
+                ):
                     model_url = model.get("admin_url")
                     return model.get("name"), model_url
 

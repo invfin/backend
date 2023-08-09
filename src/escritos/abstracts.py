@@ -29,7 +29,9 @@ def default_dict():
     return constants.DEFAULT_EXTRA_DATA_DICT
 
 
-class AbstractWrittenContent(AbstractTimeStampedModel, CommentsMixin, VotesMixin, CheckingsMixin):
+class AbstractWrittenContent(
+    AbstractTimeStampedModel, CommentsMixin, VotesMixin, CheckingsMixin
+):
     author = ForeignKey(User, on_delete=SET_NULL, null=True)
     title = CharField(max_length=800, null=True, blank=True)
     slug = SlugField(max_length=800, null=True, blank=True)

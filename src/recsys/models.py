@@ -1,5 +1,13 @@
 from django.contrib.auth import get_user_model
-from django.db.models import SET_NULL, BooleanField, CharField, DateTimeField, ForeignKey, JSONField, Model
+from django.db.models import (
+    SET_NULL,
+    BooleanField,
+    CharField,
+    DateTimeField,
+    ForeignKey,
+    JSONField,
+    Model,
+)
 from django.urls import reverse
 
 from src.business.models import ProductComplementary
@@ -24,9 +32,15 @@ class BaseModelRecommended(Model, BaseToAllMixin):
             {"id": 0, "points": 0},
         ],
     }
-    place = CharField(max_length=150, choices=constants.WEP_PROMOTION_PLACE, default=constants.SIDE)
-    location = CharField(max_length=150, choices=constants.WEP_PROMOTION_LOCATION, default=constants.ALL_WEB)
-    style = CharField(max_length=150, choices=constants.WEP_PROMOTION_STYLE, default=constants.SOLO)
+    place = CharField(
+        max_length=150, choices=constants.WEP_PROMOTION_PLACE, default=constants.SIDE
+    )
+    location = CharField(
+        max_length=150, choices=constants.WEP_PROMOTION_LOCATION, default=constants.ALL_WEB
+    )
+    style = CharField(
+        max_length=150, choices=constants.WEP_PROMOTION_STYLE, default=constants.SOLO
+    )
     clicked = BooleanField(default=False)
     recommendation_personalized = BooleanField(default=False)
     recommendation_explained = JSONField(default=dict)
@@ -47,7 +61,10 @@ class BaseModelRecommended(Model, BaseToAllMixin):
         return super().save(*args, **kwargs)
 
     def get_absolute_url(self):
-        return reverse("recsys:recommendation_clicked", kwargs={"pk": self.pk, "object_name": self.object_name})
+        return reverse(
+            "recsys:recommendation_clicked",
+            kwargs={"pk": self.pk, "object_name": self.object_name},
+        )
 
 
 class BaseVisiteurModelRecommended(BaseModelRecommended):

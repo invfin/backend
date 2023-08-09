@@ -32,7 +32,12 @@ class UserExtraManager(models.UserManager):
                     username=email.split("@")[0],
                     email=email,
                     password="".join(
-                        (secrets.choice(string.ascii_letters + string.digits + string.punctuation) for i in range(20))
+                        (
+                            secrets.choice(
+                                string.ascii_letters + string.digits + string.punctuation
+                            )
+                            for i in range(20)
+                        )
                     ),
                     just_newsletter=just_newsletter,
                     just_correction=just_correction,

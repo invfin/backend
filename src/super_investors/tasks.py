@@ -11,7 +11,10 @@ from .scrapper import get_activity, get_historial, get_investors_accronym
 def scrap_superinvestors():
     get_investors_accronym()
     return send_mail(
-        "All investors scrapped", "All investors scrapped", settings.EMAIL_DEFAULT, [settings.EMAIL_DEFAULT]
+        "All investors scrapped",
+        "All investors scrapped",
+        settings.EMAIL_DEFAULT,
+        [settings.EMAIL_DEFAULT],
     )
 
 
@@ -29,7 +32,9 @@ def scrap_superinvestors_activity(superinvestor_id):
 @celery_app.task()
 def scrap_superinvestors_history(superinvestor_activity_id):
     try:
-        superinvestor_activity = SuperinvestorActivity.objects.get(id=superinvestor_activity_id)
+        superinvestor_activity = SuperinvestorActivity.objects.get(
+            id=superinvestor_activity_id
+        )
         get_historial(superinvestor_activity)
     except Exception as e:
         superinvestor_activity.superinvestor_related.has_error = True
@@ -41,7 +46,12 @@ def scrap_superinvestors_history(superinvestor_activity_id):
 def prepare_scrap_superinvestors_activity():
     for superinvestor in Superinvestor.objects.all():
         scrap_superinvestors_activity.delay(superinvestor.id)
-    send_mail("All activity done", "All activity done", settings.EMAIL_DEFAULT, [settings.EMAIL_DEFAULT])
+    send_mail(
+        "All activity done",
+        "All activity done",
+        settings.EMAIL_DEFAULT,
+        [settings.EMAIL_DEFAULT],
+    )
     return "finished"
 
 
@@ -49,5 +59,10 @@ def prepare_scrap_superinvestors_activity():
 def prepare_scrap_superinvestors_history():
     for superinvestor in SuperinvestorActivity.objects.filter(need_verify_company=False):
         scrap_superinvestors_history.delay(superinvestor.id)
-    send_mail("All activity done", "All activity done", settings.EMAIL_DEFAULT, [settings.EMAIL_DEFAULT])
+    send_mail(
+        "All activity done",
+        "All activity done",
+        settings.EMAIL_DEFAULT,
+        [settings.EMAIL_DEFAULT],
+    )
     return "finished"

@@ -2,15 +2,16 @@ import yahooquery as yq
 
 from src.empresas.outils.data_management.information_sources.y_finance import YFinanceInfo
 
+
 def simple_stock_analysis(empresa):
     inf = YFinanceInfo(empresa).request_info_yfinance
     current_price = inf.get("currentPrice")
     result = {"result": 4}
     if not current_price:
         yahooquery_info = yq.Ticker(empresa.ticker).price
-        key = yahooquery_info.keys()[0] # type: ignore
+        key = yahooquery_info.keys()[0]  # type: ignore
         if yahooquery_info[key] != "Quote not found for ticker symbol: LB":
-            current_price = yahooquery_info[key]["regularMarketPrice"] # type: ignore
+            current_price = yahooquery_info[key]["regularMarketPrice"]  # type: ignore
 
     result_buy = {"result": 1}
 

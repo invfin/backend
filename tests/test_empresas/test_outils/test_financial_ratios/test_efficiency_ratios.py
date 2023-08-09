@@ -53,6 +53,10 @@ class TestEfficiencyRatios(TestCase):
         assert 0 == EfficiencyRatios.calculate_accounts_payable_turnover(234.67, 0)
 
     def test_calculate_free_cashflow_to_operating_cashflow(self):
-        assert 0.07 == EfficiencyRatios.calculate_free_cashflow_to_operating_cashflow(234.67, 3333)
-        assert 58.962 == EfficiencyRatios.calculate_free_cashflow_to_operating_cashflow(234.67, 3.98)
+        assert 0.07 == EfficiencyRatios.calculate_free_cashflow_to_operating_cashflow(
+            234.67, 3333
+        )
+        assert 58.962 == EfficiencyRatios.calculate_free_cashflow_to_operating_cashflow(
+            234.67, 3.98
+        )
         assert 0 == EfficiencyRatios.calculate_free_cashflow_to_operating_cashflow(234.67, 0)

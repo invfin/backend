@@ -84,12 +84,17 @@ class EmailSenderTest(TestCase):
 class EmailTest(TestCase):
     @classmethod
     def setUpTestData(cls) -> None:
-        cls.user = DjangoTestingModel.create(User, first_name="f", last_name="f", email="test@user.com")
+        cls.user = DjangoTestingModel.create(
+            User, first_name="f", last_name="f", email="test@user.com"
+        )
 
     def test_html_link(self):
-        assert '<a href="link" target="_blank">Text</a>' == EmailingSystem.html_link("link", "Text")
-        assert '<a href="http://example.com:8000link" target="_blank">Text</a>' == EmailingSystem.html_link(
-            "link", "Text", True
+        assert '<a href="link" target="_blank">Text</a>' == EmailingSystem.html_link(
+            "link", "Text"
+        )
+        assert (
+            '<a href="http://example.com:8000link" target="_blank">Text</a>'
+            == EmailingSystem.html_link("link", "Text", True)
         )
 
     def test_is_for_the_website(self):
@@ -118,14 +123,18 @@ class EmailTest(TestCase):
         assert "/call_to_action_url" == call_to_action_url
 
     def test_get_email_template(self):
-        email_template = EmailingSystem(constants.EMAIL_FOR_WEB, CONTENT_FOR_WELCOME).get_email_template()
+        email_template = EmailingSystem(
+            constants.EMAIL_FOR_WEB, CONTENT_FOR_WELCOME
+        ).get_email_template()
         assert "web/welcome.html" == email_template
         email_template = EmailingSystem(constants.EMAIL_FOR_NOTIFICATION).get_email_template()
         assert "notification.html" == email_template
 
     def test__prepare_email_track(self):
         web_email = DjangoTestingModel.create(WebsiteEmail, id=1)
-        email_machine_response = EmailingSystem()._prepare_email_track("web", "WebsiteEmail", 1, self.user)
+        email_machine_response = EmailingSystem()._prepare_email_track(
+            "web", "WebsiteEmail", 1, self.user
+        )
         web_email_track = WebsiteEmailTrack.objects.get(email_related=web_email)
         assert web_email_track.encoded_url == email_machine_response
         assert self.user == web_email_track.sent_to
@@ -146,7 +155,9 @@ class EmailTest(TestCase):
             "object_name": "WebsiteEmail",
             "id": 1,
         }
-        sender, message = EmailingSystem(constants.EMAIL_FOR_NOTIFICATION)._prepare_email(email_dict, self.user)
+        sender, message = EmailingSystem(constants.EMAIL_FOR_NOTIFICATION)._prepare_email(
+            email_dict, self.user
+        )
         email_track = WebsiteEmailTrack.objects.get(email_related=web_email)
         expected_data = {
             "subject": "Subject here",
@@ -167,11 +178,15 @@ class EmailTest(TestCase):
             "call_to_action": "call_to_action",
             "call_to_action_url": "/call_to_action_url",
         }
-        assert expected_result == EmailingSystem(constants.EMAIL_FOR_NOTIFICATION)._prepare_call_to_action(data)
+        assert expected_result == EmailingSystem(
+            constants.EMAIL_FOR_NOTIFICATION
+        )._prepare_call_to_action(data)
 
         data = {"call_to_action": "", "call_to_action_url": ""}
         expected_result = {"call_to_action": "", "call_to_action_url": ""}
-        assert expected_result == EmailingSystem(constants.EMAIL_FOR_NOTIFICATION)._prepare_call_to_action(data)
+        assert expected_result == EmailingSystem(
+            constants.EMAIL_FOR_NOTIFICATION
+        )._prepare_call_to_action(data)
 
     def test__prepare_content(self):
         email_machine = EmailingSystem(constants.EMAIL_FOR_NOTIFICATION)

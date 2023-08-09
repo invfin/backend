@@ -27,7 +27,10 @@ class Command(BaseCommand):
                 asset_class_related = constants.STOCK
             try:
                 screener_lookup = yq_screener.get_screeners(screener, 1)
-                if screener_lookup[screener] == "No screener records found. Check if scrIds are correct":
+                if (
+                    screener_lookup[screener]
+                    == "No screener records found. Check if scrIds are correct"
+                ):
                     continue
                 screener_lookup_info = screener_lookup[screener]
 
@@ -35,7 +38,9 @@ class Command(BaseCommand):
                 description = screener_lookup_info["description"]
 
                 name = google_translator().translate(name, lang_src="en", lang_tgt="es")
-                description = google_translator().translate(description, lang_src="en", lang_tgt="es")
+                description = google_translator().translate(
+                    description, lang_src="en", lang_tgt="es"
+                )
                 slug = slugify(name)
                 screener_search = YahooScreener.objects.filter(yq_name=screener)
                 if screener_search.exists():

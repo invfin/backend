@@ -58,5 +58,6 @@ def render_pre_loading(link_params: str, extra, *args):
 def render_open_modal(link_params: str, text: str, class_attrs: str = ""):
     link = reverse(link_params)
     return mark_safe(
-        f'<button class="{class_attrs} dropdown-item" hx-get="{link} "hx-target="#SharedModalDialog">{text}</button>'
+        f'<button class="{class_attrs} dropdown-item"'
+        f' hx-get="{link} "hx-target="#SharedModalDialog">{text}</button>'
     )

@@ -27,7 +27,9 @@ class BaseTestContentCreation:
         assert self.content_creator().get_object() == self.model_class_obj
 
     def test_get_shared_model_historial(self):
-        assert self.content_creator().get_shared_model_historial() == self.shared_model_historial
+        assert (
+            self.content_creator().get_shared_model_historial() == self.shared_model_historial
+        )
 
     def test_get_object_title(self):
         assert self.model_class_obj.title == self.content_creator().get_object_title()
@@ -88,8 +90,12 @@ class BaseTestContentCreation:
         )
         for socialmedia in social_constants.SOCIAL_MEDIAS_USED:
             with self.subTest(socialmedia):
-                hashtag = DjangoTestingModel.create(Hashtag, title="hashtag", platform=socialmedia)
-                result_data = self.content_creator(socialmedia).create_social_media_content_from_object()
+                hashtag = DjangoTestingModel.create(
+                    Hashtag, title="hashtag", platform=socialmedia
+                )
+                result_data = self.content_creator(
+                    socialmedia
+                ).create_social_media_content_from_object()
                 assert default_title_all == result_data["default_title"]
                 if "title_emojis" in result_data:
                     assert (emoji_1 in result_data["title_emojis"]) is True
@@ -109,12 +115,16 @@ class BaseTestContentCreation:
             content_creator_all = ContentCreation
             content_creator_all.model_class = Term
             content_creator_all.for_content = []
-            assert content_creator_all().create_default_title_filter() == {"for_content__in": [constants.ALL]}
+            assert content_creator_all().create_default_title_filter() == {
+                "for_content__in": [constants.ALL]
+            }
         with self.subTest("content with Web"):
             content_creator_web = ContentCreation
             content_creator_web.model_class = Term
             content_creator_web.for_content = []
-            assert content_creator_web(constants.PLATFORM_WEB).create_default_title_filter() == {
+            assert content_creator_web(
+                constants.PLATFORM_WEB
+            ).create_default_title_filter() == {
                 "for_content__in": [constants.ALL, constants.WEB]
             }
 
@@ -123,11 +133,15 @@ class BaseTestContentCreation:
             content_creator_all = ContentCreation
             content_creator_all.model_class = self.model_class
             content_creator_all.for_content = []
-            assert content_creator_all().create_default_title_filter() == {"for_content__in": [constants.ALL]}
+            assert content_creator_all().create_default_title_filter() == {
+                "for_content__in": [constants.ALL]
+            }
         with self.subTest("content with Web"):
             content_creator_web = ContentCreation
             content_creator_web.model_class = self.model_class
             content_creator_web.for_content = []
-            assert content_creator_web(constants.PLATFORM_WEB).create_default_title_filter() == {
+            assert content_creator_web(
+                constants.PLATFORM_WEB
+            ).create_default_title_filter() == {
                 "for_content__in": [constants.ALL, constants.WEB]
             }

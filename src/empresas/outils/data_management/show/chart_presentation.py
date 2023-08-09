@@ -10,8 +10,7 @@ from ..interfaces import StatementsInterface
 
 
 class CompanyChartPresentation(CompanyValueToJsonConverter):
-
-    def __init__(self, limit:int)->None:
+    def __init__(self, limit: int) -> None:
         self.limit = limit
 
     def get_complete_information(

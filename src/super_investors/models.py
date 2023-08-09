@@ -53,7 +53,11 @@ class Superinvestor(Model):
     @property
     def portfolio_information(self):
         all_history = self.history.prefetch_related("period_related", "company").all()
-        all_companies = all_history.order_by().values("company", "company_name").distinct("company", "company_name")
+        all_companies = (
+            all_history.order_by()
+            .values("company", "company_name")
+            .distinct("company", "company_name")
+        )
         portfolio = []
         for company in all_companies:
             query_company_history = self.history.filter(**company)
@@ -99,7 +103,13 @@ class FavoritesSuperinvestorsHistorial(AbstractFavoritesHistorial):
 
 
 class FavoritesSuperinvestorsList(Model):
-    user = OneToOneField(User, on_delete=SET_NULL, null=True, blank=True, related_name="favorites_superinvestors")
+    user = OneToOneField(
+        User,
+        on_delete=SET_NULL,
+        null=True,
+        blank=True,
+        related_name="favorites_superinvestors",
+    )
     superinvestor = ManyToManyField(Superinvestor, blank=True)
 
     class Meta:
@@ -183,7 +193,9 @@ class SuperinvestorActivity(AbstractSuperinvestorHoldingsInformation):
 
 
 class SuperinvestorHistory(AbstractSuperinvestorHoldingsInformation):
-    superinvestor_related = ForeignKey(Superinvestor, on_delete=SET_NULL, null=True, blank=True, related_name="history")
+    superinvestor_related = ForeignKey(
+        Superinvestor, on_delete=SET_NULL, null=True, blank=True, related_name="history"
+    )
     movement = CharField(max_length=500, null=True, blank=True)
     shares = FloatField(null=True, blank=True)
     reported_price = FloatField(null=True, blank=True)

@@ -36,7 +36,10 @@ class TestCheckoutRedirectView(TestCase):
             payment_type=constants.TYPE_ONE_TIME,
         )
         cls.request = MagicMock(
-            GET={"prod": cls.base_prod_comp.id, "session_id": "cs_test_a1efUTq7VYePHRp07jtfRK5UmIOepUGV1HMgpA"}
+            GET={
+                "prod": cls.base_prod_comp.id,
+                "session_id": "cs_test_a1efUTq7VYePHRp07jtfRK5UmIOepUGV1HMgpA",
+            }
         )
         cls.stripe_session = stripe.checkout.Session()
         cls.stripe_session.update(checkout_session.checkout_session)
@@ -132,7 +135,9 @@ class TestCheckoutRedirectView(TestCase):
         mock_session_retrieve.return_value = session
         mock_customer_retrieve.return_value = stripe_customer
         result_session, result_stripe_customer = self.view.get_stripe_info()
-        mock_session_retrieve.assert_called_once_with("cs_test_a1efUTq7VYePHRp07jtfRK5UmIOepUGV1HMgpA")
+        mock_session_retrieve.assert_called_once_with(
+            "cs_test_a1efUTq7VYePHRp07jtfRK5UmIOepUGV1HMgpA"
+        )
         mock_customer_retrieve.assert_called_once_with("customer")
         self.assertEqual(result_session, session)
         self.assertEqual(result_stripe_customer, stripe_customer)

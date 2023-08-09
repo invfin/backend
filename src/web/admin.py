@@ -3,7 +3,13 @@ from django.db import models
 
 from django_json_widget.widgets import JSONEditorWidget
 
-from src.web.models import Roadmap, RoadmapComment, WebsiteEmail, WebsiteEmailTrack, WebsiteLegalPage
+from src.web.models import (
+    Roadmap,
+    RoadmapComment,
+    WebsiteEmail,
+    WebsiteEmailTrack,
+    WebsiteLegalPage,
+)
 
 
 class RoadmapCommentInline(admin.StackedInline):

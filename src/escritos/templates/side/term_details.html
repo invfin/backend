@@ -1,4 +1,4 @@
-{% load static i18n extra %}
+{% load static i18n extra recsys %}
 <div class="card text-center">
     <div class="card-header">
         Contribuidores
@@ -53,4 +53,4 @@
         </div>
     </div>
 </div>
-{% include "loading_recsys.html" %}
+{% get_recommendations "terms" object.id %}

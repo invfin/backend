@@ -13,7 +13,12 @@ from rest_framework.response import Response
 from rest_framework.schemas import ManualSchema, coreapi as coreapi_schema
 from rest_framework.views import APIView
 
-from src.api.exceptions import ParameterNotSetException, QueryNotFoundException, ServerError, WrongParameterException
+from src.api.exceptions import (
+    ParameterNotSetException,
+    QueryNotFoundException,
+    ServerError,
+    WrongParameterException,
+)
 from src.api.models import EndpointsCategory, Key, ReasonKeyRequested
 from src.api.serializers import AuthKeySerializer
 from src.seo.outils.visiteur_meta import SeoInformation
@@ -170,9 +175,16 @@ class BaseAPIView(APIView):
         Improve the way that we get the searched model (Company, superinvestor or Term)
         """
         search = queryset
-        if "QuerySet" in type(queryset).__name__ or type(queryset) == QuerySet or type(queryset) == list:
+        if (
+            "QuerySet" in type(queryset).__name__
+            or type(queryset) == QuerySet
+            or type(queryset) == list
+        ):
             first_item_queryset = queryset[0]
-            if "ticker" in self.url_parameters and first_item_queryset._meta.app_label == "empresas":
+            if (
+                "ticker" in self.url_parameters
+                and first_item_queryset._meta.app_label == "empresas"
+            ):
                 search = first_item_queryset.company
             elif first_item_queryset._meta.app_label == "super_investors":
                 search = first_item_queryset.superinvestor_related
@@ -360,7 +372,9 @@ def request_API_key(request):
         description = request.POST.get("description")
         if description:
             ReasonKeyRequested.objects.create(user=request.user, description=description)
-            key = Key.objects.create(user=request.user, ip=SeoInformation.get_client_ip(request), limit=250)
+            key = Key.objects.create(
+                user=request.user, ip=SeoInformation.get_client_ip(request), limit=250
+            )
             messages.success(request, f"Gracias, tu clave ya está disponible {key.key}")
         else:
             messages.error(request, "Oups, parece que hay un error con tu motivo")

@@ -20,7 +20,9 @@ class QuestionsView(SEOListView):
     template_name = "QA_inicio.html"
     context_object_name = "questions"
     ordering = ["-created_at"]
-    meta_description = "Haz una pregunta o responde a la comunidad para conseguir premios increíbles"
+    meta_description = (
+        "Haz una pregunta o responde a la comunidad para conseguir premios increíbles"
+    )
     meta_tags = "finanzas, blog financiero, blog el financiera, invertir"
     meta_title = "Resuelve tus dudas o ayuda otros inversores y gana dinero"
     is_article = True
@@ -68,7 +70,9 @@ class CreateQuestionView(LoginRequiredMixin, SuccessMessageMixin, CreateView):
         return super().form_invalid(form)
 
 
-class UpdateQuestionView(LoginRequiredMixin, UserPassesTestMixin, SuccessMessageMixin, UpdateView):
+class UpdateQuestionView(
+    LoginRequiredMixin, UserPassesTestMixin, SuccessMessageMixin, UpdateView
+):
     model = Question
     template_name = "forms/update_question.html"
     context_object_name = "question"

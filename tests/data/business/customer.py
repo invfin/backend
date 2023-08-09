@@ -1,7 +1,14 @@
 customer = {
     "id": "cus_LpUqB8Y1NCDdhB",
     "object": "customer",
-    "address": {"city": None, "country": "ES", "line1": None, "line2": None, "postal_code": None, "state": None},
+    "address": {
+        "city": None,
+        "country": "ES",
+        "line1": None,
+        "line2": None,
+        "postal_code": None,
+        "state": None,
+    },
     "balance": 0,
     "created": 1654560061,
     "currency": None,

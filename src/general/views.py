@@ -15,7 +15,11 @@ from src.escritos.constants import BASE_ESCRITO_PUBLISHED
 from src.escritos.models import FavoritesTermsHistorial, FavoritesTermsList, Term, TermContent
 from src.notifications.models import Notification
 from src.screener.models import FavoritesStocksHistorial
-from src.super_investors.models import FavoritesSuperinvestorsHistorial, FavoritesSuperinvestorsList, Superinvestor
+from src.super_investors.models import (
+    FavoritesSuperinvestorsHistorial,
+    FavoritesSuperinvestorsList,
+    Superinvestor,
+)
 
 
 class MessagesTemplateview(TemplateView):
@@ -36,7 +40,9 @@ class Handler404(TemplateView):
     def handle_wrong_urls(self):
         if settings.FULL_DOMAIN in self.request.get_full_path_info():
             full_path = self.request.build_absolute_uri()
-            full_path = full_path.replace(f"{settings.FULL_DOMAIN}/{settings.FULL_DOMAIN}", settings.FULL_DOMAIN)
+            full_path = full_path.replace(
+                f"{settings.FULL_DOMAIN}/{settings.FULL_DOMAIN}", settings.FULL_DOMAIN
+            )
             return full_path
         return None
 
@@ -57,7 +63,9 @@ def suggest_list_search(request):
             no_cfs=False,
         ).only("name", "ticker")[:7]
 
-        terms = Term.objects.filter(title__icontains=query, status=BASE_ESCRITO_PUBLISHED).only("title")[:7]
+        terms = Term.objects.filter(
+            title__icontains=query, status=BASE_ESCRITO_PUBLISHED
+        ).only("title")[:7]
 
         terms_content = TermContent.objects.filter(
             title__icontains=query, term_related__status=BASE_ESCRITO_PUBLISHED
@@ -65,7 +73,9 @@ def suggest_list_search(request):
 
         results = []
 
-        for company, term, term_content in itertools.zip_longest(companies, terms, terms_content):
+        for company, term, term_content in itertools.zip_longest(
+            companies, terms, terms_content
+        ):
             if company:
                 results.append(f"Empresa: {company.name} [{company.ticker}]")
             if term:
@@ -132,10 +142,14 @@ def update_favorites(request):
 
             if current_stock in user.fav_stocks:
                 user.favorites_companies.stock.remove(current_stock)
-                FavoritesStocksHistorial.objects.create(user=user, asset=current_stock, removed=True)
+                FavoritesStocksHistorial.objects.create(
+                    user=user, asset=current_stock, removed=True
+                )
                 is_favorite = False
             else:
-                FavoritesStocksHistorial.objects.create(user=user, asset=current_stock, added=True)
+                FavoritesStocksHistorial.objects.create(
+                    user=user, asset=current_stock, added=True
+                )
                 user.favorites_companies.stock.add(current_stock)
                 is_favorite = True
 
@@ -148,10 +162,14 @@ def update_favorites(request):
                 FavoritesTermsList.objects.create(user=user)
             if current_term in user.fav_terms:
                 user.favorites_terms.term.remove(current_term)
-                FavoritesTermsHistorial.objects.create(user=user, term=current_term, removed=True)
+                FavoritesTermsHistorial.objects.create(
+                    user=user, term=current_term, removed=True
+                )
                 is_favorite = False
             else:
-                FavoritesTermsHistorial.objects.create(user=user, term=current_term, added=True)
+                FavoritesTermsHistorial.objects.create(
+                    user=user, term=current_term, added=True
+                )
                 user.favorites_terms.term.add(current_term)
                 is_favorite = True
 

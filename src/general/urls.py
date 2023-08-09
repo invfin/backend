@@ -13,7 +13,11 @@ from .views import (
 
 app_name = "general"
 urlpatterns = [
-    path("create-comment/<url_encoded>/", CreateCommentView.as_view(), name="create_comment_view"),
+    path(
+        "create-comment/<url_encoded>/",
+        CreateCommentView.as_view(),
+        name="create_comment_view",
+    ),
     path("create-vote/<url_encoded>/", VoteView.as_view(), name="create_vote_view"),
     path("suggestions-buscador/", suggest_list_search, name="searcher_suggestions"),
     path("buscador/", search_results, name="searcher"),

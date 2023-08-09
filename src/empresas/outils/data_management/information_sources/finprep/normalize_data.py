@@ -16,7 +16,9 @@ class NormalizeFinprep:
             year=finprep_dict["date"],
             company=self.company,
             period=Period.objects.for_year_period(finprep_dict["calendarYear"]),
-            reported_currency=Currency.objects.financial_currency(finprep_dict["reportedCurrency"]),
+            reported_currency=Currency.objects.financial_currency(
+                finprep_dict["reportedCurrency"]
+            ),
             accepted_date=finprep_dict["acceptedDate"],
             filling_date=finprep_dict["fillingDate"],
             final_link=finprep_dict["finalLink"],
@@ -38,7 +40,9 @@ class NormalizeFinprep:
             ebitdaratio=finprep_dict["ebitdaratio"],
             eps=finprep_dict["eps"],
             epsdiluted=finprep_dict["epsdiluted"],
-            general_and_administrative_expenses=finprep_dict["generalAndAdministrativeExpenses"],
+            general_and_administrative_expenses=finprep_dict[
+                "generalAndAdministrativeExpenses"
+            ],
             gross_profit=finprep_dict["grossProfit"],
             gross_profit_ratio=finprep_dict["grossProfitRatio"],
             income_before_tax=finprep_dict["incomeBeforeTax"],
@@ -55,7 +59,9 @@ class NormalizeFinprep:
             research_and_development_expenses=finprep_dict["researchAndDevelopmentExpenses"],
             revenue=finprep_dict["revenue"],
             selling_and_marketing_expenses=finprep_dict["sellingAndMarketingExpenses"],
-            selling_general_and_administrative_expenses=finprep_dict["sellingGeneralAndAdministrativeExpenses"],
+            selling_general_and_administrative_expenses=finprep_dict[
+                "sellingGeneralAndAdministrativeExpenses"
+            ],
             symbol=finprep_dict["symbol"],
             total_other_income_expenses_net=finprep_dict["totalOtherIncomeExpensesNet"],
             weighted_average_shs_out=finprep_dict["weightedAverageShsOut"],
@@ -69,7 +75,9 @@ class NormalizeFinprep:
         return dict(
             self.initial_data(finprep_dict),
             account_payables=finprep_dict["accountPayables"],
-            accumulated_other_comprehensive_income_loss=finprep_dict["accumulatedOtherComprehensiveIncomeLoss"],
+            accumulated_other_comprehensive_income_loss=finprep_dict[
+                "accumulatedOtherComprehensiveIncomeLoss"
+            ],
             calendar_year=finprep_dict["calendarYear"],
             capital_lease_obligations=finprep_dict["capitalLeaseObligations"],
             cash_and_cash_equivalents=finprep_dict["cashAndCashEquivalents"],
@@ -78,7 +86,9 @@ class NormalizeFinprep:
             common_stock=finprep_dict["commonStock"],
             deferred_revenue=finprep_dict["deferredRevenue"],
             deferred_revenue_non_current=finprep_dict["deferredRevenueNonCurrent"],
-            deferred_tax_liabilities_non_current=finprep_dict["deferredTaxLiabilitiesNonCurrent"],
+            deferred_tax_liabilities_non_current=finprep_dict[
+                "deferredTaxLiabilitiesNonCurrent"
+            ],
             goodwill=finprep_dict["goodwill"],
             goodwill_and_intangible_assets=finprep_dict["goodwillAndIntangibleAssets"],
             intangible_assets=finprep_dict["intangibleAssets"],
@@ -110,7 +120,9 @@ class NormalizeFinprep:
             total_equity=finprep_dict["totalEquity"],
             total_investments=finprep_dict["totalInvestments"],
             total_liabilities=finprep_dict["totalLiabilities"],
-            total_liabilities_and_stockholders_equity=finprep_dict["totalLiabilitiesAndStockholdersEquity"],
+            total_liabilities_and_stockholders_equity=finprep_dict[
+                "totalLiabilitiesAndStockholdersEquity"
+            ],
             total_liabilities_and_total_equity=finprep_dict["totalLiabilitiesAndTotalEquity"],
             total_non_current_assets=finprep_dict["totalNonCurrentAssets"],
             total_non_current_liabilities=finprep_dict["totalNonCurrentLiabilities"],
@@ -141,10 +153,18 @@ class NormalizeFinprep:
             effect_of_forex_changes_on_cash=finprep_dict["effectOfForexChangesOnCash"],
             free_cash_flow=finprep_dict["freeCashFlow"],
             inventory=finprep_dict["inventory"],
-            investments_in_property_plant_and_equipment=finprep_dict["investmentsInPropertyPlantAndEquipment"],
-            net_cash_provided_by_operating_activities=finprep_dict["netCashProvidedByOperatingActivities"],
-            net_cash_used_for_investing_activites=finprep_dict["netCashUsedForInvestingActivites"],
-            net_cash_used_provided_by_financing_activities=finprep_dict["netCashUsedProvidedByFinancingActivities"],
+            investments_in_property_plant_and_equipment=finprep_dict[
+                "investmentsInPropertyPlantAndEquipment"
+            ],
+            net_cash_provided_by_operating_activities=finprep_dict[
+                "netCashProvidedByOperatingActivities"
+            ],
+            net_cash_used_for_investing_activites=finprep_dict[
+                "netCashUsedForInvestingActivites"
+            ],
+            net_cash_used_provided_by_financing_activities=finprep_dict[
+                "netCashUsedProvidedByFinancingActivities"
+            ],
             net_change_in_cash=finprep_dict["netChangeInCash"],
             net_income=finprep_dict["netIncome"],
             operating_cash_flow=finprep_dict["operatingCashFlow"],

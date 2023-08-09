@@ -84,7 +84,9 @@ class EmailingSystem:
         template = f"{self.is_for}/{self.web_objective}" if self.web_objective else self.is_for
         return f"{template}.html"
 
-    def _prepare_email_track(self, app_label: str, object_name: str, object_id: int, receiver: Type) -> str:
+    def _prepare_email_track(
+        self, app_label: str, object_name: str, object_id: int, receiver: Type
+    ) -> str:
         """
         email_specifications is a dict usually created from the model's property for_task
         receiver is an instance of User model queryed
@@ -105,7 +107,9 @@ class EmailingSystem:
     @classmethod
     def build_call_to_action_url(cls, base_call_to_action_url: str) -> str:
         if base_call_to_action_url:
-            call_to_action_url = cls.append_slash_to_call_to_action_url(base_call_to_action_url)
+            call_to_action_url = cls.append_slash_to_call_to_action_url(
+                base_call_to_action_url
+            )
             # TODO Add utm
             return call_to_action_url
         return ""
@@ -186,14 +190,18 @@ class EmailingSystem:
         cc: Union[List, Tuple] = [],
         reply_to: Union[List, Tuple] = [],
     ):
-        email_message = EmailMessage(subject, body, from_email, to, bcc, connection, attachments, headers, cc, reply_to)
+        email_message = EmailMessage(
+            subject, body, from_email, to, bcc, connection, attachments, headers, cc, reply_to
+        )
         email_message.content_subtype = "html"
         email_message.send()
 
     @classmethod
     def simple_email(cls, subject: str, message: str, sent_by: str = "Web-automation"):
         body = render_to_string("web/internal.html", {"content": message})
-        return cls.send_email(subject, body, f"{sent_by} <{settings.EMAIL_DEFAULT}>", [settings.EMAIL_DEFAULT])
+        return cls.send_email(
+            subject, body, f"{sent_by} <{settings.EMAIL_DEFAULT}>", [settings.EMAIL_DEFAULT]
+        )
 
     @classmethod
     def html_link(cls, link: str, text: str, autocomplete_url: bool = False) -> str:

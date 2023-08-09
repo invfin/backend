@@ -70,7 +70,6 @@ class TestCompanyTask(TestCase):
         )
         assert CompanyTask("key_stats", "key_stats").retrieve_company() is None
 
-
     @patch(f"{UPDATE_OUTILS}.create_financials_finprep")
     @patch(f"{UPDATE_OUTILS}.create_financials_finnhub")
     @patch(f"{UPDATE_OUTILS}.create_key_stats_yahooquery")
@@ -112,12 +111,8 @@ class TestCompanyTask(TestCase):
         assert mail.outbox[0].from_email == "InvFin - Automatic <EMAIL_DEFAULT@example.com>"
         assert mail.outbox[0].to == ["InvFin - Automatic <EMAIL_DEFAULT@example.com>"]
 
-    @patch(
-        f"{UPDATE_OUTILS}.create_financials_yahooquery"
-    )
-    @patch(
-        f"{UPDATE_OUTILS}.create_financials_yahooquery"
-    )
+    @patch(f"{UPDATE_OUTILS}.create_financials_yahooquery")
+    @patch(f"{UPDATE_OUTILS}.create_financials_yahooquery")
     def test_yahoo_query_tasks(
         self, mock_create_financials_yahooquery, mock_create_financials_yahooquery_2
     ):

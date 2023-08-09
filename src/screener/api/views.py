@@ -69,7 +69,7 @@ def get_company_valuation(request, ticker):
 
 def retreive_yahoo_screener_info(request, query):
     yahoo = yq.Screener().get_screeners(query)
-    context = {"yahoo": yahoo[query]["quotes"]} # type: ignore
+    context = {"yahoo": yahoo[query]["quotes"]}  # type: ignore
     return render(request, "yahoo-screeners/screener-data.html", context)
 
 
@@ -134,7 +134,7 @@ class CompanyObservationFormView(FormView):
 
     def form_valid(self, form):
         company_ticker = self.request.POST["company_ticker"]
-        user = User.objects.get_or_create_quick_user(self.request) # type: ignore
+        user = User.objects.get_or_create_quick_user(self.request)  # type: ignore
         model = form.save()
         model.user = user
         company = Company.objects.get(ticker=company_ticker)
@@ -153,7 +153,7 @@ def suggest_list_search_companies(request):
             no_bs=False,
             no_cfs=False,
         ).only("name", "ticker")[:10]
-        
+
         for company in companies_availables:
             result = f"{company.name} ({company.ticker})"
             results.append(result)

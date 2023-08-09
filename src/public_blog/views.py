@@ -12,7 +12,12 @@ from src.general.forms import DefaultNewsletterForm
 from src.notifications import constants as notifications_constants
 from src.notifications.tasks import prepare_notification_task
 from src.public_blog.forms import PublicBlogForm
-from src.public_blog.models import NewsletterFollowers, PublicBlog, PublicBlogAsNewsletter, WriterProfile
+from src.public_blog.models import (
+    NewsletterFollowers,
+    PublicBlog,
+    PublicBlogAsNewsletter,
+    WriterProfile,
+)
 from src.seo.views import SEODetailView, SEOListView
 
 User = get_user_model()
@@ -31,8 +36,12 @@ def following_management_view(request):
             messages.success(request, f"Ya estás siguiendo a {writer.full_name}")
             return redirect(redirect_to)
 
-        prepare_notification_task.delay(writer.dict_for_task, notifications_constants.NEW_FOLLOWER)
-        messages.success(request, f"A partir de ahora recibirás las newsletters de {writer.full_name}")
+        prepare_notification_task.delay(
+            writer.dict_for_task, notifications_constants.NEW_FOLLOWER
+        )
+        messages.success(
+            request, f"A partir de ahora recibirás las newsletters de {writer.full_name}"
+        )
     return redirect(redirect_to)
 
 
@@ -47,8 +56,8 @@ def user_become_writer_view(request):
         messages.success(
             request,
             (
-                "Pon al día tu perfil, añade tus redes sociales, una buena descripción y tu nombre para que la gente"
-                " pueda conocerte."
+                "Pon al día tu perfil, añade tus redes sociales, una buena descripción y tu"
+                " nombre para que la gente pueda conocerte."
             ),
         )
         return redirect("users:update")
@@ -125,7 +134,9 @@ class CreatePublicBlogPostView(writerOnlyMixin, CreateView):
             # Prepare email and send it
             return redirect("public_blog:create_newsletter_blog", kwargs={"slug": modelo.slug})
         if modelo.status == escritos_constants.BASE_ESCRITO_PUBLISHED:
-            prepare_notification_task.delay(modelo.dict_for_task, notifications_constants.NEW_BLOG_POST)
+            prepare_notification_task.delay(
+                modelo.dict_for_task, notifications_constants.NEW_BLOG_POST
+            )
         return super(CreatePublicBlogPostView, self).form_valid(form)
 
 
@@ -136,7 +147,9 @@ class UpdatePublicBlogPostView(writerOnlyMixin, UpdateView):
     template_name = "forms/manage_escrito.html"
 
     def get_success_url(self):
-        return redirect("public_blog:manage_blogs", kwargs={"slug": self.request.user.username})
+        return redirect(
+            "public_blog:manage_blogs", kwargs={"slug": self.request.user.username}
+        )
 
     def get_context_data(self, **kwargs):
         context = super(UpdatePublicBlogPostView, self).get_context_data(**kwargs)
@@ -152,7 +165,9 @@ class UpdatePublicBlogPostView(writerOnlyMixin, UpdateView):
         if modelo.send_as_newsletter:
             return redirect("public_blog:create_newsletter_blog", kwargs={"slug": modelo.slug})
         if modelo.status == escritos_constants.BASE_ESCRITO_PUBLISHED:
-            prepare_notification_task.delay(modelo.dict_for_task, notifications_constants.NEW_BLOG_POST)
+            prepare_notification_task.delay(
+                modelo.dict_for_task, notifications_constants.NEW_BLOG_POST
+            )
         return super(UpdatePublicBlogPostView, self).form_valid(form)
 
     def test_func(self):

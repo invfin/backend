@@ -175,7 +175,9 @@ class TestBaseAPIView(APITestCase):
     @patch("src.api.views.BaseAPIView.find_query_value")
     def test_get_query_params(self, mock_find_query_value):
         view = BaseAPIView()
-        response = self.client.get("/company-information/excel-api/income", {"api_key": "horror"})
+        response = self.client.get(
+            "/company-information/excel-api/income", {"api_key": "horror"}
+        )
         view.request = response.renderer_context["request"]
         with self.assertRaises(ParameterNotSetException):
             view.get_query_params()
@@ -206,7 +208,9 @@ class TestBaseAPIView(APITestCase):
     @patch("src.api.views.BaseAPIView.generate_lookup")
     @patch("src.api.views.BaseAPIView.prepare_queryset")
     @patch("src.api.views.BaseAPIView.check_limitation")
-    def test_generate_queryset(self, mock_check_limitation, mock_prepare_queryset, mock_generate_lookup):
+    def test_generate_queryset(
+        self, mock_check_limitation, mock_prepare_queryset, mock_generate_lookup
+    ):
         queryset = IncomeStatement.objects.filter(**{"company__ticker": "INTC"})
         with self.subTest("not limited"):
             view_not_limited = BaseAPIView()
