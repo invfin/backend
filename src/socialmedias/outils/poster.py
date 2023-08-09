@@ -1,4 +1,4 @@
-from typing import Any, Dict, List, Optional, Type, Union
+from typing import Any, Dict, List, Optional, Type
 
 from django.conf import settings
 from django.contrib.auth import get_user_model

@@ -140,23 +140,11 @@ pycov:
 
 # Style
 format:
-	isort ${FOLDERS}
-	black ${FOLDERS}
-	make autoflake
-	flake8 ${FOLDERS}
-	mypy ${FOLDERS}
-
-isort_check:
-	isort --df -c ${FOLDERS}
+	$(MAKE) black
+	$(MAKE) ruff
 
 black_check:
 	black ${FOLDERS} --check
-
-flake8:
-	flake8 ${FOLDERS}
-
-isort:
-	isort ${FOLDERS}
 
 black:
 	black ${FOLDERS}
@@ -164,9 +152,9 @@ black:
 mypy:
 	mypy ${FOLDERS}
 
-autoflake:
-	autoflake --remove-all-unused-imports --recursive ${FOLDERS} -i
-	autoflake --remove-unused-variables --recursive ${FOLDERS} -i
+ruff:
+	ruff check ${FOLDERS} --fix
+
 
 deploy:
 	./deployment.sh ${ar} ${str}

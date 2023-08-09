@@ -1,8 +1,7 @@
-from typing import Any, Union, List
+from typing import Union
 from datetime import datetime, date
 from dateutil.parser import parse
 
-from django.db.models import QuerySet
 
 from .constants import QUARTER_PER_MONTH
 from .models import Period

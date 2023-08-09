@@ -193,7 +193,7 @@ class Instagram:
         if instagram_post_result["result"] == "error":
             sys.exit()
 
-        instagram_post = InstagramPostRecord.general_manager.save_record(
+        InstagramPostRecord.general_manager.save_record(
             local_content=local_content,
             post_type=post_type,
             is_original=is_original,

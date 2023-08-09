@@ -5,12 +5,12 @@ from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db.models import QuerySet
 from django.shortcuts import redirect
-
 from rest_framework import parsers, status
 from rest_framework.authentication import BasicAuthentication, SessionAuthentication
 from rest_framework.compat import coreapi, coreschema
 from rest_framework.response import Response
-from rest_framework.schemas import ManualSchema, coreapi as coreapi_schema
+from rest_framework.schemas import ManualSchema
+from rest_framework.schemas import coreapi as coreapi_schema
 from rest_framework.views import APIView
 
 from src.api.exceptions import (
@@ -91,7 +91,8 @@ class BaseAPIView(APIView):
     Maybe change the url_parameters to a dict
     Example:
         {"ticker", "company__ticker"}
-        key being the url parameter to look for and the value, the filter to apply to the queryset
+        key being the url parameter to look for and the value,
+        the filter to apply to the queryset
 
     A class to sharea across API views.
 
@@ -150,7 +151,6 @@ class BaseAPIView(APIView):
 
     def get_model_to_track(self) -> Optional[Type]:
         """
-
         Raises:
             NotImplementedError: model_to_track is set to None by default, if we don't want to save the request
             we should pass "ignore" otherwise it will rise and error

@@ -1,12 +1,8 @@
 from datetime import datetime, date
 
 from django.test import TestCase
-from bfet import DjangoTestingModel
 
-from src.periods import constants
-from src.periods.models import Period
 from src.periods.outils import FiscalDate
-from src.empresas.models.finprep import IncomeStatementFinprep
 
 
 class TestFiscalDate(TestCase):

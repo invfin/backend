@@ -58,7 +58,6 @@ class TestEngagementMachine(TestCase):
             "title": title,
             "content": content,
             "title_emojis": [self.title_emojis],
-            "content": content,
             "whom_to_send": whom_to_send,
         }
         result_data = EngagementMachine().save_newsletter(**newsletter_data)

@@ -35,15 +35,15 @@ class TestCompanyChartPresentation(TestCase):
         mock_get_important_ratios,
         mock_build_table_and_chart,
     ):
-        comparing_income_json = self.build_table_and_chart(
+        self.build_table_and_chart(
             initial_statements.inc_statements,
             self.income_json,
         )
-        comparing_balance_json = self.build_table_and_chart(
+        self.build_table_and_chart(
             initial_statements.balance_sheets,
             self.balance_json,
         )
-        comparing_cashflows = self.build_table_and_chart(
+        self.build_table_and_chart(
             initial_statements.cf_statements,
             self.cashflow_json,
         )

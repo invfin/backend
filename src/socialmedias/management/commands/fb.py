@@ -1,4 +1,3 @@
-from django.conf import settings
 from django.core.management import BaseCommand
 
 from src.socialmedias.outils.socialposter.facepy import Facebook
@@ -6,7 +5,7 @@ from src.socialmedias.outils.socialposter.facepy import Facebook
 
 class Command(BaseCommand):
     def handle(self, *args, **options):
-        post_content = dict(
+        dict(
             media="/static/general/assets/img/general/why-us.webp",
             title="Default title",
             content="Default content #default #hashtags",

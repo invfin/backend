@@ -39,6 +39,8 @@ exclude = [
     "dist",
     "node_modules",
     "venv",
+    "migrations",
+    "translate"
 ]
 
 # Same as Black.

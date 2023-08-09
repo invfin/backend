@@ -29,14 +29,12 @@ sphinx-autobuild
 
 # Code quality
 # ------------------------------------------------------------------------------
-flake8
-flake8-isort
+ruff
 coverage
 black
 pylint-django
 pylint-celery
 pre-commit
-autoflake
 
 # Django
 # ------------------------------------------------------------------------------
