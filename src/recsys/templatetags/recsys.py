@@ -1,4 +1,5 @@
 import json
+from typing import Optional
 
 from django import template
 from django.conf import settings
@@ -8,7 +9,12 @@ register = template.Library()
 
 
 @register.simple_tag(name="get_recommendations")
-def get_recommendations(model: str, num_recs: int = 5, product_id: int = 0, user_id: int = 0):
+def get_recommendations(
+    model: str,
+    num_recs: int = 5,
+    product_id: Optional[int] = None,
+    user_id: Optional[int] = None,
+):
     params = {
         "publicKey": settings.RECSYS_PUBLIC_KEY,
         "entity": model,
@@ -17,10 +23,10 @@ def get_recommendations(model: str, num_recs: int = 5, product_id: int = 0, user
         "title": "Estos temas podrían interesarte",
     }
 
-    if product_id != 0:
+    if product_id:
         params["prodId"] = product_id
 
-    if user_id != 0:
+    if user_id:
         params["userId"] = user_id
 
     endpoint = {
