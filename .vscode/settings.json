@@ -31,20 +31,16 @@
         ]
     },
     "editor.autoClosingBrackets": "languageDefined",
+    "python.formatting.provider": "black",
     "[python]": {
         "editor.wordBasedSuggestions": false,
         "editor.bracketPairColorization.enabled": true,
         "editor.autoIndent": "advanced",
         "editor.wordWrapColumn": 95,
-        "editor.defaultFormatter": "ms-python.vscode-pylance"
-    },
-    "python.linting.mypyEnabled": true,
-    "python.linting.flake8Enabled": true,
-    "python.linting.enabled": true,
-    "python.linting.pycodestyleEnabled": true,
-    "python.linting.pylintEnabled": true,
-    "python.linting.pylintArgs": [
-        "--enable=W0614"
-    ],
-    "python.formatting.provider": "black"
+        "editor.defaultFormatter": null,
+        "editor.codeActionsOnSave": {
+            "source.fixAll.ruff": true,
+            "source.organizeImports.ruff": true
+        },
+    }
 }

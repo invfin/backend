@@ -2,9 +2,9 @@
 {% load static %}
 {% block header %}
 {% include "header/result.html" %}
-<script src="https://unpkg.com/htmx.org@1.7.0" 
-    integrity="sha384-EzBXYPt0/T6gxNp0nuPtLkmRpmDBbjg6WmCUZRLXBBwYYmwAUxzlSGej0ARHX0Bo" 
-    crossorigin="anonymous" defer></script>
+<script src="https://unpkg.com/htmx.org@1.9.4"
+    integrity="sha384-EzBXYPt0/T6gxNp0nuPtLkmRpmDBbjg6WmCUZRLXBBwYYmwAUxzlSGej0ARHX0Bo" crossorigin="anonymous"
+    defer></script>
 {% endblock header%}
 
 {% block FirstCtaContent %}
@@ -14,7 +14,7 @@
 {% endblock FirstCtaContent %}
 
 {% block ListContent %}
-<div class="col-12">        
+<div class="col-12">
     <div class="card">
         {% if difference %}
         {% include "results/no-money.html" %}

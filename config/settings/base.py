@@ -1,9 +1,8 @@
-from pathlib import Path
 import re
-
-from django.contrib.messages import constants as messages
+from pathlib import Path
 
 import environ
+from django.contrib.messages import constants as messages
 from imagekitio import ImageKit
 
 ROOT_DIR = Path(__file__).resolve(strict=True).parent.parent.parent
@@ -309,14 +308,14 @@ EMAIL_BACKEND = env(
 # https://docs.djangoproject.com/en/dev/ref/settings/#email-timeout
 EMAIL_TIMEOUT = 5
 
-EMAIL_CONTACT = env("EMAIL_CONTACT", default=f"EMAIL_CONTACT@example.com")
-EMAIL_SUBJECT_PREFIX = env("EMAIL_SUBJECT_PREFIX", default=f"EMAIL_SUBJECT_PREFIX@example.com")
-DEFAULT_EMAIL = env("DEFAULT_EMAIL", default=f"DEFAULT_EMAIL@example.com")
-EMAIL_NEWSLETTER = env("EMAIL_NEWSLETTER", default=f"EMAIL_NEWSLETTER@example.com")
-MAIN_EMAIL = env("MAIN_EMAIL", default=f"MAIN_EMAIL@example.com")
-EMAIL_ACCOUNTS = env("EMAIL_ACCOUNTS", default=f"EMAIL_ACCOUNTS@example.com")
-EMAIL_DEFAULT = env("EMAIL_DEFAULT", default=f"EMAIL_DEFAULT@example.com")
-EMAIL_SUGGESTIONS = env("EMAIL_SUGGESTIONS", default=f"EMAIL_SUGGESTIONS@example.com")
+EMAIL_CONTACT = env("EMAIL_CONTACT", default="EMAIL_CONTACT@example.com")
+EMAIL_SUBJECT_PREFIX = env("EMAIL_SUBJECT_PREFIX", default="EMAIL_SUBJECT_PREFIX@example.com")
+DEFAULT_EMAIL = env("DEFAULT_EMAIL", default="DEFAULT_EMAIL@example.com")
+EMAIL_NEWSLETTER = env("EMAIL_NEWSLETTER", default="EMAIL_NEWSLETTER@example.com")
+MAIN_EMAIL = env("MAIN_EMAIL", default="MAIN_EMAIL@example.com")
+EMAIL_ACCOUNTS = env("EMAIL_ACCOUNTS", default="EMAIL_ACCOUNTS@example.com")
+EMAIL_DEFAULT = env("EMAIL_DEFAULT", default="EMAIL_DEFAULT@example.com")
+EMAIL_SUGGESTIONS = env("EMAIL_SUGGESTIONS", default="EMAIL_SUGGESTIONS@example.com")
 
 # ADMIN
 # ------------------------------------------------------------------------------
@@ -418,10 +417,10 @@ SPECTACULAR_SETTINGS = {
     "VERSION": "1.0.0",
     "SERVE_PERMISSIONS": ["rest_framework.permissions.IsAdminUser"],
     "SERVERS": [
-        {"url": f"http://0.0.0.0:8000", "description": "Local Development server"},
-        {"url": f"http://127.0.0.1:8000", "description": "Local Development server"},
-        {"url": f"http://example.com:8000", "description": "Local Development server"},
-        {"url": f"https://inversionesyfinanzas.xyz", "description": "Production server"},
+        {"url": "http://0.0.0.0:8000", "description": "Local Development server"},
+        {"url": "http://127.0.0.1:8000", "description": "Local Development server"},
+        {"url": "http://example.com:8000", "description": "Local Development server"},
+        {"url": "https://inversionesyfinanzas.xyz", "description": "Production server"},
     ],
 }
 # API versions

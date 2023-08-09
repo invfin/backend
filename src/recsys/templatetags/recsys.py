@@ -1,20 +1,20 @@
 import json
 
 from django import template
-from django.utils.safestring import mark_safe
 from django.conf import settings
+from django.utils.safestring import mark_safe
 
 register = template.Library()
 
 
 @register.simple_tag(name="get_recommendations")
-def get_recommendations(model: str, product_id: int = 0, user_id: int = 0):
+def get_recommendations(model: str, num_recs: int = 5, product_id: int = 0, user_id: int = 0):
     params = {
         "publicKey": settings.RECSYS_PUBLIC_KEY,
         "entity": model,
         "target": "product",
-        "numberRecommendations": 5,
-        "title": "This is a test title",
+        "numberRecommendations": num_recs,
+        "title": "Estos temas podrían interesarte",
     }
 
     if product_id != 0:
