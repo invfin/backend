@@ -88,8 +88,8 @@ UpdateCompany(company)
     - Interface to call the different parsers
 
 # TODO
-1. [ ] Improve recommendations
-2. [ ] Improve roboadvisor
+1. [ ] Better data import/management/update
+2. [ ] Fix and improve socialmedia posting
 3. [ ] Add ETFs
 4. [ ] Add other assets
 5. [ ] Enable categories on portfolio
