@@ -1,10 +1,115 @@
-from typing import Any, Dict
+from typing import Any, Dict, List
 
+from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
+from django.db.models import Case, CharField, F, Value, When
+from django.db.models.functions import Concat
+from django.http.response import JsonResponse
+from django.utils.text import slugify
+from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 
+from src.api.pagination import StandardResultPagination
+from src.empresas.models import Company
+from src.escritos.constants import BASE_ESCRITO_PUBLISHED
+from src.escritos.models import Term, TermContent
 from src.notifications import constants
 
 from .mixins import BaseVoteAndCommentMixin
+
+
+class PublicSearchAPIView(APIView):
+    permission_classes = [AllowAny]
+    authentication_classes = []
+    pagination_class = StandardResultPagination
+    annotated_values = ["id", "title", "slug", "logo", "rank"]
+    order_by = "-rank"
+    sliced_by = 10
+
+    def get(self, *args, **kwargs):
+        return JsonResponse(self.search(), safe=False)
+
+    def search(self) -> List[Dict[str, Any]]:
+        search = self.request.query_params.get("search", "")
+        return self.filter_results(search) if search else []
+
+    def filter_results(self, search: str) -> List[Dict[str, Any]]:
+        results = self.find_results(search)
+        return sorted(results, key=lambda x: x["rank"], reverse=True)[: self.sliced_by]
+
+    def find_results(self, search: str) -> List[Dict[str, Any]]:
+        query = SearchQuery(search)
+        return (
+            self.find_companies(query)
+            + self.find_content_terms(query)
+            + self.find_terms(query)
+        )
+
+    def find_companies(self, query: SearchQuery) -> List[Dict[str, Any]]:
+        return list(
+            Company.objects.filter(
+                no_incs=False,
+                no_bs=False,
+                no_cfs=False,
+            )
+            .annotate(
+                logo=F("image"),
+                slug=F("ticker"),
+                rank=SearchRank(SearchVector("ticker", "name"), query),
+                title=Concat("name", Value(" ("), "ticker", Value(")")),
+            )
+            .values(*self.annotated_values)
+            .order_by(self.order_by)[: self.sliced_by]
+        )
+
+    def find_content_terms(self, query: SearchQuery) -> List[Dict[str, Any]]:
+        return list(
+            TermContent.objects.filter(term_related__status=BASE_ESCRITO_PUBLISHED)
+            .annotate(
+                logo=Case(
+                    When(
+                        term_related__thumbnail__isnull=False,
+                        then="term_related__thumbnail",
+                    ),
+                    When(
+                        term_related__non_thumbnail_url__isnull=False,
+                        then="term_related__non_thumbnail_url",
+                    ),
+                    default=Value("/static/general/assets/img/general/why-us.webp"),
+                    output_field=CharField(),
+                ),
+                rank=SearchRank(SearchVector("title", "content"), query),
+                slug=Concat(
+                    "term_related__slug",
+                    Value("#"),
+                    Value(slugify(F("title"))),
+                ),
+                # slug=Func(
+                #     F("term_related__slug"),
+                #     Value("#")
+                #     + Func(F("title"), function="slugify", output_field=CharField()),
+                #     function="CONCAT",
+                #     output_field=CharField(),
+                # ),
+            )
+            .values(*self.annotated_values)
+            .order_by(self.order_by)[: self.sliced_by]
+        )
+
+    def find_terms(self, query: SearchQuery) -> List[Dict[str, Any]]:
+        return list(
+            Term.objects.filter(status=BASE_ESCRITO_PUBLISHED)
+            .annotate(
+                logo=Case(
+                    When(thumbnail__isnull=False, then="thumbnail"),
+                    When(non_thumbnail_url__isnull=False, then="non_thumbnail_url"),
+                    default=Value("/static/general/assets/img/general/why-us.webp"),
+                    output_field=CharField(),
+                ),
+                rank=SearchRank(SearchVector("title", "resume"), query),
+            )
+            .values(*self.annotated_values)
+            .order_by(self.order_by)[: self.sliced_by]
+        )
 
 
 class CreateCommentView(BaseVoteAndCommentMixin, APIView):
