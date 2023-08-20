@@ -1,9 +1,34 @@
+from django.conf import settings
 from django.contrib.auth import authenticate, get_user_model
 from django.utils.translation import gettext_lazy as _
-
 from rest_framework import serializers
 
+FULL_DOMAIN = settings.FULL_DOMAIN
+
 User = get_user_model()
+
+
+class AuthorSerializer(serializers.ModelSerializer):
+    name = serializers.SerializerMethodField(read_only=True)
+    slug = serializers.SerializerMethodField(read_only=True)
+    image = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        model = User
+        fields = [
+            "name",
+            "slug",
+            "image",
+        ]
+
+    def get_name(self, obj):
+        return obj.full_name
+
+    def get_slug(self, obj):
+        return obj.custom_url
+
+    def get_image(self, obj):
+        return f"{FULL_DOMAIN}{obj.foto}"
 
 
 class UserSerializer(serializers.ModelSerializer):

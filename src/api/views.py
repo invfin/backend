@@ -159,7 +159,7 @@ class BaseAPIView(APIView):
             Union[Type, None]: It could return an actual model to be looked up and saved or None if we want to ignore it
         """
         if self.model_to_track:
-            if type(self.model_to_track) == str:
+            if isinstance(self.model_to_track, str):
                 queryed_model = self.model_to_track
             else:
                 queryed_model = self.model_to_track.__name__

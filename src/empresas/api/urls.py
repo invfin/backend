@@ -7,9 +7,12 @@ from .views import (
     CompanyCashflowStatementAPIView,
     CompanyIncomeStatementAPIView,
     CompleteCompanyAPIView,
+    PublicCompanyAPIView,
 )
 
 urlpatterns = [
+    path("companies/", PublicCompanyAPIView.as_view(), name="company-list"),
+    # Currently using
     path("lista-exchanges/", AllExchangesAPIView.as_view()),
     path("empresa-completa/", CompleteCompanyAPIView.as_view()),
     path("empresa-basica/", BasicCompanyAPIView.as_view()),

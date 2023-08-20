@@ -18,13 +18,13 @@ if READ_DOT_ENV_FILE:
 IS_PROD = env.bool("IS_PROD", False)
 IS_TEST = env.bool("IS_TEST", False)
 
-PROTOCOL = "https://" if IS_PROD else "http://"
+PROTOCOL = "https://" if IS_PROD else "https://"
 
 # GENERAL
 # ------------------------------------------------------------------------------
 CURRENT_DOMAIN = env("CURRENT_DOMAIN", default="example.com")
 MAIN_DOMAIN = env("MAIN_DOMAIN", default="inversionesyfinanzas.xyz")
-FULL_DOMAIN = env("FULL_DOMAIN", default="http://example.com:8000")
+FULL_DOMAIN = env("FULL_DOMAIN", default="https://example.com:8000")
 
 WEB_ICON = "general/assets/img/favicon/favicon.ico"
 WEB_MANIFEST = "/webmanifest.json"
@@ -103,6 +103,7 @@ DJANGO_APPS = [
     "django.contrib.admin",
     "django.forms",
     "django.contrib.sitemaps",
+    "django.contrib.postgres",
 ]
 
 THIRD_PARTY_APPS = [

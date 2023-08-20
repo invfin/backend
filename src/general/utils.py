@@ -32,12 +32,12 @@ def add_new_default_check(checking, json_file):
 class ChartSerializer:
     @staticmethod
     def generate_json(
-        comparing_json: dict, items: list = None, chart_type: str = "line"
+        comparing_json: dict, items: Optional[list] = None, chart_type: str = "line"
     ) -> dict:
         labels = comparing_json["labels"]
         chart_data = {"labels": labels, "fields": []}
         if not items:
-            items = [i for i in range(len(comparing_json["fields"]))]
+            items = list(range(len(comparing_json["fields"])))
 
         for field in [comparing_json["fields"][num] for num in items]:
             chart_data["fields"].append(
@@ -62,7 +62,7 @@ class ChartSerializer:
                     "label": "",
                     "data": 0,
                     "backgroundColor": "#" + "".join(
-                        [random.choice("ABCDEF0123456789") for i in range(6)]
+                        [random.choice("ABCDEF0123456789") for _ in range(6)]
                     ),
                 }
             ],
@@ -89,13 +89,13 @@ class ExportCsv:
 
 class UniqueCreator:
     @classmethod
-    def create_unique_field(cls, model, value, field, original_value=None, extra: int = 0):
+    def create_unique_field(cls, model, value, field, original_value="", extra: int = 0):
         if model.__class__.objects.filter(**{field: value}).exists():
             if field == "key":
                 value = UniqueCreator.generate_key()
             else:
                 value = UniqueCreator.generate_slug(original_value, extra)
-            return UniqueCreator.create_unique_field(value, field)
+            return UniqueCreator.create_unique_field(model, value, field)
         return value
 
     @classmethod
@@ -103,7 +103,7 @@ class UniqueCreator:
         return binascii.hexlify(os.urandom(20)).decode()
 
     @classmethod
-    def generate_slug(cls, value=None, extra: int = 0):
+    def generate_slug(cls, value="", extra: int = 0):
         extra += 1
         return slugify(value + str(extra))
 

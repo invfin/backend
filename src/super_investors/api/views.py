@@ -1,16 +1,28 @@
 from django.contrib.auth import get_user_model
+from rest_framework.generics import ListAPIView
+from rest_framework.permissions import AllowAny
 
 from src.api.pagination import StandardResultPagination
 from src.api.views import BaseAPIView
 
 from ..models import Superinvestor, SuperinvestorActivity, SuperinvestorHistory
 from .serializers import (
+    SimpleSuperinvestorSerializer,
     SuperinvestorActivitySerializer,
     SuperinvestorHistorySerializer,
     SuperinvestorSerializer,
 )
 
 User = get_user_model()
+
+
+class PublicSuperinvestorsAPIView(ListAPIView):
+    # TODO: improve
+    queryset = Superinvestor.objects.all()
+    serializer_class = SimpleSuperinvestorSerializer
+    permission_classes = [AllowAny]
+    authentication_classes = []
+    pagination_class = StandardResultPagination
 
 
 class AllSuperinvestorsAPIView(BaseAPIView):

@@ -2,11 +2,17 @@ from django.urls import path
 
 from .views import (
     AllSuperinvestorsAPIView,
+    PublicSuperinvestorsAPIView,
     SuperinvestorActivityAPIView,
     SuperinvestorHistoryAPIView,
 )
 
 urlpatterns = [
+    path(
+        "superinvestors/",
+        PublicSuperinvestorsAPIView.as_view(),
+        name="superinvestors-api",
+    ),
     path(
         "lista-movimientos/",
         SuperinvestorActivityAPIView.as_view(),

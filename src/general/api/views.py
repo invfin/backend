@@ -4,7 +4,6 @@ from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
 from django.db.models import Case, CharField, F, Value, When
 from django.db.models.functions import Concat
 from django.http.response import JsonResponse
-from django.utils.text import slugify
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 
@@ -21,7 +20,7 @@ class PublicSearchAPIView(APIView):
     permission_classes = [AllowAny]
     authentication_classes = []
     pagination_class = StandardResultPagination
-    annotated_values = ["id", "title", "slug", "logo", "rank"]
+    annotated_values = ["title", "path", "logo", "rank", "inside"]
     order_by = "-rank"
     sliced_by = 10
 
@@ -52,8 +51,9 @@ class PublicSearchAPIView(APIView):
                 no_cfs=False,
             )
             .annotate(
+                inside=Value("companies"),
                 logo=F("image"),
-                slug=F("ticker"),
+                path=F("ticker"),
                 rank=SearchRank(SearchVector("ticker", "name"), query),
                 title=Concat("name", Value(" ("), "ticker", Value(")")),
             )
@@ -65,6 +65,7 @@ class PublicSearchAPIView(APIView):
         return list(
             TermContent.objects.filter(term_related__status=BASE_ESCRITO_PUBLISHED)
             .annotate(
+                inside=Value("diccionario"),
                 logo=Case(
                     When(
                         term_related__thumbnail__isnull=False,
@@ -77,19 +78,12 @@ class PublicSearchAPIView(APIView):
                     default=Value("/static/general/assets/img/general/why-us.webp"),
                     output_field=CharField(),
                 ),
-                rank=SearchRank(SearchVector("title", "content"), query),
-                slug=Concat(
+                rank=SearchRank(SearchVector("title"), query),
+                path=Concat(
                     "term_related__slug",
                     Value("#"),
-                    Value(slugify(F("title"))),
+                    "title",
                 ),
-                # slug=Func(
-                #     F("term_related__slug"),
-                #     Value("#")
-                #     + Func(F("title"), function="slugify", output_field=CharField()),
-                #     function="CONCAT",
-                #     output_field=CharField(),
-                # ),
             )
             .values(*self.annotated_values)
             .order_by(self.order_by)[: self.sliced_by]
@@ -99,13 +93,15 @@ class PublicSearchAPIView(APIView):
         return list(
             Term.objects.filter(status=BASE_ESCRITO_PUBLISHED)
             .annotate(
+                inside=Value("diccionario"),
                 logo=Case(
                     When(thumbnail__isnull=False, then="thumbnail"),
                     When(non_thumbnail_url__isnull=False, then="non_thumbnail_url"),
                     default=Value("/static/general/assets/img/general/why-us.webp"),
                     output_field=CharField(),
                 ),
-                rank=SearchRank(SearchVector("title", "resume"), query),
+                path=F("slug"),
+                rank=SearchRank(SearchVector("title"), query),
             )
             .values(*self.annotated_values)
             .order_by(self.order_by)[: self.sliced_by]

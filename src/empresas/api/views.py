@@ -1,4 +1,6 @@
 from django.contrib.auth import get_user_model
+from rest_framework.generics import ListAPIView
+from rest_framework.permissions import AllowAny
 
 from src.api.pagination import StandardResultPagination
 from src.api.views import BaseAPIView
@@ -19,6 +21,15 @@ from src.empresas.models import (
 )
 
 User = get_user_model()
+
+
+class PublicCompanyAPIView(ListAPIView):
+    # TODO: fix
+    queryset = Company.objects.all()
+    serializer_class = BasicCompanySerializer
+    permission_classes = [AllowAny]
+    authentication_classes = []
+    pagination_class = StandardResultPagination
 
 
 class AllExchangesAPIView(BaseAPIView):

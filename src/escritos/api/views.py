@@ -1,8 +1,25 @@
+from rest_framework.generics import ListAPIView
+from rest_framework.permissions import AllowAny
+
 from src.api.pagination import StandardResultPagination
 from src.api.views import BaseAPIView
 from src.escritos.models import Term, TermContent
 
-from .serializers import AllTermsSerializer, TermContentSerializer, TermSerializer
+from .serializers import (
+    AllTermsSerializer,
+    SimpleTermSerializer,
+    TermContentSerializer,
+    TermSerializer,
+)
+
+
+class PublicTermsAPIView(ListAPIView):
+    # TODO: fix
+    queryset = Term.objects.all()
+    serializer_class = SimpleTermSerializer
+    permission_classes = [AllowAny]
+    authentication_classes = []
+    pagination_class = StandardResultPagination
 
 
 class AllTermsAPIView(BaseAPIView):

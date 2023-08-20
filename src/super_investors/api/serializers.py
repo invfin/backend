@@ -7,6 +7,23 @@ from rest_framework.serializers import (
 from ..models import Superinvestor, SuperinvestorActivity, SuperinvestorHistory
 
 
+class SimpleSuperinvestorSerializer(ModelSerializer):
+    portfolio = SerializerMethodField()
+
+    class Meta:
+        model = Superinvestor
+        fields = [
+            "name",
+            "last_update",
+            "slug",
+            "image",
+            "portfolio",
+        ]
+
+    def get_portfolio(self, obj):
+        return Superinvestor.objects.resume_current_positions(obj.id)
+
+
 class SuperinvestorSerializer(ModelSerializer):
     class Meta:
         model = Superinvestor

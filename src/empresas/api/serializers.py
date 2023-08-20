@@ -76,6 +76,17 @@ class BasicCompanySerializer(ModelSerializer):
             "ipoDate",
         ]
 
+    def to_representation(self, instance):
+        data = super().to_representation(instance)
+
+        # Truncate the description field to a desired length
+        max_description_length = 100
+        description = data.get("description")
+        if description and len(description) > max_description_length:
+            data["description"] = description[:max_description_length] + "..."
+
+        return data
+
 
 class CompanyStockPriceSerializer(ModelSerializer):
     class Meta:

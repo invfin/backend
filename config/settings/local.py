@@ -95,7 +95,7 @@ INSTALLED_APPS += ["django_extensions"]  # noqa F405
 
 # CORS
 # ------------------------------------------------------------------------------
-CORS_ALLOWED_ORIGINS = [FULL_DOMAIN] + [f"http://{origin}:8848" for origin in ALLOWED_HOSTS]
+CORS_ALLOWED_ORIGINS = [FULL_DOMAIN] + [f"http://{origin}:3000" for origin in ALLOWED_HOSTS]
 # django-cors-headers - https://github.com/adamchainz/django-cors-headers#setup
 CORS_URLS_REGEX = r"^/api/.*$"
 
@@ -112,7 +112,11 @@ LOGGING = {
         },
     },
     "disable_existing_loggers": False,
-    "formatters": {"verbose": {"format": "%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s"}},
+    "formatters": {
+        "verbose": {
+            "format": "%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s"
+        }
+    },
     "handlers": {
         "console": {
             "level": "DEBUG",

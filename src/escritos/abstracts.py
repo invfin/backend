@@ -1,5 +1,6 @@
 from typing import List
 
+from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.contrib.contenttypes.fields import GenericRelation
 from django.db.models import (
@@ -22,6 +23,7 @@ from src.escritos import constants
 from src.general.abstracts import AbstractTimeStampedModel
 from src.general.mixins import CheckingsMixin, CommentsMixin, VotesMixin
 
+FULL_DOMAIN = settings.FULL_DOMAIN
 User = get_user_model()
 
 
@@ -103,6 +105,7 @@ class AbstractPublishableContent(AbstractWrittenContent):
 
     @property
     def image(self):
+        # TODO: maybe remove the s
         return (
             self.thumbnail.url if self.thumbnail else self.non_thumbnail_url
-        ) or "/static/general/assets/img/general/why-us.webp"
+        ) or f"{FULL_DOMAIN}/static/general/assets/img/general/why-us.webp"

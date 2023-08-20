@@ -47,7 +47,7 @@ class Superinvestor(Model):
 
     def save(self, *args, **kwargs):  # new
         if not self.slug:
-            self.slug = slugify((self.name))
+            self.slug = slugify(self.name)
         return super().save(*args, **kwargs)
 
     @property
@@ -60,18 +60,14 @@ class Superinvestor(Model):
         )
         portfolio = []
         for company in all_companies:
-            query_company_history = self.history.filter(**company)
+            query_company_history = all_history.filter(**company, shares__gt=0)
             last_query_company_history = query_company_history.last()
-            if last_query_company_history.shares != 0:
-                portfolio.append(last_query_company_history)
+            portfolio.append(last_query_company_history)
 
         total_number_of_holdings = len(portfolio)
         portfolio_value = sum(position.total_value for position in portfolio)
         top_holdings = sorted(portfolio, key=lambda x: x.portfolio_weight)
-        sectors_invested = set()
-        for company in portfolio:
-            sectors_invested.add(company.company_sector)
-
+        sectors_invested = {company.company_sector for company in portfolio}
         num_sectors = len(sectors_invested)
         return {
             "portfolio": portfolio,
@@ -157,10 +153,7 @@ class AbstractSuperinvestorHoldingsInformation(Model):
 
     @property
     def company_sector(self):
-        sector = None
-        if self.company:
-            sector = self.company.sector
-        return sector
+        return self.company.sector if self.company else None
 
 
 class SuperinvestorActivity(AbstractSuperinvestorHoldingsInformation):
@@ -186,10 +179,11 @@ class SuperinvestorActivity(AbstractSuperinvestorHoldingsInformation):
 
     @property
     def movement_type(self):
-        movement_type = {"move": "Venta", "color": "danger"}
-        if self.movement == 1:
-            movement_type = {"move": "Compra", "color": "success"}
-        return movement_type
+        return (
+            {"move": "Compra", "color": "success"}
+            if self.movement == 1
+            else {"move": "Venta", "color": "danger"}
+        )
 
 
 class SuperinvestorHistory(AbstractSuperinvestorHoldingsInformation):
@@ -218,7 +212,8 @@ class SuperinvestorHistory(AbstractSuperinvestorHoldingsInformation):
 
     @property
     def movement_type(self):
-        movement_type = {"move": "Venta", "color": "danger"}
-        if self.movement.startswith("Add") or self.movement.startswith("Buy"):
-            movement_type = {"move": "Compra", "color": "success"}
-        return movement_type
+        return (
+            {"move": "Compra", "color": "success"}
+            if self.movement.startswith("Add") or self.movement.startswith("Buy")
+            else {"move": "Venta", "color": "danger"}
+        )

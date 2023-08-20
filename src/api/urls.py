@@ -7,6 +7,9 @@ API_version = settings.API_VERSION["CURRENT_VERSION"]
 
 app_name = "api"
 urlpatterns = [
+    path(f"{API_version}/", include("src.general.api.urls")),
+    path(f"{API_version}/", include("src.public_blog.api.urls")),
+    path(f"{API_version}/", include("src.notifications.api.urls")),
     path(f"{API_version}/", include("src.escritos.api.urls")),
     path(f"{API_version}/", include("src.empresas.api.urls")),
     path(f"{API_version}/", include("src.super_investors.api.urls")),

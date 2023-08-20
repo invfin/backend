@@ -7,6 +7,7 @@ from rest_framework.serializers import (
 )
 
 from src.api.serializers import RichTextField
+from src.escritos.api.abstract import AbstractWrittenContentSerializer
 
 from ..models import Term, TermContent
 
@@ -50,6 +51,11 @@ class TermSerializer(ModelSerializer):
             "imagen",
             "partes",
         ]
+
+
+class SimpleTermSerializer(AbstractWrittenContentSerializer):
+    class Meta(AbstractWrittenContentSerializer.Meta):
+        model = Term
 
 
 class AllTermsSerializer(TermSerializer):
