@@ -1,8 +1,8 @@
-from datetime import date, datetime, time, timedelta
 import json
+from datetime import date, datetime, time, timedelta
 
+from ckeditor.fields import RichTextField
 from django.conf import settings
-from django.contrib.auth import get_user_model
 from django.db.models import (
     CASCADE,
     SET_NULL,
@@ -13,14 +13,13 @@ from django.db.models import (
     IntegerField,
     JSONField,
     Model,
+    OneToOneField,
     PositiveIntegerField,
     Q,
     TextField,
 )
 from django.template.defaultfilters import slugify
 from django.utils.translation import gettext_lazy as _
-
-from ckeditor.fields import RichTextField
 
 from src.api.managers import KeyManager
 from src.business.models import ProductSubscriber
@@ -29,11 +28,25 @@ from src.escritos.models import Term
 from src.general.mixins import BaseToAllMixin
 from src.general.utils import UniqueCreator
 from src.super_investors.models import Superinvestor
+from src.users.models import User
 
 FULL_DOMAIN = settings.FULL_DOMAIN
 
-User = get_user_model()
+
 API_version = settings.API_VERSION["CURRENT_VERSION"]
+
+
+class Jwt(Model):
+    expiration_date = DateTimeField()
+    user = ForeignKey(User, on_delete=CASCADE, null=True, related_name="jwt")
+    created_at = DateTimeField()
+    refresh = OneToOneField("self", on_delete=CASCADE, null=True, related_name="refreshed_by")
+
+    class Meta:
+        verbose_name = "Jwt"
+        verbose_name_plural = "Jwt"
+        db_table = "jwts"
+        ordering = ["-created_at"]
 
 
 class Key(Model, BaseToAllMixin):

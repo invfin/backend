@@ -1,7 +1,7 @@
+import uuid
 from datetime import datetime
 from io import BytesIO
 from typing import Any, Dict
-import uuid
 
 from django.conf import settings
 from django.contrib.contenttypes.models import ContentType
@@ -12,7 +12,6 @@ from django.template.defaultfilters import slugify
 from django.urls import reverse
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
-
 from PIL import Image
 from rest_framework.serializers import ModelSerializer
 
@@ -64,9 +63,7 @@ class BaseToAllMixin:
         path = reverse(
             f"admin:{self.app_label}_{self.object_name.lower()}_{action}", kwargs=kwargs
         )
-        if use_full_path:
-            return f"{FULL_DOMAIN}{path}"
-        return path
+        return f"{FULL_DOMAIN}{path}" if use_full_path else path
 
     @property
     def admin_urls(self) -> Dict:
@@ -113,12 +110,11 @@ class BaseToAllMixin:
 
     @property
     def shareable_link(self):
-        if hasattr(self, "custom_url"):
-            url = self.custom_url
-        else:
-            slug = self.get_absolute_url()
-            url = f"{FULL_DOMAIN}{slug}"
-        return url
+        return (
+            self.custom_url
+            if hasattr(self, "custom_url")
+            else f"{FULL_DOMAIN}{self.get_absolute_url()}"
+        )
 
 
 class CheckingsMixin:

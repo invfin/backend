@@ -19,9 +19,10 @@ from django.template.defaultfilters import slugify
 from django.urls import reverse
 
 from src.classifications.models import Category, Tag
+from src.content_creation.outils.content_creator import CompanyContentCreation
 from src.currencies.models import Currency
 from src.empresas.models import Company
-from src.content_creation.outils.content_creator import CompanyContentCreation
+
 from .constants import (
     HORIZON,
     INVESTOR_TYPE,
@@ -79,7 +80,7 @@ class InvestorProfile(BaseInvestorProfile):
         db_table = "user_investor_profile"
 
     def __str__(self) -> str:
-        return self.user.username
+        return self.user.username if self.user else ""
 
 
 class RoboAdvisorService(Model):

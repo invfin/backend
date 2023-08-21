@@ -29,7 +29,7 @@ class NotificationSerializer(ModelSerializer):
         return obj.get_absolute_url()
 
     def get_sender_name(self, obj: Notification):
-        return obj.object.author.name
+        return obj.object.author.full_name
 
     def get_sender_image(self, obj: Notification):
         return obj.object.author.foto

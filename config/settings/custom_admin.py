@@ -1,4 +1,4 @@
-from .base import FULL_DOMAIN, IS_PROD, WEB_ICON, WEB_MANIFEST
+from .base import FULL_DOMAIN, IS_PROD, WEB_ICON
 
 TOP_MENU_LEFT = [
     # Url that gets reversed (Permissions can be added)
@@ -185,6 +185,9 @@ SIDE_MENU = [
         "models": (
             {
                 "model": "api.Key",
+            },
+            {
+                "model": "api.Jwt",
             },
             {
                 "model": "api.CompanyRequestAPI",

@@ -18,3 +18,7 @@ SERVER_ERROR = "Lo siento hemos tenido un problema, reinténtalo en un momento"
 
 HEADER_RESPONSE_REFRESH_LIST_EMAILS = "refreshNewsletterList"
 HEADER_RESPONSE_REFRESH_LIST_FODA = "refreshObservationsCompany"
+
+# Header encoding (see RFC5987)
+HTTP_HEADER_ENCODING = "iso-8859-1"
+HTTP_AUTH_HEADER = "HTTP_AUTHORIZATION"

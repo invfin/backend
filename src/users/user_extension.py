@@ -28,29 +28,25 @@ class UserExtended:
         }
 
     @property
-    def shareable_link(self):
+    def shareable_link(self) -> str:
         return f"{FULL_DOMAIN}/invitacion/{self.user_profile.ref_code}"
 
     @property
-    def has_investor_profile(self):
-        # TODO use a backward lookup
-        from src.roboadvisor.models import InvestorProfile
-
-        return InvestorProfile.objects.filter(user=self).exists()
+    def has_investor_profile(self) -> bool:
+        return bool(self.investor_profile)
 
     @property
-    def foto(self):
+    def foto(self) -> str:
         return self.user_profile.foto_perfil.url
 
     @property
-    def full_name(self):
+    def full_name(self) -> str:
         if self.first_name and self.last_name:
-            full_name = f"{self.first_name} {self.last_name}"
+            return f"{self.first_name} {self.last_name}"
         elif self.first_name:
-            full_name = self.first_name
+            return self.first_name
         else:
-            full_name = self.username
-        return full_name
+            return self.username
 
     @property
     def user_api_key(self) -> Optional[type]:
@@ -105,10 +101,9 @@ class UserExtended:
     def fav_writers(self):
         from src.public_blog.models import NewsletterFollowers
 
-        fav_writers = NewsletterFollowers.objects.filter(followers=self)
-        if fav_writers.count() != 0:
-            return [writer.user for writer in fav_writers]
-        return []
+        return NewsletterFollowers.objects.filter(followers=self).values_list(
+            "user", flat=True
+        )
 
     def update_credits(self, number_of_credits: int) -> None:
         # TODO move to an outils
@@ -121,7 +116,8 @@ class UserExtended:
 
         if self.is_writer:
             following_historial = FollowingHistorial.objects.create(
-                user_followed=self, user_following=user
+                user_followed=self,
+                user_following=user,
             )
             writer_followers = self.main_writer_followed
             if action == "stop":

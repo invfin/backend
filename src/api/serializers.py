@@ -1,8 +1,20 @@
 from django.contrib.auth import authenticate
 from django.utils.html import strip_tags
 from django.utils.translation import gettext_lazy as _
-
 from rest_framework.serializers import CharField, Serializer, ValidationError
+
+from src.api.facade import JwtFacade
+
+
+class TokenObtainSerializer(Serializer):
+    username = CharField()
+    password = CharField(write_only=True)
+
+    def validate(self, data):
+        if user := authenticate(username=data["username"], password=data["password"]):
+            return JwtFacade(user).tokens  # type: ignore
+        else:
+            raise ValidationError("Invalid credentials")
 
 
 class RichTextField(CharField):

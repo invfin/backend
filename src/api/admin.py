@@ -2,7 +2,6 @@ from django.contrib import admin
 from django.db import models
 from django.urls import reverse
 from django.utils.html import format_html
-
 from django_json_widget.widgets import JSONEditorWidget
 from import_export.admin import ImportExportModelAdmin
 
@@ -10,11 +9,31 @@ from src.api.models import (
     CompanyRequestAPI,
     Endpoint,
     EndpointsCategory,
+    Jwt,
     Key,
     ReasonKeyRequested,
     SuperinvestorRequestAPI,
     TermRequestAPI,
 )
+
+
+@admin.register(Jwt)
+class JwtAdmin(admin.ModelAdmin):
+    list_display = [
+        "user",
+        "created_at",
+        "expiration_date",
+        "created_at",
+        "refresh",
+        "is_refresh",
+    ]
+    ordering = ["-created_at"]
+    search_fields = ["user_username"]
+
+    def is_refresh(self, obj):
+        return bool(obj.refresh)
+
+    is_refresh.short_description = "is for refresh"
 
 
 @admin.register(ReasonKeyRequested)

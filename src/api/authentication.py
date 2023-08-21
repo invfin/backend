@@ -1,39 +1,74 @@
-from typing import Tuple
-
-from django.contrib.auth import get_user_model
-
 from rest_framework.authentication import BaseAuthentication
+from rest_framework.request import Request
 
-from src.api.exceptions import KeyNotFoundException, KeyRemovedException, WrongKeyException
-from src.api.models import Key
+from src.api.constants import HTTP_AUTH_HEADER
+from src.api.exceptions import (
+    AuthenticationFailed,
+    KeyNotFoundException,
+    KeyRemovedException,
+    WrongKeyException,
+)
+from src.api.facade import JwtFacade, JWTPayload
+from src.api.models import Jwt, Key
+from src.users.models import User
 
-User = get_user_model()
+
+class JWTAuthentication(BaseAuthentication):
+    def authenticate(self, request: Request) -> tuple[User, Jwt]:
+        raw_token = self.get_authorization_header(request)
+        payload = self.get_payload(raw_token)
+        user, token = self.get_user(payload), self.get_token(payload)
+        if user != token.user:
+            # TODO: change to right error? if it's supposed to always works because I set it,
+            # an error would mean an "attack" do we want to give info in this case?
+            raise AuthenticationFailed()
+        return user, token
+
+    def get_authorization_header(self, request: Request) -> str:
+        return request.META.get(HTTP_AUTH_HEADER, "").replace("Bearer ", "")
+
+    def get_payload(self, token: str) -> JWTPayload:
+        try:
+            return JwtFacade.decode(token)
+        except Exception as e:
+            raise AuthenticationFailed() from e  # TODO: same as above
+
+    def get_token(self, payload: JWTPayload) -> Jwt:
+        try:
+            return Jwt.objects.get(pk=payload.jti)
+        except Jwt.DoesNotExist as e:
+            raise AuthenticationFailed() from e  # TODO: same as above
+
+    def get_user(self, payload: JWTPayload) -> User:
+        try:
+            return User.objects.get(pk=payload.sub)
+        except User.DoesNotExist as e:
+            raise AuthenticationFailed() from e  # TODO: same as above
 
 
 class KeyAuthentication(BaseAuthentication):
-    def get_key_from_params(self, request) -> str:
-        key = request.GET.get("api_key")
-        if key:
-            return key
+    # TODO: rename key for token
+    def authenticate(self, request: Request) -> tuple[User, Key]:
+        key_param = self.get_authorization_params(request)
+        token = self.get_token(key_param)
+        user = self.get_user(token)
+        return user, token
+
+    def get_authorization_params(self, request: Request) -> str:
+        if token := request.GET.get("api_key"):
+            return token
         raise KeyNotFoundException()
 
-    def check_key_exists(self, key: str) -> Key:
+    def get_token(self, token: str) -> Key:
         try:
-            key_obj = Key.objects.get(key=key)
-        except Key.DoesNotExist:
-            raise WrongKeyException()
-        else:
-            return key_obj
+            return Key.objects.get(key=token)
+        except Key.DoesNotExist as e:
+            raise WrongKeyException() from e
 
-    def check_key_is_use(self, key: Key) -> Tuple[User, Key]:
-        if key.in_use:
+    def get_user(self, token: Key) -> User:
+        if token.in_use:
             # DRF wants to receive (request.user, request.auth)
             # https://www.django-rest-framework.org/api-guide/authentication/#sessionauthentication
-            return key.user, key
+            return token.user
         else:
             raise KeyRemovedException()
-
-    def authenticate(self, request):
-        key = self.get_key_from_params(request)
-        key_obj = self.check_key_exists(key)
-        return self.check_key_is_use(key_obj)

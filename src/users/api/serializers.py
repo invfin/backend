@@ -1,11 +1,10 @@
 from django.conf import settings
-from django.contrib.auth import authenticate, get_user_model
-from django.utils.translation import gettext_lazy as _
 from rest_framework import serializers
+from rest_framework.utils.serializer_helpers import ReturnDict
+
+from src.users.models import User
 
 FULL_DOMAIN = settings.FULL_DOMAIN
-
-User = get_user_model()
 
 
 class AuthorSerializer(serializers.ModelSerializer):
@@ -31,42 +30,69 @@ class AuthorSerializer(serializers.ModelSerializer):
         return f"{FULL_DOMAIN}{obj.foto}"
 
 
-class UserSerializer(serializers.ModelSerializer):
+class GetUserSerializer(serializers.ModelSerializer):
+    # TODO: create a facade for the model user/profile/writer_profile
+    # the idea would be to use this interface instead of the models
+    # we can serialize data for get requests using loops from model.__dict__.pop(field)
+    credits = serializers.SerializerMethodField(read_only=True)
+    reputation = serializers.SerializerMethodField(read_only=True)
+    has_favs_companies = serializers.SerializerMethodField(read_only=True)
+    has_portfolio = serializers.SerializerMethodField(read_only=True)
+
+    class Meta:
+        snake_to_camel = True
+        model = User
+        fields = [
+            "username",
+            "email",
+            "credits",
+            "reputation",
+            "foto",
+            "is_writer",
+            "is_staff",
+            "has_favs_companies",
+            "has_portfolio",
+            "has_investor_profile",
+        ]
+
+    @staticmethod
+    def snake_to_camel(snake_str: str):
+        idx = snake_str.find("_")
+        while idx != -1:
+            snake_str = snake_str[:idx] + snake_str[idx + 1].upper() + snake_str[idx + 2 :]
+            idx = snake_str.find("_")
+        return snake_str
+
+    @property
+    def data(self):
+        ret = super().data
+        if self.Meta.snake_to_camel:
+            for key in list(ret.keys()):
+                ret[self.snake_to_camel(key)] = ret.pop(key)
+        return ReturnDict(ret, serializer=self)
+
+    def get_credits(self, obj: User):
+        return obj.user_profile.creditos
+
+    def get_reputation(self, obj: User):
+        return obj.user_profile.reputation_score
+
+    def get_has_favs_companies(self, obj: User):
+        return obj.favorites_companies.stock.all().exists()
+
+    def get_has_portfolio(self, obj: User):
+        return bool(obj.user_patrimoine)
+
+
+class CreateUserSerializer(serializers.ModelSerializer):
+    # TODO: finish that
     class Meta:
         model = User
         fields = ["username", "first_name", "url"]
 
-        extra_kwargs = {"url": {"view_name": "api:user-detail", "lookup_field": "username"}}
 
-
-class AuthTokenSerializer(serializers.Serializer):
-    username = serializers.CharField(label=_("Username"), write_only=True)
-    password = serializers.CharField(
-        label=_("Password"),
-        style={"input_type": "password"},
-        trim_whitespace=False,
-        write_only=True,
-    )
-    token = serializers.CharField(label=_("Token"), read_only=True)
-
-    def validate(self, attrs):
-        username = attrs.get("username")
-        password = attrs.get("password")
-
-        if username and password:
-            user = authenticate(
-                request=self.context.get("request"), username=username, password=password
-            )
-
-            # The authenticate call simply returns None for is_active=False
-            # users. (Assuming the default ModelBackend authentication
-            # backend.)
-            if not user:
-                msg = _("Unable to log in with provided credentials.")
-                raise serializers.ValidationError(msg, code="authorization")
-        else:
-            msg = _('Must include "username" and "password".')
-            raise serializers.ValidationError(msg, code="authorization")
-
-        attrs["user"] = user
-        return attrs
+class UpdateUserSerializer(serializers.ModelSerializer):
+    # TODO: finish that
+    class Meta:
+        model = User
+        fields = ["username", "first_name", "url"]

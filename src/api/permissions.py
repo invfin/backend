@@ -20,8 +20,7 @@ class CheckCuota(ReadOnly):
 
     def has_permission(self, request, view):
         super().has_permission(request, view)
-        key = request.GET.get("api_key")
-        if key:
+        if key := request.GET.get("api_key"):
             return Key.objects.has_cuota(key)
         raise AuthenticationFailed(
             "Introduce tu clave en api_key, si no tienes alguna entra en tu perfil para"
