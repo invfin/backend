@@ -40,3 +40,19 @@ class ParameterNotSetException(ParseError):
 
 class QueryNotFoundException(NotFound):
     default_detail = constants.QUERY_NOT_FOUND
+
+
+class JWTInvalidException(PermissionDenied):
+    pass
+
+
+class JWTIWithoutUserException(PermissionDenied):
+    pass
+
+
+class JWTUserNotMatchUserException(PermissionDenied):
+    pass
+
+
+class JWTErrorException(PermissionDenied):
+    pass

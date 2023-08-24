@@ -1,9 +1,5 @@
-from django.contrib.auth import get_user_model
-from rest_framework.generics import ListAPIView
-from rest_framework.permissions import AllowAny
-
 from src.api.pagination import StandardResultPagination
-from src.api.views import BaseAPIView
+from src.api.views import BaseAPIView, BasePublicAPIView
 from src.empresas.api.serializers import (
     BalanceSheetSerializer,
     BasicCompanySerializer,
@@ -20,16 +16,13 @@ from src.empresas.models import (
     IncomeStatement,
 )
 
-User = get_user_model()
 
-
-class PublicCompanyAPIView(ListAPIView):
-    # TODO: fix
-    queryset = Company.objects.all()
-    serializer_class = BasicCompanySerializer
-    permission_classes = [AllowAny]
-    authentication_classes = []
-    pagination_class = StandardResultPagination
+class PublicCompanyAPIView(BasePublicAPIView):
+    many_serializer_class = BasicCompanySerializer
+    single_serializer_class = CompanySerializer
+    many_queryset = Company.objects.select_related_information().all()
+    single_queryset = Company.objects.api_query().all()
+    lookup_field = "ticker"
 
 
 class AllExchangesAPIView(BaseAPIView):

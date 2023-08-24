@@ -1,25 +1,27 @@
-from rest_framework.generics import ListAPIView
 from rest_framework.permissions import AllowAny
 
 from src.api.pagination import StandardResultPagination
-from src.api.views import BaseAPIView
+from src.api.views import BaseAPIView, BasePublicAPIView
 from src.escritos.models import Term, TermContent
 
 from .serializers import (
     AllTermsSerializer,
+    CompleteTermSerializer,
     SimpleTermSerializer,
     TermContentSerializer,
     TermSerializer,
 )
 
 
-class PublicTermsAPIView(ListAPIView):
-    # TODO: fix
-    queryset = Term.objects.all()
-    serializer_class = SimpleTermSerializer
+class PublicTermsAPIView(BasePublicAPIView):
     permission_classes = [AllowAny]
     authentication_classes = []
     pagination_class = StandardResultPagination
+    lookup_field = "slug"
+    many_serializer_class = SimpleTermSerializer
+    single_serializer_class = CompleteTermSerializer
+    many_queryset = Term.objects.all()
+    single_queryset = Term.objects.prefetch_related("term_content_parts", "tags")
 
 
 class AllTermsAPIView(BaseAPIView):

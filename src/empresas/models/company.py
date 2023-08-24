@@ -126,18 +126,18 @@ class Company(Model, BaseToAllMixin, CheckingsMixin):
 
     @property
     def most_recent_year(self):
-        return self.inc_statements.latest().date
+        return self.inc_statements.latest().date  # type: ignore
 
     @property
     def has_institutions(self):
-        return self.topinstitutionalownership_set.all().exists()
+        return self.topinstitutionalownership_set.all().exists()  # type: ignore
 
     @property
     def has_ttm(self):
         return (
-            self.inc_statements.filter(is_ttm=True).exists()
-            and self.balance_sheets.filter(is_ttm=True).exists()
-            and self.cf_statements.filter(is_ttm=True).exists()
+            self.inc_statements.filter(is_ttm=True).exists()  # type: ignore
+            and self.balance_sheets.filter(is_ttm=True).exists()  # type: ignore
+            and self.cf_statements.filter(is_ttm=True).exists()  # type: ignore
         )
 
 
@@ -147,20 +147,20 @@ class CompanyYahooQueryProxy(Company):
 
     @property
     def has_inc(self):
-        return self.incomestatementyahooquery_set.all().exists()
+        return self.incomestatementyahooquery_set.all().exists()  # type: ignore
 
     @property
     def has_bs(self):
-        return self.balancesheetyahooquery_set.all().exists()
+        return self.balancesheetyahooquery_set.all().exists()  # type: ignore
 
     @property
     def has_cf(self):
-        return self.cashflowstatementyahooquery_set.all().exists()
+        return self.cashflowstatementyahooquery_set.all().exists()  # type: ignore
 
     @property
     def has_inc_quarter(self):
         return (
-            self.incomestatementyahooquery_set.all()
+            self.incomestatementyahooquery_set.all()  # type: ignore
             .exclude(period__period=PERIOD_FOR_YEAR)
             .exists()
         )
@@ -168,7 +168,7 @@ class CompanyYahooQueryProxy(Company):
     @property
     def has_bs_quarter(self):
         return (
-            self.balancesheetyahooquery_set.all()
+            self.balancesheetyahooquery_set.all()  # type: ignore
             .exclude(period__period=PERIOD_FOR_YEAR)
             .exists()
         )
@@ -176,14 +176,14 @@ class CompanyYahooQueryProxy(Company):
     @property
     def has_cf_quarter(self):
         return (
-            self.cashflowstatementyahooquery_set.all()
+            self.cashflowstatementyahooquery_set.all()  # type: ignore
             .exclude(period__period=PERIOD_FOR_YEAR)
             .exists()
         )
 
     @property
     def has_key_stats(self):
-        return self.keystatsyahooquery_set.all().exists()
+        return self.keystatsyahooquery_set.all().exists()  # type: ignore
 
 
 class CompanyYFinanceProxy(Company):
@@ -192,15 +192,15 @@ class CompanyYFinanceProxy(Company):
 
     @property
     def has_inc(self):
-        return self.incomestatementyfinance_set.all().exists()
+        return self.incomestatementyfinance_set.all().exists()  # type: ignore
 
     @property
     def has_bs(self):
-        return self.balancesheetyfinance_set.all().exists()
+        return self.balancesheetyfinance_set.all().exists()  # type: ignore
 
     @property
     def has_cf(self):
-        return self.cashflowstatementyfinance_set.all().exists()
+        return self.cashflowstatementyfinance_set.all().exists()  # type: ignore
 
 
 class CompanyFinprepProxy(Company):
@@ -209,15 +209,15 @@ class CompanyFinprepProxy(Company):
 
     @property
     def has_inc(self):
-        return self.incomestatementfinprep_set.all().exists()
+        return self.incomestatementfinprep_set.all().exists()  # type: ignore
 
     @property
     def has_bs(self):
-        return self.balancesheetfinprep_set.all().exists()
+        return self.balancesheetfinprep_set.all().exists()  # type: ignore
 
     @property
     def has_cf(self):
-        return self.cashflowstatementfinprep_set.all().exists()
+        return self.cashflowstatementfinprep_set.all().exists()  # type: ignore
 
 
 class CompanyFinnhubProxy(Company):
@@ -226,7 +226,7 @@ class CompanyFinnhubProxy(Company):
 
     @property
     def has_statements(self):
-        return self.statementsfinnhub_set.all().exists()
+        return self.statementsfinnhub_set.all().exists()  # type: ignore
 
 
 class CompanyStatementsProxy(Company):

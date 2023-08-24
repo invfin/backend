@@ -1,10 +1,9 @@
+from bfet import DjangoTestingModel
 from django.test import TestCase
 
-from bfet import DjangoTestingModel
-
 from src.empresas.models import BalanceSheet, CashflowStatement, Company, IncomeStatement
-from src.empresas.outils.financial_ratios import CalculateFinancialRatios
 from src.empresas.outils.data_management.update.update import UpdateCompany
+from src.empresas.outils.financial_ratios import CalculateFinancialRatios
 from src.periods.constants import PERIOD_1_QUARTER, PERIOD_FOR_YEAR
 from src.periods.models import Period
 from tests.data.empresas import (
@@ -66,13 +65,6 @@ class TestBaseStatementQuerySet(TestCase):
             period=cls.previous_quarter_period,
             company=cls.company,
         )
-
-    def test_quarterly(self):
-        income_statements = list(self.company.inc_statements.quarterly())
-        assert self.current_quarter_income in income_statements
-        assert self.previous_quarter_income in income_statements
-        assert self.current_income not in income_statements
-        assert self.previous_income not in income_statements
 
     def test_yearly(self):
         income_statements = list(self.company.inc_statements.yearly())

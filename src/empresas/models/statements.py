@@ -7,12 +7,12 @@ from django.db.models import (
     Model,
 )
 
+from src.empresas.fields import EntryStatementField
 from src.empresas.managers import BaseStatementManager
 from src.empresas.models import Company
 from src.empresas.querysets.statements import BaseStatementQuerySet, StatementQuerySet
 from src.general.mixins import BaseToAllMixin
 from src.periods.models import Period
-from src.empresas.fields import EntryStatementField
 
 
 class BaseStatement(Model, BaseToAllMixin):
@@ -375,7 +375,11 @@ class OperationRiskRatio(BaseFinalStatement):
 
 class EnterpriseValueRatio(BaseFinalStatement):
     company = ForeignKey(
-        Company, on_delete=SET_NULL, null=True, blank=True, related_name="ev_ratios"
+        Company,
+        on_delete=SET_NULL,
+        null=True,
+        blank=True,
+        related_name="ev_ratios",
     )
     market_cap = EntryStatementField()
     enterprise_value = EntryStatementField()
@@ -393,7 +397,11 @@ class EnterpriseValueRatio(BaseFinalStatement):
 
 class CompanyGrowth(BaseFinalStatement):
     company = ForeignKey(
-        Company, on_delete=SET_NULL, null=True, blank=True, related_name="growth_rates"
+        Company,
+        on_delete=SET_NULL,
+        null=True,
+        blank=True,
+        related_name="growth_rates",
     )
     revenue_growth = EntryStatementField()
     cost_revenue_growth = EntryStatementField()
@@ -414,7 +422,11 @@ class CompanyGrowth(BaseFinalStatement):
 
 class EficiencyRatio(BaseFinalStatement):
     company = ForeignKey(
-        Company, on_delete=SET_NULL, null=True, blank=True, related_name="efficiency_ratios"
+        Company,
+        on_delete=SET_NULL,
+        null=True,
+        blank=True,
+        related_name="efficiency_ratios",
     )
     asset_turnover = EntryStatementField()
     inventory_turnover = EntryStatementField()
@@ -436,7 +448,11 @@ class EficiencyRatio(BaseFinalStatement):
 
 class PriceToRatio(BaseFinalStatement):
     company = ForeignKey(
-        Company, on_delete=SET_NULL, null=True, blank=True, related_name="price_to_ratios"
+        Company,
+        on_delete=SET_NULL,
+        null=True,
+        blank=True,
+        related_name="price_to_ratios",
     )
     price_book = EntryStatementField()
     price_cf = EntryStatementField()

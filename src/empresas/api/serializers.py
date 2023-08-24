@@ -83,7 +83,7 @@ class BasicCompanySerializer(ModelSerializer):
         max_description_length = 100
         description = data.get("description")
         if description and len(description) > max_description_length:
-            data["description"] = description[:max_description_length] + "..."
+            data["description"] = f"{description[:max_description_length]}..."
 
         return data
 
@@ -335,71 +335,57 @@ class CompanySerializer(BasicCompanySerializer):
         return 10
 
     def get_inc_statements(self, obj):
-        limit = self.slicing()
-        queryset = obj.inc_statements.yearly()[:limit]
+        queryset = obj.inc_statements.year()[: self.slicing()]
         return IncomeStatementSerializer(queryset, many=True).data
 
     def get_balance_sheets(self, obj):
-        limit = self.slicing()
-        queryset = obj.balance_sheets.yearly()[:limit]
+        queryset = obj.balance_sheets.year()[: self.slicing()]
         return BalanceSheetSerializer(queryset, many=True).data
 
     def get_cf_statements(self, obj):
-        limit = self.slicing()
-        queryset = obj.cf_statements.yearly()[:limit]
+        queryset = obj.cf_statements.year()[: self.slicing()]
         return CashflowStatementSerializer(queryset, many=True).data
 
     def get_rentability_ratios(self, obj):
-        limit = self.slicing()
-        queryset = obj.rentability_ratios.yearly()[:limit]
+        queryset = obj.rentability_ratios.year()[: self.slicing()]
         return RentabilityRatioSerializer(queryset, many=True).data
 
     def get_liquidity_ratios(self, obj):
-        limit = self.slicing()
-        queryset = obj.liquidity_ratios.yearly()[:limit]
+        queryset = obj.liquidity_ratios.year()[: self.slicing()]
         return LiquidityRatioSerializer(queryset, many=True).data
 
     def get_margins(self, obj):
-        limit = self.slicing()
-        queryset = obj.margins.yearly()[:limit]
+        queryset = obj.margins.year()[: self.slicing()]
         return MarginRatioSerializer(queryset, many=True).data
 
     def get_fcf_ratios(self, obj):
-        limit = self.slicing()
-        queryset = obj.fcf_ratios.yearly()[:limit]
+        queryset = obj.fcf_ratios.year()[: self.slicing()]
         return FreeCashFlowRatioSerializer(queryset, many=True).data
 
     def get_per_share_values(self, obj):
-        limit = self.slicing()
-        queryset = obj.per_share_values.yearly()[:limit]
+        queryset = obj.per_share_values.year()[: self.slicing()]
         return PerShareValueSerializer(queryset, many=True).data
 
     def get_non_gaap_figures(self, obj):
-        limit = self.slicing()
-        queryset = obj.non_gaap_figures.yearly()[:limit]
+        queryset = obj.non_gaap_figures.year()[: self.slicing()]
         return NonGaapSerializer(queryset, many=True).data
 
     def get_operation_risks_ratios(self, obj):
-        limit = self.slicing()
-        queryset = obj.operation_risks_ratios.yearly()[:limit]
+        queryset = obj.operation_risks_ratios.year()[: self.slicing()]
         return OperationRiskRatioSerializer(queryset, many=True).data
 
     def get_ev_ratios(self, obj):
-        limit = self.slicing()
-        queryset = obj.ev_ratios.yearly()[:limit]
+        queryset = obj.ev_ratios.year()[: self.slicing()]
         return EnterpriseValueRatioSerializer(queryset, many=True).data
 
     def get_growth_rates(self, obj):
-        limit = self.slicing()
-        queryset = obj.growth_rates.yearly()[:limit]
+        queryset = obj.growth_rates.year()[: self.slicing()]
         return CompanyGrowthSerializer(queryset, many=True).data
 
     def get_efficiency_ratios(self, obj):
-        limit = self.slicing()
-        queryset = obj.efficiency_ratios.yearly()[:limit]
+        queryset = obj.efficiency_ratios.year()[: self.slicing()]
         return EficiencyRatioSerializer(queryset, many=True).data
 
     def get_price_to_ratios(self, obj):
-        limit = self.slicing()
-        queryset = obj.price_to_ratios.yearly()[:limit]
+        queryset = obj.price_to_ratios.year()[: self.slicing()]
         return PriceToRatioSerializer(queryset, many=True).data

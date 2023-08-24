@@ -33,7 +33,10 @@ class UserExtended:
 
     @property
     def has_investor_profile(self) -> bool:
-        return bool(self.investor_profile)
+        try:
+            return bool(self.investor_profile)
+        except Exception:  # It raises RelatedObjectDoesNotExist, but we can get it to work
+            return False
 
     @property
     def foto(self) -> str:

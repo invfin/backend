@@ -1,4 +1,4 @@
-from typing import Any, Dict
+from typing import Any, Dict, Optional
 
 from django.db.models import Count, F, Manager, Prefetch, Q
 
@@ -6,43 +6,9 @@ from src.general.managers import BaseManager, BaseQuerySet
 
 
 class CompanyQuerySet(BaseQuerySet):
-    def existing_companies(self):
-        return self.exclude(name__contains="Need-parsing")
-
-    def clean_companies(self):
-        return self.existing_companies().filter(no_incs=False, no_bs=False, no_cfs=False)
-
-    def complete_companies(self):
-        return self.clean_companies().filter(description_translated=True)
-
     def existing_companies_by_exchange_importance(self):
-        return self.existing_companies().order_by("exchange__main_org__order")
-
-
-class CompanyManager(BaseManager):
-    def get_queryset(self):
-        return CompanyQuerySet(self.model, using=self._db)
-
-    def only_essential(self):
-        return self.only(
-            "ticker",
-            "name",
-            "sector",
-            "website",
-            "state",
-            "country",
-            "ceo",
-            "image",
-            "city",
-            "employees",
-            "address",
-            "zip_code",
-            "cik",
-            "cusip",
-            "isin",
-            "description",
-            "ipoDate",
-        )
+        exchanges_order = "exchange__main_org__order"
+        return self.exclude(name__contains="Need-parsing").order_by(exchanges_order)
 
     def prefetch_yearly_historical_data(self, **kwargs):
         lookup_filter = {"company__ticker": kwargs["ticker"]} if "ticker" in kwargs else {}
@@ -132,7 +98,7 @@ class CompanyManager(BaseManager):
                     False, **lookup_filter
                 ),
             ),
-        ).get(**kwargs)
+        )
 
     def prefetch_historical_data(self):
         return self.prefetch_related(
@@ -152,53 +118,58 @@ class CompanyManager(BaseManager):
             "price_to_ratios",
         )
 
-    def fast_full(self, **kwargs):
+    def only_essential(self):
+        return self.only(
+            "ticker",
+            "name",
+            "sector",
+            "website",
+            "state",
+            "country",
+            "ceo",
+            "image",
+            "city",
+            "employees",
+            "address",
+            "zip_code",
+            "cik",
+            "cusip",
+            "isin",
+            "description",
+            "ipoDate",
+        )
+
+    def select_related_information(self):
+        return self.select_related(
+            "currency",
+            "industry",
+            "sector",
+            "country",
+            "exchange",
+        )
+
+
+class CompanyManager(BaseManager):
+    def get_queryset(self):
+        return CompanyQuerySet(self.model, using=self._db)
+
+    def select_related_information(self):
+        return self.get_queryset().select_related_information()
+
+    def prefetch_yearly_historical_data(self, **kwargs):
+        lookup_filter = {"company__ticker": kwargs["ticker"]} if "ticker" in kwargs else {}
         return (
-            self.prefetch_historical_data()
-            .only(
-                "ticker",
-                "name",
-                "sector",
-                "website",
-                "state",
-                "country",
-                "ceo",
-                "image",
-                "city",
-                "employees",
-                "address",
-                "zip_code",
-                "cik",
-                "cusip",
-                "isin",
-                "description",
-                "ipoDate",
-            )
-            .get(**kwargs)
+            self.get_queryset()
+            .prefetch_yearly_historical_data(**lookup_filter)
+            .get(**lookup_filter)
         )
 
-    def companies_by_main_exchange(self, name=None):
-        return self.filter(exchange__main_org__name=name).exclude(
-            name__contains="Need-parsing"
-        )
-
-    def clean_companies(self):
-        return self.filter(no_incs=False, no_bs=False, no_cfs=False).exclude(
-            name__contains="Need-parsing"
-        )
+    def fast_full(self, **kwargs):
+        return self.get_queryset().prefetch_historical_data().only_essential().get(**kwargs)
 
     def clean_companies_by_main_exchange(self, name=None):
         return self.filter(
             no_incs=False, no_bs=False, no_cfs=False, exchange__main_org__name=name
-        ).exclude(name__contains="Need-parsing")
-
-    def complete_companies_by_main_exchange(self, name=None):
-        return self.filter(
-            no_incs=False,
-            no_bs=False,
-            no_cfs=False,
-            description_translated=True,
-            exchange__main_org__name=name,
         ).exclude(name__contains="Need-parsing")
 
     def get_similar_companies(self, sector_id, industry_id):
@@ -211,26 +182,8 @@ class CompanyManager(BaseManager):
             industry_id=industry_id,
         ).exclude(name__contains="Need-parsing")
 
-    def random_clean_company(self):
-        return self.get_random(self.clean_companies())
-
-    def random_clean_company_by_main_exchange(self, name=None):
-        return self.get_random(self.clean_companies_by_main_exchange(name))
-
-    def random_complete_companies_by_main_exchange(self, name=None):
-        return self.get_random(self.complete_companies_by_main_exchange(name))
-
-    def clean_companies_to_update(self, name=None):
-        return self.filter(
-            no_incs=False,
-            no_bs=False,
-            no_cfs=False,
-            exchange__main_org__name=name,
-            updated=False,
-            has_error=False,
-        )
-
-    def get_random_most_visited_clean_company(self, exclude: Dict[str, Any] = {}):
+    def get_random_most_visited_clean_company(self, exclude: Optional[Dict[str, Any]] = None):
+        exclude = exclude or {}
         return self.get_random(
             self.filter(
                 no_incs=False,
@@ -300,7 +253,10 @@ class CompanyManager(BaseManager):
 
     def filter_checking_not_seen(self, checking: str):
         queryset = super().filter_checking_not_seen(checking)
-        return queryset.existing_companies_by_exchange_importance()
+        return queryset.existing_companies_by_exchange_importance()  # type: ignore
+
+    def api_query(self):
+        return self.get_queryset().select_related_information().prefetch_historical_data()
 
 
 class CompanyUpdateLogManager(Manager):

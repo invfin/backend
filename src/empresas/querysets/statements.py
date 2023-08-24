@@ -1,4 +1,5 @@
 from typing import Dict, Union
+
 from django.db.models import Avg
 
 from src.general.managers import BaseQuerySet
@@ -6,9 +7,6 @@ from src.periods import constants
 
 
 class BaseStatementQuerySet(BaseQuerySet):
-    def quarterly(self) -> "BaseStatementQuerySet":
-        return self.exclude(period__period=constants.PERIOD_FOR_YEAR)
-
     def yearly(self) -> "BaseStatementQuerySet":
         return self.filter(period__period=constants.PERIOD_FOR_YEAR)
 

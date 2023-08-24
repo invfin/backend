@@ -12,6 +12,7 @@ from .views import (
 
 urlpatterns = [
     path("companies/", PublicCompanyAPIView.as_view(), name="company-list"),
+    path("companies/<str:ticker>/", PublicCompanyAPIView.as_view(), name="company-single"),
     # Currently using
     path("lista-exchanges/", AllExchangesAPIView.as_view()),
     path("empresa-completa/", CompleteCompanyAPIView.as_view()),

@@ -8,8 +8,7 @@ from rest_framework.serializers import (
 
 from src.api.serializers import RichTextField
 from src.escritos.api.abstract import AbstractWrittenContentSerializer
-
-from ..models import Term, TermContent
+from src.escritos.models import Term, TermContent
 
 
 class TermContentSerializer(ModelSerializer):
@@ -53,12 +52,44 @@ class TermSerializer(ModelSerializer):
         ]
 
 
+class AllTermsSerializer(TermSerializer):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.fields.pop("partes")
+
+
 class SimpleTermSerializer(AbstractWrittenContentSerializer):
     class Meta(AbstractWrittenContentSerializer.Meta):
         model = Term
 
 
-class AllTermsSerializer(TermSerializer):
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.fields.pop("partes")
+class CompleteTermContentSerializer(ModelSerializer):
+    # content = RichTextField()
+    link = URLField()
+
+    class Meta:
+        model = TermContent
+        fields = ["id", "title", "order", "content", "link"]
+
+
+class CompleteTermSerializer(ModelSerializer):
+    term_parts = CompleteTermContentSerializer(many=True)
+    link = URLField()
+    category = StringRelatedField()
+    tags = StringRelatedField(many=True)
+
+    class Meta:
+        model = Term
+        fields = [
+            "id",
+            "title",
+            "slug",
+            "category",
+            "link",
+            "resume",
+            "published_at",
+            "current_status",
+            "image",
+            "tags",
+            "term_parts",
+        ]

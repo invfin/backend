@@ -1,6 +1,5 @@
-from django.test import TestCase
-
 from bfet import DjangoTestingModel
+from django.test import TestCase
 
 from src.empresas.models import Company, Exchange, ExchangeOrganisation
 from src.industries_sectors.models import Industry, Sector
@@ -126,30 +125,12 @@ class TestManager(TestCase):
             with self.subTest(f"{company}"):
                 assert company in companies_no_institutionals
 
-    def test_companies_by_main_exchange(self):
-        assert [self.apple, self.google, self.zinga] == list(
-            Company.objects.companies_by_main_exchange("Estados Unidos")
-        )
-
-    def test_clean_companies(self):
-        assert [self.apple, self.google, self.zinga] == list(Company.objects.clean_companies())
-
     def test_clean_companies_by_main_exchange(self):
         assert [self.apple, self.google, self.zinga] == list(
             Company.objects.clean_companies_by_main_exchange("Estados Unidos")
         )
 
-    def test_complete_companies_by_main_exchange(self):
-        assert [self.apple, self.google] == list(
-            Company.objects.complete_companies_by_main_exchange("Estados Unidos")
-        )
-
     def test_get_similar_companies(self):
         assert [self.apple, self.google] == list(
             Company.objects.get_similar_companies(self.sector.id, self.industry.id)
-        )
-
-    def test_clean_companies_to_update(self):
-        assert [self.google] == list(
-            Company.objects.clean_companies_to_update("Estados Unidos")
         )

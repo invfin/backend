@@ -20,3 +20,20 @@ DATA_SOURCES = (
 DEFAULT_JSON_CHECKS_FILE = "src/empresas/company-checks.json"
 
 MAX_REQUESTS_FINPREP = 250
+
+STATEMENTS = [
+    "assets_companies_income_statements",
+    "assets_companies_balance_sheet_statements",
+    "assets_companies_cashflow_statements",
+    "assets_companies_rentability_ratios",
+    "assets_companies_liquidity_ratios",
+    "assets_companies_margins_ratios",
+    "assets_companies_freecashflow_ratios",
+    "assets_companies_per_share_value",
+    "assets_companies_non_gaap",
+    "assets_companies_operations_risk_ratio",
+    "assets_companies_enterprise_value_ratios",
+    "assets_companies_growths",
+    "assets_companies_eficiency_ratios",
+    "assets_companies_price_to_ratios",
+]

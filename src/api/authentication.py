@@ -3,7 +3,10 @@ from rest_framework.request import Request
 
 from src.api.constants import HTTP_AUTH_HEADER
 from src.api.exceptions import (
-    AuthenticationFailed,
+    JWTErrorException,
+    JWTInvalidException,
+    JWTIWithoutUserException,
+    JWTUserNotMatchUserException,
     KeyNotFoundException,
     KeyRemovedException,
     WrongKeyException,
@@ -19,9 +22,7 @@ class JWTAuthentication(BaseAuthentication):
         payload = self.get_payload(raw_token)
         user, token = self.get_user(payload), self.get_token(payload)
         if user != token.user:
-            # TODO: change to right error? if it's supposed to always works because I set it,
-            # an error would mean an "attack" do we want to give info in this case?
-            raise AuthenticationFailed()
+            raise JWTUserNotMatchUserException()
         return user, token
 
     def get_authorization_header(self, request: Request) -> str:
@@ -31,19 +32,19 @@ class JWTAuthentication(BaseAuthentication):
         try:
             return JwtFacade.decode(token)
         except Exception as e:
-            raise AuthenticationFailed() from e  # TODO: same as above
+            raise JWTErrorException(e) from e
 
     def get_token(self, payload: JWTPayload) -> Jwt:
         try:
             return Jwt.objects.get(pk=payload.jti)
         except Jwt.DoesNotExist as e:
-            raise AuthenticationFailed() from e  # TODO: same as above
+            raise JWTInvalidException() from e
 
     def get_user(self, payload: JWTPayload) -> User:
         try:
             return User.objects.get(pk=payload.sub)
         except User.DoesNotExist as e:
-            raise AuthenticationFailed() from e  # TODO: same as above
+            raise JWTIWithoutUserException() from e
 
 
 class KeyAuthentication(BaseAuthentication):

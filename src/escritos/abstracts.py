@@ -32,7 +32,10 @@ def default_dict():
 
 
 class AbstractWrittenContent(
-    AbstractTimeStampedModel, CommentsMixin, VotesMixin, CheckingsMixin
+    AbstractTimeStampedModel,
+    CommentsMixin,
+    VotesMixin,
+    CheckingsMixin,
 ):
     author = ForeignKey(User, on_delete=SET_NULL, null=True)
     title = CharField(max_length=800, null=True, blank=True)
@@ -105,7 +108,6 @@ class AbstractPublishableContent(AbstractWrittenContent):
 
     @property
     def image(self):
-        # TODO: maybe remove the s
         return (
             self.thumbnail.url if self.thumbnail else self.non_thumbnail_url
         ) or f"{FULL_DOMAIN}/static/general/assets/img/general/why-us.webp"

@@ -1,9 +1,13 @@
-from typing import Callable, Dict, List, Optional, Tuple, Type, Union
+from typing import Any, Callable, Dict, List, Optional, Tuple, Type, Union
 
 from django.apps import apps
-from django.db.models import QuerySet
+from django.db.models import Manager, QuerySet
+from django.shortcuts import get_object_or_404
 from rest_framework import status
+from rest_framework.generics import ListAPIView
+from rest_framework.permissions import AllowAny
 from rest_framework.response import Response
+from rest_framework.serializers import BaseSerializer
 from rest_framework.views import APIView
 
 from src.api.exceptions import (
@@ -12,6 +16,7 @@ from src.api.exceptions import (
     ServerError,
     WrongParameterException,
 )
+from src.api.pagination import StandardResultPagination
 from src.seo.outils.visiteur_meta import SeoInformation
 
 
@@ -125,8 +130,7 @@ class BaseAPIView(APIView):
         return search
 
     def save_request(self, queryset: Union[Type, QuerySet, List]) -> None:
-        requested_model = self.get_model_to_track()
-        if requested_model:
+        if requested_model := self.get_model_to_track():
             obj_data = dict(
                 ip=SeoInformation.get_client_ip(self.request),
                 key=self.request.auth,
@@ -135,7 +139,7 @@ class BaseAPIView(APIView):
                 search=self.get_object_searched(queryset),
             )
             if hasattr(requested_model, "is_excel"):
-                obj_data.update({"is_excel": self.is_excel})
+                obj_data["is_excel"] = self.is_excel
             requested_model._default_manager.create(**obj_data)
 
     def final_response(self, serializer) -> Union[Response, ServerError]:
@@ -198,8 +202,8 @@ class BaseAPIView(APIView):
         else:
             try:
                 queryset = model_or_callable._default_manager.get(**lookup_dict)
-            except model_or_callable.DoesNotExist:
-                raise QueryNotFoundException()
+            except model_or_callable.DoesNotExist as e:
+                raise QueryNotFoundException() from e
 
         return queryset, many
 
@@ -261,7 +265,7 @@ class BaseAPIView(APIView):
                 The dictionary that might tbe empty, with the keys,values to perform filters
                 against
         """
-        lookup_data = dict()
+        lookup_data = {}
         if self.url_parameters or self.fk_lookup_model:
             url_query_param, url_query_value = self.get_query_params()
             if self.fk_lookup_model:
@@ -275,3 +279,45 @@ class BaseAPIView(APIView):
         serializer = self.serializer_class(queryset, many=many)
         self.save_request(queryset)
         return self.final_response(serializer)
+
+
+class BasePublicAPIView(ListAPIView):
+    # TODO: improve
+    queryset: Union[QuerySet[Any], Manager[Any]]
+    permission_classes = [AllowAny]
+    authentication_classes = []  # TODO: add jwt auth
+    pagination_class = StandardResultPagination
+    many_serializer_class: Optional[type[BaseSerializer[Any]]] = None
+    single_serializer_class: Optional[type[BaseSerializer[Any]]] = None
+    many_queryset: Optional[Union[QuerySet[Any], Manager[Any]]] = None
+    single_queryset: Optional[Union[QuerySet[Any], Manager[Any]]] = None
+    lookup_field = ""
+
+    def get_object(self):
+        return get_object_or_404(self.queryset, **self.kwargs)
+
+    def retrieve(self, request, *args, **kwargs):
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return Response(serializer.data)
+
+    def get(self, *args, **kwargs):
+        if kwargs.get(self.lookup_field):
+            return self.single(*args, **kwargs)
+        return self.many(*args, **kwargs)
+
+    def single(self, *args, **kwargs):
+        self.set_single()
+        return self.retrieve(*args, **kwargs)
+
+    def set_single(self):
+        self.serializer_class = self.serializer_class or self.single_serializer_class
+        self.queryset = self.queryset or self.single_queryset
+
+    def many(self, *args, **kwargs):
+        self.set_many()
+        return self.list(*args, **kwargs)
+
+    def set_many(self):
+        self.serializer_class = self.serializer_class or self.many_serializer_class
+        self.queryset = self.queryset or self.many_queryset

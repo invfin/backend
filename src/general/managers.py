@@ -1,7 +1,7 @@
 import random
-from typing import Dict, List, Optional
+from typing import Any, Dict, List, Optional
 
-from django.db.models import Manager, QuerySet
+from django.db.models import Manager
 from django.db.models.query import QuerySet
 
 
@@ -29,7 +29,7 @@ class BaseQuerySet(QuerySet):
 
 
 class BaseManager(Manager):
-    def get_queryset(self) -> "BaseQuerySet":
+    def get_queryset(self) -> QuerySet[Any]:
         return super().get_queryset()
 
     def filter_checkings(self, checkings: List[Dict[str, bool]]) -> "BaseQuerySet":

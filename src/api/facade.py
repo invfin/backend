@@ -29,7 +29,9 @@ class JwtFacade:
         }
 
     def create_tokens(self, user: Optional[User]):
-        now = timezone.now()
+        # Sometimes it seems that the iat time fail, the token isn't ready. Let's see if setting
+        # the exp date -1h less it syncs with the server time
+        now = timezone.now() - timedelta(hours=1)
         refresh_token = Jwt.objects.create(
             created_at=now,
             expiration_date=now + timedelta(days=29),
