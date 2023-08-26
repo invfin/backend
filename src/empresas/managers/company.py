@@ -1,6 +1,8 @@
+from collections import defaultdict
 from typing import Any, Dict, Optional
 
-from django.db.models import Count, F, Manager, Prefetch, Q
+from django.db.models import Avg, Count, F, Manager, Prefetch, Q
+from django.db.models.functions import Round
 
 from src.general.managers import BaseManager, BaseQuerySet
 
@@ -256,7 +258,46 @@ class CompanyManager(BaseManager):
         return queryset.existing_companies_by_exchange_importance()  # type: ignore
 
     def api_query(self):
-        return self.get_queryset().select_related_information().prefetch_historical_data()
+        return self.get_queryset().select_related_information()
+
+    def get_all_averages(self, pk, sector):
+        fields = defaultdict(Round)
+        result = {"sector": {}, "company": {}}
+        company_query = self.get_queryset().filter(pk=pk)
+        sector_query = self.get_queryset().filter(sector=sector).exclude(pk=pk)
+        to_exclude = {
+            "id",
+            "year",
+            "date",
+            "is_ttm",
+            "from_average",
+            "period",
+            "reported_currency",
+            "company",
+        }
+        for index, statement in enumerate(
+            [
+                "rentability_ratios",
+                "liquidity_ratios",
+                "margins",
+                "per_share_values",
+                "operation_risks_ratios",
+                "ev_ratios",
+                "growth_rates",
+                "efficiency_ratios",
+                "price_to_ratios",
+            ]
+        ):
+            statement_model = getattr(self.model, statement).rel.related_model
+            for field in vars(statement_model):
+                if field[0].islower() and field not in to_exclude:
+                    fields[field] = Round(Avg(f"{statement}__{field}"))
+
+            if index % 2 == 0:
+                result["sector"] |= sector_query.aggregate(**fields)
+                result["company"] |= company_query.aggregate(**fields)
+                fields = defaultdict(Round)
+        return result
 
 
 class CompanyUpdateLogManager(Manager):

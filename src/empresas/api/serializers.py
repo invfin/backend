@@ -295,6 +295,7 @@ class PriceToRatioSerializer(BaseStatementSerializer):
 
 
 class CompanySerializer(ModelSerializer):
+    averages = SerializerMethodField()
     inc_statements = SerializerMethodField()
     balance_sheets = SerializerMethodField()
     cf_statements = SerializerMethodField()
@@ -318,6 +319,7 @@ class CompanySerializer(ModelSerializer):
     class Meta:
         model = Company
         fields = [
+            "averages",
             "ticker",
             "name",
             "currency",
@@ -355,7 +357,7 @@ class CompanySerializer(ModelSerializer):
         ]
 
     def slicing(self) -> int:
-        return 1
+        return 10
 
     def get_inc_statements(self, obj):
         queryset = obj.inc_statements.year()[: self.slicing()]
@@ -412,3 +414,7 @@ class CompanySerializer(ModelSerializer):
     def get_price_to_ratios(self, obj):
         queryset = obj.price_to_ratios.year()[: self.slicing()]
         return PriceToRatioSerializer(queryset, many=True).data
+
+    def get_averages(self, obj):
+        averages = Company.objects.get_all_averages(obj.pk, obj.sector)
+        return averages
