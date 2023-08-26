@@ -294,7 +294,7 @@ class PriceToRatioSerializer(BaseStatementSerializer):
         model = PriceToRatio
 
 
-class CompanySerializer(BasicCompanySerializer):
+class CompanySerializer(ModelSerializer):
     inc_statements = SerializerMethodField()
     balance_sheets = SerializerMethodField()
     cf_statements = SerializerMethodField()
@@ -309,30 +309,53 @@ class CompanySerializer(BasicCompanySerializer):
     growth_rates = SerializerMethodField()
     efficiency_ratios = SerializerMethodField()
     price_to_ratios = SerializerMethodField()
+    exchange = StringRelatedField(many=False)
+    currency = StringRelatedField(many=False)
+    industry = StringRelatedField(many=False)
+    sector = StringRelatedField(many=False)
+    country = StringRelatedField(many=False)
 
     class Meta:
         model = Company
-        exclude = [
-            "id",
-            "is_adr",
-            "is_fund",
-            "is_etf",
-            "no_incs",
-            "no_bs",
-            "no_cfs",
-            "description_translated",
-            "has_logo",
-            "updated",
-            "last_update",
-            "date_updated",
-            "has_error",
-            "error_message",
-            "remote_image_imagekit",
-            "remote_image_cloudinary",
+        fields = [
+            "ticker",
+            "name",
+            "currency",
+            "industry",
+            "sector",
+            "website",
+            "state",
+            "country",
+            "ceo",
+            "image",
+            "city",
+            "employees",
+            "address",
+            "zip_code",
+            "cik",
+            "exchange",
+            "cusip",
+            "isin",
+            "description",
+            "ipoDate",
+            "inc_statements",
+            "balance_sheets",
+            "cf_statements",
+            "rentability_ratios",
+            "liquidity_ratios",
+            "margins",
+            "fcf_ratios",
+            "per_share_values",
+            "non_gaap_figures",
+            "operation_risks_ratios",
+            "ev_ratios",
+            "growth_rates",
+            "efficiency_ratios",
+            "price_to_ratios",
         ]
 
     def slicing(self) -> int:
-        return 10
+        return 1
 
     def get_inc_statements(self, obj):
         queryset = obj.inc_statements.year()[: self.slicing()]

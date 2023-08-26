@@ -1,3 +1,4 @@
+from ckeditor.fields import RichTextField
 from django.contrib.auth import get_user_model
 from django.contrib.sites.models import Site
 from django.db.models import (
@@ -10,8 +11,6 @@ from django.db.models import (
 )
 from django.urls import reverse
 
-from ckeditor.fields import RichTextField
-
 from src.escritos.abstracts import AbstractWrittenContent
 from src.general.abstracts import AbstractComment, AbstractTimeStampedModel
 from src.general.mixins import CommentsMixin, VotesMixin
@@ -22,7 +21,7 @@ User = get_user_model()
 
 
 class Question(AbstractWrittenContent):
-    content = RichTextField(config_name="writer")
+    content = RichTextField(config_name="writer")  # type: ignore
     is_answered = BooleanField(default=False)
     hide_question = BooleanField(default=False)
     has_accepted_answer = BooleanField(default=False)
@@ -67,15 +66,15 @@ class Question(AbstractWrittenContent):
 
     @property
     def related_answers(self):
-        return self.answers.all()
+        return self.answers.all()  # type: ignore
 
     @property
     def related_comments(self):
-        return self.comments_related.all()
+        return self.comments_related.all()  # type: ignore
 
     @property
     def accepted_answer(self):
-        return self.answers.filter(is_accepted=True).first()
+        return self.answers.filter(is_accepted=True).first()  # type: ignore
 
     def add_answer(self, author: type, answer_content: str, is_accepted: bool = False):
         answer = Answer.objects.create(
@@ -91,43 +90,45 @@ class Question(AbstractWrittenContent):
 
     @property
     def schema_org(self):
-        ques_schema = {}
-        ques_schema["@context"] = "https://schema.org"
-        ques_schema["@type"] = "QAPage"
-        ques_schema["mainEntity"] = {}
+        ques_schema = {
+            "@context": "https://schema.org",
+            "@type": "QAPage",
+            "mainEntity": {},
+        }
         ques_schema["mainEntity"]["@type"] = "Question"
         ques_schema["mainEntity"]["name"] = self.title
         ques_schema["mainEntity"]["text"] = self.content
         ques_schema["mainEntity"]["answerCount"] = self.related_answers.count()
         ques_schema["mainEntity"]["upvoteCount"] = self.upvotes.all().count()
         ques_schema["mainEntity"]["dateCreated"] = self.created_at
-        ques_schema["mainEntity"]["author"] = {}
-        ques_schema["mainEntity"]["author"]["@type"] = "Person"
+        ques_schema["mainEntity"]["author"] = {"@type": "Person"}
         ques_schema["mainEntity"]["author"]["name"] = self.author
 
         ques_schema["mainEntity"]["suggestedAnswer"] = []
 
         for answer in self.related_answers:
             if answer.is_accepted:
-                ques_schema["mainEntity"]["acceptedAnswer"] = {}
-                ques_schema["mainEntity"]["acceptedAnswer"]["@type"] = "Answer"
-                ques_schema["mainEntity"]["acceptedAnswer"]["text"] = answer.content
-                ques_schema["mainEntity"]["acceptedAnswer"]["dateCreated"] = answer.created_at
-                ques_schema["mainEntity"]["acceptedAnswer"]["upvoteCount"] = answer.total_votes
-                ques_schema["mainEntity"]["acceptedAnswer"]["url"] = answer.own_url
-                ques_schema["mainEntity"]["acceptedAnswer"]["author"] = {}
+                ques_schema["mainEntity"]["acceptedAnswer"] = {
+                    "@type": "Answer",
+                    "text": answer.content,
+                    "dateCreated": answer.created_at,
+                    "upvoteCount": answer.total_votes,
+                    "url": answer.own_url,
+                    "author": {},
+                }
                 ques_schema["mainEntity"]["acceptedAnswer"]["author"]["@type"] = "Person"
                 ques_schema["mainEntity"]["acceptedAnswer"]["author"][
                     "name"
                 ] = answer.author.full_name
 
-            sug_answ = {}
-            sug_answ["@type"] = "Answer"
-            sug_answ["text"] = answer.content
-            sug_answ["dateCreated"] = answer.created_at
-            sug_answ["upvoteCount"] = answer.total_votes
-            sug_answ["url"] = answer.own_url
-            sug_answ["author"] = {}
+            sug_answ = {
+                "@type": "Answer",
+                "text": answer.content,
+                "dateCreated": answer.created_at,
+                "upvoteCount": answer.total_votes,
+                "url": answer.own_url,
+                "author": {},
+            }
             sug_answ["author"]["@type"] = "Person"
             sug_answ["author"]["name"] = answer.author.full_name
             ques_schema["mainEntity"]["suggestedAnswer"].append(sug_answ)
@@ -142,7 +143,7 @@ class Answer(AbstractTimeStampedModel, CommentsMixin, VotesMixin):
         null=True,
         related_name="answers_apported",
     )
-    content = RichTextField(config_name="writer")
+    content = RichTextField(config_name="writer")  # type: ignore
     question_related = ForeignKey(
         Question,
         on_delete=CASCADE,
@@ -169,7 +170,7 @@ class Answer(AbstractTimeStampedModel, CommentsMixin, VotesMixin):
         # order_with_respect_to = 'question_related'
 
     def __str__(self):
-        return f"Answer-{self.id} to {self.question_related}"
+        return f"Answer-{self.pk} to {self.question_related}"
 
     def get_absolute_url(self):
         return self.question_related.get_absolute_url()
@@ -181,7 +182,7 @@ class Answer(AbstractTimeStampedModel, CommentsMixin, VotesMixin):
     @property
     def own_url(self):
         domain = Site.objects.get_current().domain
-        return f"https://{domain}/question/{self.question_related.slug}/#{self.id}"
+        return f"https://{domain}/question/{self.question_related.slug}/#{self.pk}"
 
 
 class QuesitonComment(AbstractComment):
@@ -197,7 +198,7 @@ class QuesitonComment(AbstractComment):
         db_table = "question_comments"
 
     def __str__(self):
-        return str(self.id)
+        return str(self.pk)
 
 
 class AnswerComment(AbstractComment):
@@ -213,4 +214,4 @@ class AnswerComment(AbstractComment):
         db_table = "answer_comments"
 
     def __str__(self):
-        return str(self.id)
+        return str(self.pk)
