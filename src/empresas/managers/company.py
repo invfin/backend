@@ -263,8 +263,12 @@ class CompanyManager(BaseManager):
     def get_all_averages(self, pk, sector):
         fields = defaultdict(Round)
         result = {"sector": {}, "company": {}}
-        company_query = self.get_queryset().filter(pk=pk)
-        sector_query = self.get_queryset().filter(sector=sector).exclude(pk=pk)
+        company_query = self.filter(pk=pk)
+        # Need to clean all the companies before using averages 'cause it's currently trash
+        sector_query = self.filter(sector=sector, exchange__main_org=1).exclude(
+            pk=pk, name="Need-parsing"
+        )
+
         to_exclude = {
             "id",
             "year",
