@@ -260,15 +260,9 @@ class CompanyManager(BaseManager):
     def api_query(self):
         return self.get_queryset().select_related_information()
 
-    def get_all_averages(self, pk, sector):
+    def get_all_averages(self, pk):
         fields = defaultdict(Round)
-        result = {"sector": {}, "company": {}}
-        company_query = self.filter(pk=pk)
-        # Need to clean all the companies before using averages 'cause it's currently trash
-        sector_query = self.filter(sector=sector, exchange__main_org=1).exclude(
-            pk=pk, name="Need-parsing"
-        )
-
+        result = defaultdict(dict)
         to_exclude = {
             "id",
             "year",
@@ -279,28 +273,25 @@ class CompanyManager(BaseManager):
             "reported_currency",
             "company",
         }
-        for index, statement in enumerate(
-            [
-                "rentability_ratios",
-                "liquidity_ratios",
-                "margins",
-                "per_share_values",
-                "operation_risks_ratios",
-                "ev_ratios",
-                "growth_rates",
-                "efficiency_ratios",
-                "price_to_ratios",
-            ]
-        ):
+        for statement in [
+            "rentability_ratios",
+            "liquidity_ratios",
+            "margins",
+            "per_share_values",
+            "operation_risks_ratios",
+            "ev_ratios",
+            "growth_rates",
+            "efficiency_ratios",
+            "price_to_ratios",
+        ]:
             statement_model = getattr(self.model, statement).rel.related_model
             for field in vars(statement_model):
                 if field[0].islower() and field not in to_exclude:
                     fields[field] = Round(Avg(f"{statement}__{field}"))
 
-            if index % 2 == 0:
-                result["sector"] |= sector_query.aggregate(**fields)
-                result["company"] |= company_query.aggregate(**fields)
-                fields = defaultdict(Round)
+            result[statement] = self.filter(pk=pk).aggregate(**fields)
+            fields = defaultdict(Round)
+
         return result
 
 

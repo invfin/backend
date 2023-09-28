@@ -1,27 +1,8 @@
-from typing import Optional, Union, Dict
+from typing import Dict, Optional, Union
+
+from src.empresas.constants import RATIOS_VALUES, STATEMENTS
 from src.empresas.models import Company
 from src.empresas.querysets.statements import StatementQuerySet
-
-
-RATIOS_VALUES = [
-    "rentability_ratios",
-    "liquidity_ratios",
-    "margins",
-    "per_share_values",
-    "operation_risks_ratios",
-    "ev_ratios",
-    "growth_rates",
-    "price_to_ratios",
-    "efficiency_ratios",
-]
-
-STATEMENTS = [
-    "inc_statements",
-    "balance_sheets",
-    "cf_statements",
-    "non_gaap_figures",
-    "fcf_ratios",
-] + RATIOS_VALUES
 
 
 class AveragesInterface:

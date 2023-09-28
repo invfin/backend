@@ -1,11 +1,17 @@
-from django.contrib.auth import get_user_model
-from django.db.models import CharField, IntegerField, ManyToManyField
+from django.db.models import (
+    CASCADE,
+    SET_NULL,
+    CharField,
+    ForeignKey,
+    IntegerField,
+    ManyToManyField,
+    OneToOneField,
+)
 
 from src.countries.models import Country
 from src.currencies.managers import CurrencyManager
 from src.general.abstracts import AbstractTimeStampedModel
-
-User = get_user_model()
+from src.users.models import User
 
 
 class Currency(AbstractTimeStampedModel):
@@ -56,4 +62,24 @@ class Currency(AbstractTimeStampedModel):
         db_table = "assets_currencies"
 
     def __str__(self):
-        return str(self.currency)
+        return self.currency
+
+
+class UserDefaultCurrency(AbstractTimeStampedModel):
+    user = OneToOneField(
+        User,
+        on_delete=CASCADE,
+    )
+    currency = ForeignKey(
+        Currency,
+        on_delete=SET_NULL,
+        null=True,
+        blank=True,
+        default="1",
+    )
+
+    class Meta:
+        db_table = "assets_user_default_currencies"
+
+    def __str__(self):
+        return self.currency

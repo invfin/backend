@@ -11,25 +11,19 @@ def discounted_cashflow(
     fcf_margin: Union[int, float],
     buyback: Union[int, float],
     average_shares_out: Union[int, float],
-    required_return=0.075,
-    perpetual_growth=0.025,
+    required_return: Union[int, float] = 0.075,
+    perpetual_growth: Union[int, float] = 0.025,
 ) -> Union[int, float]:
     today_value = fcf_expected = discount_factor = 0.0
     revenue_expected = last_revenue
     shares_outs = average_shares_out
     for i in range(1, 6):
         revenue_expected = revenue_expected * (1 + (revenue_growth / 100))
-
         income_expected = revenue_expected * (net_income_margin / 100)
-
         fcf_expected = income_expected * (fcf_margin / 100)
-
         discount_factor = (1 + required_return) ** i
-
         shares_outs = shares_outs * (1 - (buyback / 100))
-
         pv_future_cf = divide_or_zero(fcf_expected, discount_factor)
-
         today_value += pv_future_cf
 
     terminal_value = divide_or_zero(

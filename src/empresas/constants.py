@@ -21,7 +21,7 @@ DEFAULT_JSON_CHECKS_FILE = "src/empresas/company-checks.json"
 
 MAX_REQUESTS_FINPREP = 250
 
-STATEMENTS = [
+STATEMENTS_TABLES = [
     "assets_companies_income_statements",
     "assets_companies_balance_sheet_statements",
     "assets_companies_cashflow_statements",
@@ -37,3 +37,23 @@ STATEMENTS = [
     "assets_companies_eficiency_ratios",
     "assets_companies_price_to_ratios",
 ]
+
+RATIOS_VALUES = [
+    "rentability_ratios",
+    "liquidity_ratios",
+    "margins",
+    "per_share_values",
+    "operation_risks_ratios",
+    "ev_ratios",
+    "growth_rates",
+    "price_to_ratios",
+    "efficiency_ratios",
+]
+
+STATEMENTS = [
+    "inc_statements",
+    "balance_sheets",
+    "cf_statements",
+    "non_gaap_figures",
+    "fcf_ratios",
+] + RATIOS_VALUES

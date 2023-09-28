@@ -216,82 +216,182 @@ class ExcelCashflowStatementSerializer(ModelSerializer):
         ]
 
 
-class BaseStatementSerializer(ModelSerializer):
+class IncomeStatementSerializer(ModelSerializer):
     reported_currency = StringRelatedField(many=False)
-    company = StringRelatedField(many=False)
 
     class Meta:
-        exclude = ["id", "year", "is_ttm", "from_average", "period"]
-
-
-class IncomeStatementSerializer(BaseStatementSerializer):
-    class Meta(BaseStatementSerializer.Meta):
         model = IncomeStatement
+        exclude = ["id", "year", "is_ttm", "from_average", "period", "company"]
 
 
-class BalanceSheetSerializer(BaseStatementSerializer):
-    class Meta(BaseStatementSerializer.Meta):
+class BalanceSheetSerializer(ModelSerializer):
+    reported_currency = StringRelatedField(many=False)
+
+    class Meta:
         model = BalanceSheet
+        exclude = ["id", "year", "is_ttm", "from_average", "period", "company"]
 
 
-class CashflowStatementSerializer(BaseStatementSerializer):
-    class Meta(BaseStatementSerializer.Meta):
+class CashflowStatementSerializer(ModelSerializer):
+    reported_currency = StringRelatedField(many=False)
+
+    class Meta:
         model = CashflowStatement
+        exclude = ["id", "year", "is_ttm", "from_average", "period", "company"]
 
 
-class RentabilityRatioSerializer(BaseStatementSerializer):
-    class Meta(BaseStatementSerializer.Meta):
+class RentabilityRatioSerializer(ModelSerializer):
+    class Meta:
         model = RentabilityRatio
+        exclude = [
+            "id",
+            "year",
+            "is_ttm",
+            "from_average",
+            "period",
+            "company",
+            "reported_currency",
+        ]
 
 
-class LiquidityRatioSerializer(BaseStatementSerializer):
-    class Meta(BaseStatementSerializer.Meta):
+class LiquidityRatioSerializer(ModelSerializer):
+    class Meta:
         model = LiquidityRatio
+        exclude = [
+            "id",
+            "year",
+            "is_ttm",
+            "from_average",
+            "period",
+            "company",
+            "reported_currency",
+        ]
 
 
-class MarginRatioSerializer(BaseStatementSerializer):
-    class Meta(BaseStatementSerializer.Meta):
+class MarginRatioSerializer(ModelSerializer):
+    class Meta:
         model = MarginRatio
+        exclude = [
+            "id",
+            "year",
+            "is_ttm",
+            "from_average",
+            "period",
+            "company",
+            "reported_currency",
+        ]
 
 
-class FreeCashFlowRatioSerializer(BaseStatementSerializer):
-    class Meta(BaseStatementSerializer.Meta):
+class FreeCashFlowRatioSerializer(ModelSerializer):
+    class Meta:
         model = FreeCashFlowRatio
+        exclude = [
+            "id",
+            "year",
+            "is_ttm",
+            "from_average",
+            "period",
+            "company",
+            "reported_currency",
+        ]
 
 
-class PerShareValueSerializer(BaseStatementSerializer):
-    class Meta(BaseStatementSerializer.Meta):
+class PerShareValueSerializer(ModelSerializer):
+    class Meta:
         model = PerShareValue
+        exclude = [
+            "id",
+            "year",
+            "is_ttm",
+            "from_average",
+            "period",
+            "company",
+            "reported_currency",
+        ]
 
 
-class NonGaapSerializer(BaseStatementSerializer):
-    class Meta(BaseStatementSerializer.Meta):
+class NonGaapSerializer(ModelSerializer):
+    class Meta:
         model = NonGaap
+        exclude = [
+            "id",
+            "year",
+            "is_ttm",
+            "from_average",
+            "period",
+            "company",
+            "reported_currency",
+        ]
 
 
-class OperationRiskRatioSerializer(BaseStatementSerializer):
-    class Meta(BaseStatementSerializer.Meta):
+class OperationRiskRatioSerializer(ModelSerializer):
+    class Meta:
         model = OperationRiskRatio
+        exclude = [
+            "id",
+            "year",
+            "is_ttm",
+            "from_average",
+            "period",
+            "company",
+            "reported_currency",
+        ]
 
 
-class EnterpriseValueRatioSerializer(BaseStatementSerializer):
-    class Meta(BaseStatementSerializer.Meta):
+class EnterpriseValueRatioSerializer(ModelSerializer):
+    class Meta:
         model = EnterpriseValueRatio
+        exclude = [
+            "id",
+            "year",
+            "is_ttm",
+            "from_average",
+            "period",
+            "company",
+            "reported_currency",
+        ]
 
 
-class CompanyGrowthSerializer(BaseStatementSerializer):
-    class Meta(BaseStatementSerializer.Meta):
+class CompanyGrowthSerializer(ModelSerializer):
+    class Meta:
         model = CompanyGrowth
+        exclude = [
+            "id",
+            "year",
+            "is_ttm",
+            "from_average",
+            "period",
+            "company",
+            "reported_currency",
+        ]
 
 
-class EficiencyRatioSerializer(BaseStatementSerializer):
-    class Meta(BaseStatementSerializer.Meta):
+class EficiencyRatioSerializer(ModelSerializer):
+    class Meta:
         model = EficiencyRatio
+        exclude = [
+            "id",
+            "year",
+            "is_ttm",
+            "from_average",
+            "period",
+            "company",
+            "reported_currency",
+        ]
 
 
-class PriceToRatioSerializer(BaseStatementSerializer):
-    class Meta(BaseStatementSerializer.Meta):
+class PriceToRatioSerializer(ModelSerializer):
+    class Meta:
         model = PriceToRatio
+        exclude = [
+            "id",
+            "year",
+            "is_ttm",
+            "from_average",
+            "period",
+            "company",
+            "reported_currency",
+        ]
 
 
 class CompanySerializer(ModelSerializer):
@@ -416,5 +516,4 @@ class CompanySerializer(ModelSerializer):
         return PriceToRatioSerializer(queryset, many=True).data
 
     def get_averages(self, obj):
-        averages = Company.objects.get_all_averages(obj.pk, obj.sector)
-        return averages
+        return Company.objects.get_all_averages(obj.pk)
