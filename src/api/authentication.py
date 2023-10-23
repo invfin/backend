@@ -32,7 +32,7 @@ class JWTAuthentication(BaseAuthentication):
         try:
             return JwtFacade.decode(token)
         except Exception as e:
-            raise JWTErrorException(e) from e
+            raise JWTErrorException() from e
 
     def get_token(self, payload: JWTPayload) -> Jwt:
         try:

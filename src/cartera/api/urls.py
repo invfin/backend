@@ -1,23 +1,19 @@
 from django.urls import path
 
 from .views import (
-    AddCashflowMoveView,
-    AddCategoriesView,
-    AddDefaultCurrencyView,
-    AddFinancialObjectifView,
-    AddNewAssetView,
-    AddPositionMovementView,
+    IncomeAPIView,
+    InvestmentAPIView,
+    SavingAPIView,
+    SpendAPIView,
 )
 
 urlpatterns = [
-    path("new-cashflow-move/", AddCashflowMoveView.as_view(), name="save_cashflow_movement"),
-    path("new-asset-move/", AddPositionMovementView.as_view(), name="save_asset_movement"),
-    path(
-        "edit-default-currency/",
-        AddDefaultCurrencyView.as_view(),
-        name="save_default_currency",
-    ),
-    path("save-new-asset/", AddNewAssetView.as_view(), name="save_new_asset_movement"),
-    path("save-new-category/", AddCategoriesView.as_view(), name="save_new_category"),
-    path("save-new-objectif/", AddFinancialObjectifView.as_view(), name="save_new_objectif"),
+    path("investments/", InvestmentAPIView.as_view(), name="investments"),
+    path("investments/<int:id>", InvestmentAPIView.as_view(), name="investments-individual"),
+    path("incomes/", IncomeAPIView.as_view(), name="incomes"),
+    path("incomes/<int:id>", IncomeAPIView.as_view(), name="incomes-individual"),
+    path("spends/", SpendAPIView.as_view(), name="spends"),
+    path("spends/<int:id>", SpendAPIView.as_view(), name="spends-individual"),
+    path("savings/", SavingAPIView.as_view(), name="savings"),
+    path("savings/<int:id>", SavingAPIView.as_view(), name="savings-individual"),
 ]

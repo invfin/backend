@@ -4,7 +4,7 @@ from django.shortcuts import render
 
 from src.seo.views import SEOTemplateView
 
-from .models import Patrimonio
+from .models import Investment
 
 User = get_user_model()
 
@@ -16,7 +16,7 @@ class DefaultCateraView(LoginRequiredMixin, SEOTemplateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         user = self.request.user
-        patrimoine = Patrimonio.objects.get_or_create(user=user)[0]
+        patrimoine = Investment.objects.get_or_create(user=user)[0]
         context["patrimonio"] = patrimoine
         context["meta_title"] = self.meta_title
         return context

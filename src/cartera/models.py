@@ -3,6 +3,7 @@ from decimal import Decimal
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 from django.db.models import (
+    CASCADE,
     SET_NULL,
     BooleanField,
     CharField,
@@ -18,6 +19,8 @@ from django.db.models import (
 from src.currencies.models import Currency
 from src.general.abstracts import AbstractTimeStampedModel
 from src.users.models import User
+
+from .constants import InvestmentMovement
 
 
 class CashflowMovement(AbstractTimeStampedModel):
@@ -35,45 +38,25 @@ class CashflowMovement(AbstractTimeStampedModel):
         return self.name
 
 
-class InvestmentMovement(CashflowMovement):
-    content_type = ForeignKey(ContentType, on_delete=SET_NULL, null=True)  # type: ignore
+class Investment(CashflowMovement):
+    user = ForeignKey(
+        User,
+        on_delete=SET_NULL,
+        null=True,
+        blank=True,
+        related_name="investments",
+    )
+    content_type = ForeignKey(ContentType, on_delete=CASCADE)  # type: ignore
     object_id = PositiveIntegerField()
     object = GenericForeignKey("content_type", "object_id")
     quantity = PositiveIntegerField("Cantidad")
     price = DecimalField("Precio", max_digits=100, decimal_places=2, default=Decimal(0.0))
+    movement = CharField("Moviemiento", max_length=4, choices=InvestmentMovement.to_choices())
 
     class Meta:
-        abstract = True
-
-
-class BuyInvestment(InvestmentMovement):
-    user = ForeignKey(
-        User,
-        on_delete=SET_NULL,
-        null=True,
-        blank=True,
-        related_name="investments_buy",
-    )
-
-    class Meta:
-        verbose_name = "Investment buys"
-        verbose_name_plural = "Investment buys"
-        db_table = "patrimoine_investments_buy"
-
-
-class SellInvestment(InvestmentMovement):
-    user = ForeignKey(
-        User,
-        on_delete=SET_NULL,
-        null=True,
-        blank=True,
-        related_name="investments_sell",
-    )
-
-    class Meta:
-        verbose_name = "Investemnt sell"
-        verbose_name_plural = "Investement sells"
-        db_table = "patrimoine_investments_sells"
+        verbose_name = "Investment"
+        verbose_name_plural = "Investment"
+        db_table = "patrimoine_investments"
 
 
 class CashflowMovementCategory(AbstractTimeStampedModel):

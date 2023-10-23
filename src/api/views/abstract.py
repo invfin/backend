@@ -1,7 +1,7 @@
 from typing import Any, Callable, Dict, List, Optional, Tuple, Type, Union
 
 from django.apps import apps
-from django.db.models import Manager, QuerySet
+from django.db.models import QuerySet
 from django.shortcuts import get_object_or_404
 from rest_framework import status
 from rest_framework.generics import ListAPIView
@@ -283,14 +283,14 @@ class BaseAPIView(APIView):
 
 class BasePublicAPIView(ListAPIView):
     # TODO: improve
-    queryset: Union[QuerySet[Any], Manager[Any]]
+    queryset: Type
     permission_classes = [AllowAny]
     authentication_classes = []  # TODO: add jwt auth
     pagination_class = StandardResultPagination
     many_serializer_class: Optional[type[BaseSerializer[Any]]] = None
     single_serializer_class: Optional[type[BaseSerializer[Any]]] = None
-    many_queryset: Optional[Union[QuerySet[Any], Manager[Any]]] = None
-    single_queryset: Optional[Union[QuerySet[Any], Manager[Any]]] = None
+    many_queryset: Optional[Type] = None
+    single_queryset: Optional[Type] = None
     lookup_field = ""
 
     def get_object(self):

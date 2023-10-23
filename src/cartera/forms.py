@@ -19,11 +19,10 @@ from django.forms import (
 from src.currencies.models import Currency
 
 from .models import (
-    Asset,
     CashflowMovementCategory,
     FinancialObjectif,
     Income,
-    PositionMovement,
+    Investment,
     Spend,
 )
 
@@ -53,7 +52,7 @@ class BaseAssetMoveForm(BaseForm):
 
 class AddNewAssetForm(ModelForm, BaseAssetMoveForm):
     class Meta:
-        model = PositionMovement
+        model = Investment
         exclude = [
             "user",
             "move_type",
@@ -61,7 +60,7 @@ class AddNewAssetForm(ModelForm, BaseAssetMoveForm):
         ]
 
     def save(self, request, company):
-        asset = Asset.objects.create(is_stock=True, user=request.user, object=company)
+        asset = Investment.objects.create(is_stock=True, user=request.user, object=company)
 
         position = super().save()
         position.user = request.user
@@ -84,7 +83,7 @@ class PositionMovementForm(ModelForm, BaseAssetMoveForm):
         super(BaseAssetMoveForm, self).__init__(*args, **kwargs)
 
     class Meta:
-        model = PositionMovement
+        model = Investment
         exclude = ["user"]
 
     def save(self, request):

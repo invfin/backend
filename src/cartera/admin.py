@@ -1,20 +1,6 @@
 from django.contrib import admin
 
-from .models import Asset, FinancialObjectif, Income, Patrimonio, PositionMovement, Spend
-
-
-@admin.register(PositionMovement)
-class PositionMovementAdmin(admin.ModelAdmin):
-    list_display = [
-        "user",
-        "move_type",
-        "asset_related",
-        "price",
-        "date",
-        "quantity",
-        "currency",
-        "fee",
-    ]
+from .models import FinancialObjectif, Income, Investment, Spend
 
 
 @admin.register(Income)
@@ -43,16 +29,9 @@ class SpendAdmin(admin.ModelAdmin):
     ]
 
 
-@admin.register(Asset)
-class AssetAdmin(admin.ModelAdmin):
+@admin.register(Investment)
+class InvestmentAdmin(admin.ModelAdmin):
     list_display = ["user", "object"]
-
-
-@admin.register(Patrimonio)
-class PatrimonioAdmin(admin.ModelAdmin):
-    list_display = [
-        "user",
-    ]
 
 
 @admin.register(FinancialObjectif)

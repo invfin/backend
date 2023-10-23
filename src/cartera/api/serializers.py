@@ -1,50 +1,107 @@
+from decimal import Decimal
+
+from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ObjectDoesNotExist
 from rest_framework.serializers import (
+    CharField,
+    DateField,
+    DecimalField,
+    Field,
+    IntegerField,
     ModelSerializer,
-    SerializerMethodField,
+    PrimaryKeyRelatedField,
     StringRelatedField,
+    ValidationError,
 )
 
 from ..models import (
-    Asset,
-    Buy,
-    Sell,
     CashflowMovementCategory,
     Income,
+    Investment,
+    Saving,
     Spend,
 )
 
 
-class AssetSerializer(ModelSerializer):
+class GenericForeignKeyField(Field):
+    def to_representation(self, obj):
+        print(obj.__dict__)
+        print("*" * 100)
+        return {
+            "content_type_id": obj.content_type.id,
+            "object_id": obj.object_id,
+        }
+
+    def to_internal_value(self, data):
+        # Deserialize the dictionary and create a GenericForeignKey instance
+        content_type_id = data.get("content_type_id")
+        object_id = data.get("object_id")
+
+        try:
+            content_type = ContentType.objects.get(id=content_type_id)
+            return content_type.get_object_for_this_type(id=object_id)
+        except ContentType.DoesNotExist:
+            raise ValidationError("Invalid content_type_id")
+        except ObjectDoesNotExist:
+            raise ValidationError("Object does not exist")
+
+
+class CashflowMovementSerializer(ModelSerializer):
+    name = CharField(max_length=100, label="Nombre")
+    amount = DecimalField(
+        max_digits=100,
+        decimal_places=2,
+        default=Decimal(0.0),
+        label="Monto",
+    )
+    description = CharField(default="", label="Descripción")
+    date = DateField(allow_null=True, required=False, label="Fecha del movimiento")
+    currency = StringRelatedField()
+
+
+class InvestmentMovementSerializer(CashflowMovementSerializer):
+    quantity = IntegerField(label="Cantidad")
+    price = DecimalField(
+        max_digits=100,
+        decimal_places=2,
+        default=Decimal(0.0),
+        label="Precio",
+    )
+    content_type = PrimaryKeyRelatedField(
+        queryset=ContentType.objects.all(),
+        allow_null=True,
+        required=False,
+        label="Content Type",
+    )
+    object_id = IntegerField(allow_null=True, required=False, label="Object ID")
+    object = GenericForeignKeyField()
+
+
+class InvestmentSerializer(InvestmentMovementSerializer):
     class Meta:
-        model = Asset
-        exclude = ["id"]
-
-
-class BuySerializer(ModelSerializer):
-    class Meta:
-        model = Buy
-        exclude = ["id"]
-
-
-class SellSerializer(ModelSerializer):
-    class Meta:
-        model = Sell
-        exclude = ["id"]
+        model = Investment
+        include = "__all__"
 
 
 class CashflowMovementCategorySerializer(ModelSerializer):
     class Meta:
         model = CashflowMovementCategory
-        exclude = ["id"]
+        include = "__all__"
 
 
-class IncomeSerializer(ModelSerializer):
+class IncomeSerializer(CashflowMovementSerializer):
     class Meta:
         model = Income
-        exclude = ["id"]
+        include = "__all__"
 
 
-class SpendSerializer(ModelSerializer):
+class SpendSerializer(CashflowMovementSerializer):
     class Meta:
         model = Spend
-        exclude = ["id"]
+        include = "__all__"
+
+
+class SavingSerializer(CashflowMovementSerializer):
+    class Meta:
+        model = Saving
+        include = "__all__"
