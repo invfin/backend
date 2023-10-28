@@ -2,12 +2,23 @@ pytz
 python-slugify
 Pillow
 argon2-cffi
+
+
+# Server
+# ------------------------------------------------------------------------------
+uvicorn[standard] # https://github.com/encode/uvicorn
+channels
 whitenoise
+gunicorn
+
+# Messages
+# ------------------------------------------------------------------------------
 redis
 hiredis
 celery
 django-celery-beat
 flower
+django-redis
 
 # Images management
 # ------------------------------------------------------------------------------
@@ -32,9 +43,7 @@ yfinance
 django<4
 django-cors-headers<4
 django-environ
-gunicorn
 django-allauth
-django-redis
 
 # Django Admin
 # ------------------------------------------------------------------------------
