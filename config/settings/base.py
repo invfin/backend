@@ -18,7 +18,7 @@ if READ_DOT_ENV_FILE:
 IS_PROD = env.bool("IS_PROD", False)
 IS_TEST = env.bool("IS_TEST", False)
 
-PROTOCOL = "https://" if IS_PROD else "https://"
+PROTOCOL = env("PROTOCOL", default="https://")
 
 # GENERAL
 # ------------------------------------------------------------------------------
@@ -215,6 +215,7 @@ MIDDLEWARE = [
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.common.BrokenLinkEmailsMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "allauth.account.middleware.AccountMiddleware",
     "src.general.middleware.SubdomainURLRoutingMiddleware",
     "src.seo.middleware.VisiteurMiddleware",
 ]
@@ -230,7 +231,7 @@ SESSION_SERIALIZER = "django.contrib.sessions.serializers.JSONSerializer"
 # https://docs.djangoproject.com/en/dev/ref/settings/#csrf-cookie-httponly
 CSRF_COOKIE_HTTPONLY = True
 CSRF_COOKIE_DOMAIN = f".{CURRENT_DOMAIN}"
-CSRF_TRUSTED_ORIGINS = [f".{CURRENT_DOMAIN}", f"{CURRENT_DOMAIN}"]
+CSRF_TRUSTED_ORIGINS = [f"{PROTOCOL}*.{CURRENT_DOMAIN}", FULL_DOMAIN]
 # https://docs.djangoproject.com/en/dev/ref/settings/#secure-browser-xss-filter
 SECURE_BROWSER_XSS_FILTER = True
 

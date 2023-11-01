@@ -18,13 +18,6 @@ from src.public_blog.models import PublicBlog
 from src.seo.mixins import SEOViewMixin
 
 
-class UrlShorterRedirectView(RedirectView):
-    def get_redirect_url(self, *args, **kwargs):
-        print(*args)
-        print(**kwargs)
-        # return reverse("business:product", kwargs={"slug": "excel-inteligente"})
-
-
 def redirect_old_urls(request, ques_slug=False, term_slug=False, publs_slug=False):
     if ques_slug is False and term_slug is False:
         model = PublicBlog.objects
@@ -69,7 +62,7 @@ class PromotionRedirectView(RedirectView):
         return HttpResponseRedirect(url)
 
 
-def robots_txt(request):
+async def robots_txt(_):
     lines = [
         "User-Agent: *",
         "Disallow: /private/",

@@ -120,7 +120,7 @@ if env("LOGGING") == "yes":
             "file": {
                 "level": "INFO",
                 "class": "logging.FileHandler",
-                "filename": str(ROOT_DIR / "../logs/paginaweb.log"),
+                "filename": "/home/lucas/logs/invfin/django.log",
                 "formatter": "verbose",
             },
             "mail_admins": {

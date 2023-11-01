@@ -106,8 +106,7 @@ class SEOViewMixin(FastContextView, RecommenderMixin):
                     instance, ["meta_image", "regularised_image", "image", "thumbnail"], ""
                 )
                 if not meta_image:
-                    author = getattr(instance, "author", None)
-                    if author:
+                    if author := getattr(instance, "author", None):
                         meta_image = author.foto
             else:
                 selected_image = random.choice(

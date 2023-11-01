@@ -12,6 +12,5 @@ urlpatterns = [
         PromotionRedirectView.as_view(),
         name="promotion_redirect",
     ),
-    # path("aprovecha-la-promocion/<promo_id>/", UrlShorterRedirectView.as_view(), name="url_shorter_redirect"),
     path("robots.txt", robots_txt),
 ]
