@@ -1,6 +1,6 @@
 import json
-from typing import Dict, Tuple
 import urllib
+from typing import Dict, Tuple
 
 from django.conf import settings
 from django.contrib import messages
@@ -106,6 +106,9 @@ class HomePage(SEOTemplateView, CaptchaFormMixin):
             using=self.template_engine,
             **response_kwargs,
         )
+
+    def get(self, *args, **kwargs):
+        return super().get(*args, **kwargs)
 
 
 class SupportFormView(SEOFormView, CaptchaFormMixin):

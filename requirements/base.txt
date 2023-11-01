@@ -40,7 +40,7 @@ yfinance
 
 # Django
 # ------------------------------------------------------------------------------
-django<4
+django
 django-cors-headers<4
 django-environ
 django-allauth

@@ -3,9 +3,8 @@ from typing import Any, Dict
 from django.apps import apps
 from django.contrib import messages
 from django.shortcuts import redirect
-from django.utils.encoding import force_text
+from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
-
 from rest_framework.authentication import BasicAuthentication, SessionAuthentication
 from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.permissions import IsAuthenticated
@@ -25,7 +24,7 @@ class ParseEncodedUrlMixin:
         return apps.get_model(app_label, object_name, require_ready=True).objects.get(id=id)
 
     def parse_url(self, url_encoded: str) -> Dict[str, Any]:
-        decoded_url = force_text(urlsafe_base64_decode(url_encoded)).split("-")
+        decoded_url = force_str(urlsafe_base64_decode(url_encoded)).split("-")
         for index, info in enumerate(self.url_info):
             self.url_info[info] = decoded_url[index]
         return self.url_info
