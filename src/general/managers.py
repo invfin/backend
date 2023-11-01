@@ -32,6 +32,9 @@ class BaseManager(Manager):
     def get_queryset(self) -> QuerySet[Any]:
         return super().get_queryset()
 
+    def search(self, query):
+        return self.all()
+
     def filter_checkings(self, checkings: List[Dict[str, bool]]) -> "BaseQuerySet":
         return self.get_queryset().filter_checkings(checkings)
 

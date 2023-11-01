@@ -1,3 +1,4 @@
+from itertools import chain
 from typing import Any, Dict, List
 
 from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
@@ -20,7 +21,7 @@ class PublicSearchAPIView(APIView):
     permission_classes = [AllowAny]
     authentication_classes = []
     pagination_class = StandardResultPagination
-    annotated_values = ["title", "path", "logo", "rank", "inside"]
+    annotated_values = ["pk", "title", "path", "logo", "rank", "inside"]
     order_by = "-rank"
     sliced_by = 10
 
@@ -29,34 +30,21 @@ class PublicSearchAPIView(APIView):
 
     def search(self) -> List[Dict[str, Any]]:
         search = self.request.query_params.get("search", "")
-        return self.filter_results(search) if search else []
-
-    def filter_results(self, search: str) -> List[Dict[str, Any]]:
-        results = self.find_results(search)
+        filters = self.request.query_params.get("filter", "all")
+        results = self.find_results(search, filters)
         return sorted(results, key=lambda x: x["rank"], reverse=True)[: self.sliced_by]
 
-    def find_results(self, search: str) -> List[Dict[str, Any]]:
+    def find_results(self, search: str, filters: str) -> List[Dict[str, Any]]:
         query = SearchQuery(search)
-        return (
-            self.find_companies(query)
-            + self.find_content_terms(query)
-            + self.find_terms(query)
-        )
+        finders = {
+            "company": [self.find_companies],
+            "all": [self.find_companies, self.find_content_terms, self.find_terms],
+        }
+        return list(chain.from_iterable([x(query) for x in finders[filters]]))
 
-    def find_companies(self, query: SearchQuery) -> List[Dict[str, Any]]:
+    def find_companies(self, query: SearchQuery) -> List[Dict[str, str | float | int]]:
         return list(
-            Company.objects.filter(
-                no_incs=False,
-                no_bs=False,
-                no_cfs=False,
-            )
-            .annotate(
-                inside=Value("companies"),
-                logo=F("image"),
-                path=F("ticker"),
-                rank=SearchRank(SearchVector("ticker", "name"), query),
-                title=Concat("name", Value(" ("), "ticker", Value(")")),
-            )
+            Company.objects.search(query)
             .values(*self.annotated_values)
             .order_by(self.order_by)[: self.sliced_by]
         )

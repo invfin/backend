@@ -1,8 +1,9 @@
 from collections import defaultdict
 from typing import Any, Dict, Optional
 
-from django.db.models import Avg, Count, F, Manager, Prefetch, Q
-from django.db.models.functions import Round
+from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
+from django.db.models import Avg, Count, F, Manager, Prefetch, Q, Value
+from django.db.models.functions import Concat, Round
 
 from src.general.managers import BaseManager, BaseQuerySet
 
@@ -155,6 +156,23 @@ class CompanyManager(BaseManager):
     def get_queryset(self):
         return CompanyQuerySet(self.model, using=self._db)
 
+    def search(self, query: SearchQuery):
+        return (
+            self.exclude(name__contains="Need-parsing")
+            .filter(
+                no_incs=False,
+                no_bs=False,
+                no_cfs=False,
+            )
+            .annotate(
+                inside=Value("companies"),
+                logo=F("image"),
+                path=F("ticker"),
+                rank=SearchRank(SearchVector("ticker", "name"), query),
+                title=Concat("name", Value(" ("), "ticker", Value(")")),
+            )
+        )
+
     def select_related_information(self):
         return self.get_queryset().select_related_information()
 
@@ -205,9 +223,6 @@ class CompanyManager(BaseManager):
         )
 
     def get_most_visited_companies(self):
-        """
-        Based on most visited companies
-        """
         return (
             self.filter(no_incs=False, no_bs=False, no_cfs=False)
             .exclude(name__contains="Need-parsing")

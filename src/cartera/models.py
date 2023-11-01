@@ -23,12 +23,42 @@ from src.users.models import User
 from .constants import InvestmentMovement
 
 
+class TransactionFromFile(AbstractTimeStampedModel):
+    symbol = CharField(max_length=20)
+    quantity = DecimalField(max_digits=100, decimal_places=2, default=Decimal(0.0))
+    price = DecimalField(max_digits=100, decimal_places=4, default=Decimal(0.0))
+    action = CharField(max_length=8)
+    description = CharField(max_length=100)
+    trade_date = DateField()
+    settled_date = DateField()
+    interest = DecimalField(max_digits=100, decimal_places=2, default=Decimal(0.0))
+    amount = DecimalField(max_digits=100, decimal_places=2, default=Decimal(0.0))
+    commission = DecimalField(max_digits=100, decimal_places=2, default=Decimal(0.0))
+    fee = DecimalField(max_digits=100, decimal_places=2, default=Decimal(0.0))
+    cusip = CharField(max_length=9)
+    record_type = CharField(max_length=9)
+    file_path = CharField(max_length=100)
+
+    class Meta:
+        abstract = True
+
+
+class FirsttradeTransaction(TransactionFromFile):
+    class Meta:
+        verbose_name = "Transaction from firstrade file"
+        verbose_name_plural = "Transactions from firstrade file"
+        db_table = "patrimoine_transactions_from_firstrade_file"
+
+
 class CashflowMovement(AbstractTimeStampedModel):
     name = CharField("Nombre", max_length=100)
     amount = DecimalField("Monto", max_digits=100, decimal_places=2, default=Decimal(0.0))
     description = TextField("Descripción", default="")
     date = DateField("Fecha del movimiento", null=True, blank=True)
     currency = ForeignKey(Currency, on_delete=SET_NULL, null=True, blank=True)
+    transaction_file_type = ForeignKey(ContentType, on_delete=SET_NULL, null=True)  # type: ignore TODO: add filters
+    transaction_file_id = PositiveIntegerField(default=0, null=True)
+    transaction_file = GenericForeignKey("transaction_file_type", "transaction_file_id")
 
     class Meta:
         abstract = True
@@ -46,7 +76,7 @@ class Investment(CashflowMovement):
         blank=True,
         related_name="investments",
     )
-    content_type = ForeignKey(ContentType, on_delete=CASCADE)  # type: ignore
+    content_type = ForeignKey(ContentType, on_delete=CASCADE, related_name="assets")  # type: ignore TODO: add filters
     object_id = PositiveIntegerField()
     object = GenericForeignKey("content_type", "object_id")
     quantity = PositiveIntegerField("Cantidad")
