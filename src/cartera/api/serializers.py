@@ -7,9 +7,11 @@ from rest_framework.serializers import (
     DateField,
     DecimalField,
     Field,
+    FileField,
     IntegerField,
     ModelSerializer,
     PrimaryKeyRelatedField,
+    Serializer,
     StringRelatedField,
     ValidationError,
 )
@@ -21,6 +23,22 @@ from ..models import (
     Saving,
     Spend,
 )
+from ..parse_transactions_file import FileTransactionsHandler
+
+
+class TransactionsFromFileSerializer(Serializer):
+    category = CharField(max_length=100)
+    comes_from = CharField(max_length=100)
+    transactions_file = FileField()
+
+    def create(self, validated_data):
+        user = self.context["request"].user
+        # TODO: make it a celery task. Return 201 if the file is saved correctly and 500 if error saving the file
+        # once the file saved, parse it and so on
+        # Or maybe we should take a look at the file, see if it means something.
+        # first we'll focus on firsttrade. It seems that is always the same, at least I asume that.
+        # Later on lets try to parse bank statements.
+        return FileTransactionsHandler(**validated_data, user=user).create()
 
 
 class GenericForeignKeyField(Field):

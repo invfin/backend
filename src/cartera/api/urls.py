@@ -5,9 +5,11 @@ from .views import (
     InvestmentAPIView,
     SavingAPIView,
     SpendAPIView,
+    TransactionsFromFileAPIView,
 )
 
 urlpatterns = [
+    path("transactions/", TransactionsFromFileAPIView.as_view(), name="transactions"),
     path("investments/", InvestmentAPIView.as_view(), name="investments"),
     path("investments/<int:id>", InvestmentAPIView.as_view(), name="investments-individual"),
     path("incomes/", IncomeAPIView.as_view(), name="incomes"),

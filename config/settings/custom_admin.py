@@ -88,60 +88,40 @@ SIDE_MENU = [
         "label": "General",
         "icon": "fas fa-globe",
         "models": (
-            {
-                "model": "classifications.Category",
-            },
-            {
-                "model": "classifications.Tag",
-            },
-            {
-                "model": "currencies.Currency",
-            },
-            {
-                "model": "countries.Country",
-            },
-            {
-                "model": "notifications.Notification",
-            },
+            {"model": "classifications.Category"},
+            {"model": "classifications.Tag"},
+            {"model": "currencies.Currency"},
+            {"model": "countries.Country"},
+            {"model": "notifications.Notification"},
+        ),
+    },
+    {
+        "label": "Portfolio",
+        "icon": "fas fa-user",
+        "models": (
+            {"model": "cartera.FirsttradeTransaction"},
+            {"model": "cartera.Income"},
+            {"model": "cartera.Investment"},
+            {"model": "cartera.FinancialObjectif"},
+            {"model": "cartera.Spend"},
+            {"model": "cartera.Saving"},
         ),
     },
     {
         "label": "Socialmedia",
         "icon": "fas fa-pen-nib",
         "models": (
-            {
-                "model": "content_creation.DefaultTilte",
-            },
-            {
-                "model": "content_creation.DefaultContent",
-            },
-            {
-                "model": "content_creation.Emoji",
-            },
-            {
-                "model": "content_creation.Hashtag",
-            },
-            {
-                "model": "socialmedias.SocialmediaAuth",
-            },
-            {
-                "model": "socialmedias.CompanySharedHistorial",
-            },
-            {
-                "model": "socialmedias.BlogSharedHistorial",
-            },
-            {
-                "model": "socialmedias.NewsSharedHistorial",
-            },
-            {
-                "model": "socialmedias.TermSharedHistorial",
-            },
-            {
-                "model": "socialmedias.ProfileSharedHistorial",
-            },
-            {
-                "model": "socialmedias.QuestionSharedHistorial",
-            },
+            {"model": "content_creation.DefaultTilte"},
+            {"model": "content_creation.DefaultContent"},
+            {"model": "content_creation.Emoji"},
+            {"model": "content_creation.Hashtag"},
+            {"model": "socialmedias.SocialmediaAuth"},
+            {"model": "socialmedias.CompanySharedHistorial"},
+            {"model": "socialmedias.BlogSharedHistorial"},
+            {"model": "socialmedias.NewsSharedHistorial"},
+            {"model": "socialmedias.TermSharedHistorial"},
+            {"model": "socialmedias.ProfileSharedHistorial"},
+            {"model": "socialmedias.QuestionSharedHistorial"},
         ),
     },
     {
@@ -159,51 +139,25 @@ SIDE_MENU = [
         "label": "Web",
         "icon": "fas fa-sitemap",
         "models": (
-            {
-                "model": "promotions.Campaign",
-            },
-            {
-                "model": "web.WebsiteEmail",
-            },
-            {
-                "model": "web.WebsiteEmailTrack",
-            },
-            {
-                "model": "promotions.Promotion",
-            },
-            {
-                "model": "web.WebsiteLegalPage",
-            },
-            {
-                "model": "web.Roadmap",
-            },
+            {"model": "promotions.Campaign"},
+            {"model": "web.WebsiteEmail"},
+            {"model": "web.WebsiteEmailTrack"},
+            {"model": "promotions.Promotion"},
+            {"model": "web.WebsiteLegalPage"},
+            {"model": "web.Roadmap"},
         ),
     },
     {
         "label": "API",
         "icon": "fas fa-key",
         "models": (
-            {
-                "model": "api.Key",
-            },
-            {
-                "model": "api.Jwt",
-            },
-            {
-                "model": "api.CompanyRequestAPI",
-            },
-            {
-                "model": "api.TermRequestAPI",
-            },
-            {
-                "model": "api.SuperinvestorRequestAPI",
-            },
-            {
-                "model": "api.EndpointsCategory",
-            },
-            {
-                "model": "api.Endpoint",
-            },
+            {"model": "api.Key"},
+            {"model": "api.Jwt"},
+            {"model": "api.CompanyRequestAPI"},
+            {"model": "api.TermRequestAPI"},
+            {"model": "api.SuperinvestorRequestAPI"},
+            {"model": "api.EndpointsCategory"},
+            {"model": "api.Endpoint"},
         ),
     },
     {
@@ -242,12 +196,8 @@ SIDE_MENU = [
         "label": "Recsys",
         "icon": "fas fa-microchip",
         "models": (
-            {
-                "model": "recsys.VisiteurCompanyRecommended",
-            },
-            {
-                "model": "recsys.UserCompanyRecommended",
-            },
+            {"model": "recsys.VisiteurCompanyRecommended"},
+            {"model": "recsys.UserCompanyRecommended"},
         ),
     },
     {
@@ -311,75 +261,29 @@ SIDE_MENU = [
         "label": "Raw empresas data",
         "icon": "fas fa-database",
         "models": (
-            {
-                "model": "empresas.IncomeStatement",
-            },
-            {
-                "model": "empresas.BalanceSheet",
-            },
-            {
-                "model": "empresas.CashflowStatement",
-            },
-            {
-                "model": "empresas.RentabilityRatio",
-            },
-            {
-                "model": "empresas.LiquidityRatio",
-            },
-            {
-                "model": "empresas.MarginRatio",
-            },
-            {
-                "model": "empresas.FreeCashFlowRatio",
-            },
-            {
-                "model": "empresas.PerShareValue",
-            },
-            {
-                "model": "empresas.NonGaap",
-            },
-            {
-                "model": "empresas.OperationRiskRatio",
-            },
-            {
-                "model": "empresas.EnterpriseValueRatio",
-            },
-            {
-                "model": "empresas.CompanyGrowth",
-            },
-            {
-                "model": "empresas.EficiencyRatio",
-            },
-            {
-                "model": "empresas.PriceToRatio",
-            },
-            {
-                "model": "empresas.IncomeStatementFinprep",
-            },
-            {
-                "model": "empresas.BalanceSheetFinprep",
-            },
-            {
-                "model": "empresas.CashflowStatementFinprep",
-            },
-            {
-                "model": "empresas.IncomeStatementYahooQuery",
-            },
-            {
-                "model": "empresas.BalanceSheetYahooQuery",
-            },
-            {
-                "model": "empresas.CashflowStatementYahooQuery",
-            },
-            {
-                "model": "empresas.IncomeStatementYFinance",
-            },
-            {
-                "model": "empresas.BalanceSheetYFinance",
-            },
-            {
-                "model": "empresas.CashflowStatementYFinance",
-            },
+            {"model": "empresas.IncomeStatement"},
+            {"model": "empresas.BalanceSheet"},
+            {"model": "empresas.CashflowStatement"},
+            {"model": "empresas.RentabilityRatio"},
+            {"model": "empresas.LiquidityRatio"},
+            {"model": "empresas.MarginRatio"},
+            {"model": "empresas.FreeCashFlowRatio"},
+            {"model": "empresas.PerShareValue"},
+            {"model": "empresas.NonGaap"},
+            {"model": "empresas.OperationRiskRatio"},
+            {"model": "empresas.EnterpriseValueRatio"},
+            {"model": "empresas.CompanyGrowth"},
+            {"model": "empresas.EficiencyRatio"},
+            {"model": "empresas.PriceToRatio"},
+            {"model": "empresas.IncomeStatementFinprep"},
+            {"model": "empresas.BalanceSheetFinprep"},
+            {"model": "empresas.CashflowStatementFinprep"},
+            {"model": "empresas.IncomeStatementYahooQuery"},
+            {"model": "empresas.BalanceSheetYahooQuery"},
+            {"model": "empresas.CashflowStatementYahooQuery"},
+            {"model": "empresas.IncomeStatementYFinance"},
+            {"model": "empresas.BalanceSheetYFinance"},
+            {"model": "empresas.CashflowStatementYFinance"},
         ),
     },
     {

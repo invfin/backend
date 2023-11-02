@@ -1,10 +1,44 @@
 from django.contrib import admin
 
-from .models import FinancialObjectif, Income, Investment, Spend
+from .models import FinancialObjectif, FirsttradeTransaction, Income, Investment, Saving, Spend
+
+
+@admin.register(FirsttradeTransaction)
+class FirsttradeTransactionAdmin(admin.ModelAdmin):
+    list_display = [
+        "user",
+        "symbol",
+        "quantity",
+        "price",
+        "action",
+        "description",
+        "trade_date",
+        "settled_date",
+        "interest",
+        "amount",
+        "commission",
+        "fee",
+        "cusip",
+        "record_type",
+        "file_path",
+    ]
 
 
 @admin.register(Income)
 class IncomeAdmin(admin.ModelAdmin):
+    list_display = [
+        "user",
+        "name",
+        "amount",
+        "description",
+        "date",
+        "currency",
+        "is_recurrent",
+    ]
+
+
+@admin.register(Saving)
+class SavingAdmin(admin.ModelAdmin):
     list_display = [
         "user",
         "name",

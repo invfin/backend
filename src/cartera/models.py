@@ -24,18 +24,18 @@ from .constants import InvestmentMovement
 
 
 class TransactionFromFile(AbstractTimeStampedModel):
-    symbol = CharField(max_length=20)
-    quantity = DecimalField(max_digits=100, decimal_places=2, default=Decimal(0.0))
-    price = DecimalField(max_digits=100, decimal_places=4, default=Decimal(0.0))
+    symbol = CharField(max_length=20, default="", null=True)
+    quantity = DecimalField(max_digits=100, decimal_places=2, null=True)
+    price = DecimalField(max_digits=100, decimal_places=4, null=True)
     action = CharField(max_length=8)
-    description = CharField(max_length=100)
+    description = CharField(max_length=300, default="", null=True)
     trade_date = DateField()
     settled_date = DateField()
     interest = DecimalField(max_digits=100, decimal_places=2, default=Decimal(0.0))
     amount = DecimalField(max_digits=100, decimal_places=2, default=Decimal(0.0))
     commission = DecimalField(max_digits=100, decimal_places=2, default=Decimal(0.0))
     fee = DecimalField(max_digits=100, decimal_places=2, default=Decimal(0.0))
-    cusip = CharField(max_length=9)
+    cusip = CharField(max_length=9, default="", null=True)
     record_type = CharField(max_length=9)
     file_path = CharField(max_length=100)
 
@@ -44,6 +44,14 @@ class TransactionFromFile(AbstractTimeStampedModel):
 
 
 class FirsttradeTransaction(TransactionFromFile):
+    user = ForeignKey(
+        User,
+        on_delete=SET_NULL,
+        null=True,
+        blank=True,
+        related_name="firstrade_transactions",
+    )
+
     class Meta:
         verbose_name = "Transaction from firstrade file"
         verbose_name_plural = "Transactions from firstrade file"
