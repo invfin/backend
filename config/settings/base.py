@@ -316,7 +316,7 @@ EMAIL_BACKEND = env(
 # https://docs.djangoproject.com/en/dev/ref/settings/#email-timeout
 EMAIL_TIMEOUT = 5
 
-EMAIL_CONTACT = env("EMAIL_CONTACT", default="EMAIL_CONTACT@example.com")
+EMAIL_CONTACT = env.str("EMAIL_CONTACT", default="EMAIL_CONTACT@example.com")
 EMAIL_SUBJECT_PREFIX = env("EMAIL_SUBJECT_PREFIX", default="EMAIL_SUBJECT_PREFIX@example.com")
 DEFAULT_EMAIL = env("DEFAULT_EMAIL", default="DEFAULT_EMAIL@example.com")
 EMAIL_NEWSLETTER = env("EMAIL_NEWSLETTER", default="EMAIL_NEWSLETTER@example.com")

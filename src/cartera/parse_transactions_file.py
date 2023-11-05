@@ -33,7 +33,7 @@ class Firsttrade:
     model: type[FirsttradeTransaction] = FirsttradeTransaction
     columns: Dict[str, str] = FIRSTTRADE_COLUMNS_MAPPER
 
-    class Action(Enum):
+    class Action(str, Enum):
         BUY = "BUY"
         SELL = "SELL"
         INTEREST = "INTEREST"
@@ -42,18 +42,20 @@ class Firsttrade:
         def __new__(cls, value: str) -> Firsttrade.Action:
             return super().__new__(cls, value.upper())
 
-        # def __new__(cls, value: str):
-        # return cls(value.upper())
-
     def _model(self, action: Firsttrade.Action):
         if action in {Firsttrade.Action.DIVIDEND, Firsttrade.Action.INTEREST}:
             return Income
         return Investment
 
 
-class FileTransactionsSource(Enum):
-    CUSTOM = "custom"
-    FIRSTRADE = "firsttrade"
+class ING:
+    pass
+
+
+class FileTransactionsSource(str, Enum):
+    PERSONAL = "Personal"
+    FIRSTRADE = "Firsttrade"
+    ING = "ING"
 
     def handler(self):
         return {self.FIRSTRADE: Firsttrade}[self]
@@ -74,13 +76,11 @@ class FileTransactionsHandler:
 
     def __init__(
         self,
-        category: str,
-        comes_from: str,
+        origin: str,
         transactions_file: InMemoryUploadedFile,
         user: User,
     ):
-        # self.category = FileTransactionsType(category)
-        self.handler = FileTransactionsSource(comes_from).handler()
+        self.handler = FileTransactionsSource(origin).handler()
         self.transactions_file = transactions_file
         self.filename = transactions_file.name
         # self.user = user TODO: use this once the user is taken from the jwt
@@ -111,6 +111,8 @@ class FileTransactionsHandler:
     def _file_to_dataframe(self) -> DataFrame:
         if self.filename.endswith(".csv"):
             return read_csv(self.transactions_file.file)
+        elif self.filename.endswith(".csv.gz"):
+            return read_csv(self.transactions_file.file, compression="gzip")
         else:
             raise ValueError("File not recognized")
 

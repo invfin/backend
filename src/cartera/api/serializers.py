@@ -27,12 +27,13 @@ from ..parse_transactions_file import FileTransactionsHandler
 
 
 class TransactionsFromFileSerializer(Serializer):
-    category = CharField(max_length=100)
-    comes_from = CharField(max_length=100)
-    transactions_file = FileField()
+    origin = CharField(max_length=100)
+    transactions_file = FileField(allow_empty_file=False)
 
     def create(self, validated_data):
         user = self.context["request"].user
+        print(validated_data)
+        print("*" * 100)
         # TODO: make it a celery task. Return 201 if the file is saved correctly and 500 if error saving the file
         # once the file saved, parse it and so on
         # Or maybe we should take a look at the file, see if it means something.
