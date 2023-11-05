@@ -9,25 +9,30 @@ register = template.Library()
 
 
 @register.filter(name="has_group")
-def has_group(user, group_name):
+def has_group(user, group_name) -> bool:
     return user.groups.filter(name=group_name).exists()
 
 
 @register.filter(name="readable_date")
-def readable_date(date):
-    try:
-        return datetime.utcfromtimestamp(date).strftime("%Y-%m-%d %H:%M:%S")
-    except Exception:
-        return ""
+def readable_date(date: str | int) -> str:
+    if isinstance(date, str):
+        date = int(date)
+    return datetime.utcfromtimestamp(date).strftime("%Y-%m-%d %H:%M:%S")
 
 
 @register.filter(name="per_cent")
-def percentagement(value):
+def percentagement(value: int | float) -> int | float:
     return value * 100
 
 
 @register.simple_tag(name="utm")
-def add_utms(content="", term="", medium="webapp", source="invfin", campaign="website-links"):
+def add_utms(
+    content: str = "",
+    term: str = "",
+    medium: str = "webapp",
+    source: str = "invfin",
+    campaign: str = "website-links",
+) -> str:
     utm_source = f"utm_source={source}"
     utm_medium = f"utm_medium={medium}"
     utm_campaign = f"utm_campaign={campaign}"
@@ -43,7 +48,7 @@ def api_json_example(example):
 
 
 @register.simple_tag(name="pre_loading")
-def render_pre_loading(link_params: str, extra, *args):
+def render_pre_loading(link_params: str, extra, *args) -> str:
     link = reverse(link_params, args=args)
     return mark_safe(f"""<div hx-trigger="load" hx-target="this"
     hx-get='{link}?extra={extra}'>
@@ -56,7 +61,7 @@ def render_pre_loading(link_params: str, extra, *args):
 
 
 @register.simple_tag(name="open_modal")
-def render_open_modal(link_params: str, text: str, class_attrs: str = ""):
+def render_open_modal(link_params: str, text: str, class_attrs: str = "") -> str:
     link = reverse(link_params)
     return mark_safe(
         f'<button class="{class_attrs} dropdown-item"'

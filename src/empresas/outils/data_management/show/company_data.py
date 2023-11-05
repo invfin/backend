@@ -52,7 +52,8 @@ class CompanyData:
             0,
         )
         num_ics = min(all_inc_statements.count(), 10)
-        number = num_ics - 1
+        # we got a problem where num_ics was 0 somehow
+        number = num_ics - 1 if num_ics > 0 else 0
         sharesbuyback = abs(
             calculate_compound_growth(
                 average_shares_out,

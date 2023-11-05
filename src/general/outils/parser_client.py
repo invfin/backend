@@ -45,7 +45,7 @@ class ParserClient:
 
     def _request_content(
         self, full_url: str
-    ) -> Union[Dict[str, Any], str, str, requests.Response]:
+    ) -> Union[Dict[str, Any], None, str, requests.Response]:
         """
         It performs a get request. full_url comes from _build_full_path.
         """
@@ -76,4 +76,7 @@ class ParserClient:
         full_path = self._build_full_path(
             path, different_api_version, str_params, **dict_params
         )
-        return self._request_content(full_path)
+        try:
+            return self._request_content(full_path)
+        except Exception as e:
+            return {"error": str(e)}
