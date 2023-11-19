@@ -100,6 +100,7 @@ SIDE_MENU = [
         "icon": "fas fa-user",
         "models": (
             {"model": "cartera.FirsttradeTransaction"},
+            {"model": "cartera.IngEsTransaction"},
             {"model": "cartera.Income"},
             {"model": "cartera.Investment"},
             {"model": "cartera.FinancialObjectif"},

@@ -23,27 +23,21 @@ from src.users.models import User
 from .constants import InvestmentMovement
 
 
-class TransactionFromFile(AbstractTimeStampedModel):
+class FirsttradeTransaction(AbstractTimeStampedModel):
     symbol = CharField(max_length=20, default="", null=True)
     quantity = DecimalField(max_digits=100, decimal_places=2, null=True)
     price = DecimalField(max_digits=100, decimal_places=4, null=True)
     action = CharField(max_length=8)
-    description = CharField(max_length=300, default="", null=True)
     trade_date = DateField()
     settled_date = DateField()
     interest = DecimalField(max_digits=100, decimal_places=2, default=Decimal(0.0))
     amount = DecimalField(max_digits=100, decimal_places=2, default=Decimal(0.0))
+    file_path = CharField(max_length=100)
+    description = CharField(max_length=300, default="", null=True)
     commission = DecimalField(max_digits=100, decimal_places=2, default=Decimal(0.0))
     fee = DecimalField(max_digits=100, decimal_places=2, default=Decimal(0.0))
     cusip = CharField(max_length=9, default="", null=True)
     record_type = CharField(max_length=9)
-    file_path = CharField(max_length=100)
-
-    class Meta:
-        abstract = True
-
-
-class FirsttradeTransaction(TransactionFromFile):
     user = ForeignKey(
         User,
         on_delete=SET_NULL,
@@ -56,6 +50,29 @@ class FirsttradeTransaction(TransactionFromFile):
         verbose_name = "Transaction from firstrade file"
         verbose_name_plural = "Transactions from firstrade file"
         db_table = "patrimoine_transactions_from_firstrade_file"
+
+
+class IngEsTransaction(AbstractTimeStampedModel):
+    transaction_date = DateTimeField()
+    category = CharField(max_length=300, default="", null=True)
+    subcaterogy = CharField(max_length=300, default="", null=True)
+    comment = CharField(max_length=300, default="", null=True)
+    image = CharField(max_length=300, default="", null=True)
+    amount = DecimalField(max_digits=100, decimal_places=2, default=Decimal(0.0))
+    file_path = CharField(max_length=100)
+    description = CharField(max_length=300, default="", null=True)
+    balance = DecimalField(max_digits=100, decimal_places=2, default=Decimal(0.0))
+    user = ForeignKey(
+        User,
+        on_delete=SET_NULL,
+        null=True,
+        blank=True,
+        related_name="ing_es_transactions",
+    )
+    currency = ForeignKey(Currency, on_delete=SET_NULL, null=True, blank=True)
+
+    class Meta:
+        db_table = "patrimoine_transactions_from_ing_es"
 
 
 class CashflowMovement(AbstractTimeStampedModel):

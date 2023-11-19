@@ -1,6 +1,29 @@
 from django.contrib import admin
 
-from .models import FinancialObjectif, FirsttradeTransaction, Income, Investment, Saving, Spend
+from .models import (
+    FinancialObjectif,
+    FirsttradeTransaction,
+    Income,
+    IngEsTransaction,
+    Investment,
+    Saving,
+    Spend,
+)
+
+
+@admin.register(IngEsTransaction)
+class IngEsTransactionAdmin(admin.ModelAdmin):
+    list_display = [
+        "transaction_date",
+        "category",
+        "subcaterogy",
+        "comment",
+        "image",
+        "amount",
+        "file_path",
+        "description",
+        "balance",
+    ]
 
 
 @admin.register(FirsttradeTransaction)

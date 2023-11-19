@@ -32,14 +32,12 @@ class TransactionsFromFileSerializer(Serializer):
 
     def create(self, validated_data):
         user = self.context["request"].user
-        print(validated_data)
-        print("*" * 100)
         # TODO: make it a celery task. Return 201 if the file is saved correctly and 500 if error saving the file
         # once the file saved, parse it and so on
         # Or maybe we should take a look at the file, see if it means something.
         # first we'll focus on firsttrade. It seems that is always the same, at least I asume that.
         # Later on lets try to parse bank statements.
-        return FileTransactionsHandler(**validated_data, user=user).create()
+        return FileTransactionsHandler.create(**validated_data, user=user)
 
 
 class GenericForeignKeyField(Field):
