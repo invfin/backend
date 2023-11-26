@@ -13,15 +13,15 @@ from ..models import (
     CashflowMovementCategory,
     Income,
     Investment,
-    Saving,
-    Spend,
+    Savings,
+    Spendings,
 )
 from .serializers import (
     CashflowMovementCategorySerializer,
     IncomeSerializer,
     InvestmentSerializer,
-    SavingSerializer,
-    SpendSerializer,
+    SavingsSerializer,
+    SpendingsSerializer,
     TransactionsFromFileSerializer,
 )
 
@@ -44,7 +44,7 @@ class CashflowMovementCategoryAPIView(BasePublicAPIView):
     authentication_classes = []
     pagination_class = CashflowMovementCategorySerializer
     lookup_field = "id"
-    serializer_class = SavingSerializer
+    serializer_class = SavingsSerializer
     many_queryset = CashflowMovementCategory.objects.prefetch_related("user").all()
     single_queryset = CashflowMovementCategory.objects.prefetch_related("user").all()
 
@@ -77,21 +77,21 @@ class IncomeAPIView(BasePublicAPIView):
     single_queryset = Income.objects.prefetch_related("user")
 
 
-class SpendAPIView(BasePublicAPIView):
+class SpendingsAPIView(BasePublicAPIView):
     permission_classes = [AllowAny]
     authentication_classes = []
     pagination_class = StandardResultPagination
     lookup_field = "id"
-    serializer_class = SpendSerializer
-    many_queryset = Spend.objects.prefetch_related("user")
-    single_queryset = Spend.objects.prefetch_related("user")
+    serializer_class = SpendingsSerializer
+    many_queryset = Spendings.objects.prefetch_related("user")
+    single_queryset = Spendings.objects.prefetch_related("user")
 
 
-class SavingAPIView(BasePublicAPIView):
+class SavingsAPIView(BasePublicAPIView):
     permission_classes = [AllowAny]
     authentication_classes = []
     pagination_class = StandardResultPagination
     lookup_field = "id"
-    serializer_class = SavingSerializer
-    many_queryset = Saving.objects.prefetch_related("user")
-    single_queryset = Saving.objects.prefetch_related("user")
+    serializer_class = SavingsSerializer
+    many_queryset = Savings.objects.prefetch_related("user")
+    single_queryset = Savings.objects.prefetch_related("user")

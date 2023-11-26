@@ -105,22 +105,13 @@ class CompanyDetailsView(SEODetailView):
 
     def get_object(self):
         ticker = self.kwargs.get("ticker")
-        try:
-            response = Company.objects.prefetch_yearly_historical_data(ticker=ticker)
-            self.object = response
-            return response
-        except Company.DoesNotExist:
-            response, created = Company.objects.get_or_create(
-                name="Need-parsing",
-                ticker=ticker,
-            )
-            return None
-        except Exception:
-            """
-            TODO
-            Use logger to know the problem
-            """
-            return None
+        company, created = Company.objects.find_or_create(
+            ticker,
+            Company.objects.prefetch_yearly_historical_data,
+        )
+        if company and not created:
+            self.object = company
+        return None
 
     def save_company_in_session(self, empresa: Company):
         if "companies_visited" not in self.request.session:
@@ -129,28 +120,24 @@ class CompanyDetailsView(SEODetailView):
             companies_visited = self.request.session["companies_visited"]
         tickers = [ticker["ticker"] for ticker in companies_visited]
         if empresa.ticker not in tickers:
-            companies_visited.append(
-                {
-                    "ticker": empresa.ticker,
-                    "img": empresa.image,
-                    "sector_id": empresa.sector_id,
-                    "industry_id": empresa.industry_id,
-                    "country_id": empresa.country_id,
-                    "exchange_id": empresa.exchange_id,
-                }
-            )
+            companies_visited.append({
+                "ticker": empresa.ticker,
+                "img": empresa.image,
+                "sector_id": empresa.sector_id,
+                "industry_id": empresa.industry_id,
+                "country_id": empresa.country_id,
+                "exchange_id": empresa.exchange_id,
+            })
         if len(companies_visited) > 10:
             companies_visited.pop(0)
         self.request.session.modified = True
 
     def check_company_for_updates(self, empresa: Company) -> None:
-        if all(
-            [
-                settings.IS_PROD,
-                FinprepRequestCheck().manage_track_requests(3),
-                not empresa.has_checking("fixed_last_finprep"),
-            ]
-        ):
+        if all([
+            settings.IS_PROD,
+            FinprepRequestCheck().manage_track_requests(3),
+            not empresa.has_checking("fixed_last_finprep"),
+        ]):
             UpdateCompany(empresa).create_financials_finprep()
 
     def get_meta_description(self, empresa: Company) -> str:
@@ -199,10 +186,8 @@ class CompanyDetailsView(SEODetailView):
         if not self.object:
             messages.error(
                 self.request,
-                (
-                    "Lo sentimos, esta empresa todavía no tiene información ahora mismo vamos"
-                    " a recabar información y estará lista en poco tiempo"
-                ),
+                "Lo sentimos, esta empresa todavía no tiene información ahora mismo vamos"
+                " a recabar información y estará lista en poco tiempo",
             )
             return redirect(reverse("screener:screener_inicio"))
         context = self.get_context_data(object=self.object)
@@ -223,10 +208,8 @@ class BuyCompanyInfo(RedirectView):
         CompanyInformationBought.objects.create(user=user, company=company)
         messages.success(
             request,
-            (
-                f"Ahora que conoces toda la historia financiera de {company.name}, no olvides"
-                " hacer un análisis FODA"
-            ),
+            f"Ahora que conoces toda la historia financiera de {company.name}, no olvides"
+            " hacer un análisis FODA",
         )
         return redirect(reverse("screener:company", kwargs={"ticker": company.ticker}))
 

@@ -6,9 +6,15 @@ from .models import (
     Income,
     IngEsTransaction,
     Investment,
-    Saving,
-    Spend,
+    Savings,
+    Spendings,
+    NetWorth,
 )
+
+
+@admin.register(NetWorth)
+class NetWorthAdmin(admin.ModelAdmin):
+    list_display = ["pk", "user", "period"]
 
 
 @admin.register(IngEsTransaction)
@@ -57,11 +63,12 @@ class IncomeAdmin(admin.ModelAdmin):
         "date",
         "currency",
         "is_recurrent",
+        "net_worth",
     ]
 
 
-@admin.register(Saving)
-class SavingAdmin(admin.ModelAdmin):
+@admin.register(Savings)
+class SavingsAdmin(admin.ModelAdmin):
     list_display = [
         "user",
         "name",
@@ -70,11 +77,12 @@ class SavingAdmin(admin.ModelAdmin):
         "date",
         "currency",
         "is_recurrent",
+        "net_worth",
     ]
 
 
-@admin.register(Spend)
-class SpendAdmin(admin.ModelAdmin):
+@admin.register(Spendings)
+class SpendingsAdmin(admin.ModelAdmin):
     list_display = [
         "user",
         "name",
@@ -83,12 +91,17 @@ class SpendAdmin(admin.ModelAdmin):
         "date",
         "currency",
         "is_recurrent",
+        "net_worth",
     ]
 
 
 @admin.register(Investment)
 class InvestmentAdmin(admin.ModelAdmin):
-    list_display = ["user", "object"]
+    list_display = [
+        "user",
+        "object",
+        "net_worth",
+    ]
 
 
 @admin.register(FinancialObjectif)

@@ -37,6 +37,10 @@ class ResizeImageMixin:
 
 
 class BaseToAllMixin:
+    @classmethod
+    def get_fields_names(cls, exclude: set[str]) -> list[str]:
+        return [f.name for f in cls._meta.get_fields() if f.name not in exclude]
+
     @property
     def model_to_json(self):
         class ModelSerializerInside(ModelSerializer):

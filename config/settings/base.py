@@ -487,6 +487,12 @@ FINNHUB_SANDBOX_TOKEN = env.str("FINNHUB_SANDBOX_TOKEN", "not-set")
 FINPREP_KEY = env.str("FINPREP_KEY", "not-set")
 
 
+# Exchange Rate
+# ------------------------------------------------------------------------------
+EXCHANGE_RATE = env("EXCHANGE_RATE")
+EXCHANGE_RATE_HOST = env("EXCHANGE_RATE_HOST")
+OPEN_EXCHANGE = env("OPEN_EXCHANGE")
+
 # FACEBOOK KEYS
 # ------------------------------------------------------------------------------
 ACTUAL_FB_PAGE_ACCESS_TOKEN = env.str("ACTUAL_FB_PAGE_ACCESS_TOKEN", "not-set")

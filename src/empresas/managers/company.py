@@ -1,5 +1,6 @@
 from collections import defaultdict
-from typing import Any, Dict, Optional
+import json
+from typing import Any, Callable, Dict, Optional
 
 from django.contrib.postgres.search import SearchQuery, SearchRank, SearchVector
 from django.db.models import Avg, Count, F, Manager, Prefetch, Q, Value
@@ -172,6 +173,36 @@ class CompanyManager(BaseManager):
                 title=Concat("name", Value(" ("), "ticker", Value(")")),
             )
         )
+
+    def find_by_name_or_create(self, name: str, find_func: Callable):
+        default_query = {"name": name}
+        if possible_company := self.filter(name=name).first():
+            default_query = {"id": possible_company.id}
+        return self._find_or_create(default_query, find_func)
+
+    def find_or_create(self, ticker: str, find_func: Callable):
+        return self._find_or_create({"ticker": ticker}, find_func)
+
+    def _find_or_create(self, query: dict[str, str], find_func: Callable):
+        try:
+            return find_func(**query), False
+        except self.model.DoesNotExist:
+            description = json.dumps(query)
+            ticker = description[:30]
+            return self.get_or_create(
+                ticker=ticker,
+                name="Need-parsing",
+                defaults={
+                    "description": description,
+                    "need_parsing": True,
+                },
+            )
+        except Exception:
+            """
+            TODO
+            Use logger to know the problem
+            """
+            return None, False
 
     def select_related_information(self):
         return self.get_queryset().select_related_information()

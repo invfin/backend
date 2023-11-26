@@ -100,30 +100,25 @@ CORS_URLS_REGEX = r"^/api/.*$"
 # more details on how to customize your logging configuration.
 LOGGING = {
     "version": 1,
-    "filters": {
-        "require_debug_true": {
-            "()": "django.utils.log.RequireDebugTrue",
-        },
-    },
     "disable_existing_loggers": False,
-    "formatters": {
-        "verbose": {
-            "format": "%(levelname)s %(asctime)s %(module)s %(process)d %(thread)d %(message)s"
-        }
-    },
     "handlers": {
         "console": {
-            "level": "DEBUG",
-            "filters": ["require_debug_true"],
             "class": "logging.StreamHandler",
             "formatter": "verbose",
+            "level": "DEBUG",
+        },
+    },
+    "formatters": {
+        "verbose": {
+            "format": (
+                "%(levelname)s: %(asctime)s - Module:%(module)s -Thread: %(thread)d -"
+                " PID:%(process)d - %(filename)s (%(funcName)s - line %(lineno)d) -"
+                " %(message)s"
+            )
         }
     },
-    "root": {"level": "INFO", "handlers": ["console"]},
-    # 'loggers': {
-    #     'django.db.backends': {
-    #         'level': 'DEBUG',
-    #         'handlers': ['console'],
-    #     }
-    # }
+    "root": {
+        "handlers": ["console"],
+        "level": "WARNING",
+    },
 }

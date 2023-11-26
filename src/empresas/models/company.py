@@ -91,6 +91,7 @@ class Company(Model, BaseToAllMixin, CheckingsMixin):
     remote_image_imagekit = CharField(max_length=500, default="", blank=True)
     remote_image_cloudinary = CharField(max_length=500, default="", blank=True)
     checkings = JSONField(default=default_dict)
+    need_parsing = BooleanField(default=False)
 
     objects = CompanyManager()
 

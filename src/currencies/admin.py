@@ -1,8 +1,17 @@
 from django.contrib import admin
-
 from import_export.admin import ImportExportActionModelAdmin
 
-from .models import Currency
+from .models import Currency, ExchangeRate, UserDefaultCurrency
+
+
+@admin.register(UserDefaultCurrency)
+class UserDefaultCurrencyAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
+    list_display = ["pk", "user", "currency"]
+
+
+@admin.register(ExchangeRate)
+class ExchangeRateAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
+    list_display = ["pk", "base", "target", "conversion_rate"]
 
 
 @admin.register(Currency)
@@ -13,7 +22,7 @@ class CurrencyAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
         "symbol",
         "name",
         "spanish_name",
-        "accronym",
+        "code",
         "iso",
         "decimals",
     ]
@@ -21,7 +30,7 @@ class CurrencyAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
         "symbol",
         "name",
         "spanish_name",
-        "accronym",
+        "code",
         "iso",
         "decimals",
     ]

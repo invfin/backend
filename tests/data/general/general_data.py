@@ -21,7 +21,7 @@ CURRENCIES = [
     {
         "id": 1,
         "currency": "USD",
-        "symbol": "",
+        "code": "",
         "name": "",
         "iso": "",
         "decimals": 2,
@@ -30,7 +30,7 @@ CURRENCIES = [
     {
         "id": 2,
         "currency": "EUR",
-        "symbol": "",
+        "code": "",
         "name": "",
         "iso": "",
         "decimals": 2,

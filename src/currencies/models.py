@@ -1,7 +1,11 @@
+from decimal import Decimal
+
 from django.db.models import (
     CASCADE,
     SET_NULL,
     CharField,
+    DateField,
+    DecimalField,
     ForeignKey,
     IntegerField,
     ManyToManyField,
@@ -17,33 +21,33 @@ from src.users.models import User
 class Currency(AbstractTimeStampedModel):
     currency = CharField(
         max_length=500,
-        null=True,
+        default="",
         blank=True,
     )
     symbol = CharField(
         max_length=5,
-        null=True,
+        default="",
         blank=True,
     )
     name = CharField(
         max_length=500,
-        null=True,
+        default="",
         blank=True,
     )
     spanish_name = CharField(
         max_length=500,
-        null=True,
+        default="",
         blank=True,
     )
-    accronym = CharField(
+    code = CharField(
         max_length=10,
-        null=True,
+        default="",
         blank=True,
     )
     iso = CharField(
         max_length=500,
-        null=True,
         blank=True,
+        default="",
     )
     decimals = IntegerField(
         default=2,
@@ -65,21 +69,33 @@ class Currency(AbstractTimeStampedModel):
         return self.currency
 
 
+class ExchangeRate(AbstractTimeStampedModel):
+    base = ForeignKey(Currency, on_delete=CASCADE, related_name="rates_base")
+    target = ForeignKey(Currency, on_delete=CASCADE, related_name="rates_target")
+    conversion_rate = DecimalField(max_digits=100, decimal_places=3, default=Decimal(0.0))
+    date = DateField()
+
+    class Meta:
+        unique_together = [["base", "target", "date"]]
+        db_table = "assets_exchange_rate"
+        ordering = ["created_at"]
+
+    def __str__(self):
+        return f"{self.base.symbol} - {self.target.symbol}"
+
+
 class UserDefaultCurrency(AbstractTimeStampedModel):
-    user = OneToOneField(
-        User,
-        on_delete=CASCADE,
-    )
+    user = OneToOneField(User, on_delete=CASCADE, related_name="currency")
     currency = ForeignKey(
         Currency,
         on_delete=SET_NULL,
         null=True,
         blank=True,
-        default="1",
-    )
+        default="1",  # type: ignore
+    )  # type: ignore
 
     class Meta:
         db_table = "assets_user_default_currencies"
 
     def __str__(self):
-        return self.currency
+        return self.currency.symbol

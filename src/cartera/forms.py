@@ -23,7 +23,7 @@ from .models import (
     FinancialObjectif,
     Income,
     Investment,
-    Spend,
+    Spendings,
 )
 
 User = get_user_model()
@@ -135,8 +135,8 @@ class AddCategoriesForm(ModelForm):
 
 class DefaultCurrencyForm(BaseForm):
     def save(self, request):
-        request.user.user_patrimoine.default_currency = self.cleaned_data["currency"]
-        request.user.user_patrimoine.save()
+        request.user.default_currency = self.cleaned_data["currency"]
+        request.user.default_currency.save()
 
 
 class CashflowMoveForm(BaseForm):
@@ -162,7 +162,7 @@ class CashflowMoveForm(BaseForm):
         if self.cleaned_data["move_type"] == "0":
             model = Income.objects
         else:
-            model = Spend.objects
+            model = Spendings.objects
 
         model.create(
             user=request.user,

@@ -9,33 +9,33 @@ User = get_user_model()
 class Country(AbstractTimeStampedModel):
     country = CharField(
         max_length=500,
-        null=True,
+        default="",
         blank=True,
     )
     name = CharField(
         max_length=500,
-        null=True,
+        default="",
         blank=True,
     )
     spanish_name = CharField(
         max_length=500,
-        null=True,
+        default="",
         blank=True,
     )
     iso = CharField(
         max_length=500,
-        null=True,
+        default="",
         blank=True,
     )
 
     alpha_2_code = CharField(
         max_length=2,
-        null=True,
+        default="",
         blank=True,
     )
     alpha_3_code = CharField(
         max_length=3,
-        null=True,
+        default="",
         blank=True,
     )
 
@@ -45,4 +45,4 @@ class Country(AbstractTimeStampedModel):
         db_table = "assets_countries"
 
     def __str__(self):
-        return str(self.country)
+        return self.country or str(self.pk)

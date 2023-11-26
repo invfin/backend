@@ -1,7 +1,9 @@
+from __future__ import annotations
 from typing import Union
 from datetime import datetime, date
 from dateutil.parser import parse
 
+from django.utils import timezone
 
 from .constants import QUARTER_PER_MONTH
 from .models import Period
@@ -20,15 +22,19 @@ class FiscalDate:
         self.fiscal_quarter = quarter
         self.period = period
 
+    @classmethod
+    def current(cls) -> FiscalDate:
+        return cls(timezone.now())
+
     @staticmethod
     def _any_date_to_date_object(regular_date: Union[str, date, datetime]) -> date:
-        if type(regular_date) == str:
+        if isinstance(regular_date, str):
             regular_date = parse(
                 regular_date,
                 dayfirst=True,
                 yearfirst=True,
             ).date()
-        elif type(regular_date) == datetime:
+        elif isinstance(regular_date, datetime):
             regular_date = regular_date.date()
         return regular_date  # type: ignore
 

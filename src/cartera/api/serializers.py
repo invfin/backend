@@ -20,8 +20,8 @@ from ..models import (
     CashflowMovementCategory,
     Income,
     Investment,
-    Saving,
-    Spend,
+    Savings,
+    Spendings,
 )
 from ..parse_transactions_file import FileTransactionsHandler
 
@@ -37,7 +37,8 @@ class TransactionsFromFileSerializer(Serializer):
         # Or maybe we should take a look at the file, see if it means something.
         # first we'll focus on firsttrade. It seems that is always the same, at least I asume that.
         # Later on lets try to parse bank statements.
-        return FileTransactionsHandler.create(**validated_data, user=user)
+        origin = validated_data.pop("origin", "")
+        return FileTransactionsHandler(origin).create(**validated_data, user=user)
 
 
 class GenericForeignKeyField(Field):
@@ -112,13 +113,13 @@ class IncomeSerializer(CashflowMovementSerializer):
         include = "__all__"
 
 
-class SpendSerializer(CashflowMovementSerializer):
+class SpendingsSerializer(CashflowMovementSerializer):
     class Meta:
-        model = Spend
+        model = Spendings
         include = "__all__"
 
 
-class SavingSerializer(CashflowMovementSerializer):
+class SavingsSerializer(CashflowMovementSerializer):
     class Meta:
-        model = Saving
+        model = Savings
         include = "__all__"

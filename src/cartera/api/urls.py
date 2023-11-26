@@ -3,8 +3,8 @@ from django.urls import path
 from .views import (
     IncomeAPIView,
     InvestmentAPIView,
-    SavingAPIView,
-    SpendAPIView,
+    SavingsAPIView,
+    SpendingsAPIView,
     TransactionsFromFileAPIView,
 )
 
@@ -14,8 +14,8 @@ urlpatterns = [
     path("investments/<int:id>", InvestmentAPIView.as_view(), name="investments-individual"),
     path("incomes/", IncomeAPIView.as_view(), name="incomes"),
     path("incomes/<int:id>", IncomeAPIView.as_view(), name="incomes-individual"),
-    path("spends/", SpendAPIView.as_view(), name="spends"),
-    path("spends/<int:id>", SpendAPIView.as_view(), name="spends-individual"),
-    path("savings/", SavingAPIView.as_view(), name="savings"),
-    path("savings/<int:id>", SavingAPIView.as_view(), name="savings-individual"),
+    path("spendendings/", SpendingsAPIView.as_view(), name="spendings"),
+    path("spendings/<int:id>", SpendingsAPIView.as_view(), name="spendings-individual"),
+    path("savings/", SavingsAPIView.as_view(), name="savings"),
+    path("savings/<int:id>", SavingsAPIView.as_view(), name="savings-individual"),
 ]
