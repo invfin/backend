@@ -27,6 +27,7 @@ class ExchangeRateFacade:
         self.target_pk = target_pk
 
     def convert(self, amount: Decimal) -> Decimal:
+        return amount  # TODO: currently doing this, once we get credits back we test it
         exchange_rate = self.get()
         return amount * exchange_rate.conversion_rate
 
@@ -49,7 +50,13 @@ class ExchangeRateFacade:
 
     def _get_model(self, models: None | list[ExchangeRate] = None) -> ExchangeRate | None:
         if models:
-            return next(filter(self._filter, models))
+            last_model = models.pop()
+            if model := next(filter(self._filter, models), None):
+                # TODO: maybe refresh here if nothing is saved correctly
+                return model
+            last_model.refresh_from_db()
+            if self._filter(last_model):
+                return last_model
         return ExchangeRate.objects.filter(
             base__code=self.base,
             target__code=self.target,
@@ -57,11 +64,7 @@ class ExchangeRateFacade:
         ).first()
 
     def _filter(self, model: ExchangeRate) -> bool:
-        return (
-            model.base.code == self.base
-            and model.target.code == self.target
-            and model.date == self.date
-        )
+        return model.base.code == self.base and model.target.code == self.target
 
     def select_parser(self) -> type[ExchangeRateResponse]:
         return ExchangerateHost

@@ -1,5 +1,6 @@
 from typing import Any, Callable, Dict, List, Optional, Tuple, Type, Union
 
+from asgiref.sync import sync_to_async
 from django.apps import apps
 from django.db.models import QuerySet
 from django.shortcuts import get_object_or_404
@@ -296,11 +297,13 @@ class BasePublicAPIView(ListAPIView):
     def get_object(self):
         return get_object_or_404(self.queryset, **self.kwargs)
 
+    @sync_to_async
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
 
+    @sync_to_async
     def get(self, *args, **kwargs):
         if kwargs.get(self.lookup_field):
             return self.single(*args, **kwargs)

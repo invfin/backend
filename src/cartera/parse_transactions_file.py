@@ -80,14 +80,15 @@ class BatchTransactionsToConvert:
             net_worth.net_worth_spendings,  # type: ignore
             net_worth.net_worth_investments,  # type: ignore
         ]
-        for manager in managers:
-            yield cls(manager)
+        return map(cls, managers)
 
     def amounts(self) -> Generator[AmountToConvert, None, None]:
         values = "pk", "amount", "currency__code", "date"
-        for i in (
+        models = (
             self.manager.prefetch_related("currency").values(*values).iterator(chunk_size=100)
-        ):
+        )
+
+        for i in models:
             yield AmountToConvert(**i)
 
 

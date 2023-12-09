@@ -43,6 +43,10 @@ django-extensions
 django-coverage-plugin
 pytest-django
 
+# Profiling
+#-------------------------------------------------------------------------------
+pympler
+
 
 django-pghistory
 

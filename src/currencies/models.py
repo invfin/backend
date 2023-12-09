@@ -81,7 +81,7 @@ class ExchangeRate(AbstractTimeStampedModel):
         ordering = ["created_at"]
 
     def __str__(self):
-        return f"{self.base.symbol} - {self.target.symbol}"
+        return f"{self.base.code} - {self.target.code}"
 
 
 class UserDefaultCurrency(AbstractTimeStampedModel):
