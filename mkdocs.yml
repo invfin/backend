@@ -50,8 +50,13 @@ markdown_extensions:
   - pymdownx.mark
   - attr_list
   - pymdownx.emoji:
-      emoji_index: !!python/name:materialx.emoji.twemoji
       emoji_generator: !!python/name:materialx.emoji.to_svg
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+
 
 copyright: |
   &copy; 2023 <a href="https://github.com/invfin"  target="_blank" rel="noopener">InvFin</a>
