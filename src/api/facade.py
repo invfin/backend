@@ -1,10 +1,9 @@
 from collections import namedtuple
-from datetime import timedelta
-from typing import Dict, List, Optional
+from datetime import datetime, timedelta
+from typing import Optional
 
 import jwt
 from django.conf import settings
-from django.utils import timezone
 
 from src.api.models import Jwt
 from src.users.models import User
@@ -17,21 +16,21 @@ JWT = namedtuple("JWT", ["payload", "header"])
 class JwtFacade:
     algorithm: str = "HS256"
     secret = settings.SECRET_KEY
-    tokens: Dict[str, str]
-    audience: List[str] = ["frontend", "backend"]
+    tokens: dict[str, str]
+    audience: list[str] = ["frontend", "backend"]
     issuer = "inversionesyfinanzas.xyz"
 
-    def __init__(self, user: Optional[User] = None) -> None:
-        refresh_token, access_token = self.create_tokens(user)
+    def __init__(self, now: datetime, user: Optional[User] = None) -> None:
+        refresh_token, access_token = self.create_tokens(user, now)
         self.tokens = {
             "access": self.new(access_token, refresh_token.pk),
             "refresh": self.new(refresh_token, access_token.pk),
         }
 
-    def create_tokens(self, user: Optional[User]):
-        # Sometimes it seems that the iat time fail, the token isn't ready. Let's see if setting
-        # the exp date -1h less it syncs with the server time
-        now = timezone.now() - timedelta(hours=1)
+    def create_tokens(self, user: Optional[User], date: datetime):
+        # Sometimes it seems that the iat time fail, the token isn't ready.
+        # Let's see if setting the exp date -1h less it syncs with the server time
+        now = date - timedelta(hours=1)
         refresh_token = Jwt.objects.create(
             created_at=now,
             expiration_date=now + timedelta(days=29),

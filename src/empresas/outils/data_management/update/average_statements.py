@@ -29,18 +29,22 @@ class AverageStatements:
 
         prepare_data:
             Method that loops over the statements and builds a dict with the fields for
-            the multiples statements, the values of all the statements related to the company and the period.
+            the multiples statements, the values of all the statements related to the
+            company and the period.
 
         calculate_average_income_statement:
-            Method that filter according to the company and the period and get the first of all the statements.
+            Method that filter according to the company and the period and
+            get the first of all the statements.
             It returns the result of return_averaged_data
 
         calculate_average_balance_sheet:
-            Method that filter according to the company and the period and get the first of all the statements.
+            Method that filter according to the company and
+            the period and get the first of all the statements.
             It returns the result of return_averaged_data
 
         calculate_average_cashflow_statement:
-            Method that filter according to the company and the period and get the first of all the statements.
+            Method that filter according to the company and
+            the period and get the first of all the statements.
             It returns the result of return_averaged_data
     """
 
@@ -112,7 +116,7 @@ class AverageStatements:
 
     @staticmethod
     def find_correct_currency(
-        reunited_data: Union[Dict[str, List[Union[int, float]]], defaultdict]
+        reunited_data: Union[Dict[str, List[Union[int, float]]], defaultdict],
     ) -> Dict[str, Optional[int]]:
         if currency := reunited_data.pop("reported_currency_id", None):
             currency, repetitions = Counter(currency).most_common(1)[0]
@@ -120,6 +124,6 @@ class AverageStatements:
 
     @staticmethod
     def calculate_averages(
-        reunited_data: Dict[str, List[Union[int, float]]]
+        reunited_data: Dict[str, List[Union[int, float]]],
     ) -> Dict[str, Union[int, float]]:
         return {key: round(fmean(value), 2) for key, value in reunited_data.items()}

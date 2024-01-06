@@ -83,9 +83,9 @@ class EngagementMachine:
             ):
                 web_objective = constants.CONTENT_FOR_ENGAGEMENT_USER_LITTLE_ACTIVE
             elif (
-                not user.last_time_seen
-                and more_than_month(last_email_engagement.date_to_send)
-                # If the user has never visited the web and the last email was sent more then a month back
+                not user.last_time_seen and more_than_month(last_email_engagement.date_to_send)
+                # If the user has never visited the web and
+                # the last email was sent more then a month back
             ):
                 web_objective = constants.CONTENT_FOR_ENGAGEMENT_USER_NO_ACTIVE
         else:

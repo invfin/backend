@@ -34,14 +34,14 @@
     "python.formatting.provider": "black",
     "[python]": {
         "editor.formatOnSave": true,
-        "editor.wordBasedSuggestions": false,
+        "editor.wordBasedSuggestions": "off",
         "editor.bracketPairColorization.enabled": true,
         "editor.autoIndent": "advanced",
         "editor.wordWrapColumn": 95,
         "editor.defaultFormatter": "ms-python.black-formatter",
         "editor.codeActionsOnSave": {
-            "source.fixAll.ruff": true,
-            "source.organizeImports.ruff": true
+            "source.fixAll.ruff": "explicit",
+            "source.organizeImports.ruff": "explicit"
         },
     }
 }

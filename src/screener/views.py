@@ -68,9 +68,9 @@ class CompanyScreenerInicioView(SEOListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         name = self.kwargs["slug"]
-        context["meta_title"] = (
-            f"Más de 30 años de información financiera de cualquier empresa de {name}"
-        )
+        context[
+            "meta_title"
+        ] = f"Más de 30 años de información financiera de cualquier empresa de {name}"
         context["meta_url"] = f"/empresas-de/{name}/"
         return context
 
@@ -120,24 +120,28 @@ class CompanyDetailsView(SEODetailView):
             companies_visited = self.request.session["companies_visited"]
         tickers = [ticker["ticker"] for ticker in companies_visited]
         if empresa.ticker not in tickers:
-            companies_visited.append({
-                "ticker": empresa.ticker,
-                "img": empresa.image,
-                "sector_id": empresa.sector_id,
-                "industry_id": empresa.industry_id,
-                "country_id": empresa.country_id,
-                "exchange_id": empresa.exchange_id,
-            })
+            companies_visited.append(
+                {
+                    "ticker": empresa.ticker,
+                    "img": empresa.image,
+                    "sector_id": empresa.sector_id,
+                    "industry_id": empresa.industry_id,
+                    "country_id": empresa.country_id,
+                    "exchange_id": empresa.exchange_id,
+                }
+            )
         if len(companies_visited) > 10:
             companies_visited.pop(0)
         self.request.session.modified = True
 
     def check_company_for_updates(self, empresa: Company) -> None:
-        if all([
-            settings.IS_PROD,
-            FinprepRequestCheck().manage_track_requests(3),
-            not empresa.has_checking("fixed_last_finprep"),
-        ]):
+        if all(
+            [
+                settings.IS_PROD,
+                FinprepRequestCheck().manage_track_requests(3),
+                not empresa.has_checking("fixed_last_finprep"),
+            ]
+        ):
             UpdateCompany(empresa).create_financials_finprep()
 
     def get_meta_description(self, empresa: Company) -> str:

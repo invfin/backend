@@ -20,19 +20,32 @@ class ExchangeRateResponse:
         for currency, rate in self.rates.items():
             yield currency, Decimal(rate)
 
-    def get_currency(self, code: str) -> Currency:
+    @classmethod
+    def get_currency(cls, code: str) -> Currency:
         currency, _ = Currency.objects.get_or_create(code=code)
         return currency
 
-    def get_rates(self, conversion_rates: dict[str, float]) -> dict[int, float]:
-        codes = self.filter_codes(conversion_rates)
-        return {self.get_currency(s).pk: conversion_rates[s] for s in codes}
+    @classmethod
+    def get_rates(
+        cls,
+        conversion_rates: dict[str, float],
+        base: Currency,
+        date: datetime.date,
+    ) -> dict[int, float]:
+        codes = cls.filter_codes(conversion_rates, base, date)
+        return {cls.get_currency(s).pk: conversion_rates[s] for s in codes}
 
-    def filter_codes(self, conversion_rates: dict[str, float]) -> set[str]:
+    @classmethod
+    def filter_codes(
+        cls,
+        conversion_rates: dict[str, float],
+        base: Currency,
+        date: datetime.date,
+    ) -> set[str]:
         existing = ExchangeRate.objects.filter(
             target__code__in=conversion_rates.keys(),
-            base=self.base,
-            date=self.date,
+            base=base,
+            date=date,
         ).values_list("target__code", flat=True)
         return set(conversion_rates.keys()) - set(existing)
 
@@ -59,9 +72,16 @@ class ExchangerateAPI(ExchangeRateResponse):
         conversion_rates: dict[str, float],
         **_,
     ):
-        self.date = datetime.date(year=year, month=month, day=day)
-        self.base = self.get_currency(base_code)
-        self.rates = self.get_rates(conversion_rates)
+        date_instance = datetime.date(year=year, month=month, day=day)
+        base = self.get_currency(base_code)
+        rates = self.get_rates(
+            conversion_rates,
+            base,
+            date_instance,
+        )
+        self.date = date_instance
+        self.base = base
+        self.rates = rates
 
     @classmethod
     def validate_response(cls, response: Any):
@@ -98,12 +118,20 @@ class ExchangerateHost(ExchangeRateResponse):
     exchangerate.host
     """
 
-    def __init__(self, timestamp: int, source: str, quotes: dict[str, float], **_):
-        self.date = datetime.date.fromtimestamp(timestamp)
-        self.base = self.get_currency(source)
-        self.rates = self.get_rates(self.normalize_quotes(quotes, source))
+    def __init__(self, date: str, source: str, quotes: dict[str, float], **_):
+        date_instance = datetime.date.fromisoformat(date)
+        base = self.get_currency(source)
+        rates = self.get_rates(
+            self.normalize_quotes(quotes, source),
+            base,
+            date_instance,
+        )
+        self.date = date_instance
+        self.base = base
+        self.rates = rates
 
-    def normalize_quotes(self, quotes: dict[str, float], source: str) -> dict[str, float]:
+    @classmethod
+    def normalize_quotes(cls, quotes: dict[str, float], source: str) -> dict[str, float]:
         return {k.replace(source, ""): v for k, v in quotes.items()}
 
     @classmethod

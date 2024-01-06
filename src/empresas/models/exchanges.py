@@ -15,7 +15,7 @@ class ExchangeOrganisation(Model):
         verbose_name_plural = "Organisation exchanges"
         db_table = "assets_exchanges_organisations"
 
-    def __str__(self)->str:
+    def __str__(self) -> str:
         return self.name or str(self.pk)
 
 

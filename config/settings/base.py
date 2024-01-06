@@ -23,6 +23,7 @@ PROTOCOL = env("PROTOCOL", default="https://")
 # GENERAL
 # ------------------------------------------------------------------------------
 CURRENT_DOMAIN = env("CURRENT_DOMAIN", default="example.com")
+FRONT_DOMAIN = env("FRONT_DOMAIN", default="localhost")
 MAIN_DOMAIN = env("MAIN_DOMAIN", default="inversionesyfinanzas.xyz")
 FULL_DOMAIN = env("FULL_DOMAIN", default="https://example.com:8000")
 
@@ -204,8 +205,8 @@ AUTH_PASSWORD_VALIDATORS = [
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#middleware
 MIDDLEWARE = [
-    "django.middleware.security.SecurityMiddleware",
     "corsheaders.middleware.CorsMiddleware",
+    "django.middleware.security.SecurityMiddleware",
     # "whitenoise.middleware.WhiteNoiseMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.locale.LocaleMiddleware",
@@ -417,7 +418,8 @@ REST_FRAMEWORK = {
     # }
 }
 
-# By Default swagger ui is available only to admin user. You can change permission classs to change that
+# By Default swagger ui is available only to admin user.
+# You can change permission classs to change that
 # See more configuration options at https://drf-spectacular.readthedocs.io/en/latest/settings.html#settings
 SPECTACULAR_SETTINGS = {
     "TITLE": "InvFin API",
@@ -489,9 +491,9 @@ FINPREP_KEY = env.str("FINPREP_KEY", "not-set")
 
 # Exchange Rate
 # ------------------------------------------------------------------------------
-EXCHANGE_RATE = env("EXCHANGE_RATE")
-EXCHANGE_RATE_HOST = env("EXCHANGE_RATE_HOST")
-OPEN_EXCHANGE = env("OPEN_EXCHANGE")
+EXCHANGE_RATE = env.str("EXCHANGE_RATE", "not-set")
+EXCHANGE_RATE_HOST = env.str("EXCHANGE_RATE_HOST", "not-set")
+OPEN_EXCHANGE = env.str("OPEN_EXCHANGE", "not-set")
 
 # FACEBOOK KEYS
 # ------------------------------------------------------------------------------

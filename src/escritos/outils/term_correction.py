@@ -18,7 +18,9 @@ class TermCorrectionManagement:
 
     def approve_correction(self, approved_by, fields: List[str]) -> None:
         self.update_correction_data_when_approved(approved_by, fields)
-        prepare_notification_task.delay(self.term_correction.dict_for_task, CORRECTION_APPROVED)  # type: ignore
+        prepare_notification_task.delay(
+            self.term_correction.dict_for_task, CORRECTION_APPROVED
+        )  # type: ignore
         return None
 
     def create_content(self):

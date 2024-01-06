@@ -138,16 +138,19 @@ class TestEmailEngamentTask(TestCase):
         assert email.sent is True
 
     def test_get_email_parameters_to_send(self):
-        email_serialized, web_objective = (
-            self.engagement_task_campaign.get_email_parameters_to_send()
-        )
+        (
+            email_serialized,
+            web_objective,
+        ) = self.engagement_task_campaign.get_email_parameters_to_send()
         assert "campaign-slug" == web_objective
         assert email_serialized == {"sender": "InvFin", **self.email_campaign.email_serialized}
 
     def test_return_emailing_info(self):
-        users_to_email, email_serialized, web_objective = (
-            self.engagement_task_campaign.return_emailing_info()
-        )
+        (
+            users_to_email,
+            email_serialized,
+            web_objective,
+        ) = self.engagement_task_campaign.return_emailing_info()
         assert "campaign-slug" == web_objective
         assert email_serialized == {"sender": "InvFin", **self.email_campaign.email_serialized}
         self.assertNotIn(self.user_for_all, users_to_email)

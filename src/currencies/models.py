@@ -66,12 +66,12 @@ class Currency(AbstractTimeStampedModel):
         db_table = "assets_currencies"
 
     def __str__(self):
-        return self.currency
+        return self.code or self.currency
 
 
 class ExchangeRate(AbstractTimeStampedModel):
-    base = ForeignKey(Currency, on_delete=CASCADE, related_name="rates_base")
-    target = ForeignKey(Currency, on_delete=CASCADE, related_name="rates_target")
+    base = ForeignKey(Currency, on_delete=CASCADE, related_name="rates_from")  # From
+    target = ForeignKey(Currency, on_delete=CASCADE, related_name="rates_to")  # To
     conversion_rate = DecimalField(max_digits=100, decimal_places=3, default=Decimal(0.0))
     date = DateField()
 
@@ -81,7 +81,10 @@ class ExchangeRate(AbstractTimeStampedModel):
         ordering = ["created_at"]
 
     def __str__(self):
-        return f"{self.base.code} - {self.target.code}"
+        return (
+            f"{self.base.code}: 1 - "
+            f"{self.target.code}: {self.conversion_rate:.4f} - {self.date}"
+        )
 
 
 class UserDefaultCurrency(AbstractTimeStampedModel):

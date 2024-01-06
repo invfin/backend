@@ -61,9 +61,8 @@ class ChartSerializer:
                 {
                     "label": "",
                     "data": 0,
-                    "backgroundColor": "#" + "".join(
-                        [random.choice("ABCDEF0123456789") for _ in range(6)]
-                    ),
+                    "backgroundColor": "#"
+                    + "".join([random.choice("ABCDEF0123456789") for _ in range(6)]),
                 }
             ],
         }

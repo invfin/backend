@@ -1,6 +1,5 @@
 from typing import Any, Callable, Dict, List, Optional, Tuple, Type, Union
 
-from asgiref.sync import sync_to_async
 from django.apps import apps
 from django.db.models import QuerySet
 from django.shortcuts import get_object_or_404
@@ -88,11 +87,13 @@ class BaseAPIView(APIView):
     def get_model_to_track(self) -> Optional[Type]:
         """
         Raises:
-            NotImplementedError: model_to_track is set to None by default, if we don't want to save the request
+            NotImplementedError: model_to_track is set to None by default,
+            if we don't want to save the request
             we should pass "ignore" otherwise it will rise and error
 
         Returns:
-            Union[Type, None]: It could return an actual model to be looked up and saved or None if we want to ignore it
+            Union[Type, None]: It could return an actual model to be looked up and
+            saved or None if we want to ignore it
         """
         if self.model_to_track:
             if isinstance(self.model_to_track, str):
@@ -113,8 +114,8 @@ class BaseAPIView(APIView):
         search = queryset
         if (
             "QuerySet" in type(queryset).__name__
-            or type(queryset) == QuerySet
-            or type(queryset) == list
+            or isinstance(queryset, QuerySet)
+            or isinstance(queryset, list)
         ):
             first_item_queryset = queryset[0]
             if (
@@ -156,8 +157,9 @@ class BaseAPIView(APIView):
 
     def get_model_or_callable(self) -> Tuple[Union[Type, Callable], bool]:
         """
-        Tries to get a tuple with the model to use or a queryset and a bool. In case that neither of both
-        are found it will look for the model of the serializer.
+        Tries to get a tuple with the model to use or a queryset and a bool.
+        In case that neither of both are found it will look for the model
+        of the serializer.
         The boolean it's used to know if the serializer has many or not.
 
         Parameters
@@ -285,8 +287,8 @@ class BaseAPIView(APIView):
 class BasePublicAPIView(ListAPIView):
     # TODO: improve
     queryset: Type
-    permission_classes = [AllowAny]
-    authentication_classes = []  # TODO: add jwt auth
+    permission_classes = (AllowAny,)
+    authentication_classes = ()  # TODO: add jwt auth
     pagination_class = StandardResultPagination
     many_serializer_class: Optional[type[BaseSerializer[Any]]] = None
     single_serializer_class: Optional[type[BaseSerializer[Any]]] = None
@@ -294,16 +296,17 @@ class BasePublicAPIView(ListAPIView):
     single_queryset: Optional[Type] = None
     lookup_field = ""
 
+    def get_queryset(self) -> QuerySet:
+        return super().get_queryset()  # .filter(user=self.request.user)
+
     def get_object(self):
         return get_object_or_404(self.queryset, **self.kwargs)
 
-    @sync_to_async
     def retrieve(self, request, *args, **kwargs):
         instance = self.get_object()
         serializer = self.get_serializer(instance)
         return Response(serializer.data)
 
-    @sync_to_async
     def get(self, *args, **kwargs):
         if kwargs.get(self.lookup_field):
             return self.single(*args, **kwargs)

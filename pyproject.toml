@@ -40,7 +40,8 @@ exclude = [
     "node_modules",
     "venv",
     "migrations",
-    "translate"
+    "translate",
+    "**/proto/*_pb2.py",
 ]
 
 # Same as Black.

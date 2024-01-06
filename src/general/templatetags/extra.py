@@ -50,14 +50,16 @@ def api_json_example(example):
 @register.simple_tag(name="pre_loading")
 def render_pre_loading(link_params: str, extra, *args) -> str:
     link = reverse(link_params, args=args)
-    return mark_safe(f"""<div hx-trigger="load" hx-target="this"
+    return mark_safe(
+        f"""<div hx-trigger="load" hx-target="this"
     hx-get='{link}?extra={extra}'>
     <div class="text-center">
         <div class="spinner-border" role="status"></div>
         Cargando...
     </div>
 </div>
-""")
+"""
+    )
 
 
 @register.simple_tag(name="open_modal")

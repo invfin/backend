@@ -6,7 +6,13 @@ from django.urls import include, path
 from django.views import defaults as default_views
 
 from src.api.views import obtain_auth_key
-from src.seo.sitemaps import CompanySitemap, PublicBlogSitemap, QuestionSitemap, SuperinvestorSitemap, TermSitemap
+from src.seo.sitemaps import (
+    CompanySitemap,
+    PublicBlogSitemap,
+    QuestionSitemap,
+    SuperinvestorSitemap,
+    TermSitemap,
+)
 from src.general.views import Handler404
 
 sitemaps = {
@@ -19,7 +25,9 @@ sitemaps = {
 
 urlpatterns = [
     path(settings.ADMIN_URL, admin.site.urls),
-    path(settings.SECOND_ADMIN_URL, include("admin_honeypot.urls", namespace="admin_honeypot")),
+    path(
+        settings.SECOND_ADMIN_URL, include("admin_honeypot.urls", namespace="admin_honeypot")
+    ),
     path("", include("src.general.urls", namespace="general")),
     path("", include("src.web.urls", namespace="web")),
     path("", include("src.users.urls", namespace="users")),
@@ -37,7 +45,12 @@ urlpatterns = [
     path("", include("src.business.urls", namespace="business")),
     path("", include("src.recsys.urls", namespace="recsys")),
     path("", include("src.emailing.urls", namespace="emailing")),
-    path("sitemap.xml", sitemap, {"sitemaps": sitemaps}, name="django.contrib.sitemaps.views.sitemap"),
+    path(
+        "sitemap.xml",
+        sitemap,
+        {"sitemaps": sitemaps},
+        name="django.contrib.sitemaps.views.sitemap",
+    ),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
 # API URLS

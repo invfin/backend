@@ -108,9 +108,27 @@ INSTALLED_APPS += ["django_extensions"]  # noqa F405
 
 # CORS
 # ------------------------------------------------------------------------------
-CORS_ALLOWED_ORIGINS = [FULL_DOMAIN] + [f"http://{origin}:3000" for origin in ALLOWED_HOSTS]
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    # r"^https://\w+\.example\.com$",
+    r"^http://\w+\.example\.com:3000$",
+]
 # django-cors-headers - https://github.com/adamchainz/django-cors-headers#setup
 CORS_URLS_REGEX = r"^/api/.*$"
+
+CORS_ALLOW_ALL_ORIGINS = (
+    True
+)  # If this is used then `CORS_ALLOWED_ORIGINS` will not have any effect
+CORS_ALLOW_CREDENTIALS = True
+
+CORS_ALLOWED_ORIGINS = ("http://dashboard.example.com:3000",)
+CORS_ALLOW_HEADERS = (
+    "accept",
+    "authorization",
+    "content-type",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+)
 
 # LOGGING
 # ------------------------------------------------------------------------------

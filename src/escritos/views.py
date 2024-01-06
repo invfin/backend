@@ -150,7 +150,9 @@ class ManageUserTermCorrectionDetailView(PrivateWebDetailView):
     def manage_correction(self):
         # TODO : test
         fields = self.get_fields(self.request.POST)
-        TermCorrectionManagement(self.get_object()).approve_correction(self.request.user, fields)  # type: ignore
+        TermCorrectionManagement(self.get_object()).approve_correction(
+            self.request.user, fields
+        )  # type: ignore
 
     def post(self, request, *args: str, **kwargs):
         # TODO : test

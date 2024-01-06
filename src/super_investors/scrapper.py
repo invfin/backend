@@ -44,7 +44,10 @@ def get_historial(superinvestor_activity):
     else:
         ticker = actual_company["company"].ticker
 
-    url = f"{SITE}/m/hist/hist.php?f={superinvestor_activity.superinvestor_related.info_accronym}&s={ticker}"
+    url = (
+        f"{SITE}/m/hist/hist.php"
+        f"?f={superinvestor_activity.superinvestor_related.info_accronym}&s={ticker}"
+    )
     response = requests.get(url, headers=HEADERS).content
     table = pd.read_html(response)[0]
     table["Activity"] = table["Activity"].fillna("Hold")
@@ -62,7 +65,7 @@ def get_historial(superinvestor_activity):
         if super_activity.exists():
             continue
         reported_price = content["Reported Price"]
-        if type(reported_price) == int:
+        if isinstance(reported_price, int):
             reported_price = reported_price
         elif reported_price.startswith("$"):
             try:
@@ -138,15 +141,16 @@ def get_activity(superinvestor):
                                 not_registered_company = True
                         else:
                             not_registered_company = True
-                    superinvestor_activity, created = (
-                        SuperinvestorActivity.objects.get_or_create(
-                            superinvestor_related=superinvestor,
-                            period_related=period,
-                            company=company,
-                            company_name=info,
-                            not_registered_company=not_registered_company,
-                            need_verify_company=need_verify_company,
-                        )
+                    (
+                        superinvestor_activity,
+                        created,
+                    ) = SuperinvestorActivity.objects.get_or_create(
+                        superinvestor_related=superinvestor,
+                        period_related=period,
+                        company=company,
+                        company_name=info,
+                        not_registered_company=not_registered_company,
+                        need_verify_company=need_verify_company,
                     )
                     continue
 

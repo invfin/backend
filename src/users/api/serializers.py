@@ -81,7 +81,7 @@ class GetUserSerializer(serializers.ModelSerializer):
         return obj.favorites_companies.stock.all().exists()
 
     def get_has_portfolio(self, obj: User):
-        return bool(obj.user_patrimoine)
+        return bool(obj.net_worth)
 
 
 class CreateUserSerializer(serializers.ModelSerializer):

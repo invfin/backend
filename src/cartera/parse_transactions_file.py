@@ -1,19 +1,18 @@
 from __future__ import annotations
 
-import datetime
 import logging
 from decimal import Decimal
 from enum import Enum
-from functools import cached_property
-from math import nan
-from typing import Any, Generator
+from functools import partial
+from math import isnan, nan
 
 from django.core.files.uploadedfile import InMemoryUploadedFile
-from django.db.models import Manager, Model
-from pandas import DataFrame, read_csv, read_excel
+from django.db.models import Model
+from pandas import DataFrame, Series, read_csv, read_excel
 
 from src.cartera.constants import InvestmentMovement
 from src.cartera.models import (
+    CashflowMovementCategory,
     FirsttradeTransaction,
     Income,
     IngEsTransaction,
@@ -21,13 +20,11 @@ from src.cartera.models import (
     NetWorth,
     Savings,
     Spendings,
+    WireTransfer,
 )
-from src.currencies.facades import ExchangeRateFacade
-from src.currencies.models import Currency, UserDefaultCurrency
 from src.empresas.models.company import Company
-from src.periods.models import Period
-from src.periods.outils import FiscalDate
 from src.users.models import User
+from .facades import NetWorthFacade
 
 FIRSTTRADE_COLUMNS_MAPPER = {
     "Symbol": "symbol",
@@ -60,97 +57,6 @@ TransactionType = Spendings | Investment | Income | Savings
 RawTransactionType = FirsttradeTransaction | IngEsTransaction
 
 
-class AmountToConvert:
-    def __init__(self, pk: int, amount: Decimal, currency__code: str, date: datetime.date):
-        self.pk = pk
-        self.amount = amount
-        self.base = currency__code
-        self.date = date
-
-
-class BatchTransactionsToConvert:
-    def __init__(self, manager: Manager) -> None:
-        self.manager = manager
-
-    @classmethod
-    def get_batch(cls, net_worth: NetWorth):
-        managers = [
-            net_worth.net_worth_incomes,  # type: ignore
-            net_worth.net_worth_savings,  # type: ignore
-            net_worth.net_worth_spendings,  # type: ignore
-            net_worth.net_worth_investments,  # type: ignore
-        ]
-        return map(cls, managers)
-
-    def amounts(self) -> Generator[AmountToConvert, None, None]:
-        values = "pk", "amount", "currency__code", "date"
-        models = (
-            self.manager.prefetch_related("currency").values(*values).iterator(chunk_size=100)
-        )
-
-        for i in models:
-            yield AmountToConvert(**i)
-
-
-class NetWorthFacade:
-    def __init__(
-        self,
-        user: User | None = None,
-        date: datetime.date | None = None,
-        net_worth: NetWorth | None = None,
-    ):
-        if net_worth:
-            self.net_worth = net_worth
-        elif user and date:
-            period = FiscalDate(date).period
-            self.net_worth, _ = self.get(user, period)
-        else:
-            logging.error(f"user: {vars(user)}, date: {date}, net_worth: {vars(net_worth)}")
-            raise ValueError("Invalid networth")
-        return None
-
-    @classmethod
-    def update_many(cls, net_worths: set[NetWorth]):
-        for net_worth in net_worths:
-            cls(net_worth=net_worth).update()
-        return None
-
-    def update(self):
-        target_currency = self._get_target_currency()
-        self._convert_amounts(target_currency)
-
-    def _get_target_currency(self) -> Currency:
-        try:
-            return self.net_worth.user.currency.currency  # type: ignore
-        except Exception as e:
-            currency = UserDefaultCurrency.objects.create(
-                user=self.net_worth.user, currency_id=5
-            )
-            logger.error(str(e))
-            return currency.currency
-
-    def _convert_amounts(self, target: Currency) -> None:
-        for batch in BatchTransactionsToConvert.get_batch(self.net_worth):
-            for amount_to_convert in batch.amounts():
-                try:
-                    amount_converted = ExchangeRateFacade(
-                        pk=amount_to_convert.pk,
-                        base=amount_to_convert.base,
-                        target=target.code,
-                        target_pk=target.pk,
-                        date=amount_to_convert.date,
-                    ).convert(amount_to_convert.amount)
-                    batch.manager.filter(id=amount_to_convert.pk).update(
-                        read=True,
-                        amount_converted=amount_converted,
-                    )
-                except ValueError as e:
-                    logger.error(f"{vars(amount_to_convert)} error: {str(e)}")
-
-    def get(self, user: User, period: Period) -> tuple[NetWorth, bool]:
-        return NetWorth.objects.get_or_create(user=user, period=period)
-
-
 class RawModelToStdModel:
     def create_relationship(self, instances: list[RawTransactionType]) -> None:
         net_worths: set[NetWorth] = set()
@@ -170,22 +76,30 @@ class RawModelToStdModel:
     ) -> None:
         movements[class_.__class__.__name__].append(movement)
 
-    def _raw_to_std(self, model: RawTransactionType) -> TransactionType: ...
+    def _raw_to_std(self, model: RawTransactionType) -> TransactionType:
+        ...
 
-    def __to_spendings(self, *args, **kwargs) -> Spendings: ...
+    def _to_spendings(self, *args, **kwargs) -> Spendings:
+        ...
 
-    def _to_income(self, *args, **kwargs) -> Income: ...
+    def _to_income(self, *args, **kwargs) -> Income:
+        ...
 
-    def _to_investment(self, *args, **kwargs) -> Investment: ...
+    def _to_investment(self, *args, **kwargs) -> Investment:
+        ...
 
-    def __to_savings(self, *args, **kwargs) -> Savings: ...
+    def _to_savings(self, *args, **kwargs) -> Savings:
+        ...
+
+    def _to_wire_transfer(self, *args, **kwargs) -> WireTransfer:
+        ...
 
 
 class FileToRawModelInterface:
     model: RawTransactionType
     columns: dict[str, str]
-    read_kwargs: dict[str, Any] = {}
     fields_to_exclude: set[str] = {"id", "category_id", "created_at", "updated_at"}
+    read_kwargs: dict = {}
 
     def create_raw_models(
         self,
@@ -207,20 +121,23 @@ class FileToRawModelInterface:
     def _file_to_dataframe(self, transaction_file: InMemoryUploadedFile) -> DataFrame:
         filename = transaction_file.name
         if filename.endswith(".csv"):
-            reader = read_csv
+            reader = partial(read_csv)
         elif filename.endswith(".csv.gz"):
-            k = self.read_kwargs.copy()
-            k["compression"] = "gzip"
-            self.read_kwargs = k
-            reader = read_csv
+            reader = partial(read_csv, compression="gzip")
         elif filename.endswith(".xls"):
-            reader = read_excel
+            reader = partial(read_excel, **self.read_kwargs)
         else:
             raise ValueError("File not recognized")
-        return reader(transaction_file.file, **self.read_kwargs)
+        return reader(transaction_file.file)
 
     def _process_df(self, df: DataFrame) -> DataFrame:
         return df
+
+    @staticmethod
+    def to_decimal(v):
+        if v and not isnan(v):
+            return Decimal(v)
+        return Decimal("0.0")
 
     def _prepare_models(self, df: DataFrame, filename: str, user: User):
         df["model"] = df.apply(
@@ -232,29 +149,39 @@ class FileToRawModelInterface:
         )  # type: ignore
         return df.model.tolist()
 
-    @staticmethod
+    @classmethod
     def _create_transaction(
-        row: dict,
+        cls,
+        row: Series,
         model: RawTransactionType,
         file_path: str,
         user: User,
     ) -> RawTransactionType:
+        data = cls._filter_data(row)
         try:
             instance, _ = model.objects.get_or_create(
-                **row,
                 file_path=file_path,
                 user=user,
+                **data,
             )
             return instance
         except model.MultipleObjectsReturned:
-            instance = model.objects.filter(**row, file_path=file_path, user=user).first()
+            instance = model.objects.filter(**data, file_path=file_path, user=user).first()
             if not instance:
                 raise ValueError("_create_transaction no model")
             return instance
 
+    @classmethod
+    def _filter_data(cls, data: Series) -> dict:
+        d = data.to_dict()
+        for k in d.keys():
+            if isinstance(d[k], Decimal):
+                d[k] = Decimal(d[k]).quantize(Decimal("1.000"))
+        return d
+
 
 class Firsttrade(FileToRawModelInterface, RawModelToStdModel):
-    model: type[FirsttradeTransaction] = FirsttradeTransaction
+    model = FirsttradeTransaction
     columns: dict[str, str] = FIRSTTRADE_COLUMNS_MAPPER
 
     class Action(str, Enum):
@@ -264,31 +191,34 @@ class Firsttrade(FileToRawModelInterface, RawModelToStdModel):
         DIVIDEND = "DIVIDEND"
         OTHER = "OTHER"
 
-        @cached_property
         def _is_income(self) -> bool:
             return self in {self.DIVIDEND, self.INTEREST}
 
-        @cached_property
         def _is_investment(self) -> bool:
             return self in {self.BUY, self.SELL}
 
     def _process_df(self, df: DataFrame) -> DataFrame:
         df["symbol"] = df["symbol"].str.strip()
+        df["description"] = df["description"].str.strip()
+        df["cusip"] = df["cusip"].str.strip()
+        for col in ("price", "interest", "quantity", "commission", "fee", "amount"):
+            df[col] = df[col].apply(self.to_decimal)
         return df
 
     def _raw_to_std(self, model: FirsttradeTransaction):
         action = Firsttrade.Action(model.action.upper())
-        if action._is_income:
+        if action._is_income():
             func = self._to_income
-        elif action._is_investment:
+            # TODO: check if when sending funds to bank account is the same starting
+        elif action._is_investment() or model.description.startswith("Wire Funds"):
             func = self._to_investment
         elif model.description.startswith(("***", "INTEREST ON CREDIT")):
-            func = self.__to_spendings
+            func = self._to_spendings
         else:
             return
         return func(model, action)
 
-    def __to_spendings(self, model: FirsttradeTransaction, *args) -> Spendings:
+    def _to_spendings(self, model: FirsttradeTransaction, *args) -> Spendings:
         return Spendings(
             user=model.user,
             name=model.description.replace("***", ""),
@@ -300,18 +230,19 @@ class Firsttrade(FileToRawModelInterface, RawModelToStdModel):
         )
 
     def _to_income(self, model: FirsttradeTransaction, action: Firsttrade.Action) -> Income:
-        name = model.description
-        company, company_info = None, {}
+        name, company_info = model.description, {}
+
         if action == Firsttrade.Action.INTEREST:
             interest_title = "INTEREST ON CREDIT BALANCE"
+            cat, _ = CashflowMovementCategory.objects.get_or_create(name="Interests")
             if model.description.startswith(interest_title):
                 name = interest_title.title()
             else:
                 name = "".join(model.description.split()[:3])
         elif action == Firsttrade.Action.DIVIDEND:
             name = f"Dividendo: {model.symbol}"
-            company = self._get_company(model.symbol)
-            company_info["object"] = company
+            cat, _ = CashflowMovementCategory.objects.get_or_create(name="Dividends")
+            company_info["object"] = self._get_company(model.symbol)
 
         return Income(
             user=model.user,
@@ -320,7 +251,9 @@ class Firsttrade(FileToRawModelInterface, RawModelToStdModel):
             description=model.description,
             date=model.settled_date,
             currency_id=1,
+            category=cat,
             transaction_file=model,
+            to_substract=True,
             **company_info,
         )
 
@@ -333,14 +266,28 @@ class Firsttrade(FileToRawModelInterface, RawModelToStdModel):
         model: FirsttradeTransaction,
         action: Firsttrade.Action,
     ) -> Investment:
-        name = "Compra: {}" if action == Firsttrade.Action.BUY else "Venta {}"
+        if action == Firsttrade.Action.OTHER:
+            cat, _ = CashflowMovementCategory.objects.get_or_create(name="Wire Transfers")
+            if model.description.startswith("Wire Funds Received"):
+                name = "Fondos recibidos"
+                movement = InvestmentMovement.RECEIVE_FUND
+            else:
+                name = "Fondos enviados"
+                movement = InvestmentMovement.SEND_FUND
+        else:
+            cat = None
+            name = "Compra: {}" if action == Firsttrade.Action.BUY else "Venta {}"
+            name = name.format(model.symbol)
+            movement = InvestmentMovement(action.value)
+
         return Investment(
             user=model.user,
-            name=name.format(model.symbol),
+            name=name,
             object=self._get_asset(model.symbol),
             quantity=model.quantity,
             price=model.price,
-            movement=InvestmentMovement(action.value),
+            movement=movement,
+            category=cat,
             amount=abs(model.amount),
             description=model.description,
             date=model.settled_date,
@@ -359,23 +306,21 @@ class Firsttrade(FileToRawModelInterface, RawModelToStdModel):
 class Ing(FileToRawModelInterface, RawModelToStdModel):
     model: type[IngEsTransaction] = IngEsTransaction
     columns: dict[str, str] = ING_COLUMNS_MAPPER
-    read_kwargs = {"skiprows": list(range(5))}
+    read_kwargs = {"skiprows": 5}
 
     def _process_df(self, df: DataFrame) -> DataFrame:
         df["image"] = df["image"].replace({"No": ""})
         df["comment"] = df["comment"].replace({nan: ""})
         df["currency_id"] = 5
+        for col in ("amount", "balance"):
+            df[col] = df[col].apply(self.to_decimal)
         return df
 
     def _raw_to_std(self, model: IngEsTransaction):
-        if model.amount > 0:
-            func = self._to_income
-        else:
-            func = self.__to_spendings
-
+        func = self._to_income if model.amount > 0 else self._to_spendings
         return func(model)
 
-    def __to_spendings(self, model: IngEsTransaction) -> Spendings:
+    def _to_spendings(self, model: IngEsTransaction) -> Spendings:
         return Spendings(
             user=model.user,
             name=model.description,

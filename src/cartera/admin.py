@@ -10,11 +10,27 @@ from .models import (
     Spendings,
     NetWorth,
 )
+from .parse_transactions_file import NetWorthFacade
+
+
+@admin.action(description="Update amount")
+def update_amount(modeladmin, request, queryset):
+    NetWorthFacade.update_many(set(queryset))
 
 
 @admin.register(NetWorth)
 class NetWorthAdmin(admin.ModelAdmin):
-    list_display = ["pk", "user", "period"]
+    list_display = [
+        "pk",
+        "user",
+        "period",
+        "equity",
+        "investments",
+        "spendings",
+        "incomes",
+        "savings",
+    ]
+    actions = [update_amount]
 
 
 @admin.register(IngEsTransaction)
@@ -64,7 +80,11 @@ class IncomeAdmin(admin.ModelAdmin):
         "currency",
         "is_recurrent",
         "net_worth",
+        "read",
+        "amount_converted",
+        "to_substract",
     ]
+    list_filter = ["net_worth"]
 
 
 @admin.register(Savings)
@@ -78,7 +98,10 @@ class SavingsAdmin(admin.ModelAdmin):
         "currency",
         "is_recurrent",
         "net_worth",
+        "read",
+        "amount_converted",
     ]
+    list_filter = ["net_worth"]
 
 
 @admin.register(Spendings)
@@ -92,16 +115,27 @@ class SpendingsAdmin(admin.ModelAdmin):
         "currency",
         "is_recurrent",
         "net_worth",
+        "read",
+        "amount_converted",
     ]
+    list_filter = ["net_worth"]
 
 
 @admin.register(Investment)
 class InvestmentAdmin(admin.ModelAdmin):
     list_display = [
         "user",
-        "object",
+        "name",
+        "amount",
+        "description",
+        "date",
+        "currency",
+        "is_recurrent",
         "net_worth",
+        "read",
+        "amount_converted",
     ]
+    list_filter = ["net_worth"]
 
 
 @admin.register(FinancialObjectif)

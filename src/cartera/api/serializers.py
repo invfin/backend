@@ -32,10 +32,12 @@ class TransactionsFromFileSerializer(Serializer):
 
     def create(self, validated_data):
         user = self.context["request"].user
-        # TODO: make it a celery task. Return 201 if the file is saved correctly and 500 if error saving the file
+        # TODO: make it a celery task.
+        # Return 201 if the file is saved correctly and 500 if error saving the file
         # once the file saved, parse it and so on
         # Or maybe we should take a look at the file, see if it means something.
-        # first we'll focus on firsttrade. It seems that is always the same, at least I asume that.
+        # first we'll focus on firsttrade.
+        # It seems that is always the same, at least I asume that.
         # Later on lets try to parse bank statements.
         origin = validated_data.pop("origin", "")
         return FileTransactionsHandler(origin).create(**validated_data, user=user)
@@ -95,31 +97,108 @@ class InvestmentMovementSerializer(CashflowMovementSerializer):
     object = GenericForeignKeyField()
 
 
+class NetWorthSerializer(Serializer):
+    period__period = CharField()
+    period__year = IntegerField()
+    equity = DecimalField(
+        max_digits=100,
+        decimal_places=2,
+        default=Decimal(0.0),
+    )
+    incomes = DecimalField(
+        max_digits=100,
+        decimal_places=2,
+        default=Decimal(0.0),
+    )
+    spendings = DecimalField(
+        max_digits=100,
+        decimal_places=2,
+        default=Decimal(0.0),
+    )
+    savings = DecimalField(
+        max_digits=100,
+        decimal_places=2,
+        default=Decimal(0.0),
+    )
+    investments = DecimalField(
+        max_digits=100,
+        decimal_places=2,
+        default=Decimal(0.0),
+    )
+    percent_investments = DecimalField(
+        max_digits=100,
+        decimal_places=2,
+        default=Decimal(0.0),
+    )
+    percent_spendings = DecimalField(
+        max_digits=100,
+        decimal_places=2,
+        default=Decimal(0.0),
+    )
+    percent_savings = DecimalField(
+        max_digits=100,
+        decimal_places=2,
+        default=Decimal(0.0),
+    )
+
+
 class InvestmentSerializer(InvestmentMovementSerializer):
     class Meta:
         model = Investment
-        include = "__all__"
+        fields = [
+            "name",
+            "amount",
+            "description",
+            "comment",
+            "date",
+            "currency",
+            "amount_converted",
+        ]
 
 
 class CashflowMovementCategorySerializer(ModelSerializer):
     class Meta:
         model = CashflowMovementCategory
-        include = "__all__"
+        fields = "__all__"
 
 
 class IncomeSerializer(CashflowMovementSerializer):
     class Meta:
         model = Income
-        include = "__all__"
+        fields = [
+            "name",
+            "amount",
+            "description",
+            "comment",
+            "date",
+            "currency",
+            "amount_converted",
+        ]
 
 
 class SpendingsSerializer(CashflowMovementSerializer):
     class Meta:
         model = Spendings
-        include = "__all__"
+        fields = [
+            "name",
+            "amount",
+            "description",
+            "comment",
+            "date",
+            "currency",
+            "amount_converted",
+        ]
 
 
 class SavingsSerializer(CashflowMovementSerializer):
     class Meta:
         model = Savings
-        include = "__all__"
+        fields = [
+            "name",
+            "amount",
+            "description",
+            "comment",
+            "date",
+            "currency",
+            "amount_converted",
+        ]

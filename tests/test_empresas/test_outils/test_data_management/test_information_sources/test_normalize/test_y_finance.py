@@ -18,9 +18,9 @@ class TestNormalizeStatementsYFinance(NormalizeStatementMixin, TestCase):
     cashflow_statement_model = CashflowStatementYFinance
 
     def test_return_standard_income_statement(self):
-        income_statement_dict: Dict[str, Optional[Union[int, float]]] = (
-            self.income_statement.return_standard()
-        )
+        income_statement_dict: Dict[
+            str, Optional[Union[int, float]]
+        ] = self.income_statement.return_standard()
         self.assertEqual(
             income_statement_dict["revenue"],
             self.income_statement.total_revenue,
@@ -103,9 +103,9 @@ class TestNormalizeStatementsYFinance(NormalizeStatementMixin, TestCase):
         )
 
     def test_return_standard_balance_sheet(self):
-        balance_sheet_dict: Dict[str, Optional[Union[int, float]]] = (
-            self.balance_sheet.return_standard()
-        )
+        balance_sheet_dict: Dict[
+            str, Optional[Union[int, float]]
+        ] = self.balance_sheet.return_standard()
         self.assertEqual(
             balance_sheet_dict["cash_and_cash_equivalents"],
             self.balance_sheet.cash,
@@ -264,9 +264,9 @@ class TestNormalizeStatementsYFinance(NormalizeStatementMixin, TestCase):
         )
 
     def test_return_standard_cashflow_statement(self):
-        cashflow_statement_dict: Dict[str, Optional[Union[int, float]]] = (
-            self.cashflow_statement.return_standard()
-        )
+        cashflow_statement_dict: Dict[
+            str, Optional[Union[int, float]]
+        ] = self.cashflow_statement.return_standard()
         self.assertEqual(
             cashflow_statement_dict["net_income"],
             self.cashflow_statement.net_income,

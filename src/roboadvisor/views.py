@@ -27,9 +27,9 @@ class RoboAdvisorServicesListView(SEOListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["meta_desc"] = "IA para mejorar las inversiones"
-        context["meta_tags"] = (
-            "finanzas, blog financiero, blog el financiera, invertir, roboadvisor"
-        )
+        context[
+            "meta_tags"
+        ] = "finanzas, blog financiero, blog el financiera, invertir, roboadvisor"
         context["meta_title"] = "Tu consejero inteligente"
         context["meta_url"] = "/"
 
@@ -46,7 +46,11 @@ class RoboAdvisorServiceOptionView(LoginRequiredMixin, DetailView):
 
     def prepare_forms(self, user, service):
         context_forms = {}
-        # if RoboAdvisorUserServiceActivity.objects.filter(user = user, service = service, status = 2).exists():
+        # if
+        # RoboAdvisorUserServiceActivity.objects.filter(
+        # user=user,
+        # service=service,
+        # status=2 ).exists():
         # 	# get pre filed data
         # 	pass
 
@@ -114,8 +118,8 @@ class RoboAdvisorUserResultsListView(LoginRequiredMixin, ListView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context["meta_desc"] = "IA para mejorar las inversiones"
-        context["meta_tags"] = (
-            "finanzas, blog financiero, blog el financiera, invertir, roboadvisor"
-        )
+        context[
+            "meta_tags"
+        ] = "finanzas, blog financiero, blog el financiera, invertir, roboadvisor"
         context["meta_title"] = "Tu consejero inteligente"
         return context

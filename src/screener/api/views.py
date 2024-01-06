@@ -5,6 +5,7 @@ from django.db.models import Q
 from django.http.response import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.views.generic import FormView, ListView
+from rest_framework.response import Response
 
 import yahooquery as yq
 
@@ -12,6 +13,7 @@ from src.empresas.models import Company
 from src.empresas.outils.data_management.show.company_data import CompanyData
 from src.empresas.outils.valuations import discounted_cashflow
 
+from src.api.views import BasePublicAPIView
 from ..forms import UserCompanyObservationForm
 from ..models import (
     UserCompanyObservation,
@@ -21,6 +23,11 @@ from ..models import (
 )
 
 User = get_user_model()
+
+
+class CompanyScreenerView(BasePublicAPIView):
+    def get(self, *args, **kwargs):
+        return Response({"data": [{"INTC": {"cool": 45}}, {"AMD": {"EUR": 45}}]})
 
 
 class CompanyFODAListView(ListView):

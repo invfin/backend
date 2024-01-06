@@ -15,6 +15,7 @@ from django.db.models import (
     PositiveIntegerField,
     TextField,
 )
+from src.cartera.querysets import CashflowMovementQuerySet
 
 from src.currencies.models import Currency
 from src.general.abstracts import AbstractTimeStampedModel
@@ -26,15 +27,15 @@ from .constants import InvestmentMovement
 
 class FirsttradeTransaction(AbstractTimeStampedModel):
     symbol = CharField(max_length=20, default="", blank=True)
-    quantity = DecimalField(max_digits=100, decimal_places=3, null=True)
-    price = DecimalField(max_digits=100, decimal_places=4, null=True)
+    quantity = DecimalField(max_digits=100, decimal_places=3, default=Decimal(0.0))
+    price = DecimalField(max_digits=100, decimal_places=3, default=Decimal(0.0))
     action = CharField(max_length=8)
     trade_date = DateField()
     settled_date = DateField()
     interest = DecimalField(max_digits=100, decimal_places=3, default=Decimal(0.0))
     amount = DecimalField(max_digits=100, decimal_places=3, default=Decimal(0.0))
-    file_path = CharField(max_length=100)
-    description = CharField(max_length=300, default="", blank=True)
+    file_path = CharField(max_length=300)
+    description = TextField(default="", blank=True)
     commission = DecimalField(max_digits=100, decimal_places=3, default=Decimal(0.0))
     fee = DecimalField(max_digits=100, decimal_places=3, default=Decimal(0.0))
     cusip = CharField(max_length=9, default="", blank=True)
@@ -60,11 +61,11 @@ class IngEsTransaction(AbstractTimeStampedModel):
     transaction_date = DateTimeField()
     category = CharField(max_length=300, default="", blank=True)
     subcaterogy = CharField(max_length=300, default="", blank=True)
-    comment = CharField(max_length=300, default="", blank=True)
+    comment = TextField(default="", blank=True)
     image = CharField(max_length=300, default="", blank=True)
     amount = DecimalField(max_digits=100, decimal_places=3, default=Decimal(0.0))
     file_path = CharField(max_length=100)
-    description = CharField(max_length=300, default="", blank=True)
+    description = TextField(default="", blank=True)
     balance = DecimalField(max_digits=100, decimal_places=3, default=Decimal(0.0))
     user = ForeignKey(
         User,
@@ -84,19 +85,25 @@ class IngEsTransaction(AbstractTimeStampedModel):
 
 class NetWorth(AbstractTimeStampedModel):
     user = ForeignKey(User, on_delete=SET_NULL, null=True, related_name="net_worth")
-    amount = DecimalField(max_digits=100, decimal_places=3, default=Decimal(0.0))
+    equity = DecimalField(max_digits=100, decimal_places=3, default=Decimal(0.0))
     period = ForeignKey(Period, on_delete=SET_NULL, null=True, blank=True)
+    # The amounts are based on the default currency of the user
+    investments = DecimalField(max_digits=100, decimal_places=3, default=Decimal(0.0))
+    incomes = DecimalField(max_digits=100, decimal_places=3, default=Decimal(0.0))
+    spendings = DecimalField(max_digits=100, decimal_places=3, default=Decimal(0.0))
+    savings = DecimalField(max_digits=100, decimal_places=3, default=Decimal(0.0))
 
     class Meta:
         db_table = "patrimoine_net_worth"
 
     def __str__(self) -> str:
         name = self.user or "Anon"
-        return f"{self.pk} {name}"
+        period = self.period or "Undefined"
+        return f"{name} - {period}"
 
 
 class CashflowMovement(AbstractTimeStampedModel):
-    name = CharField("Nombre", max_length=100)
+    name = CharField("Nombre", max_length=500)
     amount = DecimalField("Monto", max_digits=100, decimal_places=3, default=Decimal(0.0))
     description = TextField("Descripción", default="", blank=True)
     comment = TextField("Comentario", default="", blank=True)
@@ -113,6 +120,7 @@ class CashflowMovement(AbstractTimeStampedModel):
         default=Decimal(0.0),
         blank=True,
     )
+    objects = CashflowMovementQuerySet.as_manager()
 
     class Meta:
         abstract = True
@@ -141,6 +149,35 @@ class CashflowMovementCategory(AbstractTimeStampedModel):
         return self.name or "Cashflow cat"
 
 
+class WireTransfer(CashflowMovement):
+    user = ForeignKey(
+        User,
+        on_delete=SET_NULL,
+        null=True,
+        blank=True,
+        related_name="wire_trasnfers",
+    )
+    sender_type = ForeignKey(ContentType, on_delete=SET_NULL, null=True, related_name="sender")  # type: ignore TODO: add filters
+    sender_id = PositiveIntegerField(null=True)
+    sender = GenericForeignKey("sender_type", "sender_id")
+    receiver_type = ForeignKey(
+        ContentType, on_delete=SET_NULL, null=True, related_name="receiver"
+    )  # type: ignore TODO: add filters
+    receiver_id = PositiveIntegerField(null=True)
+    receiver = GenericForeignKey("receiver_type", "receiver_id")
+    category = ForeignKey(CashflowMovementCategory, on_delete=SET_NULL, null=True, blank=True)
+    net_worth = ForeignKey(
+        NetWorth,
+        on_delete=SET_NULL,
+        null=True,
+        blank=True,
+        related_name="net_worth_wire_trasnfers",
+    )
+
+    class Meta:
+        db_table = "patrimoine_wire_trasnfers"
+
+
 class Investment(CashflowMovement):
     user = ForeignKey(
         User,
@@ -154,7 +191,7 @@ class Investment(CashflowMovement):
     object = GenericForeignKey("content_type", "object_id")
     quantity = DecimalField("Cantidad", max_digits=100, decimal_places=3, default=Decimal(0.0))
     price = DecimalField("Precio", max_digits=100, decimal_places=3, default=Decimal(0.0))
-    movement = CharField("Moviemiento", max_length=4, choices=InvestmentMovement.to_choices())
+    movement = CharField("Moviemiento", max_length=12, choices=InvestmentMovement.to_choices())
     category = ForeignKey(CashflowMovementCategory, on_delete=SET_NULL, null=True, blank=True)
     net_worth = ForeignKey(
         NetWorth,
@@ -178,6 +215,7 @@ class Income(CashflowMovement):
         blank=True,
         related_name="incomes",
     )
+    to_substract = BooleanField(default=False)
     category = ForeignKey(CashflowMovementCategory, on_delete=SET_NULL, null=True, blank=True)
     content_type = ForeignKey(
         ContentType,

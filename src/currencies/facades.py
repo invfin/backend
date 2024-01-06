@@ -14,57 +14,53 @@ logger = logging.getLogger(__name__)
 class ExchangeRateFacade:
     def __init__(
         self,
-        base: str,
-        pk: int | None = None,
-        target: str = "",
+        base_code: str,
+        base_pk: int | None = None,
+        target_code: str = "",
         target_pk: int | None = None,
-        date: None | date = None,
+        exchange_date: None | date = None,
     ) -> None:
-        self.pk = pk
-        self.base = base
-        self.target = target
-        self.date = date
+        self.base_pk = base_pk
+        self.base_code = base_code
+        self.target_code = target_code
+        self.date = exchange_date
         self.target_pk = target_pk
 
     def convert(self, amount: Decimal) -> Decimal:
-        return amount  # TODO: currently doing this, once we get credits back we test it
-        exchange_rate = self.get()
-        return amount * exchange_rate.conversion_rate
+        return amount * self.get().conversion_rate
+
+    def query(self):
+        query = {"base__code": self.base_code}
+        if self.base_pk:
+            query |= {"base_id": self.base_pk}
+        if self.date:
+            query |= {"date": self.date}
+        if self.target_pk:
+            query |= {"target_id": self.target_pk}
+        if self.target_code:
+            query |= {"target__code": self.target_code}
+        return query
 
     def get(self) -> ExchangeRate:
-        try:
-            exchange_rate = ExchangeRate.objects.get(
-                base_id=self.pk,
-                target_id=self.target_pk,
-                date=self.date,
-            )
-        except (ValueError, ExchangeRate.DoesNotExist):
-            parser = self.select_parser()
-            resp = self.request(parser)
-            exchange_rates = self.save_one_to_many(resp)
-            exchange_rate = self._get_model(exchange_rates)
-            if not exchange_rate:
-                raise ValueError(f"Exchange rate missing: {vars(self)}")
-
+        if exchange_rate := ExchangeRate.objects.filter(**self.query()).first():
+            return exchange_rate
+        parser = self.select_parser()
+        resp = self.request(parser)
+        exchange_rates = self.save_one_to_many(resp)
+        exchange_rate = self._get_model(exchange_rates)
+        if not exchange_rate:
+            raise ValueError(f"Exchange rate missing: {vars(self)}")
         return exchange_rate
 
     def _get_model(self, models: None | list[ExchangeRate] = None) -> ExchangeRate | None:
         if models:
-            last_model = models.pop()
             if model := next(filter(self._filter, models), None):
-                # TODO: maybe refresh here if nothing is saved correctly
                 return model
-            last_model.refresh_from_db()
-            if self._filter(last_model):
-                return last_model
-        return ExchangeRate.objects.filter(
-            base__code=self.base,
-            target__code=self.target,
-            date=self.date,
-        ).first()
+        return ExchangeRate.objects.filter(**self.query()).first()
 
     def _filter(self, model: ExchangeRate) -> bool:
-        return model.base.code == self.base and model.target.code == self.target
+        # model.refresh_from_db()
+        return model.base.code == self.base_code and model.target.code == self.target_code
 
     def select_parser(self) -> type[ExchangeRateResponse]:
         return ExchangerateHost
@@ -73,7 +69,7 @@ class ExchangeRateFacade:
         return parser(**self._request_rates(parser))
 
     def _request_rates(self, parser: type[ExchangeRateResponse]) -> Any:
-        url = parser.construct_url(self.base, self.date)
+        url = parser.construct_url(self.base_code, self.date)
         resp = requests.get(url)
         try:
             resp.raise_for_status()
@@ -85,7 +81,7 @@ class ExchangeRateFacade:
         return resp_json
 
     def save_one_to_many(self, resp: ExchangeRateResponse) -> list[ExchangeRate]:
-        rates = (
+        rates = [
             ExchangeRate(
                 date=resp.date,
                 base=resp.base,
@@ -93,5 +89,14 @@ class ExchangeRateFacade:
                 conversion_rate=rate,
             )
             for t_id, rate in resp
-        )
-        return ExchangeRate.objects.bulk_create(rates)
+        ]
+        reverse_rates = [
+            ExchangeRate(
+                date=resp.date,
+                target=resp.base,
+                base_id=t_id,
+                conversion_rate=Decimal(1) / rate,
+            )
+            for t_id, rate in resp
+        ]
+        return ExchangeRate.objects.bulk_create(rates + reverse_rates, ignore_conflicts=True)

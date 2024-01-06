@@ -18,7 +18,11 @@ TEST_RUNNER = "django.test.runner.DiscoverRunner"
 # DATABASES
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
-DATABASES = {"default": env.db("LOCAL_DATABASE_URL", default="postgresql://root@localhost/circle_test?sslmode=disable")}
+DATABASES = {
+    "default": env.db(
+        "LOCAL_DATABASE_URL", default="postgresql://root@localhost/circle_test?sslmode=disable"
+    )
+}
 DATABASES["default"]["ATOMIC_REQUESTS"] = True
 
 # PASSWORDS
@@ -44,3 +48,5 @@ MAIN_EMAIL = "MAIN_EMAIL@example.com"
 EMAIL_ACCOUNTS = "EMAIL_ACCOUNTS@example.com"
 EMAIL_DEFAULT = "EMAIL_DEFAULT@example.com"
 EMAIL_SUGGESTIONS = "EMAIL_SUGGESTIONS@example.com"
+
+EXCHANGE_RATE_HOST = "mytemp"

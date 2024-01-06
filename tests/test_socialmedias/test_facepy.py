@@ -44,8 +44,7 @@ class TestFacePoster(TestCase):
             " https://www.tiktok.com/@inversionesyfinanzas?\nTwitter :"
             " https://twitter.com/InvFinz\nLinkedIn :"
             " https://www.linkedin.com/company/inversiones-finanzas\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n.\n#list"
-            " #de #hashtags"
-            == description
+            " #de #hashtags" == description
         )
 
     @skip("not ready")

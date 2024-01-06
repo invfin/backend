@@ -288,3 +288,4 @@ backups
 assets_*
 src/empresas/parse/finprep_requests_done.json
 certs/*
+*.ipynb

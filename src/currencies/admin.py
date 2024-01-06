@@ -11,7 +11,7 @@ class UserDefaultCurrencyAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
 
 @admin.register(ExchangeRate)
 class ExchangeRateAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
-    list_display = ["pk", "base", "target", "conversion_rate"]
+    list_display = ["pk", "base", "target", "conversion_rate", "date"]
 
 
 @admin.register(Currency)

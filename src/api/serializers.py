@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.contrib.auth import authenticate
 from django.utils.html import strip_tags
 from django.utils.translation import gettext_lazy as _
@@ -10,9 +11,13 @@ class TokenObtainSerializer(Serializer):
     username = CharField()
     password = CharField(write_only=True)
 
+    def __init__(self, now: datetime, *args, **kwargs):
+        self.now = now
+        super().__init__(*args, **kwargs)
+
     def validate(self, data):
         if user := authenticate(username=data["username"], password=data["password"]):
-            return JwtFacade(user).tokens  # type: ignore
+            return JwtFacade(now=self.now, user=user).tokens  # type: ignore
         else:
             raise ValidationError("Invalid credentials")
 
