@@ -36,7 +36,8 @@ class CashflowMovementFacade:
 
     def _amount_converted(self, target: Currency) -> tuple[Decimal, bool]:
         amount, converted = self.model.amount, True
-        if target.code != self.model.currency.code:
+        # TODO: check if possible and if it can cause problems self.model.currency to be None
+        if self.model.currency and target.code != self.model.currency.code:
             try:
                 amount, converted = (
                     ExchangeRateFacade(
@@ -83,7 +84,7 @@ class CashflowMovementsAmounts:
     savings: CashflowMovementsAmount
     spendings: CashflowMovementsAmount
     equity: CashflowMovementsAmount
-    __slots__ = ("incomes", "savings", "spendings", "investments", "equity")
+    __slots__ = "incomes", "savings", "spendings", "investments", "equity"
 
     def __init__(self, movements: Iterable[CashflowMovementsFacade]) -> None:
         for movement in movements:
