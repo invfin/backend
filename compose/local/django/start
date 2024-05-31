@@ -6,9 +6,9 @@ set -o nounset
 
 
 # python manage.py migrate --settings config.settings.local
-# python manage.py collectstatic --settings config.settings.local
-# python manage.py runserver 0.0.0.0:8000 --settings config.settings.final
+# python manage.py collectstatic --noinput --link --settings config.settings.local
+python manage.py runserver 0.0.0.0:8000 --settings config.settings.final
 
 # uvicorn config.asgi:application --host 0.0.0.0 --reload
 
-/home/lucas/miniconda3/envs/invfin/bin/gunicorn config.asgi --bind 0.0.0.0:5000 --chdir=/app -k uvicorn.workers.UvicornWorker
+# /home/lucas/miniconda3/envs/invfin/bin/gunicorn config.asgi --bind 0.0.0.0:5000 --chdir=/app -k uvicorn.workers.UvicornWorker

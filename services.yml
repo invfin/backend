@@ -1,0 +1,25 @@
+volumes:
+  postgres_data: {}
+
+services:
+  postgres:
+    build:
+      context: .
+      dockerfile: ./compose/production/postgres/Dockerfile
+    image: invfin_local_postgres
+    container_name: invfin_local_postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data:Z
+      - ./backups:/backups:Z
+    env_file:
+      - ./.envs/.local/.postgres
+
+
+  mailhog:
+    image: mailhog/mailhog:v1.0.0
+    container_name: invfin_local_mailhog
+    ports:
+      - "1025:1025"
+      - "8025:8025"

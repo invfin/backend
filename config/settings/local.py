@@ -18,9 +18,9 @@ ALLOWED_HOSTS = ["localhost", "0.0.0.0", "127.0.0.1", ".example.com"]
 # DATABASES
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
-DATABASE_URL = "LOCAL_DATABASE_URL"
+DATABASE_URL = "DATABASE_URL"
 if USE_DOCKER:
-    DATABASE_URL = "DATABASE_URL"
+    DATABASE_URL = "LOCAL_DATABASE_URL"
 DATABASES = {"default": env.db(DATABASE_URL)}
 DATABASES["default"]["ATOMIC_REQUESTS"] = True
 

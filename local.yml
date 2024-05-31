@@ -1,5 +1,3 @@
-version: '3'
-
 volumes:
   invfin_local_postgres_data: {}
   invfin_local_postgres_data_backups: {}
@@ -37,6 +35,8 @@ services:
       dockerfile: ./compose/production/postgres/Dockerfile
     image: invfin_production_postgres
     container_name: invfin_local_postgres
+    ports:
+      - "5432:5432"
     volumes:
       - invfin_local_postgres_data:/var/lib/postgresql/data:z
       - invfin_local_postgres_data_backups:/backups:z
@@ -56,6 +56,8 @@ services:
 
   redis:
     image: redis:6
+    ports:
+      - "6379:6379"
     container_name: invfin_local_redis
     networks:
       - invfin_network

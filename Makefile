@@ -17,6 +17,9 @@ clean-start:
 	docker compose -f local.yml build invfin
 	make up-b
 
+services:
+	docker compose -f services.yml up
+
 restart:
 	docker compose -f local.yml restart $(ar)
 
@@ -76,10 +79,6 @@ manage:
 
 collectstatic:
 	docker compose -f local.yml run --rm invfin ./manage.py collectstatic --noinput
-	make build ar="invfin"
-
-col-share-static:
-	docker compose -f local.yml run --rm invfin ./manage.py collectstatic --noinput
 	docker compose -f local.yml build
 
 run:
@@ -108,12 +107,7 @@ backup:
 ls_backups:
 	docker compose -f local.yml exec postgres backups
 
-rt_backups:
-	@echo ls -Art $PWD/backups/*.sql.gz | tail -n 1
-
 restore:
-	docker compose -f local.yml stop
-	docker compose -f local.yml up -d postgres
 	docker compose -f local.yml exec postgres restore $(ar)
 
 # Documentation
