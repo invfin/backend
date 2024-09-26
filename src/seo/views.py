@@ -1,4 +1,5 @@
 from django.db.models import Q
+from django.db import transaction
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import redirect
 from django.views.generic import (
@@ -62,6 +63,7 @@ class PromotionRedirectView(RedirectView):
         return HttpResponseRedirect(url)
 
 
+@transaction.non_atomic_requests
 async def robots_txt(_):
     lines = [
         "User-Agent: *",
