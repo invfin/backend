@@ -36,31 +36,30 @@ class FinprepRequestCheck:
         return is_auth, datetime.timestamp(now), requests_done
 
     def manage_track_requests(self, number_requests_to_do: int) -> bool:
-        finprep_requests_done_file = "src/empresas/parse/finprep_requests_done.json"
-        with open(finprep_requests_done_file, "r") as read_checks_json:
-            checks_json = json.load(read_checks_json)
-            is_auth, last_request, requests_done = self.check_remaining_requests(
-                number_requests_to_do,
-                checks_json["last_request"],
-                checks_json["requests_done"],
-            )
-            checks_json["requests_done"] = requests_done
-            checks_json["last_request"] = last_request
-        with open(finprep_requests_done_file, "w") as writte_checks_json:
-            json.dump(checks_json, writte_checks_json, indent=2, separators=(",", ": "))
-        return is_auth
+        try:
+            finprep_requests_done_file = "src/empresas/parse/finprep_requests_done.json"
+            with open(finprep_requests_done_file, "r") as read_checks_json:
+                checks_json = json.load(read_checks_json)
+                is_auth, last_request, requests_done = self.check_remaining_requests(
+                    number_requests_to_do,
+                    checks_json["last_request"],
+                    checks_json["requests_done"],
+                )
+                checks_json["requests_done"] = requests_done
+                checks_json["last_request"] = last_request
+            with open(finprep_requests_done_file, "w") as writte_checks_json:
+                json.dump(checks_json, writte_checks_json, indent=2, separators=(",", ": "))
+            return is_auth
+        except json.JSONDecodeError:
+            return False
 
 
-def detect_outlier(list_data):
-    outliers = []
+def detect_outlier(list_data)->list:
     threshold = 3
     mean_1 = np.mean(list_data)
     std_1 = np.std(list_data)
 
-    for y in list_data:
-        z_score = (y - mean_1) / std_1
-        if np.abs(z_score) > threshold:
-            outliers.append(y)
+    outliers = [y for y in list_data if np.abs((y - mean_1) / std_1) > threshold]
 
     return "No outliers" if not outliers else outliers
 
